@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { cn } from '@/utilities/ui'
+import { PianoLogo } from './PianoLogo'
 
 const PIANO_BRANDS = [
   { label: 'All Pianos', href: '/pianos' },
@@ -31,29 +32,16 @@ export function PianoHeader() {
     href === '/' ? pathname === href : pathname.startsWith(href)
 
   return (
-    <header
-      className="sticky top-0 z-50 w-full bg-piano-black border-b border-piano-gold/10"
-    >
-      <div className="max-w-7xl mx-auto px-8 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full bg-piano-cream border-b border-piano-linen">
+      <div className="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">
+
         {/* Logo */}
-        <Link href="/" className="group flex items-center gap-0">
-          <span
-            className="text-piano-cream font-normal leading-none tracking-tight group-hover:text-white transition-colors"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '1.2rem' }}
-          >
-            UsedSteinways
-          </span>
-          <span
-            className="text-piano-gold/70 group-hover:text-piano-gold font-normal leading-none tracking-tight transition-colors"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: '1.2rem' }}
-          >
-            .com
-          </span>
-        </Link>
+        <PianoLogo theme="light" size="md" />
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-8">
-          {/* Pianos Dropdown */}
+        <nav className="hidden lg:flex items-center gap-10">
+
+          {/* Pianos dropdown */}
           <div
             className="relative"
             onMouseEnter={() => setPianoMenuOpen(true)}
@@ -61,27 +49,29 @@ export function PianoHeader() {
           >
             <button
               className={cn(
-                'flex items-center gap-1 font-display text-xs tracking-[0.15em] uppercase transition-colors py-1',
-                pathname.startsWith('/pianos') ? 'text-piano-gold' : 'text-piano-cream/70 hover:text-piano-cream',
+                'flex items-center gap-1.5 font-display text-[11px] tracking-[0.25em] uppercase transition-colors py-1',
+                pathname.startsWith('/pianos')
+                  ? 'text-piano-black'
+                  : 'text-piano-stone hover:text-piano-black',
               )}
             >
               Pianos
-              <svg className="w-3 h-3 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <svg className="w-2.5 h-2.5 mt-px" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
             </button>
 
             {pianoMenuOpen && (
-              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-piano-charcoal border border-piano-gold/20 shadow-2xl shadow-piano-black/40 py-2">
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-52 bg-piano-cream border border-piano-linen shadow-lg shadow-piano-black/5 py-2">
                 {PIANO_BRANDS.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      'block px-5 py-2.5 font-display text-xs tracking-wide transition-colors',
+                      'block px-5 py-3 font-display text-[10px] tracking-[0.25em] uppercase transition-colors',
                       item.href === '/pianos'
-                        ? 'text-piano-gold border-b border-piano-gold/10 mb-1 uppercase tracking-[0.15em]'
-                        : 'text-piano-cream/70 hover:text-piano-cream hover:bg-piano-gold/5',
+                        ? 'text-piano-black border-b border-piano-linen mb-1'
+                        : 'text-piano-stone hover:text-piano-black hover:bg-piano-warm-white',
                     )}
                   >
                     {item.label}
@@ -96,8 +86,10 @@ export function PianoHeader() {
               key={link.href}
               href={link.href}
               className={cn(
-                'font-display text-xs tracking-[0.15em] uppercase transition-colors',
-                isActive(link.href) ? 'text-piano-gold' : 'text-piano-cream/70 hover:text-piano-cream',
+                'font-display text-[11px] tracking-[0.25em] uppercase transition-colors',
+                isActive(link.href)
+                  ? 'text-piano-black'
+                  : 'text-piano-stone hover:text-piano-black',
               )}
             >
               {link.label}
@@ -105,54 +97,57 @@ export function PianoHeader() {
           ))}
         </nav>
 
-        {/* Contact CTA + Mobile */}
-        <div className="flex items-center gap-4">
+        {/* Right side */}
+        <div className="flex items-center gap-6">
           <Link
             href="/contact"
-            className="hidden sm:inline-flex items-center bg-piano-burgundy text-white px-5 py-2 font-display text-xs tracking-[0.2em] uppercase hover:bg-piano-burgundy/90 transition-colors"
+            className="hidden sm:inline-flex items-center gap-1.5 font-display text-[11px] tracking-[0.25em] uppercase text-piano-black hover:text-piano-gold transition-colors"
           >
             Contact
+            <span className="text-piano-gold text-xs">→</span>
           </Link>
 
-          {/* Mobile Menu Toggle */}
+          {/* Mobile toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden text-piano-cream p-1"
+            className="lg:hidden text-piano-black p-1"
             aria-label="Toggle menu"
           >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
               {mobileMenuOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 7h18M3 12h18M3 17h18" />
               )}
             </svg>
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-piano-charcoal border-t border-piano-gold/10">
+        <div className="lg:hidden bg-piano-cream border-t border-piano-linen">
           <div className="px-8 py-6 space-y-1">
-            <p className="font-display text-xs tracking-[0.2em] uppercase text-piano-gold mb-3">Pianos</p>
+            <p className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold mb-4">
+              Pianos
+            </p>
             {PIANO_BRANDS.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-piano-cream/80 hover:text-piano-cream font-display text-xs tracking-wide"
+                className="block py-3 text-piano-stone hover:text-piano-black font-display text-[11px] tracking-[0.22em] uppercase transition-colors"
               >
                 {item.label}
               </Link>
             ))}
-            <div className="pt-4 mt-4 border-t border-piano-gold/10 space-y-1">
+            <div className="pt-5 mt-5 border-t border-piano-linen space-y-1">
               {NAV_LINKS.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 text-piano-cream/80 hover:text-piano-cream font-display text-xs tracking-[0.15em] uppercase"
+                  className="block py-3 text-piano-stone hover:text-piano-black font-display text-[11px] tracking-[0.22em] uppercase transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -160,9 +155,9 @@ export function PianoHeader() {
               <Link
                 href="/contact"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block mt-4 text-center bg-piano-burgundy text-white py-3 font-display text-xs tracking-[0.2em] uppercase"
+                className="block mt-5 text-center border border-piano-black text-piano-black py-3.5 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-black hover:text-piano-cream transition-colors"
               >
-                Contact
+                Contact Roger →
               </Link>
             </div>
           </div>

@@ -14,32 +14,34 @@ export function PianoCard({ piano, className }: PianoCardProps) {
     <Link
       href={`/pianos/${piano.slug}`}
       className={cn(
-        'group block bg-white border border-gray-200 hover:border-piano-gold/40 transition-all duration-200 hover:shadow-md',
+        'group block bg-piano-cream border border-piano-linen hover:border-piano-gold/40 transition-all duration-200',
         className,
       )}
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
+      <div className="relative aspect-[4/3] overflow-hidden bg-piano-black">
         {piano.imageUrls[0] && (
           <Image
             src={piano.imageUrls[0]}
             alt={piano.title}
             fill
-            className="object-cover group-hover:scale-102 transition-transform duration-300"
+            className="object-cover opacity-90 group-hover:opacity-100 group-hover:scale-[1.03] transition-all duration-500"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         )}
-        <div className="absolute top-3 left-3">
+        <div className="absolute top-4 left-4">
           <ConditionBadge condition={piano.condition} />
         </div>
       </div>
-      <div className="p-5">
-        <p className="font-display text-xs tracking-[0.15em] uppercase text-gray-500 mb-1">
+      <div className="p-8">
+        <p className="font-display text-[10px] tracking-[0.4em] uppercase text-piano-gold mb-3">
           {piano.brand}
         </p>
-        <h3 className="font-medium text-gray-900 text-base leading-snug mb-3">{piano.title}</h3>
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-600">{piano.size}</p>
-          <p className="font-semibold text-gray-900">{piano.priceDisplay}</p>
+        <h3 className="font-cormorant text-3xl font-light text-piano-black leading-snug mb-4">
+          {piano.title}
+        </h3>
+        <div className="flex items-center justify-between border-t border-piano-linen pt-5">
+          <p className="text-piano-stone text-sm">{piano.size}</p>
+          <p className="font-cormorant text-2xl font-light text-piano-black">{piano.priceDisplay}</p>
         </div>
       </div>
     </Link>

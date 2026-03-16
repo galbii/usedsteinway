@@ -6,17 +6,17 @@ interface ConditionBadgeProps {
 }
 
 const variants = {
-  Excellent: 'bg-emerald-50 text-emerald-800 border border-emerald-200',
-  'Very Good': 'bg-blue-50 text-blue-800 border border-blue-200',
-  Good: 'bg-amber-50 text-amber-800 border border-amber-200',
-  Fair: 'bg-gray-50 text-gray-700 border border-gray-200',
+  Excellent: 'bg-piano-cream border border-piano-gold/50 text-piano-black',
+  'Very Good': 'bg-piano-cream border border-piano-stone/40 text-piano-black',
+  Good: 'bg-piano-warm-white border border-piano-stone/30 text-piano-stone',
+  Fair: 'bg-piano-warm-white border border-piano-stone/20 text-piano-stone',
 }
 
 export function ConditionBadge({ condition, className }: ConditionBadgeProps) {
   return (
     <span
       className={cn(
-        'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium tracking-wide font-display',
+        'inline-flex items-center px-3 py-1 font-display text-[9px] tracking-[0.3em] uppercase',
         variants[condition],
         className,
       )}

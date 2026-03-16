@@ -14,7 +14,7 @@ export function PianoCardFeatured({ piano, className }: PianoCardFeaturedProps) 
     <Link
       href={`/pianos/${piano.slug}`}
       className={cn(
-        'group block bg-piano-charcoal border border-piano-gold/20 hover:border-piano-gold/60 transition-all duration-300 overflow-hidden',
+        'group block bg-piano-cream border border-piano-linen hover:border-piano-gold/40 transition-all duration-300 overflow-hidden',
         className,
       )}
     >
@@ -24,14 +24,14 @@ export function PianoCardFeatured({ piano, className }: PianoCardFeaturedProps) 
             src={piano.imageUrls[0]}
             alt={piano.title}
             fill
-            className="object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+            className="object-cover opacity-90 group-hover:opacity-100 group-hover:scale-[1.04] transition-all duration-700"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-piano-black/70 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-piano-black/50 via-transparent to-transparent" />
         {piano.isFeatured && (
-          <div className="absolute top-4 right-4">
-            <span className="bg-piano-gold/90 text-piano-black text-xs font-display tracking-widest uppercase px-3 py-1">
+          <div className="absolute top-4 left-4">
+            <span className="bg-piano-gold text-piano-black font-display text-[9px] tracking-[0.35em] uppercase px-3 py-1.5">
               Featured
             </span>
           </div>
@@ -41,28 +41,25 @@ export function PianoCardFeatured({ piano, className }: PianoCardFeaturedProps) 
         </div>
       </div>
 
-      <div className="p-6">
-        <p className="font-display text-xs tracking-[0.2em] uppercase text-piano-gold mb-1.5">
+      <div className="p-8">
+        <p className="font-display text-[10px] tracking-[0.4em] uppercase text-piano-gold mb-3">
           {piano.brand} · {piano.year}
         </p>
-        <h3
-          className="text-piano-cream text-lg font-medium leading-snug mb-2"
-          style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-        >
+        <h3 className="font-cormorant text-4xl font-light text-piano-black leading-snug mb-2">
           {piano.model}
         </h3>
-        <p className="text-piano-silver text-xs mb-4 line-clamp-2 leading-relaxed">
+        <p className="text-piano-stone text-sm mb-6">
           {piano.finish} · {piano.size}
         </p>
 
-        <div className="flex items-center justify-between pt-4 border-t border-piano-gold/10">
-          <p className="text-piano-silver text-xs font-display tracking-wide">{piano.size}</p>
-          <p className="text-piano-gold font-semibold text-base">{piano.priceDisplay}</p>
-        </div>
-
-        <div className="mt-4 flex items-center gap-2 text-piano-gold/70 group-hover:text-piano-gold transition-colors">
-          <span className="font-display text-xs tracking-[0.15em] uppercase">View Details</span>
-          <span className="text-sm group-hover:translate-x-1 transition-transform">→</span>
+        <div className="flex items-center justify-between pt-5 border-t border-piano-linen">
+          <span className="font-cormorant text-2xl font-light text-piano-black">
+            {piano.priceDisplay}
+          </span>
+          <span className="font-display text-[10px] tracking-[0.3em] uppercase text-piano-stone group-hover:text-piano-black transition-colors inline-flex items-center gap-1.5">
+            View
+            <span className="group-hover:translate-x-0.5 transition-transform inline-block">→</span>
+          </span>
         </div>
       </div>
     </Link>

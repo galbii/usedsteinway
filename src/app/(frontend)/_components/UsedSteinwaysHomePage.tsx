@@ -1,8 +1,35 @@
 /* eslint-disable react/no-unescaped-entities */
+/**
+ * UsedSteinways — Design Scale System
+ * ─────────────────────────────────────────────────────────────
+ * Display type (Cormorant Garamond, font-cormorant):
+ *   Hero XL    → clamp(5rem, 8.5vw, 10rem)
+ *   Section LG → clamp(3.2rem, 5.5vw, 6rem)
+ *   Card MD    → text-4xl (2.25rem)
+ *   Sub SM     → text-2xl (1.5rem)
+ *   Inline     → text-xl (1.25rem)
+ *
+ * UI type (Syne, font-display) — small + wide tracking is intentional:
+ *   Overlines  → text-[11px] tracking-[0.45em]
+ *   Nav / BTN  → text-[11px] tracking-[0.28em]
+ *   Captions   → text-[10px] tracking-[0.35em]
+ *
+ * Body (Geist Sans):
+ *   Primary    → text-lg (18px)
+ *   Secondary  → text-base (16px)
+ *   Fine       → text-sm (14px)
+ *
+ * Spacing rhythm:
+ *   Section    → py-36
+ *   Card inner → p-8 / p-9
+ *   Section hdr margin → mb-20
+ *   Overline → mb-5
+ *   Headline → mb-10
+ * ─────────────────────────────────────────────────────────────
+ */
 import Link from 'next/link'
 import Image from 'next/image'
 import { getFeaturedPianos, BRANDS, GUIDES, TESTIMONIALS } from '@/lib/piano-data'
-import { PianoCardFeatured } from '@/components/piano/PianoCardFeatured'
 
 export function UsedSteinwaysHomePage() {
   const featured = getFeaturedPianos().slice(0, 3)
@@ -13,141 +40,202 @@ export function UsedSteinwaysHomePage() {
     <div className="bg-piano-cream">
 
       {/* ═══════════════════════════════════════════════
-          HERO — Full viewport, split composition
+          HERO — Split editorial composition
       ═══════════════════════════════════════════════ */}
-      <section className="relative min-h-screen flex flex-col lg:flex-row overflow-hidden bg-piano-black">
+      <section className="relative min-h-screen flex flex-col lg:flex-row overflow-hidden">
 
-        {/* Left: Content */}
-        <div className="relative z-10 flex flex-col justify-center px-8 md:px-16 lg:px-20 py-24 lg:py-0 lg:w-[52%] xl:w-[48%]">
+        {/* Left: Ivory panel */}
+        <div className="relative z-10 flex flex-col justify-center bg-piano-cream px-10 md:px-16 xl:px-24 py-32 lg:py-0 lg:w-[46%] xl:w-[44%]">
 
           {/* Overline */}
-          <div className="flex items-center gap-4 mb-10">
-            <div className="h-px w-12 bg-piano-gold" />
-            <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold">
+          <div
+            className="flex items-center gap-3 mb-10 animate-fade-up"
+            style={{ animationDelay: '0.05s', opacity: 0 }}
+          >
+            <div className="h-px w-8 bg-piano-gold" />
+            <span className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-stone">
               New Hampshire · Est. 1993
             </span>
           </div>
 
-          {/* Headline — broken for dramatic effect */}
+          {/* Headline */}
           <h1
-            className="text-[clamp(2.8rem,5.5vw,5.2rem)] font-normal leading-[1.05] text-white mb-8 max-w-xl"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            className="font-cormorant leading-[1.03] text-piano-black mb-10 animate-fade-up"
+            style={{
+              fontSize: 'clamp(3.6rem, 7vw, 8.5rem)',
+              animationDelay: '0.15s',
+              opacity: 0,
+            }}
           >
             The world's finest<br />
-            <em className="not-italic text-piano-gold">pre-owned</em> pianos,<br />
+            <em className="italic text-piano-gold">pre-owned</em> pianos,<br />
             personally chosen.
           </h1>
 
           {/* Body */}
-          <p className="text-piano-silver text-base md:text-lg leading-loose max-w-md mb-10">
-            Every piano personally selected. Every detail inspected.
-            A collection where each instrument has earned its place.
+          <p
+            className="text-piano-stone text-lg leading-relaxed max-w-md mb-12 font-light animate-fade-up"
+            style={{ animationDelay: '0.25s', opacity: 0 }}
+          >
+            Every instrument personally evaluated by Roger — a Registered Piano
+            Technician with thirty years of experience placing extraordinary
+            pianos in extraordinary homes.
           </p>
 
           {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div
+            className="flex flex-col sm:flex-row gap-4 animate-fade-up"
+            style={{ animationDelay: '0.35s', opacity: 0 }}
+          >
             <Link
               href="/pianos"
-              className="inline-flex items-center justify-center bg-piano-burgundy text-white px-8 py-4 font-display text-[11px] tracking-[0.25em] uppercase hover:bg-piano-burgundy/90 transition-colors"
+              className="inline-flex items-center justify-center bg-piano-black text-piano-cream px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-charcoal transition-colors duration-200"
             >
-              Browse the Collection
+              Browse Collection
             </Link>
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center border border-piano-gold/50 text-piano-gold px-8 py-4 font-display text-[11px] tracking-[0.25em] uppercase hover:border-piano-gold hover:bg-piano-gold/5 transition-colors"
+              className="inline-flex items-center justify-center border border-piano-black/25 text-piano-black px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:border-piano-gold hover:text-piano-gold transition-colors duration-200"
             >
               Talk to Roger
             </Link>
           </div>
 
-          {/* Scroll hint */}
-          <div className="hidden lg:flex items-center gap-3 mt-20 text-piano-silver/40">
-            <div className="w-px h-10 bg-piano-silver/20" />
-            <span className="font-display text-[9px] tracking-[0.3em] uppercase">Scroll to explore</span>
-          </div>
-        </div>
-
-        {/* Right: Image */}
-        <div className="relative lg:absolute lg:right-0 lg:top-0 lg:bottom-0 lg:w-[54%] h-64 lg:h-auto overflow-hidden">
-          <Image
-            src="https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=1400&q=85"
-            alt="Grand piano in dramatic lighting"
-            fill
-            priority
-            className="object-cover object-center"
-            sizes="(max-width: 1024px) 100vw, 54vw"
-          />
-          {/* Gradient bleed into left content on desktop */}
-          <div className="absolute inset-0 bg-gradient-to-r from-piano-black via-piano-black/30 to-transparent hidden lg:block" />
-          {/* Mobile overlay */}
-          <div className="absolute inset-0 bg-piano-black/50 lg:hidden" />
-        </div>
-
-        {/* Bottom gold rule */}
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-piano-gold/20" />
-      </section>
-
-      {/* ═══════════════════════════════════════════════
-          TRUST BAR — Numbers that command attention
-      ═══════════════════════════════════════════════ */}
-      <section className="bg-piano-charcoal border-b border-piano-gold/10">
-        <div className="max-w-7xl mx-auto px-8 py-10">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-0 lg:divide-x lg:divide-piano-gold/10">
+          {/* Stats row */}
+          <div
+            className="flex gap-12 mt-16 pt-10 border-t border-piano-linen animate-fade-up"
+            style={{ animationDelay: '0.45s', opacity: 0 }}
+          >
             {[
-              { stat: '30+', label: 'Years of Expertise', sub: 'Steinway-certified since 1993' },
-              { stat: '25', label: 'Instruments', sub: 'Every one personally approved' },
-              { stat: '#1', label: 'In New England', sub: 'Pre-owned fine piano selection' },
-              { stat: '100%', label: 'Satisfaction', sub: 'Every buyer, every time' },
-            ].map(({ stat, label, sub }) => (
-              <div key={label} className="lg:px-8 first:pl-0 last:pr-0 text-center lg:text-left">
-                <p
-                  className="text-[2.8rem] font-normal leading-none text-piano-gold mb-1"
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                >
-                  {stat}
+              { n: '30+', l: 'Years' },
+              { n: '25', l: 'Instruments' },
+              { n: '10', l: 'Brands' },
+            ].map(({ n, l }) => (
+              <div key={l}>
+                <p className="font-cormorant font-light text-piano-black leading-none" style={{ fontSize: 'clamp(2.8rem, 4vw, 4rem)' }}>
+                  {n}
                 </p>
-                <p className="font-display text-[11px] tracking-[0.15em] uppercase text-piano-cream mb-1">{label}</p>
-                <p className="text-piano-silver/50 text-xs leading-relaxed hidden lg:block">{sub}</p>
+                <p className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-stone mt-2">
+                  {l}
+                </p>
               </div>
             ))}
           </div>
         </div>
+
+        {/* Vertical divider */}
+        <div className="hidden lg:block absolute left-[46%] xl:left-[44%] top-0 bottom-0 w-px bg-piano-gold/20 z-20" />
+
+        {/* Right: Piano photograph */}
+        <div className="relative lg:absolute lg:right-0 lg:top-0 lg:bottom-0 lg:w-[54%] xl:w-[56%] h-72 lg:h-auto">
+          <Image
+            src="https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=1600&q=90"
+            alt="Grand piano in dramatic lighting"
+            fill
+            priority
+            className="object-cover object-center"
+            sizes="(max-width: 1024px) 100vw, 56vw"
+          />
+          <div className="absolute inset-0 bg-piano-black/15 hidden lg:block" />
+          <div className="absolute inset-0 bg-piano-black/55 lg:hidden" />
+        </div>
       </section>
 
       {/* ═══════════════════════════════════════════════
-          FEATURED PIANOS — The collection
+          TICKER — Brand names marquee
       ═══════════════════════════════════════════════ */}
-      <section className="bg-piano-cream py-24 px-8">
+      <div className="bg-piano-black h-12 flex items-center overflow-hidden border-t border-b border-piano-gold/10">
+        <div className="flex items-center animate-ticker whitespace-nowrap">
+          {[0, 1].map((i) => (
+            <div key={i} className="flex items-center shrink-0">
+              {BRANDS.map((brand) => (
+                <span key={brand.slug} className="flex items-center">
+                  <span className="font-display text-[10px] tracking-[0.45em] uppercase text-piano-cream/30 px-8">
+                    {brand.name}
+                  </span>
+                  <span className="text-piano-gold/20 text-xs">·</span>
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ═══════════════════════════════════════════════
+          FEATURED INSTRUMENTS
+      ═══════════════════════════════════════════════ */}
+      <section className="bg-piano-cream py-36 px-8">
         <div className="max-w-7xl mx-auto">
 
           {/* Section header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
             <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-px w-8 bg-piano-burgundy" />
-                <span className="font-display text-[10px] tracking-[0.3em] uppercase text-piano-burgundy">
-                  Hand-Selected
-                </span>
-              </div>
+              <span className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold block mb-5">
+                Hand-Selected
+              </span>
               <h2
-                className="text-[clamp(2rem,4vw,3.2rem)] font-normal text-piano-black leading-tight"
-                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                className="font-cormorant font-light text-piano-black leading-tight"
+                style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)' }}
               >
                 Featured Instruments
               </h2>
             </div>
             <Link
               href="/pianos"
-              className="group flex items-center gap-3 font-display text-[11px] tracking-[0.2em] uppercase text-piano-black/60 hover:text-piano-burgundy transition-colors shrink-0"
+              className="group flex items-center gap-2 font-display text-[11px] tracking-[0.3em] uppercase text-piano-stone hover:text-piano-black transition-colors"
             >
-              View all {featured.length > 0 ? '25' : ''} pianos
-              <span className="group-hover:translate-x-1 transition-transform">→</span>
+              View all 25 pianos
+              <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Piano cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-piano-linen border border-piano-linen">
             {featured.map((piano) => (
-              <PianoCardFeatured key={piano.id} piano={piano} />
+              <Link
+                key={piano.id}
+                href={`/pianos/${piano.slug}`}
+                className="group bg-piano-cream block overflow-hidden"
+              >
+                <div className="relative aspect-[4/3] overflow-hidden bg-piano-black">
+                  {piano.imageUrls[0] && (
+                    <Image
+                      src={piano.imageUrls[0]}
+                      alt={piano.title}
+                      fill
+                      className="object-cover opacity-90 group-hover:opacity-100 group-hover:scale-[1.04] transition-all duration-700"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  )}
+                  {piano.isFeatured && (
+                    <div className="absolute top-5 left-5">
+                      <span className="bg-piano-gold text-piano-black font-display text-[9px] tracking-[0.35em] uppercase px-3.5 py-2">
+                        Featured
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="p-9 border-t border-piano-linen">
+                  <p className="font-display text-[10px] tracking-[0.4em] uppercase text-piano-gold mb-4">
+                    {piano.brand} · {piano.year}
+                  </p>
+                  <h3 className="font-cormorant text-4xl font-light text-piano-black leading-snug mb-3">
+                    {piano.model}
+                  </h3>
+                  <p className="text-piano-stone text-sm leading-relaxed mb-7">
+                    {piano.finish} · {piano.size}
+                  </p>
+                  <div className="flex items-center justify-between border-t border-piano-linen pt-6">
+                    <span className="font-cormorant text-2xl font-light text-piano-black">
+                      {piano.priceDisplay}
+                    </span>
+                    <span className="font-display text-[10px] tracking-[0.3em] uppercase text-piano-stone group-hover:text-piano-black transition-colors inline-flex items-center gap-2">
+                      View
+                      <span className="group-hover:translate-x-0.5 transition-transform inline-block">→</span>
+                    </span>
+                  </div>
+                </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -156,48 +244,51 @@ export function UsedSteinwaysHomePage() {
       {/* ═══════════════════════════════════════════════
           PHILOSOPHY — The curator story
       ═══════════════════════════════════════════════ */}
-      <section className="bg-piano-black py-24 px-8 border-t border-piano-gold/10">
+      <section className="bg-piano-black py-36 px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-[1fr_1px_1fr] gap-0 lg:gap-0 items-start">
+          <div className="grid lg:grid-cols-[1fr_1px_1fr] items-start">
 
-            {/* Left: Large editorial quote */}
-            <div className="lg:pr-16 pb-12 lg:pb-0">
-              <p className="text-piano-gold text-[5rem] leading-none font-display mb-4 opacity-30">"</p>
+            {/* Left: Quote */}
+            <div className="lg:pr-20 pb-16 lg:pb-0">
+              <div className="h-px w-10 bg-piano-gold mb-14" />
               <blockquote
-                className="text-[clamp(1.5rem,2.8vw,2.2rem)] font-normal text-piano-cream leading-snug mb-10"
-                style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic' }}
+                className="font-cormorant font-light italic text-piano-cream leading-snug mb-12"
+                style={{ fontSize: 'clamp(1.8rem, 2.8vw, 2.8rem)' }}
               >
-                We're not married to any manufacturer. We select the finest instruments regardless of nameplate — the only criterion is excellence.
+                "We're not married to any manufacturer. We select the finest
+                instruments regardless of nameplate — the only criterion is
+                excellence."
               </blockquote>
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-piano-charcoal border border-piano-gold/30 flex items-center justify-center">
-                  <span className="text-piano-gold text-xs font-display font-bold">R</span>
+              <div className="flex items-center gap-5">
+                <div className="w-11 h-11 border border-piano-gold/35 flex items-center justify-center shrink-0">
+                  <span className="text-piano-gold font-display text-xs font-bold">R</span>
                 </div>
                 <div>
-                  <p className="text-piano-cream text-sm font-medium" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Roger</p>
-                  <p className="text-piano-silver/50 font-display text-[10px] tracking-widest uppercase">Founder · RPT · 30 Years</p>
+                  <p className="font-cormorant text-piano-cream text-xl font-light leading-none mb-1.5">
+                    Roger
+                  </p>
+                  <p className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-stone">
+                    Founder · RPT · 30 Years
+                  </p>
                 </div>
               </div>
             </div>
 
-            {/* Vertical divider */}
-            <div className="hidden lg:block w-px bg-piano-gold/15 self-stretch mx-8" />
+            {/* Divider */}
+            <div className="hidden lg:block w-px bg-piano-gold/12 self-stretch mx-14" />
 
-            {/* Right: Brand pillars */}
-            <div className="lg:pl-16 pt-12 lg:pt-0 border-t border-piano-gold/10 lg:border-0">
-              <div className="flex items-center gap-3 mb-8">
-                <div className="h-px w-8 bg-piano-gold" />
-                <span className="font-display text-[10px] tracking-[0.3em] uppercase text-piano-gold">
-                  The Difference
-                </span>
-              </div>
+            {/* Right: Pillars */}
+            <div className="lg:pl-20 pt-16 lg:pt-0 border-t border-piano-gold/10 lg:border-0">
+              <span className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold block mb-10">
+                The Difference
+              </span>
               <h3
-                className="text-2xl font-normal text-piano-cream mb-10 leading-snug"
-                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                className="font-cormorant font-light text-piano-cream mb-14 leading-snug"
+                style={{ fontSize: 'clamp(2.2rem, 3.5vw, 3.4rem)' }}
               >
                 The Curator,<br />Not the Warehouse
               </h3>
-              <div className="space-y-8">
+              <div className="space-y-10">
                 {[
                   {
                     n: '01',
@@ -212,28 +303,28 @@ export function UsedSteinwaysHomePage() {
                   {
                     n: '03',
                     title: 'Personal Expertise',
-                    body: 'Every instrument evaluated by Roger personally. Not staff. Not photographs. A 30-year technician who has worked on concert grands at Symphony Hall.',
+                    body: 'Every instrument evaluated by Roger personally. A 30-year RPT who has worked on concert grands at Symphony Hall.',
                   },
                 ].map(({ n, title, body }) => (
-                  <div key={n} className="flex gap-6">
-                    <span className="text-piano-gold/20 font-display text-xs tracking-widest font-bold pt-1 shrink-0 w-6">{n}</span>
+                  <div key={n} className="flex gap-7">
+                    <span className="font-display text-[10px] tracking-widest text-piano-gold/25 pt-0.5 shrink-0 w-7">
+                      {n}
+                    </span>
                     <div>
-                      <h4 className="text-piano-cream text-sm font-medium mb-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                      <h4 className="font-cormorant text-piano-cream text-2xl font-light mb-2">
                         {title}
                       </h4>
-                      <p className="text-piano-silver/60 text-sm leading-relaxed">{body}</p>
+                      <p className="text-piano-stone text-base leading-relaxed">{body}</p>
                     </div>
                   </div>
                 ))}
               </div>
-
-              <div className="mt-10">
+              <div className="mt-12 pt-8 border-t border-piano-gold/10">
                 <Link
                   href="/about"
-                  className="inline-flex items-center gap-3 font-display text-[11px] tracking-[0.2em] uppercase text-piano-gold/60 hover:text-piano-gold transition-colors"
+                  className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold/45 hover:text-piano-gold transition-colors inline-flex items-center gap-2"
                 >
-                  Roger's story
-                  <span>→</span>
+                  Roger's story →
                 </Link>
               </div>
             </div>
@@ -242,61 +333,53 @@ export function UsedSteinwaysHomePage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          BRAND MOSAIC — 10 brands as elegant tiles
+          BRANDS — World-class instruments
       ═══════════════════════════════════════════════ */}
-      <section className="bg-piano-cream py-24 px-8 border-t border-piano-gold/10">
+      <section className="bg-piano-cream py-36 px-8">
         <div className="max-w-7xl mx-auto">
 
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
             <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-px w-8 bg-piano-burgundy" />
-                <span className="font-display text-[10px] tracking-[0.3em] uppercase text-piano-burgundy">
-                  The Makers
-                </span>
-              </div>
+              <span className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold block mb-5">
+                The Makers
+              </span>
               <h2
-                className="text-[clamp(2rem,4vw,3.2rem)] font-normal text-piano-black leading-tight"
-                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                className="font-cormorant font-light text-piano-black leading-tight"
+                style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)' }}
               >
                 World-Class Instruments
               </h2>
             </div>
-            <p className="text-piano-silver text-sm max-w-xs leading-relaxed">
-              We carry ten of the world's finest piano brands — selected for excellence, not exclusivity.
+            <p className="text-piano-stone text-base max-w-xs leading-relaxed">
+              Ten of the world's finest piano brands — selected for excellence,
+              not exclusivity.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-px bg-piano-linen border border-piano-linen">
             {BRANDS.map((brand) => (
               <Link
                 key={brand.slug}
                 href={`/pianos/${brand.slug}`}
-                className="group relative bg-white border border-gray-100 hover:border-piano-gold/40 hover:shadow-md p-6 transition-all duration-200 overflow-hidden"
+                className="group bg-piano-cream p-8 flex flex-col hover:bg-piano-warm-white transition-colors duration-200"
               >
-                {/* Prestige badge */}
-                <div className="absolute top-3 right-3">
+                <div className="flex items-start justify-between mb-5">
+                  <p className="font-display text-[9px] tracking-[0.3em] uppercase text-piano-stone leading-loose">
+                    {brand.country.split('/')[0]?.trim()}<br />{brand.founded}
+                  </p>
                   {brand.prestige === 'Ultra Premium' && (
-                    <div className="w-1.5 h-1.5 rounded-full bg-piano-gold" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-piano-gold shrink-0 mt-1" />
                   )}
                 </div>
-
-                <p className="font-display text-[9px] tracking-[0.2em] uppercase text-gray-400 mb-2 group-hover:text-piano-burgundy transition-colors">
-                  {brand.country.split('/')[0]?.trim()} · {brand.founded}
-                </p>
-                <h3
-                  className="text-piano-black font-medium leading-snug text-[0.95rem] group-hover:text-piano-burgundy transition-colors"
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                >
+                <h3 className="font-cormorant text-xl font-light text-piano-black leading-snug group-hover:text-piano-charcoal transition-colors mb-2.5">
                   {brand.name}
                 </h3>
-                <p className="text-gray-400 text-[11px] mt-3 leading-relaxed line-clamp-2 hidden sm:block">
+                <p className="text-piano-stone text-xs leading-relaxed line-clamp-2 hidden sm:block flex-1">
                   {brand.tagline}
                 </p>
-                <div className="mt-4 flex items-center gap-1 text-piano-gold/0 group-hover:text-piano-gold/60 transition-colors">
-                  <span className="font-display text-[9px] tracking-widest uppercase">Explore</span>
-                  <span className="text-xs group-hover:translate-x-0.5 transition-transform">→</span>
-                </div>
+                <p className="font-display text-[9px] tracking-[0.3em] uppercase text-piano-gold/0 group-hover:text-piano-gold/55 mt-4 transition-colors">
+                  Explore →
+                </p>
               </Link>
             ))}
           </div>
@@ -304,60 +387,58 @@ export function UsedSteinwaysHomePage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          GUIDES PREVIEW — Editorial knowledge section
+          GUIDES — Editorial knowledge section
       ═══════════════════════════════════════════════ */}
-      <section className="bg-piano-black py-24 px-8 border-t border-piano-gold/10">
+      <section className="bg-piano-black py-36 px-8">
         <div className="max-w-7xl mx-auto">
 
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
             <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-px w-8 bg-piano-gold" />
-                <span className="font-display text-[10px] tracking-[0.3em] uppercase text-piano-gold">
-                  Expert Knowledge
-                </span>
-              </div>
+              <span className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold block mb-5">
+                Expert Knowledge
+              </span>
               <h2
-                className="text-[clamp(2rem,4vw,3.2rem)] font-normal text-piano-cream leading-tight"
-                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                className="font-cormorant font-light text-piano-cream leading-tight"
+                style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)' }}
               >
-                Buy with Confidence
+                Buy With Confidence
               </h2>
             </div>
             <Link
               href="/guides"
-              className="group flex items-center gap-3 font-display text-[11px] tracking-[0.2em] uppercase text-piano-silver/50 hover:text-piano-gold transition-colors shrink-0"
+              className="group flex items-center gap-2 font-display text-[11px] tracking-[0.3em] uppercase text-piano-stone hover:text-piano-cream transition-colors"
             >
               All guides
-              <span className="group-hover:translate-x-1 transition-transform">→</span>
+              <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-piano-gold/8">
             {featuredGuides.map((guide) => (
               <Link
                 key={guide.slug}
                 href={`/guides/${guide.slug}`}
-                className="group border border-piano-gold/10 hover:border-piano-gold/30 bg-piano-charcoal p-8 transition-all duration-200 flex flex-col"
+                className="group bg-piano-charcoal p-10 flex flex-col hover:bg-[hsl(25_5%_12%)] transition-colors duration-200"
               >
-                <div className="flex items-center justify-between mb-6">
-                  <span className="font-display text-[9px] tracking-[0.2em] uppercase text-piano-gold/60 group-hover:text-piano-gold transition-colors">
+                <div className="flex items-center justify-between mb-8">
+                  <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold/45 group-hover:text-piano-gold/75 transition-colors">
                     {guide.category}
                   </span>
-                  <span className="text-piano-silver/30 font-display text-[9px] tracking-wide">{guide.readTime}</span>
+                  <span className="font-display text-[10px] tracking-wide text-piano-stone">
+                    {guide.readTime}
+                  </span>
                 </div>
-                <h3
-                  className="text-piano-cream text-lg font-normal leading-snug mb-4 flex-1 group-hover:text-white transition-colors"
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                >
+                <h3 className="font-cormorant text-[2rem] font-light text-piano-cream leading-snug mb-5 flex-1 group-hover:text-white transition-colors">
                   {guide.title}
                 </h3>
-                <p className="text-piano-silver/50 text-sm leading-relaxed line-clamp-2 mb-6">
+                <p className="text-piano-stone text-base leading-relaxed line-clamp-3 mb-8">
                   {guide.description}
                 </p>
-                <div className="flex items-center gap-2 text-piano-gold/30 group-hover:text-piano-gold/70 transition-colors">
-                  <span className="font-display text-[10px] tracking-widest uppercase">Read</span>
-                  <span className="group-hover:translate-x-1 transition-transform text-sm">→</span>
+                <div className="border-t border-piano-gold/10 pt-6">
+                  <span className="font-display text-[10px] tracking-[0.3em] uppercase text-piano-gold/25 group-hover:text-piano-gold/65 transition-colors inline-flex items-center gap-2">
+                    Read guide
+                    <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
+                  </span>
                 </div>
               </Link>
             ))}
@@ -369,37 +450,26 @@ export function UsedSteinwaysHomePage() {
           TESTIMONIAL — Single commanding quote
       ═══════════════════════════════════════════════ */}
       {testimonial && (
-        <section className="bg-piano-charcoal py-24 px-8 border-t border-piano-gold/10 relative overflow-hidden">
-          {/* Decorative large quote mark */}
-          <div
-            className="absolute top-8 left-8 md:left-16 text-[12rem] leading-none text-piano-gold/5 pointer-events-none select-none"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-            aria-hidden="true"
-          >
-            &ldquo;
-          </div>
-
-          <div className="max-w-4xl mx-auto relative z-10 text-center">
+        <section className="bg-piano-charcoal py-36 px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="h-px w-10 bg-piano-gold/35 mx-auto mb-16" />
             <blockquote
-              className="text-[clamp(1.4rem,2.5vw,2rem)] font-normal text-piano-cream leading-relaxed mb-10"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif", fontStyle: 'italic' }}
+              className="font-cormorant font-light italic text-piano-cream leading-relaxed mb-14"
+              style={{ fontSize: 'clamp(1.7rem, 3vw, 2.8rem)' }}
             >
               "{testimonial.quote}"
             </blockquote>
-
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-8 h-px bg-piano-gold/40 mb-4" />
-              <p className="font-display text-[11px] tracking-[0.25em] uppercase text-piano-cream">
+            <div className="flex flex-col items-center gap-2.5">
+              <p className="font-display text-[11px] tracking-[0.4em] uppercase text-piano-cream/60">
                 {testimonial.name}
               </p>
-              <p className="font-display text-[10px] tracking-widest uppercase text-piano-silver/40">
+              <p className="font-display text-[10px] tracking-[0.3em] uppercase text-piano-stone">
                 {testimonial.piano} · {testimonial.location}
               </p>
             </div>
-
             <Link
               href="/testimonials"
-              className="inline-block mt-8 font-display text-[10px] tracking-[0.25em] uppercase text-piano-gold/40 hover:text-piano-gold/80 transition-colors"
+              className="inline-block mt-12 font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold/35 hover:text-piano-gold/75 transition-colors"
             >
               More stories →
             </Link>
@@ -408,26 +478,26 @@ export function UsedSteinwaysHomePage() {
       )}
 
       {/* ═══════════════════════════════════════════════
-          FINAL CTA — Begin Your Search
+          FINAL CTA
       ═══════════════════════════════════════════════ */}
-      <section className="bg-piano-cream py-24 px-8 border-t border-gray-100">
+      <section className="bg-piano-cream py-36 px-8">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <div className="h-px w-12 bg-piano-gold/40" />
-            <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-silver">
+          <div className="flex items-center justify-center gap-5 mb-12">
+            <div className="h-px w-12 bg-piano-gold/30" />
+            <span className="font-display text-[10px] tracking-[0.45em] uppercase text-piano-stone">
               New Hampshire Showroom
             </span>
-            <div className="h-px w-12 bg-piano-gold/40" />
+            <div className="h-px w-12 bg-piano-gold/30" />
           </div>
 
           <h2
-            className="text-[clamp(2.4rem,5vw,4rem)] font-normal text-piano-black leading-tight mb-6"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            className="font-cormorant font-light text-piano-black leading-tight mb-8"
+            style={{ fontSize: 'clamp(3.5rem, 7vw, 7.5rem)' }}
           >
-            Begin Your Search
+            Begin Your<br />Search
           </h2>
 
-          <p className="text-gray-500 text-base md:text-lg leading-loose max-w-xl mx-auto mb-10">
+          <p className="text-piano-stone text-lg leading-relaxed max-w-md mx-auto mb-14">
             Tell us what you're looking for — or come hear the pianos yourself.
             Every conversation starts with listening.
           </p>
@@ -435,21 +505,21 @@ export function UsedSteinwaysHomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/contact"
-              className="inline-flex items-center justify-center bg-piano-burgundy text-white px-10 py-4 font-display text-[11px] tracking-[0.25em] uppercase hover:bg-piano-burgundy/90 transition-colors"
+              className="inline-flex items-center justify-center bg-piano-black text-piano-cream px-12 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-charcoal transition-colors duration-200"
             >
               Contact Roger
             </Link>
             <Link
               href="/pianos"
-              className="inline-flex items-center justify-center border border-piano-black/20 text-piano-black px-10 py-4 font-display text-[11px] tracking-[0.25em] uppercase hover:border-piano-black hover:bg-piano-black hover:text-white transition-colors"
+              className="inline-flex items-center justify-center border border-piano-black/20 text-piano-black px-12 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:border-piano-black hover:bg-piano-black hover:text-piano-cream transition-colors duration-200"
             >
               Browse Inventory
             </Link>
           </div>
 
-          <p className="mt-8 text-sm text-gray-400 font-display tracking-wide">
+          <p className="mt-10 text-base text-piano-stone font-display tracking-wide">
             or call{' '}
-            <a href="tel:+16035550123" className="text-piano-burgundy hover:underline">
+            <a href="tel:+16035550123" className="text-piano-black hover:text-piano-gold transition-colors">
               (603) 555-0123
             </a>
           </p>

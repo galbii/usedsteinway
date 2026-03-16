@@ -20,7 +20,7 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
       <section className="bg-piano-black">
         {/* Breadcrumb */}
         <div className="max-w-7xl mx-auto px-8 pt-8">
-          <nav className="flex items-center gap-2 text-piano-cream/50 font-display text-xs tracking-widest uppercase mb-6">
+          <nav className="flex items-center gap-2 text-piano-cream/50 font-display text-[11px] tracking-[0.45em] uppercase mb-6">
             <Link href="/pianos" className="hover:text-piano-gold transition-colors">All Pianos</Link>
             <span>·</span>
             <Link href={`/pianos/${piano.brandSlug}`} className="hover:text-piano-gold transition-colors">{piano.brand}</Link>
@@ -44,7 +44,7 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
                     priority
                   />
                 )}
-                <div className="absolute bottom-4 right-4 bg-piano-black/70 px-3 py-1.5 text-piano-cream/70 font-display text-xs tracking-widest">
+                <div className="absolute bottom-4 right-4 bg-piano-black/70 px-3 py-1.5 text-piano-cream/70 font-display text-[11px] tracking-[0.45em]">
                   {activeImage + 1} / {piano.imageUrls.length}
                 </div>
               </div>
@@ -75,17 +75,17 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
               <div className="flex items-start gap-3 mb-2">
                 <ConditionBadge condition={piano.condition} />
                 {piano.isFeatured && (
-                  <span className="bg-piano-gold/20 text-piano-gold text-xs font-display tracking-widest uppercase px-2.5 py-0.5 rounded-full border border-piano-gold/30">
+                  <span className="bg-piano-gold/20 text-piano-gold text-[11px] font-display tracking-[0.45em] uppercase px-2.5 py-0.5 rounded-full border border-piano-gold/30">
                     Featured
                   </span>
                 )}
               </div>
-              <p className="font-display text-xs tracking-[0.25em] uppercase text-piano-gold mt-4 mb-2">
+              <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mt-4 mb-2">
                 {piano.brand} · {piano.year}
               </p>
               <h1
-                className="text-3xl font-medium text-piano-cream leading-snug mb-2"
-                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                className="font-cormorant font-light text-piano-cream leading-snug mb-2"
+                style={{ fontSize: 'clamp(3.6rem, 7vw, 8.5rem)' }}
               >
                 {piano.model}
               </h1>
@@ -94,11 +94,8 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
               </p>
 
               <div className="border-t border-piano-gold/20 pt-5 mb-6">
-                <p className="text-piano-silver text-xs font-display tracking-widest uppercase mb-1">Asking Price</p>
-                <p
-                  className="text-3xl font-semibold text-piano-cream"
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                >
+                <p className="text-piano-silver text-[11px] font-display tracking-[0.45em] uppercase mb-1">Asking Price</p>
+                <p className="font-cormorant font-light text-3xl text-piano-cream">
                   {piano.priceDisplay}
                 </p>
               </div>
@@ -107,19 +104,19 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
               <div className="flex flex-col gap-3">
                 <Link
                   href={`/contact?subject=${encodeURIComponent(`Schedule Viewing: ${piano.title}`)}`}
-                  className="w-full text-center bg-piano-burgundy text-white py-4 font-display text-xs tracking-[0.2em] uppercase hover:bg-piano-burgundy/90 transition-colors"
+                  className="w-full text-center bg-piano-black text-piano-cream px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-charcoal transition-colors"
                 >
                   Schedule a Viewing
                 </Link>
                 <Link
                   href={`/contact?subject=${encodeURIComponent(`Request Details: ${piano.title}`)}`}
-                  className="w-full text-center border border-piano-gold text-piano-gold py-4 font-display text-xs tracking-[0.2em] uppercase hover:bg-piano-gold/10 transition-colors"
+                  className="w-full text-center border border-piano-gold/50 text-piano-gold px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:border-piano-gold transition-colors"
                 >
                   Request More Details
                 </Link>
                 <a
                   href="tel:+16035550123"
-                  className="w-full text-center border border-piano-cream/20 text-piano-cream/70 py-4 font-display text-xs tracking-[0.2em] uppercase hover:border-piano-cream/50 hover:text-piano-cream transition-colors"
+                  className="w-full text-center border border-piano-cream/20 text-piano-cream/70 px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:border-piano-cream/50 hover:text-piano-cream transition-colors"
                 >
                   Call (603) 555-0123
                 </a>
@@ -136,44 +133,44 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
       </section>
 
       {/* ── Piano Story & Details ── */}
-      <section className="py-20 px-8">
+      <section className="py-28 px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-3 gap-16">
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-14">
               {/* Description */}
               <div>
-                <p className="font-display text-xs tracking-[0.2em] uppercase text-piano-burgundy mb-4">About This Instrument</p>
+                <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-4">About This Instrument</p>
                 <h2
-                  className="text-2xl font-medium text-piano-black mb-5"
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                  className="font-cormorant font-light text-piano-black mb-5"
+                  style={{ fontSize: 'clamp(2.8rem, 4.5vw, 4.5rem)' }}
                 >
                   {piano.title}
                 </h2>
-                <p className="text-gray-700 leading-loose text-base">{piano.description}</p>
+                <p className="text-piano-stone text-lg leading-relaxed">{piano.description}</p>
               </div>
 
               {/* Provenance */}
               {piano.provenance && (
                 <div className="border-l-2 border-piano-gold pl-8">
-                  <p className="font-display text-xs tracking-[0.2em] uppercase text-piano-gold mb-3">Provenance</p>
-                  <p className="text-gray-700 leading-loose italic">{piano.provenance}</p>
+                  <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-3">Provenance</p>
+                  <p className="text-piano-stone text-lg leading-relaxed italic">{piano.provenance}</p>
                 </div>
               )}
 
               {/* Restoration */}
               {piano.restorationHistory && (
                 <div>
-                  <p className="font-display text-xs tracking-[0.2em] uppercase text-piano-burgundy mb-3">Restoration History</p>
-                  <p className="text-gray-700 leading-loose">{piano.restorationHistory}</p>
+                  <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-3">Restoration History</p>
+                  <p className="text-piano-stone text-lg leading-relaxed">{piano.restorationHistory}</p>
                 </div>
               )}
 
               {/* Condition Report */}
               {piano.conditionReport && (
-                <div className="bg-piano-black/5 p-8 border border-piano-gold/10">
-                  <p className="font-display text-xs tracking-[0.2em] uppercase text-piano-burgundy mb-4">Condition Report</p>
-                  <p className="text-gray-700 leading-loose text-sm">{piano.conditionReport}</p>
+                <div className="bg-piano-black/5 p-8 border border-piano-linen">
+                  <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-4">Condition Report</p>
+                  <p className="text-piano-stone text-base leading-relaxed">{piano.conditionReport}</p>
                 </div>
               )}
             </div>
@@ -181,11 +178,11 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
             {/* Specs Sidebar */}
             <div className="space-y-8">
               <div className="bg-piano-black p-8">
-                <p className="font-display text-xs tracking-[0.2em] uppercase text-piano-gold mb-6">Specifications</p>
+                <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-6">Specifications</p>
                 <dl className="space-y-4">
                   {Object.entries(piano.specs).map(([key, val]) => (
                     <div key={key} className="pb-4 border-b border-piano-gold/10 last:border-0 last:pb-0">
-                      <dt className="text-piano-silver text-xs font-display tracking-wide uppercase mb-1">{key}</dt>
+                      <dt className="text-piano-silver text-[11px] font-display tracking-[0.45em] uppercase mb-1">{key}</dt>
                       <dd className="text-piano-cream text-sm font-medium">{val}</dd>
                     </div>
                   ))}
@@ -193,18 +190,18 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
               </div>
 
               {/* Quick Actions */}
-              <div className="border border-piano-gold/20 p-6">
-                <p className="font-display text-xs tracking-[0.2em] uppercase text-piano-burgundy mb-4">Quick Contact</p>
+              <div className="border border-piano-linen p-8">
+                <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-4">Quick Contact</p>
                 <div className="flex flex-col gap-3">
                   <Link
                     href="/contact"
-                    className="text-center bg-piano-burgundy text-white py-3 font-display text-xs tracking-widest uppercase hover:bg-piano-burgundy/90 transition-colors"
+                    className="text-center bg-piano-black text-piano-cream px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-charcoal transition-colors"
                   >
                     Contact Roger
                   </Link>
                   <a
                     href="tel:+16035550123"
-                    className="text-center border border-piano-black/20 text-piano-black py-3 font-display text-xs tracking-widest uppercase hover:border-piano-burgundy hover:text-piano-burgundy transition-colors"
+                    className="text-center border border-piano-black/20 text-piano-black px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:border-piano-gold hover:text-piano-gold transition-colors"
                   >
                     (603) 555-0123
                   </a>

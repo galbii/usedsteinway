@@ -1,17 +1,9 @@
 import type { Metadata } from 'next'
 import { getServerSideURL } from '@/utilities/getURL'
-import { Header } from '@/Header/Component'
-import { Footer } from '@/Footer/Component'
 import { UsedSteinwaysHomePage } from './_components/UsedSteinwaysHomePage'
 
 export default function HomePage() {
-  return (
-    <>
-      <Header />
-      <UsedSteinwaysHomePage />
-      <Footer />
-    </>
-  )
+  return <UsedSteinwaysHomePage />
 }
 
 export const metadata: Metadata = {
