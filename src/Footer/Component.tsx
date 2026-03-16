@@ -4,9 +4,7 @@ import React from 'react'
 
 import type { Footer } from '@/payload-types'
 
-import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import { CMSLink } from '@/components/Link'
-import { Logo } from '@/components/Logo/Logo'
 
 export async function Footer() {
   const footerData: Footer = await getCachedGlobal('footer', 1)()
@@ -17,38 +15,66 @@ export async function Footer() {
     <footer
       className="mt-auto"
       style={{
-        background: 'hsl(220 20% 6%)',
-        borderTop: '1px solid hsl(220 15% 14%)',
-        color: 'hsl(210 12% 40%)',
+        background: 'hsl(0 0% 10%)',
+        borderTop: '1px solid hsl(40 46% 56% / 0.15)',
       }}
     >
-      <div className="container py-6 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-        <Link className="flex items-center" href="/">
-          <Logo />
-        </Link>
+      <div
+        className="container py-8 flex flex-col md:flex-row md:justify-between md:items-center gap-6"
+      >
+        <div className="flex flex-col gap-2">
+          <Link href="/">
+            <span
+              style={{
+                fontFamily: "'Playfair Display', Georgia, serif",
+                fontSize: '1.15rem',
+                fontWeight: 400,
+                letterSpacing: '0.04em',
+                color: 'hsl(40 33% 99%)',
+              }}
+            >
+              UsedSteinways
+              <span style={{ color: 'hsl(40 46% 56%)' }}>.com</span>
+            </span>
+          </Link>
+          <p
+            className="text-xs tracking-wide"
+            style={{ color: 'hsl(220 9% 50%)', fontStyle: 'italic', fontFamily: "'Playfair Display', Georgia, serif" }}
+          >
+            Every piano personally selected. Every detail inspected.
+          </p>
+        </div>
 
-        <div className="flex flex-col-reverse items-start md:flex-row gap-4 md:items-center">
-          <ThemeSelector />
-          <nav className="flex flex-col md:flex-row gap-6">
+        {navItems.length > 0 && (
+          <nav className="flex flex-col md:flex-row gap-5">
             {navItems.map(({ link }, i) => {
               return (
                 <CMSLink
-                  className="text-xs tracking-widest uppercase transition-opacity duration-150 hover:opacity-100 opacity-60 font-display"
+                  className="text-[11px] tracking-[0.15em] uppercase transition-colors duration-150 text-piano-silver hover:text-piano-gold font-display"
                   key={i}
                   {...link}
                 />
               )
             })}
           </nav>
-        </div>
+        )}
       </div>
 
       <div
         className="container py-4 flex flex-col md:flex-row md:justify-between md:items-center gap-2"
-        style={{ borderTop: '1px solid hsl(220 15% 11%)' }}
+        style={{ borderTop: '1px solid hsl(0 0% 14%)' }}
       >
-        <p className="text-xs tracking-wide" style={{ fontFamily: "'Syne', sans-serif" }}>
-          © {new Date().getFullYear()} OrcaClub
+        <p
+          className="text-xs tracking-wide"
+          style={{ color: 'hsl(220 9% 38%)', fontFamily: "'Syne', sans-serif" }}
+        >
+          © {new Date().getFullYear()} UsedSteinways.com — Concord, New Hampshire
+        </p>
+        <p
+          className="text-xs"
+          style={{ color: 'hsl(220 9% 30%)', fontFamily: "'Syne', sans-serif" }}
+        >
+          Roger&apos;s Piano
         </p>
       </div>
     </footer>

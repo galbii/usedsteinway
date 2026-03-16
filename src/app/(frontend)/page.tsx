@@ -1,25 +1,33 @@
 import type { Metadata } from 'next'
-import { OrcaHomePage } from './_components/OrcaHomePage'
 import { getServerSideURL } from '@/utilities/getURL'
+import { Header } from '@/Header/Component'
+import { Footer } from '@/Footer/Component'
+import { UsedSteinwaysHomePage } from './_components/UsedSteinwaysHomePage'
 
 export default function HomePage() {
-  return <OrcaHomePage />
+  return (
+    <>
+      <Header />
+      <UsedSteinwaysHomePage />
+      <Footer />
+    </>
+  )
 }
 
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
-  title: 'OrcaClub — The Club for Builders Who Move Fast',
-  description: 'OrcaClub is a premium membership community for ambitious founders, operators, and engineers.',
+  title: 'UsedSteinways.com — Pre-Owned Steinway & Fine Pianos | New Hampshire',
+  description:
+    "A curated collection of pre-owned Steinway, Bösendorfer, Bechstein and world-class pianos. Every instrument personally selected by Roger. New England's most discerning piano collection.",
   openGraph: {
-    title: 'OrcaClub',
-    description: 'The premium membership for builders who move fast.',
-    siteName: 'OrcaClub',
+    title: 'UsedSteinways.com',
+    description: 'Every piano personally selected. Every detail inspected.',
+    siteName: 'UsedSteinways.com',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    creator: '@orcaclub',
-    title: 'OrcaClub',
-    description: 'The premium membership for builders who move fast.',
+    title: 'UsedSteinways.com',
+    description: 'Pre-owned Steinway & fine pianos. Personally selected.',
   },
 }

@@ -14,7 +14,6 @@ interface HeaderClientProps {
 }
 
 export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
-  /* Storing the value in a useState to avoid hydration errors */
   const [theme, setTheme] = useState<string | null>(null)
   const { headerTheme, setHeaderTheme } = useHeaderTheme()
   const pathname = usePathname()
@@ -33,12 +32,12 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
     <header
       className="relative z-20 w-full"
       style={{
-        background: 'hsl(220 20% 6%)',
-        borderBottom: '1px solid hsl(220 15% 14%)',
+        background: 'hsl(0 0% 10%)',
+        borderBottom: '1px solid hsl(0 0% 16%)',
       }}
       {...(theme ? { 'data-theme': theme } : {})}
     >
-      <div className="container py-5 flex justify-between items-center">
+      <div className="container py-4 flex justify-between items-center">
         <Link href="/">
           <Logo loading="eager" priority="high" />
         </Link>

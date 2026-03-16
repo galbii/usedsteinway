@@ -14,15 +14,15 @@ export const Logo = (props: Props) => {
     <span
       className={clsx(className)}
       style={{
-        fontFamily: "'Cormorant Garamond', serif",
-        fontSize: '1.1rem',
+        fontFamily: "'Playfair Display', Georgia, serif",
+        fontSize: '1.15rem',
         fontWeight: 400,
-        letterSpacing: '0.18em',
-        textTransform: 'uppercase',
-        color: 'hsl(210 15% 88%)',
+        letterSpacing: '0.04em',
+        color: 'hsl(40 33% 99%)',
       }}
     >
-      Orcaclub
+      UsedSteinways
+      <span style={{ color: 'hsl(40 46% 56%)' }}>.com</span>
     </span>
   )
 }
