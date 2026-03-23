@@ -23,9 +23,9 @@ interface PianoLogoProps {
  */
 export function PianoLogo({ theme = 'light', size = 'md', className }: PianoLogoProps) {
   const topSize = {
-    sm: 'text-[8px] tracking-[0.6em]',
-    md: 'text-[9px] tracking-[0.65em]',
-    lg: 'text-[10px] tracking-[0.65em]',
+    sm: 'text-[9px] tracking-[0.6em]',
+    md: 'text-[11px] tracking-[0.65em]',
+    lg: 'text-[12px] tracking-[0.65em]',
   }[size]
 
   const bottomSize = {
@@ -41,9 +41,10 @@ export function PianoLogo({ theme = 'light', size = 'md', className }: PianoLogo
           'font-display uppercase leading-none mb-1 transition-colors',
           topSize,
           theme === 'dark'
-            ? 'text-piano-gold/45 group-hover:text-piano-gold/70'
+            ? 'group-hover:opacity-90'
             : 'text-piano-gold group-hover:text-piano-gold/75',
         )}
+        style={theme === 'dark' ? { color: 'hsl(42, 90%, 72%)' } : undefined}
       >
         Used
       </span>

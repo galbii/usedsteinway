@@ -23,7 +23,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
           key={i}
           {...link}
           appearance="link"
-          className="font-display text-[11px] tracking-[0.25em] uppercase text-piano-stone hover:text-piano-black transition-colors duration-150"
+          className="font-display text-[11px] tracking-[0.25em] uppercase text-piano-cream/60 hover:text-piano-cream transition-colors duration-150"
         />
       ))}
     </nav>

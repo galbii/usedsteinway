@@ -36,13 +36,14 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
 
   return (
     <header
-      className="sticky top-0 z-50 w-full bg-piano-cream border-b border-piano-linen"
+      className="sticky top-0 z-50 w-full"
+      style={{ backgroundColor: 'hsl(350, 62%, 26%)', borderBottom: '1px solid hsl(350, 48%, 40%)' }}
       {...(theme ? { 'data-theme': theme } : {})}
     >
       <div className="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">
 
         {/* Logo */}
-        <PianoLogo theme="light" size="md" />
+        <PianoLogo theme="dark" size="md" />
 
         {/* Center nav — desktop only, Contact excluded */}
         <HeaderNav data={data} />
@@ -51,14 +52,14 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
         <div className="flex items-center gap-6">
           <Link
             href="/contact"
-            className="hidden lg:inline-flex items-center gap-1.5 font-display text-[11px] tracking-[0.25em] uppercase text-piano-black hover:text-piano-gold transition-colors"
+            className="hidden lg:inline-flex items-center gap-1.5 font-display text-[11px] tracking-[0.25em] uppercase text-piano-cream/80 hover:text-piano-cream transition-colors"
           >
             Contact
             <span className="text-piano-gold text-xs">→</span>
           </Link>
           <Link
             href="/search"
-            className="hidden lg:block text-piano-stone hover:text-piano-black transition-colors duration-150"
+            className="hidden lg:block text-piano-cream/60 hover:text-piano-cream transition-colors duration-150"
           >
             <span className="sr-only">Search</span>
             <SearchIcon className="w-4 h-4" />
@@ -67,7 +68,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
           {/* Mobile toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden text-piano-black p-1"
+            className="lg:hidden text-piano-cream p-1"
             aria-label="Toggle menu"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -83,14 +84,14 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-piano-cream border-t border-piano-linen">
+        <div className="lg:hidden" style={{ backgroundColor: 'hsl(350, 56%, 32%)', borderTop: '1px solid hsl(350, 48%, 40%)' }}>
           <div className="px-8 py-6 space-y-1">
             {navItems.map(({ link }, i) => (
               <CMSLink
                 key={i}
                 {...link}
                 appearance="link"
-                className="block py-3 text-piano-stone hover:text-piano-black font-display text-[11px] tracking-[0.22em] uppercase transition-colors"
+                className="block py-3 text-piano-cream/60 hover:text-piano-cream font-display text-[11px] tracking-[0.22em] uppercase transition-colors"
               />
             ))}
           </div>

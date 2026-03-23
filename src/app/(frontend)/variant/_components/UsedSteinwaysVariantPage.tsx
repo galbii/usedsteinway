@@ -30,8 +30,8 @@ import { getFeaturedPianos, BRANDS, GUIDES, TESTIMONIALS } from '@/lib/piano-dat
 
 const C = {
   bg:          'hsl(36, 22%, 96%)',
-  darkBg:      'hsl(350, 45%, 9%)',
-  darkCard:    'hsl(350, 40%, 12%)',
+  darkBg:      'hsl(350, 62%, 26%)',
+  darkCard:    'hsl(350, 56%, 32%)',
   accent:      'hsl(40, 72%, 52%)',
   accentLight: 'hsl(40, 65%, 88%)',
   accentMid:   'hsl(40, 58%, 68%)',
@@ -39,7 +39,7 @@ const C = {
   text:        'hsl(350, 12%, 11%)',
   muted:       'hsl(350, 5%, 46%)',
   border:      'hsl(36, 18%, 89%)',
-  borderDark:  'hsl(350, 30%, 18%)',
+  borderDark:  'hsl(350, 48%, 40%)',
   hover:       'hsl(350, 8%, 93%)',
   ivory:       'hsl(36, 22%, 96%)',
 }
@@ -80,7 +80,7 @@ export function UsedSteinwaysVariantPage() {
           <h1
             className="font-cormorant leading-[1.03] mb-10 animate-fade-up"
             style={{
-              fontSize: 'clamp(3.6rem, 7vw, 8.5rem)',
+              fontSize: 'clamp(2.2rem, 6vw, 8.5rem)',
               animationDelay: '0.15s',
               opacity: 0,
               color: C.text,
@@ -177,11 +177,11 @@ export function UsedSteinwaysVariantPage() {
           {/* Indigo-tinted overlay */}
           <div
             className="absolute inset-0 hidden lg:block"
-            style={{ backgroundColor: 'hsl(350, 45%, 9%, 0.18)' }}
+            style={{ backgroundColor: 'hsl(350, 62%, 26%, 0.22)' }}
           />
           <div
             className="absolute inset-0 lg:hidden"
-            style={{ backgroundColor: 'hsl(350, 45%, 9%, 0.58)' }}
+            style={{ backgroundColor: 'hsl(350, 62%, 26%, 0.65)' }}
           />
         </div>
       </section>
@@ -256,7 +256,7 @@ export function UsedSteinwaysVariantPage() {
                 style={{
                   backgroundColor: '#fff',
                   borderTop: `4px solid ${C.accent}`,
-                  boxShadow: '0 4px 28px hsl(350 35% 9% / 0.09), 0 1px 4px hsl(350 35% 9% / 0.06)',
+                  boxShadow: '0 4px 28px hsl(350 62% 26% / 0.14), 0 1px 4px hsl(350 62% 26% / 0.09)',
                 }}
               >
                 <div
@@ -346,7 +346,7 @@ export function UsedSteinwaysVariantPage() {
           {/* Deep indigo overlay — lets just enough image bleed through */}
           <div
             className="absolute inset-0"
-            style={{ backgroundColor: 'hsl(350, 45%, 9%, 0.91)' }}
+            style={{ backgroundColor: 'hsl(350, 62%, 26%, 0.91)' }}
           />
         </div>
 
@@ -608,7 +608,7 @@ export function UsedSteinwaysVariantPage() {
                 style={{
                   backgroundColor: C.bg,
                   border: `1px solid ${C.border}`,
-                  boxShadow: '0 2px 20px hsl(350 45% 9% / 0.35)',
+                  boxShadow: '0 2px 20px hsl(350 62% 26% / 0.45)',
                 }}
               >
                 <div className="flex items-center justify-between mb-8">
