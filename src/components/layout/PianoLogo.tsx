@@ -42,7 +42,7 @@ export function PianoLogo({ theme = 'light', size = 'md', className }: PianoLogo
           topSize,
           theme === 'dark'
             ? 'text-piano-gold/45 group-hover:text-piano-gold/70'
-            : 'text-piano-stone group-hover:text-piano-gold',
+            : 'text-piano-gold group-hover:text-piano-gold/75',
         )}
       >
         Used

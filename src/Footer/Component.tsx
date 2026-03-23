@@ -39,35 +39,35 @@ const NAV_COLUMNS = [
 
 export async function Footer() {
   return (
-    <footer className="bg-piano-cream mt-auto">
+    <footer className="mt-auto" style={{ backgroundColor: 'hsl(225, 52%, 10%)' }}>
 
       {/* ── Contact Band ── */}
-      <div className="bg-piano-warm-white border-y border-piano-linen">
+      <div style={{ backgroundColor: 'hsl(225, 48%, 13%)', borderTop: '1px solid hsl(225, 35%, 20%)', borderBottom: '1px solid hsl(225, 35%, 20%)' }}>
         <div className="max-w-7xl mx-auto px-8 py-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 text-base">
               <a
                 href="tel:+16035550123"
-                className="flex items-center gap-2 text-piano-black hover:text-piano-gold transition-colors"
+                className="flex items-center gap-2 text-piano-cream/80 hover:text-piano-gold transition-colors"
               >
-                <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold hidden sm:inline">Phone</span>
+                <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold/50 hidden sm:inline">Phone</span>
                 <span>(603) 555-0123</span>
               </a>
               <a
                 href="mailto:info@usedsteinways.com"
-                className="flex items-center gap-2 text-piano-stone hover:text-piano-black transition-colors"
+                className="flex items-center gap-2 text-piano-cream/40 hover:text-piano-cream/70 transition-colors"
               >
-                <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold/60 hidden sm:inline">Email</span>
+                <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold/40 hidden sm:inline">Email</span>
                 <span>info@usedsteinways.com</span>
               </a>
-              <div className="flex items-center gap-2 text-piano-stone/70 text-xs">
-                <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold/60 hidden sm:inline">Hours</span>
+              <div className="flex items-center gap-2 text-piano-cream/30 text-xs">
+                <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold/40 hidden sm:inline">Hours</span>
                 <span>Mon – Fri 10–6 · Sat 10–4</span>
               </div>
             </div>
             <Link
               href="/visit"
-              className="inline-flex items-center gap-2 border border-piano-gold/40 text-piano-gold hover:border-piano-gold hover:bg-piano-gold/5 px-8 py-3 font-display text-[11px] tracking-[0.3em] uppercase transition-colors shrink-0"
+              className="inline-flex items-center gap-2 border border-piano-gold/25 text-piano-gold/60 hover:border-piano-gold/55 hover:text-piano-gold px-8 py-3 font-display text-[11px] tracking-[0.3em] uppercase transition-colors shrink-0"
             >
               Plan a Visit →
             </Link>
@@ -79,15 +79,15 @@ export async function Footer() {
       <div className="max-w-7xl mx-auto px-8 pt-16 pb-10">
 
         {/* Logo + tagline */}
-        <div className="mb-12 pb-12 border-b border-piano-linen">
+        <div className="mb-12 pb-12" style={{ borderBottom: '1px solid hsl(225, 35%, 20%)' }}>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-              <PianoLogo theme="light" size="lg" />
-              <p className="text-piano-stone font-display text-[10px] tracking-[0.4em] uppercase mt-3">
+              <PianoLogo theme="dark" size="lg" />
+              <p className="text-piano-cream/30 font-display text-[10px] tracking-[0.4em] uppercase mt-3">
                 New Hampshire · Est. 1993 · Roger, RPT
               </p>
             </div>
-            <p className="font-cormorant font-light italic text-lg text-piano-stone/60 max-w-xs leading-relaxed text-right hidden md:block">
+            <p className="font-cormorant font-light italic text-lg text-piano-cream/25 max-w-xs leading-relaxed text-right hidden md:block">
               &ldquo;Every piano personally selected.<br />Every detail inspected.&rdquo;
             </p>
           </div>
@@ -97,7 +97,7 @@ export async function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-10 mb-12">
           {NAV_COLUMNS.map((col) => (
             <div key={col.title}>
-              <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-6">
+              <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold/60 mb-6">
                 {col.title}
               </p>
               <ul className="space-y-3">
@@ -105,7 +105,7 @@ export async function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-piano-stone hover:text-piano-black text-base transition-colors leading-relaxed"
+                      className="text-piano-cream/35 hover:text-piano-cream/65 text-base transition-colors leading-relaxed"
                     >
                       {link.label}
                     </Link>
@@ -117,8 +117,8 @@ export async function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-piano-linen pt-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-          <p className="text-piano-stone/50 text-[11px] font-display tracking-wide">
+        <div className="pt-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3" style={{ borderTop: '1px solid hsl(225, 35%, 20%)' }}>
+          <p className="text-piano-cream/25 text-[11px] font-display tracking-wide">
             © {new Date().getFullYear()} UsedSteinway · Concord, New Hampshire · All rights reserved
           </p>
           <div className="flex items-center gap-5">
@@ -130,7 +130,7 @@ export async function Footer() {
               <Link
                 key={l.href}
                 href={l.href}
-                className="text-piano-stone/50 hover:text-piano-black font-display text-[10px] tracking-[0.3em] uppercase transition-colors"
+                className="text-piano-cream/25 hover:text-piano-cream/55 font-display text-[10px] tracking-[0.3em] uppercase transition-colors"
               >
                 {l.label}
               </Link>

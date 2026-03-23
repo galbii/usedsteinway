@@ -38,10 +38,10 @@ const NAV_COLUMNS = [
 
 export function PianoFooter() {
   return (
-    <footer className="bg-piano-black mt-auto">
+    <footer className="mt-auto" style={{ backgroundColor: 'hsl(225, 52%, 10%)' }}>
 
       {/* ── Contact Band ── */}
-      <div className="border-t border-piano-gold/15 border-b border-b-piano-gold/5 bg-piano-charcoal">
+      <div className="border-t border-piano-gold/15 border-b border-b-piano-gold/5" style={{ backgroundColor: 'hsl(225, 48%, 13%)' }}>
         <div className="max-w-7xl mx-auto px-8 py-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 text-base">
