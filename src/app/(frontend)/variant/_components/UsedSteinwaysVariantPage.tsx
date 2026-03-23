@@ -30,17 +30,17 @@ import { getFeaturedPianos, BRANDS, GUIDES, TESTIMONIALS } from '@/lib/piano-dat
 
 const C = {
   bg:          'hsl(36, 22%, 96%)',
-  darkBg:      'hsl(225, 52%, 10%)',
-  darkCard:    'hsl(225, 48%, 13%)',
+  darkBg:      'hsl(350, 45%, 9%)',
+  darkCard:    'hsl(350, 40%, 12%)',
   accent:      'hsl(40, 72%, 52%)',
   accentLight: 'hsl(40, 65%, 88%)',
   accentMid:   'hsl(40, 58%, 68%)',
   accentFaded: 'hsl(40, 72%, 52%, 0.28)',
-  text:        'hsl(225, 15%, 12%)',
-  muted:       'hsl(225, 8%, 48%)',
+  text:        'hsl(350, 12%, 11%)',
+  muted:       'hsl(350, 5%, 46%)',
   border:      'hsl(36, 18%, 89%)',
-  borderDark:  'hsl(225, 35%, 20%)',
-  hover:       'hsl(225, 15%, 93%)',
+  borderDark:  'hsl(350, 30%, 18%)',
+  hover:       'hsl(350, 8%, 93%)',
   ivory:       'hsl(36, 22%, 96%)',
 }
 
@@ -177,11 +177,11 @@ export function UsedSteinwaysVariantPage() {
           {/* Indigo-tinted overlay */}
           <div
             className="absolute inset-0 hidden lg:block"
-            style={{ backgroundColor: 'hsl(225, 52%, 10%, 0.18)' }}
+            style={{ backgroundColor: 'hsl(350, 45%, 9%, 0.18)' }}
           />
           <div
             className="absolute inset-0 lg:hidden"
-            style={{ backgroundColor: 'hsl(225, 52%, 10%, 0.58)' }}
+            style={{ backgroundColor: 'hsl(350, 45%, 9%, 0.58)' }}
           />
         </div>
       </section>
@@ -256,7 +256,7 @@ export function UsedSteinwaysVariantPage() {
                 style={{
                   backgroundColor: '#fff',
                   borderTop: `4px solid ${C.accent}`,
-                  boxShadow: '0 4px 28px hsl(225 30% 10% / 0.09), 0 1px 4px hsl(225 30% 10% / 0.06)',
+                  boxShadow: '0 4px 28px hsl(350 35% 9% / 0.09), 0 1px 4px hsl(350 35% 9% / 0.06)',
                 }}
               >
                 <div
@@ -346,7 +346,7 @@ export function UsedSteinwaysVariantPage() {
           {/* Deep indigo overlay — lets just enough image bleed through */}
           <div
             className="absolute inset-0"
-            style={{ backgroundColor: 'hsl(225, 52%, 10%, 0.91)' }}
+            style={{ backgroundColor: 'hsl(350, 45%, 9%, 0.91)' }}
           />
         </div>
 
@@ -608,7 +608,7 @@ export function UsedSteinwaysVariantPage() {
                 style={{
                   backgroundColor: C.bg,
                   border: `1px solid ${C.border}`,
-                  boxShadow: '0 2px 20px hsl(225 52% 10% / 0.35)',
+                  boxShadow: '0 2px 20px hsl(350 45% 9% / 0.35)',
                 }}
               >
                 <div className="flex items-center justify-between mb-8">
@@ -665,7 +665,7 @@ export function UsedSteinwaysVariantPage() {
           <div className="max-w-4xl mx-auto text-center">
             <div
               className="h-px w-10 mx-auto mb-16"
-              style={{ backgroundColor: 'hsl(225, 15%, 12%, 0.20)' }}
+              style={{ backgroundColor: 'hsl(350, 12%, 11%, 0.20)' }}
             />
             <blockquote
               className="font-cormorant font-light italic leading-relaxed mb-14"
@@ -679,13 +679,13 @@ export function UsedSteinwaysVariantPage() {
             <div className="flex flex-col items-center gap-2.5">
               <p
                 className="font-display text-[11px] tracking-[0.4em] uppercase"
-                style={{ color: 'hsl(225, 15%, 12%, 0.60)' }}
+                style={{ color: 'hsl(350, 12%, 11%, 0.60)' }}
               >
                 {testimonial.name}
               </p>
               <p
                 className="font-display text-[10px] tracking-[0.3em] uppercase"
-                style={{ color: 'hsl(225, 15%, 12%, 0.42)' }}
+                style={{ color: 'hsl(350, 12%, 11%, 0.42)' }}
               >
                 {testimonial.piano} · {testimonial.location}
               </p>
@@ -693,7 +693,7 @@ export function UsedSteinwaysVariantPage() {
             <Link
               href="/testimonials"
               className="inline-block mt-12 font-display text-[10px] tracking-[0.35em] uppercase transition-opacity hover:opacity-70"
-              style={{ color: 'hsl(225, 15%, 12%, 0.38)' }}
+              style={{ color: 'hsl(350, 12%, 11%, 0.38)' }}
             >
               More stories →
             </Link>

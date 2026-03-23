@@ -39,10 +39,10 @@ const NAV_COLUMNS = [
 
 export async function Footer() {
   return (
-    <footer className="mt-auto" style={{ backgroundColor: 'hsl(225, 52%, 10%)' }}>
+    <footer className="mt-auto" style={{ backgroundColor: 'hsl(350, 45%, 9%)' }}>
 
       {/* ── Contact Band ── */}
-      <div style={{ backgroundColor: 'hsl(225, 48%, 13%)', borderTop: '1px solid hsl(225, 35%, 20%)', borderBottom: '1px solid hsl(225, 35%, 20%)' }}>
+      <div style={{ backgroundColor: 'hsl(350, 40%, 12%)', borderTop: '1px solid hsl(350, 30%, 18%)', borderBottom: '1px solid hsl(350, 30%, 18%)' }}>
         <div className="max-w-7xl mx-auto px-8 py-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 text-base">
@@ -79,7 +79,7 @@ export async function Footer() {
       <div className="max-w-7xl mx-auto px-8 pt-16 pb-10">
 
         {/* Logo + tagline */}
-        <div className="mb-12 pb-12" style={{ borderBottom: '1px solid hsl(225, 35%, 20%)' }}>
+        <div className="mb-12 pb-12" style={{ borderBottom: '1px solid hsl(350, 30%, 18%)' }}>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
               <PianoLogo theme="dark" size="lg" />
@@ -117,7 +117,7 @@ export async function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="pt-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3" style={{ borderTop: '1px solid hsl(225, 35%, 20%)' }}>
+        <div className="pt-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3" style={{ borderTop: '1px solid hsl(350, 30%, 18%)' }}>
           <p className="text-piano-cream/25 text-[11px] font-display tracking-wide">
             © {new Date().getFullYear()} UsedSteinway · Concord, New Hampshire · All rights reserved
           </p>
