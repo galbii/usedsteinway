@@ -14,11 +14,15 @@ export function PianoCardFeatured({ piano, className }: PianoCardFeaturedProps) 
     <Link
       href={`/pianos/${piano.slug}`}
       className={cn(
-        'group block bg-piano-cream border border-piano-linen hover:border-piano-gold/40 transition-all duration-300 overflow-hidden',
+        'group block bg-white overflow-hidden transition-all duration-500 hover:-translate-y-1.5',
         className,
       )}
+      style={{
+        borderTop: '4px solid hsl(40 72% 52%)',
+        boxShadow: '0 4px 28px hsl(350 62% 26% / 0.14), 0 1px 4px hsl(350 62% 26% / 0.09)',
+      }}
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-piano-black">
+      <div className="relative aspect-[4/3] overflow-hidden bg-piano-burgundy">
         {piano.imageUrls[0] && (
           <Image
             src={piano.imageUrls[0]}

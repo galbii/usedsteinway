@@ -13,7 +13,7 @@ export default function VisitPage() {
   return (
     <main className="min-h-screen bg-piano-cream">
       {/* Hero */}
-      <section className="bg-piano-black py-28 px-8">
+      <section className="bg-piano-burgundy py-28 px-8">
         <div className="max-w-7xl mx-auto">
           <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-5">
             Plan Your Visit
@@ -60,7 +60,7 @@ export default function VisitPage() {
               <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-4">
                 Location
               </p>
-              <div className="bg-piano-black p-6">
+              <div className="bg-piano-indigo-card p-6">
                 <p className="text-piano-cream leading-relaxed mb-4">
                   123 Concert Hall Drive<br />
                   Concord, New Hampshire 03301
@@ -179,7 +179,7 @@ export default function VisitPage() {
             </div>
 
             {/* First Visit Tips */}
-            <div className="bg-piano-black p-8">
+            <div className="bg-piano-indigo-card p-8">
               <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-4">
                 Tips for Your Visit
               </p>

@@ -17,7 +17,7 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
   return (
     <main className="min-h-screen bg-piano-cream">
       {/* ── Full-Screen Gallery Header ── */}
-      <section className="bg-piano-black">
+      <section className="bg-piano-burgundy">
         {/* Breadcrumb */}
         <div className="max-w-7xl mx-auto px-8 pt-8">
           <nav className="flex items-center gap-2 text-piano-cream/50 font-display text-[11px] tracking-[0.45em] uppercase mb-6">
@@ -33,7 +33,7 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
           <div className="grid lg:grid-cols-[1fr_380px] gap-8">
             {/* Main Gallery */}
             <div>
-              <div className="relative aspect-[16/10] overflow-hidden bg-piano-charcoal">
+              <div className="relative aspect-[16/10] overflow-hidden bg-piano-burgundy">
                 {piano.imageUrls[activeImage] && (
                   <Image
                     src={piano.imageUrls[activeImage] ?? ''}
@@ -104,7 +104,7 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
               <div className="flex flex-col gap-3">
                 <Link
                   href={`/contact?subject=${encodeURIComponent(`Schedule Viewing: ${piano.title}`)}`}
-                  className="w-full text-center bg-piano-black text-piano-cream px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-charcoal transition-colors"
+                  className="w-full text-center bg-piano-cream text-piano-burgundy px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:opacity-90 transition-opacity"
                 >
                   Schedule a Viewing
                 </Link>
@@ -177,7 +177,7 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
 
             {/* Specs Sidebar */}
             <div className="space-y-8">
-              <div className="bg-piano-black p-8">
+              <div className="bg-piano-burgundy p-8">
                 <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-6">Specifications</p>
                 <dl className="space-y-4">
                   {Object.entries(piano.specs).map(([key, val]) => (

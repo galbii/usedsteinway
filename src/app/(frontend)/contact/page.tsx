@@ -35,7 +35,7 @@ export default function ContactPage() {
   return (
     <main className="min-h-screen bg-piano-cream">
       {/* Page Header */}
-      <section className="bg-piano-black py-24 px-8">
+      <section className="bg-piano-burgundy py-24 px-8">
         <div className="max-w-7xl mx-auto">
           <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-4">
             Get in Touch

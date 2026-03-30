@@ -48,26 +48,26 @@ export async function Footer() {
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 text-base">
               <a
                 href="tel:+16035550123"
-                className="flex items-center gap-2 text-piano-cream/80 hover:text-piano-gold transition-colors"
+                className="flex items-center gap-2 text-piano-cream hover:text-piano-gold transition-colors"
               >
-                <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold/50 hidden sm:inline">Phone</span>
+                <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold hidden sm:inline">Phone</span>
                 <span>(603) 555-0123</span>
               </a>
               <a
                 href="mailto:info@usedsteinways.com"
-                className="flex items-center gap-2 text-piano-cream/40 hover:text-piano-cream/70 transition-colors"
+                className="flex items-center gap-2 text-piano-cream/70 hover:text-piano-cream transition-colors"
               >
-                <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold/40 hidden sm:inline">Email</span>
+                <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold hidden sm:inline">Email</span>
                 <span>info@usedsteinways.com</span>
               </a>
-              <div className="flex items-center gap-2 text-piano-cream/30 text-xs">
-                <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold/40 hidden sm:inline">Hours</span>
+              <div className="flex items-center gap-2 text-piano-cream/60 text-xs">
+                <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold hidden sm:inline">Hours</span>
                 <span>Mon – Fri 10–6 · Sat 10–4</span>
               </div>
             </div>
             <Link
               href="/visit"
-              className="inline-flex items-center gap-2 border border-piano-gold/25 text-piano-gold/60 hover:border-piano-gold/55 hover:text-piano-gold px-8 py-3 font-display text-[11px] tracking-[0.3em] uppercase transition-colors shrink-0"
+              className="inline-flex items-center gap-2 border border-piano-gold text-piano-gold hover:bg-piano-gold/10 px-8 py-3 font-display text-[11px] tracking-[0.3em] uppercase transition-colors shrink-0"
             >
               Plan a Visit →
             </Link>

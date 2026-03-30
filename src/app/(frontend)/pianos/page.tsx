@@ -17,7 +17,7 @@ export default function PianosPage() {
   return (
     <main className="min-h-screen bg-piano-cream">
       {/* Hero */}
-      <section className="bg-piano-black py-32 px-8">
+      <section className="bg-piano-burgundy py-32 px-8">
         <div className="max-w-7xl mx-auto">
           <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-5">
             New Hampshire · Est. 2005
@@ -52,7 +52,7 @@ export default function PianosPage() {
             </div>
             <p className="text-piano-silver text-sm font-display tracking-wide">{featured.length} featured</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
             {featured.map((piano) => (
               <PianoCardFeatured key={piano.id} piano={piano} />
             ))}
@@ -61,7 +61,7 @@ export default function PianosPage() {
       </section>
 
       {/* Brand Browser */}
-      <section className="py-28 px-8 bg-piano-black border-t border-piano-gold/10">
+      <section className="py-28 px-8 bg-piano-burgundy border-t border-piano-gold/10">
         <div className="max-w-7xl mx-auto">
           <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-3">Browse by Maker</p>
           <h2
@@ -77,7 +77,7 @@ export default function PianosPage() {
                 <Link
                   key={brand.slug}
                   href={`/pianos/${brand.slug}`}
-                  className="group p-6 border border-piano-gold/15 hover:border-piano-gold/50 bg-piano-charcoal transition-all duration-200"
+                  className="group p-6 border border-piano-gold/15 hover:border-piano-gold/50 bg-piano-indigo-card transition-all duration-200"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <span className="font-display text-xs tracking-[0.15em] uppercase text-piano-gold/60 group-hover:text-piano-gold transition-colors">

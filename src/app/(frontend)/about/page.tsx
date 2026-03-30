@@ -14,7 +14,7 @@ export default function AboutPage() {
   return (
     <main className="min-h-screen bg-piano-cream">
       {/* Hero */}
-      <section className="relative bg-piano-black py-28 px-8 overflow-hidden">
+      <section className="relative bg-piano-burgundy py-28 px-8 overflow-hidden">
         <div className="absolute inset-0 opacity-15">
           <Image
             src="https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=1600&q=80"
@@ -87,7 +87,7 @@ export default function AboutPage() {
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
             </div>
-            <div className="absolute -bottom-6 -left-6 bg-piano-black p-6 max-w-xs">
+            <div className="absolute -bottom-6 -left-6 bg-piano-burgundy p-6 max-w-xs">
               <p className="font-cormorant font-light text-piano-gold text-3xl mb-1">
                 30+
               </p>
@@ -148,7 +148,7 @@ export default function AboutPage() {
       </section>
 
       {/* Three Pillars */}
-      <section className="py-28 px-8 bg-piano-black border-t border-piano-gold/10">
+      <section className="py-28 px-8 bg-piano-burgundy border-t border-piano-gold/10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-14">
             <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-3">
@@ -251,7 +251,7 @@ export default function AboutPage() {
       </section>
 
       {/* Positioning Statement */}
-      <section className="py-28 px-8 bg-piano-black border-t border-piano-gold/10">
+      <section className="py-28 px-8 bg-piano-burgundy border-t border-piano-gold/10">
         <div className="max-w-4xl mx-auto text-center">
           <blockquote>
             <p
@@ -265,7 +265,7 @@ export default function AboutPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/pianos"
-              className="inline-block bg-piano-black text-piano-cream px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-charcoal transition-colors"
+              className="inline-block bg-piano-cream text-piano-burgundy px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:opacity-90 transition-opacity"
             >
               Browse the Collection
             </Link>

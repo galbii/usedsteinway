@@ -64,7 +64,7 @@ export default function RecentlySoldPage() {
   return (
     <main className="min-h-screen bg-piano-cream">
       {/* Hero */}
-      <section className="bg-piano-black py-28 px-8">
+      <section className="bg-piano-burgundy py-28 px-8">
         <div className="max-w-7xl mx-auto">
           <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-5">
             Archive
@@ -120,7 +120,7 @@ export default function RecentlySoldPage() {
       </section>
 
       {/* Stats Bar */}
-      <section className="py-12 px-8 bg-piano-black border-t border-piano-gold/10">
+      <section className="py-12 px-8 bg-piano-burgundy border-t border-piano-gold/10">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
             { stat: '200+', label: 'Pianos Placed' },

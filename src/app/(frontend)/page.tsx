@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import { getServerSideURL } from '@/utilities/getURL'
-import { UsedSteinwaysHomePage } from './_components/UsedSteinwaysHomePage'
+import { UsedSteinwaysVariantPage } from './variant/_components/UsedSteinwaysVariantPage'
 
 export default function HomePage() {
-  return <UsedSteinwaysHomePage />
+  return <UsedSteinwaysVariantPage />
 }
 
 export const metadata: Metadata = {

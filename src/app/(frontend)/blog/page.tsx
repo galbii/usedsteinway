@@ -59,7 +59,7 @@ export default function BlogPage() {
   return (
     <main className="min-h-screen bg-piano-cream">
       {/* Hero */}
-      <section className="bg-piano-black py-20 px-8">
+      <section className="bg-piano-burgundy py-20 px-8">
         <div className="max-w-7xl mx-auto">
           <p className="font-display text-xs tracking-[0.3em] uppercase text-piano-gold mb-5">
             From the Showroom

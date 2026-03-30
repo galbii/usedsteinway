@@ -15,7 +15,7 @@ export function BrandPageV2({ brand, pianos, models }: BrandPageV2Props) {
     <main className="min-h-screen bg-piano-cream">
 
       {/* ── Hero ── */}
-      <section className="relative h-[75vh] min-h-[520px] max-h-[800px] overflow-hidden bg-piano-black">
+      <section className="relative h-[75vh] min-h-[520px] max-h-[800px] overflow-hidden bg-piano-burgundy">
         <Image
           src={brand.heroImageUrl}
           alt={brand.name}
@@ -94,7 +94,7 @@ export function BrandPageV2({ brand, pianos, models }: BrandPageV2Props) {
       <div className="border-t border-piano-linen" />
 
       {/* ── Current Inventory ── */}
-      <section className="bg-piano-black py-28 px-8">
+      <section className="bg-piano-burgundy py-28 px-8">
         <div className="max-w-7xl mx-auto">
           <div className="flex items-end justify-between mb-16">
             <div>
@@ -116,7 +116,7 @@ export function BrandPageV2({ brand, pianos, models }: BrandPageV2Props) {
           </div>
 
           {pianos.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-piano-gold/10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {pianos.map((piano) => (
                 <PianoCardFeatured key={piano.id} piano={piano} />
               ))}

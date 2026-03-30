@@ -14,7 +14,7 @@ export function ModelPageTemplate({ model, currentInventory }: ModelPageTemplate
   return (
     <main className="min-h-screen bg-piano-cream">
       {/* Hero */}
-      <section className="relative bg-piano-black pt-28 pb-24 px-8 overflow-hidden">
+      <section className="relative bg-piano-burgundy pt-28 pb-24 px-8 overflow-hidden">
         <div className="absolute inset-0 opacity-20">
           <Image src={model.imageUrl} alt={model.name} fill className="object-cover" sizes="100vw" />
         </div>
@@ -67,7 +67,7 @@ export function ModelPageTemplate({ model, currentInventory }: ModelPageTemplate
 
           {/* Specs Table */}
           <div className="lg:col-span-2">
-            <div className="bg-piano-black p-8">
+            <div className="bg-piano-indigo-card p-8">
               <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-6">
                 Specifications
               </p>
@@ -91,7 +91,7 @@ export function ModelPageTemplate({ model, currentInventory }: ModelPageTemplate
       </section>
 
       {/* Price Guide */}
-      <section className="py-24 px-8 bg-piano-black border-t border-piano-gold/10">
+      <section className="py-24 px-8 bg-piano-burgundy border-t border-piano-gold/10">
         <div className="max-w-7xl mx-auto">
           <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-3">Market Pricing</p>
           <h2

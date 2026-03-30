@@ -12,7 +12,7 @@ export default function FinancingPage() {
   return (
     <main className="min-h-screen bg-piano-cream">
       {/* Hero */}
-      <section className="bg-piano-black py-28 px-8">
+      <section className="bg-piano-burgundy py-28 px-8">
         <div className="max-w-7xl mx-auto">
           <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-5">
             Payment Options
@@ -83,7 +83,7 @@ export default function FinancingPage() {
         </section>
 
         {/* What Affects Financing */}
-        <section className="bg-piano-black p-10">
+        <section className="bg-piano-indigo-card p-10">
           <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-3">
             Key Factors
           </p>

@@ -13,7 +13,7 @@ export default function TestimonialsPage() {
   return (
     <main className="min-h-screen bg-piano-cream">
       {/* Hero */}
-      <section className="bg-piano-black py-28 px-8">
+      <section className="bg-piano-burgundy py-28 px-8">
         <div className="max-w-7xl mx-auto">
           <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-5">
             From Our Clients
@@ -86,7 +86,7 @@ export default function TestimonialsPage() {
       </section>
 
       {/* Extended Testimonials (additional hardcoded) */}
-      <section className="py-8 px-8 bg-piano-black border-t border-piano-gold/10">
+      <section className="py-8 px-8 bg-piano-burgundy border-t border-piano-gold/10">
         <div className="max-w-7xl mx-auto">
           <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-8 text-center">
             More from Our Clients
@@ -148,7 +148,7 @@ export default function TestimonialsPage() {
         </h2>
         <Link
           href="/pianos"
-          className="inline-block bg-piano-black text-piano-cream px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-charcoal transition-colors"
+          className="inline-block bg-piano-burgundy text-piano-cream px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-charcoal transition-colors"
         >
           Browse the Collection
         </Link>

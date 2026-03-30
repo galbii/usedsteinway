@@ -90,7 +90,7 @@ export default function SellYourPianoPage() {
   return (
     <main className="min-h-screen bg-piano-cream">
       {/* Hero */}
-      <section className="bg-piano-black py-32 px-8">
+      <section className="bg-piano-burgundy py-32 px-8">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-end">
           <div>
             <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-5">
@@ -113,7 +113,7 @@ export default function SellYourPianoPage() {
               { stat: '300+', label: 'Pianos purchased' },
               { stat: '30yrs', label: 'Buying experience' },
             ].map(({ stat, label }) => (
-              <div key={label} className="bg-piano-charcoal p-6 text-center">
+              <div key={label} className="bg-piano-indigo-card p-6 text-center">
                 <p className="font-cormorant font-light text-piano-gold text-3xl mb-1">
                   {stat}
                 </p>
@@ -190,7 +190,7 @@ export default function SellYourPianoPage() {
       </section>
 
       {/* What We Buy / Don't Buy */}
-      <section className="py-28 px-8 bg-piano-black border-t border-piano-gold/10">
+      <section className="py-28 px-8 bg-piano-burgundy border-t border-piano-gold/10">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16">
           {/* What We Buy */}
           <div>
@@ -294,7 +294,7 @@ export default function SellYourPianoPage() {
       </section>
 
       {/* Curation Positioning */}
-      <section className="py-24 px-8 bg-piano-charcoal">
+      <section className="py-24 px-8 bg-piano-indigo-card">
         <div className="max-w-4xl mx-auto text-center">
           <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-6">
             Our Commitment to Your Instrument
@@ -348,7 +348,7 @@ export default function SellYourPianoPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-28 px-8 bg-piano-black border-t border-piano-gold/10">
+      <section className="py-28 px-8 bg-piano-burgundy border-t border-piano-gold/10">
         <div className="max-w-3xl mx-auto text-center">
           <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-4">
             Ready to Begin?

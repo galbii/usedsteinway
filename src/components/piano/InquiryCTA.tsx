@@ -21,7 +21,7 @@ export function InquiryCTA({ brand, pianoTitle, variant = 'dark', className }: I
     <section
       className={cn(
         'py-28 px-8',
-        isDark ? 'bg-piano-black text-piano-cream' : 'bg-piano-cream text-piano-black',
+        isDark ? 'bg-piano-burgundy text-piano-cream' : 'bg-piano-cream text-piano-black',
         className,
       )}
     >
@@ -51,7 +51,10 @@ export function InquiryCTA({ brand, pianoTitle, variant = 'dark', className }: I
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href={`/contact?subject=${encodeURIComponent(subject)}`}
-            className="inline-flex items-center justify-center px-10 py-4 bg-piano-black text-piano-cream font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-charcoal transition-colors"
+            className={cn(
+              'inline-flex items-center justify-center px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase transition-opacity duration-200 hover:opacity-80',
+              isDark ? 'bg-piano-cream text-piano-burgundy' : 'bg-piano-black text-piano-cream',
+            )}
           >
             Contact Roger
           </Link>

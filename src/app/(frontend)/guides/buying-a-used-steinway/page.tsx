@@ -23,7 +23,7 @@ export default function BuyingGuidePage() {
   return (
     <main className="min-h-screen bg-piano-cream">
       {/* Hero */}
-      <section className="bg-piano-black py-28 px-8">
+      <section className="bg-piano-burgundy py-28 px-8">
         <div className="max-w-4xl mx-auto">
           <nav className="flex items-center gap-2 text-piano-cream/50 font-display text-[11px] tracking-[0.45em] uppercase mb-8">
             <Link href="/guides" className="hover:text-piano-gold transition-colors">
@@ -396,7 +396,7 @@ export default function BuyingGuidePage() {
 
           {/* Sidebar TOC */}
           <aside className="hidden lg:block sticky top-24">
-            <div className="bg-piano-black p-6">
+            <div className="bg-piano-indigo-card p-6">
               <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-5">
                 In This Guide
               </p>

@@ -14,7 +14,7 @@ export default function GuidesPage() {
   return (
     <main className="min-h-screen bg-piano-cream">
       {/* Hero */}
-      <section className="bg-piano-black py-28 px-8">
+      <section className="bg-piano-burgundy py-28 px-8">
         <div className="max-w-3xl mx-auto">
           <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-5">
             Knowledge Base
@@ -40,7 +40,11 @@ export default function GuidesPage() {
               <Link
                 key={guide.slug}
                 href={`/guides/${guide.slug}`}
-                className="group block bg-piano-cream border border-piano-linen hover:border-piano-gold/30 transition-all duration-200 hover:shadow-lg overflow-hidden"
+                className="group block bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1"
+                style={{
+                  border: '1px solid hsl(36 18% 89%)',
+                  boxShadow: '0 2px 20px hsl(350 62% 26% / 0.10)',
+                }}
               >
                 {guide.imageUrl && (
                   <div className="relative aspect-[16/9] overflow-hidden bg-piano-warm-white">

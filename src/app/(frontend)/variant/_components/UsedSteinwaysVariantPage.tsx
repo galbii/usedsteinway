@@ -164,24 +164,25 @@ export function UsedSteinwaysVariantPage() {
           }}
         />
 
-        {/* Right: Piano photograph */}
+        {/* Right: Roger at work in the showroom */}
         <div className="relative lg:absolute lg:right-0 lg:top-0 lg:bottom-0 lg:w-[54%] xl:w-[56%] h-72 lg:h-auto">
           <Image
-            src="https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=1600&q=90"
-            alt="Grand piano in dramatic lighting"
+            src="/Roger-at-work-2-for-web.jpg"
+            alt="Roger evaluating a piano in the showroom"
             fill
             priority
             className="object-cover object-center"
             sizes="(max-width: 1024px) 100vw, 56vw"
           />
-          {/* Indigo-tinted overlay */}
+          {/* Subtle warm overlay — desktop */}
           <div
             className="absolute inset-0 hidden lg:block"
-            style={{ backgroundColor: 'hsl(350, 62%, 26%, 0.22)' }}
+            style={{ backgroundColor: 'hsl(350, 62%, 26%, 0.18)' }}
           />
+          {/* Stronger overlay on mobile so it doesn't compete with text */}
           <div
             className="absolute inset-0 lg:hidden"
-            style={{ backgroundColor: 'hsl(350, 62%, 26%, 0.65)' }}
+            style={{ backgroundColor: 'hsl(350, 62%, 26%, 0.60)' }}
           />
         </div>
       </section>
@@ -334,19 +335,19 @@ export function UsedSteinwaysVariantPage() {
         className="relative py-36 px-8"
         style={{ backgroundColor: C.darkBg }}
       >
-        {/* Background: piano keys photograph */}
+        {/* Background: Roger working in the showroom */}
         <div className="absolute inset-0 overflow-hidden">
           <Image
-            src="https://images.unsplash.com/photo-1481091838234-b2c303aaea5c?w=1800&q=80"
-            alt="Piano keys"
+            src="/Roger-at-work-2-for-web.jpg"
+            alt="Roger evaluating a piano in the showroom"
             fill
-            className="object-cover object-center"
+            className="object-cover object-[center_30%]"
             sizes="100vw"
           />
-          {/* Deep indigo overlay — lets just enough image bleed through */}
+          {/* Heavy overlay — image serves as texture/atmosphere, text stays legible */}
           <div
             className="absolute inset-0"
-            style={{ backgroundColor: 'hsl(350, 62%, 26%, 0.91)' }}
+            style={{ backgroundColor: 'hsl(350, 62%, 26%, 0.88)' }}
           />
         </div>
 

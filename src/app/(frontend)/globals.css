@@ -22,10 +22,11 @@
   --color-orca-navy: hsl(220 35% 10%);
   --color-orca-surface: hsl(220 30% 14%);
 
-  /* UsedSteinways Piano Brand — refined palette */
+  /* UsedSteinways Piano Brand — variant palette (deep indigo + burnished gold) */
   --color-piano-black: hsl(25 6% 9%);
-  --color-piano-burgundy: hsl(358 28% 26%);
-  --color-piano-gold: hsl(38 36% 44%);
+  --color-piano-burgundy: hsl(350 62% 26%);       /* deep midnight indigo — dark sections */
+  --color-piano-indigo-card: hsl(350 56% 32%);    /* slightly lighter indigo — card/band bg */
+  --color-piano-gold: hsl(40 72% 52%);            /* burnished gold — vibrant accent */
   --color-piano-cream: hsl(36 18% 97%);
   --color-piano-charcoal: hsl(25 5% 14%);
   --color-piano-silver: hsl(25 4% 58%);
@@ -230,7 +231,7 @@
 }
 
 /* ── Safelist: dynamically constructed classes ─────────────── */
-@source inline("{lg:col-span-4,lg:col-span-6,lg:col-span-8,lg:col-span-12,border-border,bg-card,border-error,bg-error/30,border-success,bg-success/30,border-warning,bg-warning/30,bg-piano-black,bg-piano-burgundy,bg-piano-gold,bg-piano-cream,bg-piano-charcoal,bg-piano-warm-white,bg-piano-linen,bg-piano-stone,text-piano-black,text-piano-burgundy,text-piano-gold,text-piano-cream,text-piano-charcoal,text-piano-silver,text-piano-stone,border-piano-gold,border-piano-burgundy,border-piano-black,border-piano-charcoal,border-piano-silver,border-piano-linen,hover:bg-piano-burgundy,hover:text-piano-gold,hover:border-piano-gold,hover:bg-piano-warm-white,bg-piano-burgundy/10,bg-piano-gold/10,bg-piano-gold/20,bg-piano-gold/30,bg-piano-gold/40,bg-piano-burgundy/90,bg-piano-black/80,bg-piano-black/60,bg-piano-black/40,text-piano-gold/30,text-piano-gold/50,text-piano-gold/60,text-piano-gold/70,text-piano-gold/80,text-piano-stone/60,text-piano-cream/60,text-piano-cream/70,text-piano-silver/50}");
+@source inline("{lg:col-span-4,lg:col-span-6,lg:col-span-8,lg:col-span-12,border-border,bg-card,border-error,bg-error/30,border-success,bg-success/30,border-warning,bg-warning/30,bg-piano-black,bg-piano-burgundy,bg-piano-indigo-card,bg-piano-gold,bg-piano-cream,bg-piano-charcoal,bg-piano-warm-white,bg-piano-linen,bg-piano-stone,text-piano-black,text-piano-burgundy,text-piano-indigo-card,text-piano-gold,text-piano-cream,text-piano-charcoal,text-piano-silver,text-piano-stone,border-piano-gold,border-piano-burgundy,border-piano-indigo-card,border-piano-black,border-piano-charcoal,border-piano-silver,border-piano-linen,hover:bg-piano-burgundy,hover:bg-piano-indigo-card,hover:text-piano-gold,hover:border-piano-gold,hover:bg-piano-warm-white,bg-piano-burgundy/10,bg-piano-burgundy/91,bg-piano-indigo-card/80,bg-piano-gold/10,bg-piano-gold/20,bg-piano-gold/28,bg-piano-gold/30,bg-piano-gold/40,bg-piano-gold/45,bg-piano-burgundy/90,bg-piano-black/80,bg-piano-black/60,bg-piano-black/40,text-piano-gold/25,text-piano-gold/30,text-piano-gold/50,text-piano-gold/60,text-piano-gold/70,text-piano-gold/80,text-piano-stone/60,text-piano-cream/60,text-piano-cream/70,text-piano-silver/50}");
 
 /* ── FOUC prevention ───────────────────────────────────────── */
 html {
