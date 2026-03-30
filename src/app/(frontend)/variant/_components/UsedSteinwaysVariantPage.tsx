@@ -53,137 +53,128 @@ export function UsedSteinwaysVariantPage() {
     <div style={{ backgroundColor: C.bg }}>
 
       {/* ═══════════════════════════════════════════════
-          HERO — Diagonal slash split
+          HERO — Full-bleed photo, ivory fade from left
       ═══════════════════════════════════════════════ */}
-      <section className="relative min-h-screen flex flex-col lg:flex-row overflow-hidden">
+      <section className="relative min-h-screen flex items-center overflow-hidden">
 
-        {/* Left: Warm ivory panel */}
-        <div
-          className="relative z-10 flex flex-col justify-center px-10 md:px-16 xl:px-24 py-32 lg:py-0 lg:w-[46%] xl:w-[44%]"
-          style={{ backgroundColor: C.bg }}
-        >
-          {/* Overline */}
-          <div
-            className="flex items-center gap-3 mb-10 animate-fade-up"
-            style={{ animationDelay: '0.05s', opacity: 0 }}
-          >
-            <div className="h-px w-8" style={{ backgroundColor: C.accent }} />
-            <span
-              className="font-display text-[11px] tracking-[0.45em] uppercase"
-              style={{ color: C.muted }}
-            >
-              New Hampshire · Est. 1993
-            </span>
-          </div>
-
-          {/* Headline */}
-          <h1
-            className="font-cormorant leading-[1.03] mb-10 animate-fade-up"
-            style={{
-              fontSize: 'clamp(2.2rem, 6vw, 8.5rem)',
-              animationDelay: '0.15s',
-              opacity: 0,
-              color: C.text,
-            }}
-          >
-            The world's finest<br />
-            <em className="italic" style={{ color: C.accent }}>pre-owned</em> pianos,<br />
-            personally chosen.
-          </h1>
-
-          {/* Body */}
-          <p
-            className="text-lg leading-relaxed max-w-md mb-12 font-light animate-fade-up"
-            style={{ animationDelay: '0.25s', opacity: 0, color: C.muted }}
-          >
-            Every instrument personally evaluated by Roger — a Registered Piano
-            Technician with thirty years of experience placing extraordinary
-            pianos in extraordinary homes.
-          </p>
-
-          {/* CTAs */}
-          <div
-            className="flex flex-col sm:flex-row gap-4 animate-fade-up"
-            style={{ animationDelay: '0.35s', opacity: 0 }}
-          >
-            <Link
-              href="/pianos"
-              className="inline-flex items-center justify-center px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase transition-opacity duration-200 hover:opacity-80"
-              style={{ backgroundColor: C.text, color: C.bg }}
-            >
-              Browse Collection
-            </Link>
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase transition-colors duration-200 hover:opacity-80"
-              style={{ border: `1px solid ${C.border}`, color: C.text }}
-            >
-              Talk to Roger
-            </Link>
-          </div>
-
-          {/* Stats */}
-          <div
-            className="flex gap-12 mt-16 pt-10 animate-fade-up"
-            style={{ animationDelay: '0.45s', opacity: 0, borderTop: `1px solid ${C.border}` }}
-          >
-            {[
-              { n: '30+', l: 'Years' },
-              { n: '25',  l: 'Instruments' },
-              { n: '10',  l: 'Brands' },
-            ].map(({ n, l }) => (
-              <div key={l}>
-                <p
-                  className="font-cormorant font-light leading-none"
-                  style={{ fontSize: 'clamp(2.8rem, 4vw, 4rem)', color: C.text }}
-                >
-                  {n}
-                </p>
-                <p
-                  className="font-display text-[10px] tracking-[0.35em] uppercase mt-2"
-                  style={{ color: C.muted }}
-                >
-                  {l}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Diagonal slash — skewed gradient that bleeds the panel edge */}
-        <div
-          className="hidden lg:block absolute z-20 pointer-events-none"
-          style={{
-            left: 'calc(46% - 56px)',
-            top: 0,
-            bottom: 0,
-            width: '112px',
-            background: `linear-gradient(to right, ${C.bg} 0%, ${C.bg} 40%, transparent 100%)`,
-            transform: 'skewX(-1.5deg)',
-            transformOrigin: 'top left',
-          }}
-        />
-
-        {/* Right: Roger at work in the showroom */}
-        <div className="relative lg:absolute lg:right-0 lg:top-0 lg:bottom-0 lg:w-[54%] xl:w-[56%] h-72 lg:h-auto">
+        {/* Full-bleed photo fills entire section */}
+        <div className="absolute inset-0">
           <Image
             src="/Roger-at-work-2-for-web.jpg"
             alt="Roger evaluating a piano in the showroom"
             fill
             priority
-            className="object-cover object-center"
-            sizes="(max-width: 1024px) 100vw, 56vw"
+            className="object-cover object-[62%_center]"
+            sizes="100vw"
           />
-          {/* Subtle warm overlay — desktop */}
+          {/* Desktop: ivory fade left → transparent right */}
           <div
             className="absolute inset-0 hidden lg:block"
-            style={{ backgroundColor: 'hsl(350, 62%, 26%, 0.18)' }}
+            style={{
+              background: `linear-gradient(to right, ${C.bg} 0%, ${C.bg} 38%, color-mix(in srgb, ${C.bg} 80%, transparent) 54%, transparent 68%)`,
+            }}
           />
-          {/* Stronger overlay on mobile so it doesn't compete with text */}
+          {/* Mobile: ivory fade top → transparent bottom (text stacks above image area) */}
           <div
             className="absolute inset-0 lg:hidden"
-            style={{ backgroundColor: 'hsl(350, 62%, 26%, 0.60)' }}
+            style={{
+              background: `linear-gradient(to bottom, ${C.bg} 0%, ${C.bg} 55%, color-mix(in srgb, ${C.bg} 60%, transparent) 75%, transparent 100%)`,
+            }}
           />
+        </div>
+
+        {/* Text content — left-aligned, max ~520px wide on desktop */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-8 md:px-14 xl:px-20 py-32 lg:py-0">
+          <div className="max-w-[500px] lg:max-w-[460px]">
+
+            {/* Overline */}
+            <div
+              className="flex items-center gap-3 mb-10 animate-fade-up"
+              style={{ animationDelay: '0.05s', opacity: 0 }}
+            >
+              <div className="h-px w-8" style={{ backgroundColor: C.accent }} />
+              <span
+                className="font-display text-[11px] tracking-[0.45em] uppercase"
+                style={{ color: C.muted }}
+              >
+                New Hampshire · Est. 1993
+              </span>
+            </div>
+
+            {/* Headline */}
+            <h1
+              className="font-cormorant leading-[1.04] mb-10 animate-fade-up"
+              style={{
+                fontSize: 'clamp(2.2rem, 3.6vw, 4.5rem)',
+                animationDelay: '0.15s',
+                opacity: 0,
+                color: C.text,
+              }}
+            >
+              The world's finest<br />
+              <em className="italic" style={{ color: C.accent }}>pre-owned</em> pianos,<br />
+              personally chosen.
+            </h1>
+
+            {/* Body */}
+            <p
+              className="text-base leading-relaxed max-w-sm mb-12 animate-fade-up"
+              style={{ animationDelay: '0.25s', opacity: 0, color: C.muted }}
+            >
+              Every instrument personally evaluated by Roger — a Registered Piano
+              Technician with thirty years of experience placing extraordinary
+              pianos in extraordinary homes.
+            </p>
+
+            {/* CTAs */}
+            <div
+              className="flex flex-col sm:flex-row gap-3 animate-fade-up"
+              style={{ animationDelay: '0.35s', opacity: 0 }}
+            >
+              <Link
+                href="/pianos"
+                className="inline-flex items-center justify-center px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase transition-opacity duration-200 hover:opacity-80"
+                style={{ backgroundColor: C.text, color: C.bg }}
+              >
+                Browse Collection
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase transition-opacity duration-200 hover:opacity-70"
+                style={{ border: `1px solid ${C.border}`, color: C.text }}
+              >
+                Talk to Roger
+              </Link>
+            </div>
+
+            {/* Stats */}
+            <div
+              className="flex gap-12 mt-16 pt-10 animate-fade-up"
+              style={{ animationDelay: '0.45s', opacity: 0, borderTop: `1px solid ${C.border}` }}
+            >
+              {[
+                { n: '30+', l: 'Years' },
+                { n: '25',  l: 'Instruments' },
+                { n: '10',  l: 'Brands' },
+              ].map(({ n, l }) => (
+                <div key={l}>
+                  <p
+                    className="font-cormorant font-light leading-none"
+                    style={{ fontSize: 'clamp(2rem, 2.8vw, 2.8rem)', color: C.text }}
+                  >
+                    {n}
+                  </p>
+                  <p
+                    className="font-display text-[10px] tracking-[0.35em] uppercase mt-2"
+                    style={{ color: C.muted }}
+                  >
+                    {l}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+          </div>
         </div>
       </section>
 
