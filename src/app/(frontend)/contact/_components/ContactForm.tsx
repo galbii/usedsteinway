@@ -6,14 +6,14 @@ import { cn } from '@/utilities/ui'
 type InquiryType = 'buy' | 'sell' | 'general' | 'visit'
 
 const inquiryTypes: { id: InquiryType; label: string; description: string }[] = [
-  { id: 'buy', label: 'Acquire', description: 'Browse inventory or find a specific instrument' },
-  { id: 'sell', label: 'Consign', description: 'Request an appraisal for your piano' },
+  { id: 'buy', label: 'Buy a Piano', description: 'Browse inventory or find a specific instrument' },
+  { id: 'sell', label: 'Sell a Piano', description: 'Request an appraisal for your piano' },
   { id: 'visit', label: 'Visit', description: 'Come see the showroom and play the pianos' },
-  { id: 'general', label: 'Enquire', description: 'Advice, appraisals, or anything else' },
+  { id: 'general', label: 'Contact', description: 'Advice, appraisals, or anything else' },
 ]
 
 export function ContactForm() {
-  const [inquiryType, setInquiryType] = useState<InquiryType>('buy')
+  const [inquiryType, setInquiryType] = useState<InquiryType>('general')
   const [submitted, setSubmitted] = useState(false)
   const [form, setForm] = useState({
     name: '',

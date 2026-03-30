@@ -1,8 +1,16 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import type { Brand, Piano, PianoModel } from '@/types/piano'
-import { PianoCardFeatured } from './PianoCardFeatured'
+import { FeaturedCarousel } from './FeaturedCarousel'
 import { InquiryCTA } from './InquiryCTA'
+
+const C = {
+  bg:     'hsl(36, 22%, 96%)',
+  accent: 'hsl(40, 72%, 52%)',
+  text:   'hsl(350, 12%, 11%)',
+  muted:  'hsl(350, 5%, 46%)',
+  border: 'hsl(36, 18%, 89%)',
+}
 
 interface BrandPageV2Props {
   brand: Brand
@@ -59,45 +67,54 @@ export function BrandPageV2({ brand, pianos, models }: BrandPageV2Props) {
       </section>
 
       {/* ── Current Inventory ── */}
-      <section className="bg-piano-burgundy py-28 px-8">
+      <section className="py-36 px-8" style={{ backgroundColor: C.bg }}>
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-end justify-between mb-16">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
             <div>
-              <span className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold block mb-5">
+              <span
+                className="font-display text-[11px] tracking-[0.45em] uppercase block mb-5"
+                style={{ color: C.accent }}
+              >
                 Available Now
               </span>
               <h2
-                className="font-cormorant font-light text-piano-cream"
-                style={{ fontSize: 'clamp(2.8rem, 4.5vw, 4.5rem)' }}
+                className="font-cormorant font-light leading-tight"
+                style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)', color: C.text }}
               >
                 {brand.name} Collection
               </h2>
             </div>
             {pianos.length > 0 && (
-              <p className="text-piano-stone font-display text-[10px] tracking-[0.3em] uppercase">
+              <p
+                className="font-display text-[11px] tracking-[0.3em] uppercase"
+                style={{ color: C.muted }}
+              >
                 {pianos.length} instrument{pianos.length !== 1 ? 's' : ''}
               </p>
             )}
           </div>
 
           {pianos.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {pianos.map((piano) => (
-                <PianoCardFeatured key={piano.id} piano={piano} />
-              ))}
-            </div>
+            <FeaturedCarousel pianos={pianos} />
           ) : (
-            <div className="border border-piano-gold/20 py-20 text-center">
-              <p className="text-piano-stone text-lg mb-4">
+            <div
+              className="py-20 text-center"
+              style={{ border: `1px solid ${C.border}` }}
+            >
+              <p className="text-lg mb-4" style={{ color: C.muted }}>
                 No {brand.name} pianos in current inventory.
               </p>
-              <p className="text-piano-stone/60 text-base max-w-md mx-auto leading-relaxed mb-10">
+              <p
+                className="text-base max-w-md mx-auto leading-relaxed mb-10"
+                style={{ color: C.muted, opacity: 0.6 }}
+              >
                 We source and curate instruments continuously. Contact us and we will notify you
                 when a {brand.name} becomes available.
               </p>
               <Link
                 href={`/contact?subject=${encodeURIComponent(`Waiting List: ${brand.name}`)}`}
-                className="inline-block border border-piano-gold text-piano-gold px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-gold/10 transition-colors"
+                className="inline-block px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase transition-colors hover:opacity-75"
+                style={{ border: `1px solid ${C.accent}`, color: C.accent }}
               >
                 Join the Waiting List
               </Link>

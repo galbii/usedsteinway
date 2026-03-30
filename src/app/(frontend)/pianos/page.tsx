@@ -1,9 +1,16 @@
 /* eslint-disable react/no-unescaped-entities */
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { PianoCardFeatured } from '@/components/piano/PianoCardFeatured'
+import { FeaturedCarousel } from '@/components/piano/FeaturedCarousel'
 import { InquiryCTA } from '@/components/piano/InquiryCTA'
 import { getAvailablePianos, getFeaturedPianos } from '@/lib/piano-data'
+
+const C = {
+  bg:     'hsl(36, 22%, 96%)',
+  accent: 'hsl(40, 72%, 52%)',
+  text:   'hsl(350, 12%, 11%)',
+  muted:  'hsl(350, 5%, 46%)',
+}
 
 export const metadata: Metadata = {
   title: 'Piano Inventory | UsedSteinways.com',
@@ -38,25 +45,31 @@ export default function PianosPage() {
       </section>
 
       {/* Featured Pianos */}
-      <section className="py-28 px-8">
+      <section className="py-36 px-8" style={{ backgroundColor: C.bg }}>
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-end justify-between mb-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
             <div>
-              <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-2">Hand-Picked</p>
+              <span
+                className="font-display text-[11px] tracking-[0.45em] uppercase block mb-5"
+                style={{ color: C.accent }}
+              >
+                Hand-Selected
+              </span>
               <h2
-                className="font-cormorant font-light text-piano-black"
-                style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)' }}
+                className="font-cormorant font-light leading-tight"
+                style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)', color: C.text }}
               >
                 Featured Instruments
               </h2>
             </div>
-            <p className="text-piano-silver text-sm font-display tracking-wide">{featured.length} featured</p>
+            <p
+              className="font-display text-[11px] tracking-[0.3em] uppercase"
+              style={{ color: C.muted }}
+            >
+              {featured.length} instrument{featured.length !== 1 ? 's' : ''}
+            </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
-            {featured.map((piano) => (
-              <PianoCardFeatured key={piano.id} piano={piano} />
-            ))}
-          </div>
+          <FeaturedCarousel pianos={featured} />
         </div>
       </section>
 
