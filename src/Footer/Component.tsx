@@ -2,6 +2,8 @@ import Link from 'next/link'
 import React from 'react'
 
 import { PianoLogo } from '@/components/layout/PianoLogo'
+import { getCachedGlobal } from '@/utilities/getGlobals'
+import type { SiteSetting } from '@/payload-types'
 
 const NAV_COLUMNS = [
   {
@@ -38,6 +40,14 @@ const NAV_COLUMNS = [
 ]
 
 export async function Footer() {
+  const siteSettings = await getCachedGlobal('site-settings', 0)() as SiteSetting
+  const { phone, email, hoursOfOperation } = siteSettings?.contactInfo ?? {}
+
+  const displayPhone = phone ?? '508-545-0766'
+  const displayEmail = email ?? 'info@usedsteinways.com'
+  const displayHours = hoursOfOperation ?? 'By appointment'
+  const telHref = `tel:+1${displayPhone.replace(/\D/g, '')}`
+
   return (
     <footer className="mt-auto" style={{ backgroundColor: 'hsl(350, 62%, 26%)' }}>
 
@@ -47,22 +57,22 @@ export async function Footer() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 text-base">
               <a
-                href="tel:+16035550123"
+                href={telHref}
                 className="flex items-center gap-2 text-piano-cream hover:text-piano-gold transition-colors"
               >
                 <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold hidden sm:inline">Phone</span>
-                <span>(603) 555-0123</span>
+                <span>{displayPhone}</span>
               </a>
               <a
-                href="mailto:info@usedsteinways.com"
+                href={`mailto:${displayEmail}`}
                 className="flex items-center gap-2 text-piano-cream/70 hover:text-piano-cream transition-colors"
               >
                 <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold hidden sm:inline">Email</span>
-                <span>info@usedsteinways.com</span>
+                <span>{displayEmail}</span>
               </a>
               <div className="flex items-center gap-2 text-piano-cream/60 text-xs">
                 <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold hidden sm:inline">Hours</span>
-                <span>Mon – Fri 10–6 · Sat 10–4</span>
+                <span>{displayHours}</span>
               </div>
             </div>
             <Link
@@ -84,7 +94,7 @@ export async function Footer() {
             <div>
               <PianoLogo theme="dark" size="lg" />
               <p className="text-piano-cream/30 font-display text-[10px] tracking-[0.4em] uppercase mt-3">
-                New Hampshire · Est. 1993 · Roger, RPT
+                Massachusetts · Est. 1993 · Roger, RPT
               </p>
             </div>
             <p className="font-cormorant font-light italic text-lg text-piano-cream/25 max-w-xs leading-relaxed text-right hidden md:block">
@@ -119,7 +129,7 @@ export async function Footer() {
         {/* Bottom bar */}
         <div className="pt-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3" style={{ borderTop: '1px solid hsl(350, 48%, 40%)' }}>
           <p className="text-piano-cream/25 text-[11px] font-display tracking-wide">
-            © {new Date().getFullYear()} UsedSteinway · Concord, New Hampshire · All rights reserved
+            © {new Date().getFullYear()} UsedSteinways · Natick & Burlington, MA · All rights reserved
           </p>
           <div className="flex items-center gap-5">
             {[

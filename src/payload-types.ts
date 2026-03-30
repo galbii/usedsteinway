@@ -1746,10 +1746,33 @@ export interface Footer {
 export interface SiteSetting {
   id: string;
   contactInfo?: {
-    email?: string | null;
     phone?: string | null;
-    address?: string | null;
+    email?: string | null;
+    /**
+     * Displayed in the footer and on the contact/visit pages.
+     */
+    hoursOfOperation?: string | null;
   };
+  /**
+   * Add one entry per physical location.
+   */
+  locations?:
+    | {
+        /**
+         * e.g. "Natick" or "Burlington"
+         */
+        name: string;
+        streetAddress: string;
+        city: string;
+        state: string;
+        zip: string;
+        /**
+         * Full Google Maps link for the "Get Directions" button.
+         */
+        googleMapsUrl?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   socialLinks?:
     | {
         platform:
@@ -1828,9 +1851,20 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   contactInfo?:
     | T
     | {
-        email?: T;
         phone?: T;
-        address?: T;
+        email?: T;
+        hoursOfOperation?: T;
+      };
+  locations?:
+    | T
+    | {
+        name?: T;
+        streetAddress?: T;
+        city?: T;
+        state?: T;
+        zip?: T;
+        googleMapsUrl?: T;
+        id?: T;
       };
   socialLinks?:
     | T

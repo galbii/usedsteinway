@@ -27,6 +27,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { getFeaturedPianos, BRANDS, GUIDES, TESTIMONIALS } from '@/lib/piano-data'
+import { FeaturedCarousel } from './FeaturedCarousel'
 
 const C = {
   bg:          'hsl(36, 22%, 96%)',
@@ -45,7 +46,7 @@ const C = {
 }
 
 export function UsedSteinwaysVariantPage() {
-  const featured = getFeaturedPianos().slice(0, 3)
+  const featured = getFeaturedPianos()
   const featuredGuides = GUIDES.slice(0, 3)
   const testimonial = TESTIMONIALS[0]
 
@@ -53,11 +54,11 @@ export function UsedSteinwaysVariantPage() {
     <div style={{ backgroundColor: C.bg }}>
 
       {/* ═══════════════════════════════════════════════
-          HERO — Full-bleed photo, ivory fade from left
+          HERO — Solid ivory panel left, photo right
       ═══════════════════════════════════════════════ */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
 
-        {/* Full-bleed photo fills entire section */}
+        {/* Photo — full bleed, shows through on right */}
         <div className="absolute inset-0">
           <Image
             src="/Roger-at-work-2-for-web.jpg"
@@ -67,109 +68,135 @@ export function UsedSteinwaysVariantPage() {
             className="object-cover object-[62%_center]"
             sizes="100vw"
           />
-          {/* Desktop: ivory fade left → transparent right */}
-          <div
-            className="absolute inset-0 hidden lg:block"
-            style={{
-              background: `linear-gradient(to right, ${C.bg} 0%, ${C.bg} 38%, color-mix(in srgb, ${C.bg} 80%, transparent) 54%, transparent 68%)`,
-            }}
-          />
-          {/* Mobile: ivory fade top → transparent bottom (text stacks above image area) */}
-          <div
-            className="absolute inset-0 lg:hidden"
-            style={{
-              background: `linear-gradient(to bottom, ${C.bg} 0%, ${C.bg} 55%, color-mix(in srgb, ${C.bg} 60%, transparent) 75%, transparent 100%)`,
-            }}
-          />
         </div>
 
-        {/* Text content — left-aligned, max ~520px wide on desktop */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-8 md:px-14 xl:px-20 py-32 lg:py-0">
-          <div className="max-w-[500px] lg:max-w-[460px]">
+        {/* Desktop: solid ivory panel covers left ~46% — crisp hard edge */}
+        <div
+          className="absolute inset-y-0 left-0 hidden lg:block"
+          style={{
+            width: 'calc(46% + 1px)',
+            backgroundColor: C.bg,
+          }}
+        />
+
+        {/* Desktop: 3% feather at the panel edge — barely-there softening */}
+        <div
+          className="absolute inset-y-0 hidden lg:block"
+          style={{
+            left: '46%',
+            width: '80px',
+            background: `linear-gradient(to right, ${C.bg}, transparent)`,
+          }}
+        />
+
+        {/* Mobile: ivory fade downward — text reads on top, photo shows below */}
+        <div
+          className="absolute inset-0 lg:hidden"
+          style={{
+            background: `linear-gradient(to bottom, ${C.bg} 0%, ${C.bg} 52%, transparent 78%)`,
+          }}
+        />
+
+        {/* Content */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-8 md:px-14 xl:px-20 py-28 lg:py-0">
+          <div className="max-w-[460px] lg:max-w-[400px]">
 
             {/* Overline */}
             <div
               className="flex items-center gap-3 mb-10 animate-fade-up"
               style={{ animationDelay: '0.05s', opacity: 0 }}
             >
-              <div className="h-px w-8" style={{ backgroundColor: C.accent }} />
+              <div className="h-px w-6" style={{ backgroundColor: C.accent }} />
               <span
-                className="font-display text-[11px] tracking-[0.45em] uppercase"
+                className="font-display text-[10px] tracking-[0.5em] uppercase"
                 style={{ color: C.muted }}
               >
                 New Hampshire · Est. 1993
               </span>
             </div>
 
-            {/* Headline */}
+            {/* Headline — no gold emphasis, Cormorant italic is enough */}
             <h1
-              className="font-cormorant leading-[1.04] mb-10 animate-fade-up"
+              className="font-cormorant font-light leading-[1.1] mb-8 animate-fade-up"
               style={{
-                fontSize: 'clamp(2.2rem, 3.6vw, 4.5rem)',
-                animationDelay: '0.15s',
+                fontSize: 'clamp(2.6rem, 3.8vw, 4.8rem)',
+                animationDelay: '0.14s',
                 opacity: 0,
                 color: C.text,
               }}
             >
               The world's finest<br />
-              <em className="italic" style={{ color: C.accent }}>pre-owned</em> pianos,<br />
+              <em>pre-owned</em> pianos,<br />
               personally chosen.
             </h1>
 
-            {/* Body */}
+            {/* Body — concise */}
             <p
-              className="text-base leading-relaxed max-w-sm mb-12 animate-fade-up"
-              style={{ animationDelay: '0.25s', opacity: 0, color: C.muted }}
+              className="text-sm leading-[1.85] mb-11 animate-fade-up"
+              style={{
+                animationDelay: '0.24s',
+                opacity: 0,
+                color: C.muted,
+                maxWidth: '30ch',
+              }}
             >
-              Every instrument personally evaluated by Roger — a Registered Piano
-              Technician with thirty years of experience placing extraordinary
-              pianos in extraordinary homes.
+              Every instrument personally evaluated by Roger —
+              a Registered Piano Technician with thirty years of experience.
             </p>
 
-            {/* CTAs */}
+            {/* CTAs — primary solid, secondary as text link */}
             <div
-              className="flex flex-col sm:flex-row gap-3 animate-fade-up"
-              style={{ animationDelay: '0.35s', opacity: 0 }}
+              className="flex items-center gap-7 animate-fade-up"
+              style={{ animationDelay: '0.32s', opacity: 0 }}
             >
               <Link
                 href="/pianos"
-                className="inline-flex items-center justify-center px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase transition-opacity duration-200 hover:opacity-80"
+                className="inline-flex items-center justify-center px-8 py-3 font-display text-[10px] tracking-[0.35em] uppercase transition-opacity duration-200 hover:opacity-75"
                 style={{ backgroundColor: C.text, color: C.bg }}
               >
                 Browse Collection
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase transition-opacity duration-200 hover:opacity-70"
-                style={{ border: `1px solid ${C.border}`, color: C.text }}
+                className="group font-display text-[10px] tracking-[0.35em] uppercase inline-flex items-center gap-2 transition-opacity duration-200 hover:opacity-50"
+                style={{ color: C.muted }}
               >
                 Talk to Roger
+                <span className="group-hover:translate-x-0.5 transition-transform inline-block">→</span>
               </Link>
             </div>
 
-            {/* Stats */}
+            {/* Stats — smaller, separated by thin rules */}
             <div
-              className="flex gap-12 mt-16 pt-10 animate-fade-up"
-              style={{ animationDelay: '0.45s', opacity: 0, borderTop: `1px solid ${C.border}` }}
+              className="flex items-start gap-0 mt-16 pt-8 animate-fade-up"
+              style={{ animationDelay: '0.42s', opacity: 0, borderTop: `1px solid ${C.border}` }}
             >
               {[
                 { n: '30+', l: 'Years' },
                 { n: '25',  l: 'Instruments' },
                 { n: '10',  l: 'Brands' },
-              ].map(({ n, l }) => (
-                <div key={l}>
-                  <p
-                    className="font-cormorant font-light leading-none"
-                    style={{ fontSize: 'clamp(2rem, 2.8vw, 2.8rem)', color: C.text }}
-                  >
-                    {n}
-                  </p>
-                  <p
-                    className="font-display text-[10px] tracking-[0.35em] uppercase mt-2"
-                    style={{ color: C.muted }}
-                  >
-                    {l}
-                  </p>
+              ].map(({ n, l }, i) => (
+                <div key={l} className="flex items-stretch">
+                  {i > 0 && (
+                    <div
+                      className="w-px mx-8 self-stretch"
+                      style={{ backgroundColor: C.border }}
+                    />
+                  )}
+                  <div>
+                    <p
+                      className="font-cormorant font-light leading-none"
+                      style={{ fontSize: 'clamp(1.6rem, 2.2vw, 2.2rem)', color: C.text }}
+                    >
+                      {n}
+                    </p>
+                    <p
+                      className="font-display text-[9px] tracking-[0.38em] uppercase mt-2"
+                      style={{ color: C.muted }}
+                    >
+                      {l}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -239,83 +266,7 @@ export function UsedSteinwaysVariantPage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featured.map((piano) => (
-              <Link
-                key={piano.id}
-                href={`/pianos/${piano.slug}`}
-                className="group block overflow-hidden transition-all duration-500 hover:-translate-y-1.5"
-                style={{
-                  backgroundColor: '#fff',
-                  borderTop: `4px solid ${C.accent}`,
-                  boxShadow: '0 4px 28px hsl(350 62% 26% / 0.14), 0 1px 4px hsl(350 62% 26% / 0.09)',
-                }}
-              >
-                <div
-                  className="relative aspect-[4/3] overflow-hidden"
-                  style={{ backgroundColor: C.darkBg }}
-                >
-                  {piano.imageUrls[0] && (
-                    <Image
-                      src={piano.imageUrls[0]}
-                      alt={piano.title}
-                      fill
-                      className="object-cover opacity-90 group-hover:opacity-100 group-hover:scale-[1.04] transition-all duration-700"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                  )}
-                  {piano.isFeatured && (
-                    <div className="absolute top-5 left-5">
-                      <span
-                        className="font-display text-[9px] tracking-[0.35em] uppercase px-3.5 py-2"
-                        style={{ backgroundColor: C.accent, color: C.darkBg }}
-                      >
-                        Featured
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <div className="p-9" style={{ borderTop: `1px solid ${C.border}` }}>
-                  <p
-                    className="font-display text-[10px] tracking-[0.4em] uppercase mb-4"
-                    style={{ color: C.accent }}
-                  >
-                    {piano.brand} · {piano.year}
-                  </p>
-                  <h3
-                    className="font-cormorant text-4xl font-light leading-snug mb-3"
-                    style={{ color: C.text }}
-                  >
-                    {piano.model}
-                  </h3>
-                  <p
-                    className="text-sm leading-relaxed mb-7"
-                    style={{ color: C.muted }}
-                  >
-                    {piano.finish} · {piano.size}
-                  </p>
-                  <div
-                    className="flex items-center justify-between pt-6"
-                    style={{ borderTop: `1px solid ${C.border}` }}
-                  >
-                    <span
-                      className="font-cormorant text-2xl font-light"
-                      style={{ color: C.text }}
-                    >
-                      {piano.priceDisplay}
-                    </span>
-                    <span
-                      className="font-display text-[10px] tracking-[0.3em] uppercase inline-flex items-center gap-2"
-                      style={{ color: C.muted }}
-                    >
-                      View
-                      <span className="group-hover:translate-x-0.5 transition-transform inline-block">→</span>
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+          <FeaturedCarousel pianos={featured} />
         </div>
       </section>
 
@@ -653,42 +604,99 @@ export function UsedSteinwaysVariantPage() {
           striking moment on the page.
       ═══════════════════════════════════════════════ */}
       {testimonial && (
-        <section className="py-36 px-8" style={{ backgroundColor: C.accent }}>
-          <div className="max-w-4xl mx-auto text-center">
-            <div
-              className="h-px w-10 mx-auto mb-16"
-              style={{ backgroundColor: 'hsl(350, 12%, 11%, 0.20)' }}
-            />
+        <section
+          className="relative py-32 px-8 overflow-hidden"
+          style={{ backgroundColor: C.accent }}
+        >
+          {/* Large decorative opening quote — structural atmosphere */}
+          <div
+            className="absolute select-none pointer-events-none"
+            style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: 'clamp(18rem, 30vw, 28rem)',
+              lineHeight: 1,
+              color: 'hsl(350, 62%, 26%, 0.07)',
+              top: '-2rem',
+              left: '-1rem',
+              fontStyle: 'italic',
+              fontWeight: 300,
+            }}
+          >
+            &ldquo;
+          </div>
+
+          <div className="relative z-10 max-w-5xl mx-auto">
+            {/* Top rule + label */}
+            <div className="flex items-center gap-5 mb-16">
+              <div className="h-px flex-1 max-w-[3rem]" style={{ backgroundColor: 'hsl(350, 62%, 26%, 0.35)' }} />
+              <span
+                className="font-display text-[12px] tracking-[0.42em] uppercase"
+                style={{ color: 'hsl(350, 62%, 26%, 0.70)' }}
+              >
+                Client Story
+              </span>
+            </div>
+
+            {/* Quote */}
             <blockquote
-              className="font-cormorant font-light italic leading-relaxed mb-14"
+              className="font-cormorant font-light italic leading-[1.25] mb-16"
               style={{
-                fontSize: 'clamp(1.7rem, 3vw, 2.8rem)',
-                color: C.darkBg,
+                fontSize: 'clamp(2rem, 3.5vw, 3.4rem)',
+                color: 'hsl(350, 62%, 14%)',
+                maxWidth: '52rem',
               }}
             >
-              "{testimonial.quote}"
+              &ldquo;{testimonial.quote}&rdquo;
             </blockquote>
-            <div className="flex flex-col items-center gap-2.5">
-              <p
-                className="font-display text-[11px] tracking-[0.4em] uppercase"
-                style={{ color: 'hsl(350, 12%, 11%, 0.60)' }}
+
+            {/* Attribution + CTA row */}
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-10">
+
+              {/* Attribution */}
+              <div className="flex items-center gap-5">
+                {/* Small monogram mark */}
+                <div
+                  className="w-11 h-11 flex items-center justify-center shrink-0"
+                  style={{
+                    border: '1px solid hsl(350, 62%, 26%, 0.35)',
+                  }}
+                >
+                  <span
+                    className="font-cormorant text-xl font-light"
+                    style={{ color: 'hsl(350, 62%, 26%, 0.70)' }}
+                  >
+                    {testimonial.name.charAt(0)}
+                  </span>
+                </div>
+                <div>
+                  <p
+                    className="font-display text-[13px] tracking-[0.38em] uppercase mb-2"
+                    style={{ color: 'hsl(350, 12%, 11%, 0.85)' }}
+                  >
+                    {testimonial.name}
+                  </p>
+                  <p
+                    className="font-display text-[12px] tracking-[0.26em] uppercase"
+                    style={{ color: 'hsl(350, 12%, 11%, 0.58)' }}
+                  >
+                    {testimonial.piano} · {testimonial.location}
+                  </p>
+                </div>
+              </div>
+
+              {/* Black CTA button */}
+              <Link
+                href="/testimonials"
+                className="inline-flex items-center gap-3 px-9 py-4 font-display text-[12px] tracking-[0.35em] uppercase transition-opacity duration-200 hover:opacity-80 shrink-0"
+                style={{
+                  backgroundColor: 'hsl(350, 12%, 11%)',
+                  color: '#ffffff',
+                }}
               >
-                {testimonial.name}
-              </p>
-              <p
-                className="font-display text-[10px] tracking-[0.3em] uppercase"
-                style={{ color: 'hsl(350, 12%, 11%, 0.42)' }}
-              >
-                {testimonial.piano} · {testimonial.location}
-              </p>
+                More Stories
+                <span className="text-xs">→</span>
+              </Link>
             </div>
-            <Link
-              href="/testimonials"
-              className="inline-block mt-12 font-display text-[10px] tracking-[0.35em] uppercase transition-opacity hover:opacity-70"
-              style={{ color: 'hsl(350, 12%, 11%, 0.38)' }}
-            >
-              More stories →
-            </Link>
           </div>
         </section>
       )}

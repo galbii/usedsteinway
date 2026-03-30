@@ -16,19 +16,95 @@ export const SiteSettings: GlobalConfig = {
       type: 'group',
       fields: [
         {
-          name: 'email',
-          type: 'email',
-          label: 'Email Address',
-        },
-        {
           name: 'phone',
           type: 'text',
           label: 'Phone Number',
+          defaultValue: '508-545-0766',
         },
         {
-          name: 'address',
-          type: 'textarea',
-          label: 'Address',
+          name: 'email',
+          type: 'email',
+          label: 'Email Address',
+          defaultValue: 'info@usedsteinways.com',
+        },
+        {
+          name: 'hoursOfOperation',
+          type: 'text',
+          label: 'Hours of Operation',
+          defaultValue: 'By appointment. Walk-in may be possible but not guaranteed.',
+          admin: {
+            description: 'Displayed in the footer and on the contact/visit pages.',
+          },
+        },
+      ],
+    },
+    {
+      name: 'locations',
+      type: 'array',
+      label: 'Store Locations',
+      minRows: 1,
+      admin: {
+        description: 'Add one entry per physical location.',
+      },
+      defaultValue: [
+        {
+          name: 'Natick',
+          streetAddress: '12 Worcester Street',
+          city: 'Natick',
+          state: 'MA',
+          zip: '01760',
+          googleMapsUrl: 'https://maps.google.com/?q=12+Worcester+Street,+Natick,+MA+01760',
+        },
+        {
+          name: 'Burlington',
+          streetAddress: '135 Cambridge Street',
+          city: 'Burlington',
+          state: 'MA',
+          zip: '01803',
+          googleMapsUrl: 'https://maps.google.com/?q=135+Cambridge+Street,+Burlington,+MA+01803',
+        },
+      ],
+      fields: [
+        {
+          name: 'name',
+          type: 'text',
+          label: 'Location Name',
+          required: true,
+          admin: {
+            description: 'e.g. "Natick" or "Burlington"',
+          },
+        },
+        {
+          name: 'streetAddress',
+          type: 'text',
+          label: 'Street Address',
+          required: true,
+        },
+        {
+          name: 'city',
+          type: 'text',
+          label: 'City',
+          required: true,
+        },
+        {
+          name: 'state',
+          type: 'text',
+          label: 'State',
+          required: true,
+        },
+        {
+          name: 'zip',
+          type: 'text',
+          label: 'ZIP Code',
+          required: true,
+        },
+        {
+          name: 'googleMapsUrl',
+          type: 'text',
+          label: 'Google Maps URL',
+          admin: {
+            description: 'Full Google Maps link for the "Get Directions" button.',
+          },
         },
       ],
     },

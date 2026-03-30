@@ -32,7 +32,7 @@ export function PianoHeader() {
     href === '/' ? pathname === href : pathname.startsWith(href)
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-piano-cream border-b border-piano-linen">
+    <header className="sticky top-0 z-50 w-full bg-piano-cream" style={{ borderBottom: '30px solid hsl(40 72% 52%)' }}>
       <div className="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">
 
         {/* Logo */}

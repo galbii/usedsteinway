@@ -65,6 +65,25 @@
     from { height: var(--radix-accordion-content-height); }
     to { height: 0; }
   }
+
+  /* ── Header animations ──────────────────────────────────────── */
+  --animate-header-reveal: header-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-nav-in: nav-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @keyframes header-reveal {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes nav-in {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes gold-shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
 }
 
 /* ── Semantic color utilities (maps :root CSS vars → Tailwind classes) ─ */
