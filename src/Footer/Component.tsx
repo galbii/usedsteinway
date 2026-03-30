@@ -11,10 +11,8 @@ const NAV_COLUMNS = [
     links: [
       { label: 'All Pianos', href: '/pianos' },
       { label: 'Steinway & Sons', href: '/pianos/steinway' },
-      { label: 'Bösendorfer', href: '/pianos/bosendorfer' },
-      { label: 'C. Bechstein', href: '/pianos/bechstein' },
+      { label: 'Handcrafted European', href: '/pianos/european' },
       { label: 'Shigeru Kawai', href: '/pianos/shigeru-kawai' },
-      { label: 'Recently Sold', href: '/recently-sold' },
     ],
   },
   {

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import type { SiteSetting } from '@/payload-types'
 import { InquiryCTA } from '@/components/piano/InquiryCTA'
-import { LocationTabs } from './_components/LocationTabs'
+import { LocationTabs } from '@/components/piano/LocationTabs'
 
 export const metadata: Metadata = {
   title: 'Visit the Showroom | UsedSteinways.com',
@@ -50,7 +50,7 @@ export default async function VisitPage() {
             </p>
           </div>
           <div className="max-w-7xl mx-auto px-8">
-            <LocationTabs locations={locations} />
+            <LocationTabs locations={locations} phone={displayPhone} />
           </div>
           <div className="pb-16" />
         </section>

@@ -33,7 +33,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               preview: isEnabled,
             }}
           />
-          <Header />
+          <div className="sticky top-0 z-50 w-full">
+            <Header />
+          </div>
           <div className="flex flex-col min-h-screen">
             {children}
           </div>

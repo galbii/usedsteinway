@@ -1,4 +1,6 @@
-import type { Piano, Brand, PianoModel, Guide, Testimonial } from '@/types/piano'
+import type { Piano, Brand, PianoModel, Guide, Testimonial, CategorySlug } from '@/types/piano'
+
+export type { CategorySlug } from '@/types/piano'
 
 // ─── PIANO INVENTORY ──────────────────────────────────────────
 export const PIANOS: Piano[] = [
@@ -264,6 +266,7 @@ export const BRANDS: Brand[] = [
     name: 'Steinway & Sons',
     country: 'United States / Germany',
     founded: 1853,
+    category: 'steinway' as CategorySlug,
     tagline: 'The instrument of the immortals.',
     description: 'Founded in 1853 by Heinrich Engelhard Steinweg in New York City, Steinway & Sons has defined concert piano performance for over 170 years. Nine of ten concert pianists perform on a Steinway. The company\'s Hamburg and New York factories maintain hand-craftsmanship traditions unchanged since the 19th century, with each instrument requiring over a year to produce.',
     whyBuyPreowned: [
@@ -282,6 +285,7 @@ export const BRANDS: Brand[] = [
     name: 'Bösendorfer',
     country: 'Austria',
     founded: 1828,
+    category: 'european' as CategorySlug,
     tagline: 'The sound of Vienna.',
     description: 'Founded in Vienna in 1828, Bösendorfer is the world\'s oldest active piano manufacturer. Now owned by Yamaha, Bösendorfer instruments are still built entirely in Vienna with Austrian spruce soundboards and a sound that is uniquely warm, orchestral, and resonant. Famous for models with extended bass range (97 keys on the Imperial).',
     whyBuyPreowned: [
@@ -300,6 +304,7 @@ export const BRANDS: Brand[] = [
     name: 'C. Bechstein',
     country: 'Germany',
     founded: 1853,
+    category: 'european' as CategorySlug,
     tagline: 'German precision. Poetic voice.',
     description: 'C. Bechstein, founded in Berlin in 1853 — the same year as Steinway — is the choice of pianists who prefer a more refined, analytically transparent sound. Bechstein instruments are known for their clarity of texture, extraordinary touch sensitivity, and long-term durability. Franz Liszt called the Bechstein "the piano of the future."',
     whyBuyPreowned: [
@@ -318,6 +323,7 @@ export const BRANDS: Brand[] = [
     name: 'Blüthner',
     country: 'Germany',
     founded: 1853,
+    category: 'european' as CategorySlug,
     tagline: 'The Leipzig warmth.',
     description: 'Blüthner, founded in Leipzig in 1853, holds a unique place in the piano world through its patented aliquot stringing system — an additional fourth string in the treble register that vibrates sympathetically, adding extraordinary warmth and harmonic richness. Brahms, Tchaikovsky, and Wagner all favored Blüthner instruments.',
     whyBuyPreowned: [
@@ -332,10 +338,30 @@ export const BRANDS: Brand[] = [
     prestige: 'Ultra Premium',
   },
   {
+    slug: 'schimmel',
+    name: 'Schimmel',
+    country: 'Braunschweig, Germany',
+    founded: 1885,
+    category: 'european' as CategorySlug,
+    tagline: 'German precision. A century of concert-hall excellence.',
+    description: 'Founded in Leipzig in 1885, Schimmel is Germany\'s largest piano manufacturer and one of Europe\'s most respected. Known for exceptional precision, warm Germanic tone, and meticulous craftsmanship, Schimmel instruments are found in conservatories and concert halls throughout Europe.',
+    whyBuyPreowned: [
+      'Exceptional value — Schimmel holds value exceptionally well',
+      'German precision engineering built to last 100+ years',
+      'Warm, balanced tone suited to home and recital use',
+      'Rarer in the used market — finding a fine example requires expertise',
+    ],
+    heroImageUrl: 'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=1200&q=80',
+    models: ['K-122', 'K-132', 'C-120', 'W-180', 'W-206', 'W-272'],
+    priceRange: '$35,000 – $120,000',
+    prestige: 'Ultra Premium',
+  },
+  {
     slug: 'shigeru-kawai',
     name: 'Shigeru Kawai',
     country: 'Japan',
     founded: 1927,
+    category: 'shigeru-kawai' as CategorySlug,
     tagline: 'Master class. Japanese soul.',
     description: 'Shigeru Kawai represents the absolute pinnacle of Kawai\'s artisanal craft — handbuilt in Hamamatsu by master craftsmen with Renner hammers, premium European spruce soundboards, and an extraordinary level of individual attention. These instruments compete directly with Steinway at a significantly more accessible price.',
     whyBuyPreowned: [
@@ -354,6 +380,7 @@ export const BRANDS: Brand[] = [
     name: 'Petrof',
     country: 'Czech Republic',
     founded: 1864,
+    category: 'european' as CategorySlug,
     tagline: 'Bohemian craftsmanship since 1864.',
     description: 'Petrof, founded in Hradec Králové in 1864, is Central Europe\'s finest piano manufacturer and one of the best-kept secrets in the piano world. Built with centuries of Czech craftsmanship tradition, Petrof instruments offer an extraordinarily musical sound at prices that make European luxury accessible.',
     whyBuyPreowned: [
@@ -372,6 +399,7 @@ export const BRANDS: Brand[] = [
     name: 'Kayserburg',
     country: 'China',
     founded: 2000,
+    category: 'other' as CategorySlug,
     tagline: 'Pearl River\'s masterwork.',
     description: 'Kayserburg is Pearl River\'s artist-level line, designed in collaboration with German and Austrian engineers and built to world-class standards. The instruments use Renner actions, premium Sitka spruce soundboards, and Röslau strings — the same materials found in Europe\'s finest instruments.',
     whyBuyPreowned: [
@@ -390,6 +418,7 @@ export const BRANDS: Brand[] = [
     name: 'Yamaha',
     country: 'Japan',
     founded: 1887,
+    category: 'other' as CategorySlug,
     tagline: 'Crafted for performance.',
     description: 'Yamaha\'s CF and CFX concert grands represent the pinnacle of Japanese piano engineering. While mass-market Yamaha models are ubiquitous, the professional CF series instruments — particularly the CF6, CF7, and CFX — are world-class instruments used at the highest levels of performance.',
     whyBuyPreowned: [
@@ -408,6 +437,7 @@ export const BRANDS: Brand[] = [
     name: 'Wendl & Lung',
     country: 'Austria',
     founded: 1854,
+    category: 'other' as CategorySlug,
     tagline: 'Viennese heritage. Modern soul.',
     description: 'Wendl & Lung, Vienna\'s second historic piano house, produces instruments with a distinctly Viennese tonal character — warm, lyrical, and responsive. A smaller operation than Bösendorfer, Wendl & Lung offers exceptional quality at more accessible prices.',
     whyBuyPreowned: [
@@ -426,6 +456,7 @@ export const BRANDS: Brand[] = [
     name: 'Brodmann',
     country: 'Austria / China',
     founded: 2002,
+    category: 'other' as CategorySlug,
     tagline: 'Viennese design. Global craft.',
     description: 'Brodmann pianos are designed by Austrian master craftsmen and built in China under strict European quality standards. The result is an instrument with genuine musical character — warm, responsive, and musical — at prices that make serious piano ownership accessible to more musicians.',
     whyBuyPreowned: [
@@ -438,6 +469,34 @@ export const BRANDS: Brand[] = [
     models: ['PE 187', 'PE 228'],
     priceRange: '$10,000 – $40,000',
     prestige: 'Professional',
+  },
+]
+
+// ─── CATEGORIES ───────────────────────────────────────────────
+export const CATEGORIES = [
+  {
+    slug: 'steinway' as CategorySlug,
+    label: 'Steinway & Sons',
+    href: '/pianos/steinway',
+    tagline: 'The standard by which all pianos are measured.',
+    description: 'The benchmark instrument of the concert hall for over 170 years.',
+    brands: ['steinway'],
+  },
+  {
+    slug: 'european' as CategorySlug,
+    label: 'Handcrafted European Pianos',
+    href: '/pianos/european',
+    tagline: 'The great ateliers of Europe.',
+    description: 'Bösendorfer, C. Bechstein, Blüthner, Petrof, Schimmel — centuries of European craft.',
+    brands: ['bosendorfer', 'bechstein', 'bluthner', 'petrof', 'schimmel'],
+  },
+  {
+    slug: 'shigeru-kawai' as CategorySlug,
+    label: 'Shigeru Kawai',
+    href: '/pianos/shigeru-kawai',
+    tagline: "Japan's finest concert instrument.",
+    description: 'A revelatory alternative. World-class at a fraction of the European competition.',
+    brands: ['shigeru-kawai'],
   },
 ]
 
@@ -818,4 +877,14 @@ export function getPiano(slug: string): Piano | undefined {
 
 export function getAvailablePianos(): Piano[] {
   return PIANOS.filter((p) => p.isAvailable)
+}
+
+export function getBrandsByCategory(categorySlug: CategorySlug): Brand[] {
+  const category = CATEGORIES.find((c) => c.slug === categorySlug)
+  if (!category) return []
+  return BRANDS.filter((b) => category.brands.includes(b.slug))
+}
+
+export function getCategory(slug: CategorySlug) {
+  return CATEGORIES.find((c) => c.slug === slug) ?? null
 }

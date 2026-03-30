@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { PianoCardFeatured } from '@/components/piano/PianoCardFeatured'
 import { InquiryCTA } from '@/components/piano/InquiryCTA'
-import { getAvailablePianos, getFeaturedPianos, BRANDS, getPianosByBrand } from '@/lib/piano-data'
+import { getAvailablePianos, getFeaturedPianos } from '@/lib/piano-data'
 
 export const metadata: Metadata = {
   title: 'Piano Inventory | UsedSteinways.com',
@@ -60,48 +60,84 @@ export default function PianosPage() {
         </div>
       </section>
 
-      {/* Brand Browser */}
+      {/* Category Browser */}
       <section className="py-28 px-8 bg-piano-burgundy border-t border-piano-gold/10">
         <div className="max-w-7xl mx-auto">
-          <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-3">Browse by Maker</p>
+          <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-3">Browse by Category</p>
           <h2
             className="font-cormorant font-light text-piano-cream mb-14"
             style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)' }}
           >
-            The World's Finest Pianos
+            Three Traditions
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {BRANDS.map((brand) => {
-              const brandPianos = getPianosByBrand(brand.slug)
-              return (
-                <Link
-                  key={brand.slug}
-                  href={`/pianos/${brand.slug}`}
-                  className="group p-6 border border-piano-gold/15 hover:border-piano-gold/50 bg-piano-indigo-card transition-all duration-200"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <span className="font-display text-xs tracking-[0.15em] uppercase text-piano-gold/60 group-hover:text-piano-gold transition-colors">
-                      {brand.country}
-                    </span>
-                    {brandPianos.length > 0 && (
-                      <span className="bg-piano-gold/10 text-piano-gold text-xs px-2 py-0.5 font-display tracking-wide">
-                        {brandPianos.length}
-                      </span>
-                    )}
-                  </div>
-                  <h3 className="font-cormorant font-light text-piano-cream text-3xl mb-1 group-hover:text-white transition-colors">
-                    {brand.name}
-                  </h3>
-                  <p className="text-piano-silver/60 text-base leading-relaxed line-clamp-2 mb-4">
-                    {brand.tagline}
-                  </p>
-                  <span className="text-piano-gold/50 group-hover:text-piano-gold font-display text-xs tracking-widest uppercase transition-colors">
-                    View Collection →
-                  </span>
-                </Link>
-              )
-            })}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+
+            {/* Steinway */}
+            <Link
+              href="/pianos/steinway"
+              className="group p-8 border border-piano-gold/15 hover:border-piano-gold/50 bg-piano-indigo-card transition-all duration-200"
+            >
+              <p className="font-display text-[9px] tracking-[0.3em] uppercase text-piano-gold/60 group-hover:text-piano-gold transition-colors mb-4">
+                Hamburg · Est. 1853
+              </p>
+              <h3 className="font-cormorant font-light text-piano-cream text-4xl mb-3 group-hover:text-white transition-colors">
+                Steinway & Sons
+              </h3>
+              <p className="text-piano-silver/60 text-sm leading-relaxed mb-6">
+                The standard by which all concert grands are measured.
+              </p>
+              <span className="text-piano-gold/50 group-hover:text-piano-gold font-display text-xs tracking-widest uppercase transition-colors">
+                View Collection →
+              </span>
+            </Link>
+
+            {/* European */}
+            <Link
+              href="/pianos/european"
+              className="group p-8 border border-piano-gold/15 hover:border-piano-gold/50 bg-piano-indigo-card transition-all duration-200"
+            >
+              <p className="font-display text-[9px] tracking-[0.3em] uppercase text-piano-gold/60 group-hover:text-piano-gold transition-colors mb-4">
+                Vienna · Berlin · Leipzig · Prague
+              </p>
+              <h3 className="font-cormorant font-light text-piano-cream text-4xl mb-3 group-hover:text-white transition-colors">
+                Handcrafted European
+              </h3>
+              <p className="text-piano-silver/60 text-sm leading-relaxed mb-3">
+                Bösendorfer · C. Bechstein · Blüthner · Petrof · Schimmel
+              </p>
+              <span className="text-piano-gold/50 group-hover:text-piano-gold font-display text-xs tracking-widest uppercase transition-colors">
+                View Collection →
+              </span>
+            </Link>
+
+            {/* Shigeru Kawai */}
+            <Link
+              href="/pianos/shigeru-kawai"
+              className="group p-8 border border-piano-gold/15 hover:border-piano-gold/50 bg-piano-indigo-card transition-all duration-200"
+            >
+              <p className="font-display text-[9px] tracking-[0.3em] uppercase text-piano-gold/60 group-hover:text-piano-gold transition-colors mb-4">
+                Hamamatsu, Japan · Est. 1927
+              </p>
+              <h3 className="font-cormorant font-light text-piano-cream text-4xl mb-3 group-hover:text-white transition-colors">
+                Shigeru Kawai
+              </h3>
+              <p className="text-piano-silver/60 text-sm leading-relaxed mb-6">
+                Japan's finest concert instrument. World-class at a revelatory price.
+              </p>
+              <span className="text-piano-gold/50 group-hover:text-piano-gold font-display text-xs tracking-widest uppercase transition-colors">
+                View Collection →
+              </span>
+            </Link>
+
           </div>
+
+          {/* All brands link */}
+          <p className="font-display text-[10px] tracking-[0.3em] uppercase text-piano-gold/50 text-center">
+            Looking for another maker?{' '}
+            <Link href="/pianos" className="text-piano-gold hover:text-piano-cream transition-colors">
+              Browse all inventory →
+            </Link>
+          </p>
         </div>
       </section>
 

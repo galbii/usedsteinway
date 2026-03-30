@@ -25,11 +25,14 @@ export interface Piano {
   tags: string[]
 }
 
+export type CategorySlug = 'steinway' | 'european' | 'shigeru-kawai' | 'other'
+
 export interface Brand {
   slug: string
   name: string
   country: string
   founded: number
+  category: CategorySlug
   tagline: string
   description: string
   whyBuyPreowned: string[]

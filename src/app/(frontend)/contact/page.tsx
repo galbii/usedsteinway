@@ -3,126 +3,157 @@ import Link from 'next/link'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import type { SiteSetting } from '@/payload-types'
 import { ContactForm } from './_components/ContactForm'
+import { LocationTabs } from '@/components/piano/LocationTabs'
 
 export const metadata: Metadata = {
   title: 'Contact Roger | UsedSteinways.com',
   description: 'Get in touch with Roger about buying, selling, or visiting the showroom.',
 }
 
+
 export default async function ContactPage() {
-  const siteSettings = await getCachedGlobal('site-settings', 0)() as SiteSetting
+  const siteSettings = (await getCachedGlobal('site-settings', 0)()) as SiteSetting
   const { phone, email, hoursOfOperation } = siteSettings?.contactInfo ?? {}
   const locations = siteSettings?.locations ?? []
 
   const displayPhone = phone ?? '508-545-0766'
   const displayEmail = email ?? 'info@usedsteinways.com'
-  const displayHours = hoursOfOperation ?? 'By appointment. Walk-in may be possible but not guaranteed.'
+  const displayHours =
+    hoursOfOperation ?? 'By appointment. Walk-in may be possible but not guaranteed.'
   const telHref = `tel:+1${displayPhone.replace(/\D/g, '')}`
 
   return (
     <main className="min-h-screen bg-piano-cream">
-      {/* Page Header */}
-      <section className="bg-piano-burgundy py-24 px-8">
+
+      {/* ── Hero — dark strip ─────────────────────────────────────── */}
+      <section className="bg-piano-black relative pt-28 pb-20 px-8">
         <div className="max-w-7xl mx-auto">
-          <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-4">
-            Get in Touch
+
+          <p className="font-display text-sm tracking-[0.6em] uppercase text-piano-gold/60 mb-10">
+            UsedSteinways.com — Private Consultations Welcome
           </p>
+
           <h1
-            className="font-cormorant font-light text-white mb-4"
-            style={{ fontSize: 'clamp(3.6rem, 7vw, 8.5rem)' }}
+            className="font-light text-piano-cream leading-[0.88] tracking-tight"
+            style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: 'clamp(5rem, 13vw, 14rem)',
+            }}
           >
-            Contact Roger
+            Contact
+            <br />
+            <span className="italic text-piano-gold/90">Roger</span>
           </h1>
-          <p className="text-piano-cream/70 text-lg max-w-xl leading-relaxed">
-            Every conversation starts with listening. Tell us what you&apos;re looking for.
+
+          <div className="flex items-center gap-6 mt-12 mb-10">
+            <div className="flex-1 h-px bg-piano-gold/25" />
+            <span className="font-display text-sm tracking-[0.5em] uppercase text-piano-gold/40 shrink-0">
+              Every Conversation Starts With Listening
+            </span>
+            <div className="w-12 h-px bg-piano-gold/25 shrink-0" />
+          </div>
+
+          <p className="text-piano-silver/60 text-xl max-w-lg leading-relaxed font-light">
+            Whether buying, selling, or simply curious — we&apos;re here.
           </p>
         </div>
       </section>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-8 py-24">
-        <div className="grid lg:grid-cols-[1fr_420px] gap-16">
+      {/* ── Form + Sidebar ───────────────────────────────────────── */}
+      <section className="max-w-7xl mx-auto px-8 py-20">
+        <div className="grid lg:grid-cols-[1fr_400px] gap-12 items-start">
 
-          {/* Left: Form */}
-          <div>
+          {/* Form Panel */}
+          <div className="bg-piano-warm-white px-12 py-14">
+            <div className="flex items-center gap-5 mb-12">
+              <p className="font-display text-sm tracking-[0.5em] uppercase text-piano-black shrink-0">
+                Send a Message
+              </p>
+              <div className="flex-1 h-px bg-piano-linen" />
+            </div>
             <ContactForm />
           </div>
 
-          {/* Right: Contact Info */}
-          <div className="space-y-6">
-            {/* Shared Contact Details */}
-            <div className="bg-piano-black p-8">
-              <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-6">
-                Showroom Details
-              </p>
-              <div className="space-y-5">
+          {/* Sidebar — dark panel */}
+          <div className="lg:sticky lg:top-8 bg-piano-black divide-y divide-piano-charcoal">
+
+            {/* Showroom Details */}
+            <div className="px-10 py-10">
+              <div className="flex items-center gap-3 mb-8">
+                <p className="font-display text-sm tracking-[0.5em] uppercase text-piano-gold/60 shrink-0">
+                  Showroom
+                </p>
+                <div className="flex-1 h-px bg-piano-gold/15" />
+              </div>
+              <div className="space-y-7">
                 <div>
-                  <p className="font-display text-xs tracking-widest uppercase text-piano-silver/50 mb-1">Phone</p>
-                  <a href={telHref} className="text-piano-gold text-sm hover:text-piano-gold/80 transition-colors">
+                  <p className="font-display text-xs tracking-[0.4em] uppercase text-piano-silver/30 mb-2">
+                    Phone
+                  </p>
+                  <a
+                    href={telHref}
+                    className="text-piano-gold text-lg hover:text-piano-gold/75 transition-colors duration-200 font-light"
+                  >
                     {displayPhone}
                   </a>
                 </div>
                 <div>
-                  <p className="font-display text-xs tracking-widest uppercase text-piano-silver/50 mb-1">Email</p>
-                  <a href={`mailto:${displayEmail}`} className="text-piano-cream/80 text-sm hover:text-piano-cream transition-colors">
+                  <p className="font-display text-[10px] tracking-[0.4em] uppercase text-piano-silver/30 mb-2">
+                    Email
+                  </p>
+                  <a
+                    href={`mailto:${displayEmail}`}
+                    className="text-piano-cream/70 text-base hover:text-piano-cream transition-colors duration-200 font-light"
+                  >
                     {displayEmail}
                   </a>
                 </div>
                 <div>
-                  <p className="font-display text-xs tracking-widest uppercase text-piano-silver/50 mb-2">Hours</p>
-                  <p className="text-piano-cream/80 text-sm leading-relaxed">{displayHours}</p>
+                  <p className="font-display text-[10px] tracking-[0.4em] uppercase text-piano-silver/30 mb-2">
+                    Hours
+                  </p>
+                  <p className="text-piano-silver/55 text-base leading-relaxed font-light">
+                    {displayHours}
+                  </p>
                 </div>
               </div>
             </div>
 
-            {/* Locations */}
-            {locations.length > 0 && (
-              <div className="space-y-4">
-                <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-stone/60">
-                  Our Locations
-                </p>
-                {locations.map((loc, i) => (
-                  <div key={i} className="bg-piano-black p-6">
-                    <p className="font-display text-[10px] tracking-[0.4em] uppercase text-piano-gold mb-3">
-                      {loc.name}
-                    </p>
-                    <p className="text-piano-cream text-sm leading-relaxed mb-4">
-                      {loc.streetAddress}<br />
-                      {loc.city}, {loc.state} {loc.zip}
-                    </p>
-                    {loc.googleMapsUrl && (
-                      <a
-                        href={loc.googleMapsUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-block border border-piano-gold/40 text-piano-gold/80 px-5 py-2 font-display text-[10px] tracking-[0.3em] uppercase hover:border-piano-gold hover:text-piano-gold transition-colors"
-                      >
-                        Get Directions →
-                      </a>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-
             {/* Quick Links */}
-            <div className="grid grid-cols-2 gap-3">
-              <Link
-                href="/visit"
-                className="block text-center border border-piano-black/20 py-3 text-piano-black font-display text-[11px] tracking-[0.3em] uppercase hover:border-piano-gold hover:text-piano-gold transition-colors"
-              >
-                Plan Your Visit
-              </Link>
-              <Link
-                href="/sell-your-piano"
-                className="block text-center border border-piano-black/20 py-3 text-piano-black font-display text-[11px] tracking-[0.3em] uppercase hover:border-piano-gold hover:text-piano-gold transition-colors"
-              >
-                Sell Your Piano
-              </Link>
+            <div className="px-10 py-8">
+              <div className="grid grid-cols-2 gap-3">
+                <Link
+                  href="/visit"
+                  className="block text-center border border-piano-silver/15 py-4 text-piano-silver/45 font-display text-xs tracking-[0.3em] uppercase hover:border-piano-gold/50 hover:text-piano-gold/80 transition-all duration-200"
+                >
+                  Plan Your Visit
+                </Link>
+                <Link
+                  href="/sell-your-piano"
+                  className="block text-center border border-piano-silver/15 py-4 text-piano-silver/45 font-display text-xs tracking-[0.3em] uppercase hover:border-piano-gold/50 hover:text-piano-gold/80 transition-all duration-200"
+                >
+                  Sell Your Piano
+                </Link>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* ── Locations ────────────────────────────────────────────── */}
+      {locations.length > 0 && (
+        <section className="border-t border-piano-linen">
+          <div className="max-w-7xl mx-auto px-8 py-20">
+            <div className="flex items-center gap-5 mb-12">
+              <p className="font-display text-sm tracking-[0.5em] uppercase text-piano-stone/50 shrink-0">
+                Our Locations
+              </p>
+              <div className="flex-1 h-px bg-piano-linen" />
+            </div>
+            <LocationTabs locations={locations} phone={displayPhone} />
+          </div>
+        </section>
+      )}
     </main>
   )
 }

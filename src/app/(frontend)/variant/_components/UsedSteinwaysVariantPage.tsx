@@ -26,7 +26,7 @@
  */
 import Link from 'next/link'
 import Image from 'next/image'
-import { getFeaturedPianos, BRANDS, GUIDES, TESTIMONIALS } from '@/lib/piano-data'
+import { getFeaturedPianos, BRANDS, CATEGORIES, GUIDES, TESTIMONIALS } from '@/lib/piano-data'
 import { FeaturedCarousel } from './FeaturedCarousel'
 
 const C = {
@@ -70,20 +70,20 @@ export function UsedSteinwaysVariantPage() {
           />
         </div>
 
-        {/* Desktop: solid ivory panel covers left ~46% — crisp hard edge */}
+        {/* Desktop: solid ivory panel — widened for larger wordmark */}
         <div
           className="absolute inset-y-0 left-0 hidden lg:block"
           style={{
-            width: 'calc(46% + 1px)',
+            width: 'calc(54% + 1px)',
             backgroundColor: C.bg,
           }}
         />
 
-        {/* Desktop: 3% feather at the panel edge — barely-there softening */}
+        {/* Desktop: feather at panel edge */}
         <div
           className="absolute inset-y-0 hidden lg:block"
           style={{
-            left: '46%',
+            left: '54%',
             width: '80px',
             background: `linear-gradient(to right, ${C.bg}, transparent)`,
           }}
@@ -99,66 +99,70 @@ export function UsedSteinwaysVariantPage() {
 
         {/* Content */}
         <div className="relative z-10 w-full max-w-7xl mx-auto px-8 md:px-14 xl:px-20 py-28 lg:py-0">
-          <div className="max-w-[460px] lg:max-w-[400px]">
+          <div className="max-w-[560px] lg:max-w-[500px]">
 
             {/* Overline */}
             <div
-              className="flex items-center gap-3 mb-10 animate-fade-up"
+              className="flex items-center gap-4 mb-12 animate-fade-up"
               style={{ animationDelay: '0.05s', opacity: 0 }}
             >
-              <div className="h-px w-6" style={{ backgroundColor: C.accent }} />
+              <div className="h-px w-8" style={{ backgroundColor: C.accent }} />
               <span
-                className="font-display text-[10px] tracking-[0.5em] uppercase"
+                className="font-display text-[11px] tracking-[0.5em] uppercase"
                 style={{ color: C.muted }}
               >
                 New Hampshire · Est. 1993
               </span>
             </div>
 
-            {/* Headline — no gold emphasis, Cormorant italic is enough */}
+            {/* Wordmark — "Used Steinways" as the logo */}
             <h1
-              className="font-cormorant font-light leading-[1.1] mb-8 animate-fade-up"
-              style={{
-                fontSize: 'clamp(2.6rem, 3.8vw, 4.8rem)',
-                animationDelay: '0.14s',
-                opacity: 0,
-                color: C.text,
-              }}
+              className="font-cormorant font-light leading-[0.95] mb-10 animate-fade-up"
+              style={{ animationDelay: '0.14s', opacity: 0 }}
             >
-              The world's finest<br />
-              <em>pre-owned</em> pianos,<br />
-              personally chosen.
+              <span
+                className="block italic"
+                style={{ fontSize: 'clamp(2.2rem, 3.5vw, 4rem)', color: C.accent }}
+              >
+                Used
+              </span>
+              <span
+                className="block"
+                style={{ fontSize: 'clamp(4rem, 7vw, 9rem)', color: C.text, letterSpacing: '-0.01em' }}
+              >
+                Steinways
+              </span>
             </h1>
 
-            {/* Body — concise */}
+            {/* Tagline */}
             <p
-              className="text-sm leading-[1.85] mb-11 animate-fade-up"
+              className="text-base leading-[1.8] mb-12 animate-fade-up"
               style={{
                 animationDelay: '0.24s',
                 opacity: 0,
                 color: C.muted,
-                maxWidth: '30ch',
+                maxWidth: '34ch',
               }}
             >
               Every instrument personally evaluated by Roger —
               a Registered Piano Technician with thirty years of experience.
             </p>
 
-            {/* CTAs — primary solid, secondary as text link */}
+            {/* CTAs */}
             <div
-              className="flex items-center gap-7 animate-fade-up"
+              className="flex items-center gap-8 animate-fade-up"
               style={{ animationDelay: '0.32s', opacity: 0 }}
             >
               <Link
                 href="/pianos"
-                className="inline-flex items-center justify-center px-8 py-3 font-display text-[10px] tracking-[0.35em] uppercase transition-opacity duration-200 hover:opacity-75"
+                className="inline-flex items-center justify-center px-10 py-4 font-display text-[11px] tracking-[0.35em] uppercase transition-opacity duration-200 hover:opacity-75"
                 style={{ backgroundColor: C.text, color: C.bg }}
               >
                 Browse Collection
               </Link>
               <Link
                 href="/contact"
-                className="group font-display text-[10px] tracking-[0.35em] uppercase inline-flex items-center gap-2 transition-opacity duration-200 hover:opacity-50"
+                className="group font-display text-[11px] tracking-[0.35em] uppercase inline-flex items-center gap-2.5 transition-opacity duration-200 hover:opacity-50"
                 style={{ color: C.muted }}
               >
                 Talk to Roger
@@ -166,9 +170,9 @@ export function UsedSteinwaysVariantPage() {
               </Link>
             </div>
 
-            {/* Stats — smaller, separated by thin rules */}
+            {/* Stats */}
             <div
-              className="flex items-start gap-0 mt-16 pt-8 animate-fade-up"
+              className="flex items-start mt-16 pt-10 animate-fade-up"
               style={{ animationDelay: '0.42s', opacity: 0, borderTop: `1px solid ${C.border}` }}
             >
               {[
@@ -179,19 +183,19 @@ export function UsedSteinwaysVariantPage() {
                 <div key={l} className="flex items-stretch">
                   {i > 0 && (
                     <div
-                      className="w-px mx-8 self-stretch"
+                      className="w-px mx-10 self-stretch"
                       style={{ backgroundColor: C.border }}
                     />
                   )}
                   <div>
                     <p
                       className="font-cormorant font-light leading-none"
-                      style={{ fontSize: 'clamp(1.6rem, 2.2vw, 2.2rem)', color: C.text }}
+                      style={{ fontSize: 'clamp(2rem, 2.8vw, 3rem)', color: C.text }}
                     >
                       {n}
                     </p>
                     <p
-                      className="font-display text-[9px] tracking-[0.38em] uppercase mt-2"
+                      className="font-display text-[10px] tracking-[0.4em] uppercase mt-2"
                       style={{ color: C.muted }}
                     >
                       {l}
@@ -219,15 +223,14 @@ export function UsedSteinwaysVariantPage() {
         <div className="flex items-center animate-ticker whitespace-nowrap">
           {[0, 1].map((i) => (
             <div key={i} className="flex items-center shrink-0">
-              {BRANDS.map((brand) => (
-                <span key={brand.slug} className="flex items-center">
+              {['Steinway & Sons', '·', 'Handcrafted European Pianos', '·', 'Bösendorfer', '·', 'C. Bechstein', '·', 'Blüthner', '·', 'Petrof', '·', 'Schimmel', '·', 'Shigeru Kawai'].map((item, idx) => (
+                <span key={idx} className="flex items-center">
                   <span
                     className="font-display text-[10px] tracking-[0.45em] uppercase px-8"
-                    style={{ color: 'hsl(36, 22%, 96%, 0.28)' }}
+                    style={{ color: 'rgba(245, 235, 220, 0.28)' }}
                   >
-                    {brand.name}
+                    {item}
                   </span>
-                  <span style={{ color: C.accentFaded, fontSize: '0.75rem' }}>·</span>
                 </span>
               ))}
             </div>
@@ -425,7 +428,7 @@ export function UsedSteinwaysVariantPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          BRANDS — Left gold accent bar animates on hover
+          CATEGORIES — Three editorial pillars
       ═══════════════════════════════════════════════ */}
       <section className="py-36 px-8" style={{ backgroundColor: C.bg }}>
         <div className="max-w-7xl mx-auto">
@@ -436,76 +439,168 @@ export function UsedSteinwaysVariantPage() {
                 className="font-display text-[11px] tracking-[0.45em] uppercase block mb-5"
                 style={{ color: C.accent }}
               >
-                The Makers
+                The Collection
               </span>
               <h2
                 className="font-cormorant font-light leading-tight"
                 style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)', color: C.text }}
               >
-                World-Class Instruments
+                Three Traditions.<br />One Standard.
               </h2>
             </div>
             <p
               className="text-base max-w-xs leading-relaxed"
               style={{ color: C.muted }}
             >
-              Ten of the world's finest piano brands — selected for excellence,
-              not exclusivity.
+              Every instrument personally selected — regardless of nameplate.
             </p>
           </div>
 
-          <div className="border" style={{ borderColor: C.border }}>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
-              {BRANDS.map((brand) => (
-                <Link
-                  key={brand.slug}
-                  href={`/pianos/${brand.slug}`}
-                  className="group p-8 flex flex-col relative overflow-hidden transition-colors duration-200"
-                  style={{
-                    borderRight:  `1px solid ${C.border}`,
-                    borderBottom: `1px solid ${C.border}`,
-                  }}
-                >
-                  {/* Left accent bar — animates from 0 width on hover */}
-                  <div
-                    className="absolute left-0 top-0 bottom-0 w-0 group-hover:w-[3px] transition-all duration-300 ease-out"
-                    style={{ backgroundColor: C.accent }}
-                  />
-                  <div className="flex items-start justify-between mb-5">
-                    <p
-                      className="font-display text-[9px] tracking-[0.3em] uppercase leading-loose"
-                      style={{ color: C.muted }}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 border" style={{ borderColor: C.border }}>
+
+            {/* Steinway */}
+            <Link
+              href="/pianos/steinway"
+              className="group relative flex flex-col p-12 overflow-hidden transition-colors duration-300"
+              style={{ borderRight: `1px solid ${C.border}`, borderBottom: `1px solid ${C.border}` }}
+            >
+              <div
+                className="absolute left-0 top-0 bottom-0 w-0 group-hover:w-[3px] transition-all duration-300 ease-out"
+                style={{ backgroundColor: C.accent }}
+              />
+              <p
+                className="font-display text-[9px] tracking-[0.4em] uppercase mb-6"
+                style={{ color: C.muted }}
+              >
+                Hamburg · Est. 1853
+              </p>
+              <h3
+                className="font-cormorant font-light mb-5 leading-tight"
+                style={{ fontSize: 'clamp(2.2rem, 3vw, 3.2rem)', color: C.text }}
+              >
+                Steinway<br />&amp; Sons
+              </h3>
+              <p
+                className="text-sm leading-relaxed mb-8 flex-1"
+                style={{ color: C.muted }}
+              >
+                The standard by which all concert grands are measured. We carry Models S through D — the full Hamburg and New York range.
+              </p>
+              <div className="flex items-center justify-between">
+                <div className="flex gap-2 flex-wrap">
+                  {['Model B', 'Model D', 'Model M', 'Model S'].map((m) => (
+                    <span
+                      key={m}
+                      className="font-display text-[9px] tracking-[0.2em] uppercase px-2 py-1"
+                      style={{ backgroundColor: `${C.accent}10`, color: C.accent }}
                     >
-                      {brand.country.split('/')[0]?.trim()}<br />{brand.founded}
-                    </p>
-                    {brand.prestige === 'Ultra Premium' && (
-                      <div
-                        className="w-1.5 h-1.5 rounded-full shrink-0 mt-1"
-                        style={{ backgroundColor: C.accent }}
-                      />
-                    )}
-                  </div>
-                  <h3
-                    className="font-cormorant text-xl font-light leading-snug mb-2.5"
-                    style={{ color: C.text }}
+                      {m}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <p
+                className="font-display text-[10px] tracking-[0.3em] uppercase mt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                style={{ color: C.accent }}
+              >
+                Explore →
+              </p>
+            </Link>
+
+            {/* Handcrafted European */}
+            <Link
+              href="/pianos/european"
+              className="group relative flex flex-col p-12 overflow-hidden transition-colors duration-300"
+              style={{ borderRight: `1px solid ${C.border}`, borderBottom: `1px solid ${C.border}`, backgroundColor: C.darkBg }}
+            >
+              <div
+                className="absolute left-0 top-0 bottom-0 w-0 group-hover:w-[3px] transition-all duration-300 ease-out"
+                style={{ backgroundColor: C.accent }}
+              />
+              <p
+                className="font-display text-[9px] tracking-[0.4em] uppercase mb-6"
+                style={{ color: 'rgba(245,235,220,0.35)' }}
+              >
+                Vienna · Berlin · Leipzig · Hradec Králové
+              </p>
+              <h3
+                className="font-cormorant font-light mb-5 leading-tight"
+                style={{ fontSize: 'clamp(2.2rem, 3vw, 3.2rem)', color: C.ivory }}
+              >
+                Handcrafted<br />European Pianos
+              </h3>
+              <p
+                className="text-sm leading-relaxed mb-8 flex-1"
+                style={{ color: 'rgba(245,235,220,0.50)' }}
+              >
+                The great ateliers of Europe. Each maker with a distinct voice — from Bösendorfer's Viennese warmth to Bechstein's crystalline clarity.
+              </p>
+              <div className="flex gap-2 flex-wrap">
+                {['Bösendorfer', 'C. Bechstein', 'Blüthner', 'Petrof', 'Schimmel'].map((b) => (
+                  <span
+                    key={b}
+                    className="font-display text-[9px] tracking-[0.15em] uppercase px-2 py-1"
+                    style={{ border: `1px solid rgba(245,235,220,0.15)`, color: 'rgba(245,235,220,0.45)' }}
                   >
-                    {brand.name}
-                  </h3>
-                  <p
-                    className="text-xs leading-relaxed line-clamp-2 hidden sm:block flex-1"
-                    style={{ color: C.muted }}
+                    {b}
+                  </span>
+                ))}
+              </div>
+              <p
+                className="font-display text-[10px] tracking-[0.3em] uppercase mt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                style={{ color: C.accent }}
+              >
+                Explore →
+              </p>
+            </Link>
+
+            {/* Shigeru Kawai */}
+            <Link
+              href="/pianos/shigeru-kawai"
+              className="group relative flex flex-col p-12 overflow-hidden transition-colors duration-300"
+              style={{ borderBottom: `1px solid ${C.border}` }}
+            >
+              <div
+                className="absolute left-0 top-0 bottom-0 w-0 group-hover:w-[3px] transition-all duration-300 ease-out"
+                style={{ backgroundColor: C.accent }}
+              />
+              <p
+                className="font-display text-[9px] tracking-[0.4em] uppercase mb-6"
+                style={{ color: C.muted }}
+              >
+                Hamamatsu, Japan · Est. 1927
+              </p>
+              <h3
+                className="font-cormorant font-light mb-5 leading-tight"
+                style={{ fontSize: 'clamp(2.2rem, 3vw, 3.2rem)', color: C.text }}
+              >
+                Shigeru<br />Kawai
+              </h3>
+              <p
+                className="text-sm leading-relaxed mb-8 flex-1"
+                style={{ color: C.muted }}
+              >
+                Japan's finest concert instrument. A revelatory alternative to European grands — world-class tone at a fraction of the price.
+              </p>
+              <div className="flex gap-2 flex-wrap">
+                {['SK-2', 'SK-3', 'SK-5', 'SK-6', 'SK-7'].map((m) => (
+                  <span
+                    key={m}
+                    className="font-display text-[9px] tracking-[0.2em] uppercase px-2 py-1"
+                    style={{ backgroundColor: `${C.accent}10`, color: C.accent }}
                   >
-                    {brand.tagline}
-                  </p>
-                  <p
-                    className="font-display text-[9px] tracking-[0.3em] uppercase mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                    style={{ color: C.accent }}
-                  >
-                    Explore →
-                  </p>
-                </Link>
-              ))}
-            </div>
+                    {m}
+                  </span>
+                ))}
+              </div>
+              <p
+                className="font-display text-[10px] tracking-[0.3em] uppercase mt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                style={{ color: C.accent }}
+              >
+                Explore →
+              </p>
+            </Link>
+
           </div>
         </div>
       </section>

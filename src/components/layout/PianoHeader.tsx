@@ -5,15 +5,28 @@ import { useState } from 'react'
 import { cn } from '@/utilities/ui'
 import { PianoLogo } from './PianoLogo'
 
-const PIANO_BRANDS = [
-  { label: 'All Pianos', href: '/pianos' },
-  { label: 'Steinway & Sons', href: '/pianos/steinway' },
-  { label: 'Bösendorfer', href: '/pianos/bosendorfer' },
-  { label: 'C. Bechstein', href: '/pianos/bechstein' },
-  { label: 'Blüthner', href: '/pianos/bluthner' },
-  { label: 'Shigeru Kawai', href: '/pianos/shigeru-kawai' },
-  { label: 'Petrof', href: '/pianos/petrof' },
-  { label: 'Yamaha (CF Series)', href: '/pianos/yamaha' },
+const NAV_CATEGORIES = [
+  {
+    label: 'Steinway & Sons',
+    href: '/pianos/steinway',
+    brands: null,
+  },
+  {
+    label: 'Handcrafted European',
+    href: '/pianos/european',
+    brands: [
+      { label: 'Bösendorfer', href: '/pianos/bosendorfer' },
+      { label: 'C. Bechstein', href: '/pianos/bechstein' },
+      { label: 'Blüthner', href: '/pianos/bluthner' },
+      { label: 'Petrof', href: '/pianos/petrof' },
+      { label: 'Schimmel', href: '/pianos/schimmel' },
+    ],
+  },
+  {
+    label: 'Shigeru Kawai',
+    href: '/pianos/shigeru-kawai',
+    brands: null,
+  },
 ]
 
 const NAV_LINKS = [
@@ -62,20 +75,44 @@ export function PianoHeader() {
             </button>
 
             {pianoMenuOpen && (
-              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-52 bg-piano-cream border border-piano-linen shadow-lg shadow-piano-black/5 py-2">
-                {PIANO_BRANDS.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      'block px-5 py-3 font-display text-[10px] tracking-[0.25em] uppercase transition-colors',
-                      item.href === '/pianos'
-                        ? 'text-piano-black border-b border-piano-linen mb-1'
-                        : 'text-piano-stone hover:text-piano-black hover:bg-piano-warm-white',
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-64 bg-piano-cream border border-piano-linen shadow-lg shadow-piano-black/5 py-2">
+                {/* All Pianos */}
+                <Link
+                  href="/pianos"
+                  className="block px-5 py-3 font-display text-[10px] tracking-[0.25em] uppercase text-piano-black border-b border-piano-linen mb-2"
+                >
+                  All Pianos
+                </Link>
+
+                {NAV_CATEGORIES.map((cat) => (
+                  <div key={cat.href}>
+                    {/* Category link */}
+                    <Link
+                      href={cat.href}
+                      className={cn(
+                        'block px-5 py-2.5 font-display text-[10px] tracking-[0.25em] uppercase transition-colors',
+                        pathname.startsWith(cat.href)
+                          ? 'text-piano-black'
+                          : 'text-piano-stone hover:text-piano-black hover:bg-piano-warm-white',
+                      )}
+                    >
+                      {cat.label}
+                    </Link>
+                    {/* Sub-brands (European only) */}
+                    {cat.brands && (
+                      <div className="ml-4 border-l border-piano-linen pl-3 mb-1">
+                        {cat.brands.map((brand) => (
+                          <Link
+                            key={brand.href}
+                            href={brand.href}
+                            className="block px-2 py-1.5 font-display text-[9px] tracking-[0.2em] uppercase text-piano-stone/70 hover:text-piano-black transition-colors"
+                          >
+                            {brand.label}
+                          </Link>
+                        ))}
+                      </div>
                     )}
-                  >
-                    {item.label}
-                  </Link>
+                  </div>
                 ))}
               </div>
             )}
@@ -131,15 +168,39 @@ export function PianoHeader() {
             <p className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold mb-4">
               Pianos
             </p>
-            {PIANO_BRANDS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="block py-3 text-piano-stone hover:text-piano-black font-display text-[11px] tracking-[0.22em] uppercase transition-colors"
-              >
-                {item.label}
-              </Link>
+            {/* All Pianos */}
+            <Link
+              href="/pianos"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-3 text-piano-black font-display text-[11px] tracking-[0.22em] uppercase border-b border-piano-linen mb-2"
+            >
+              All Pianos
+            </Link>
+
+            {NAV_CATEGORIES.map((cat) => (
+              <div key={cat.href}>
+                <Link
+                  href={cat.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block py-3 text-piano-stone hover:text-piano-black font-display text-[11px] tracking-[0.22em] uppercase transition-colors"
+                >
+                  {cat.label}
+                </Link>
+                {cat.brands && (
+                  <div className="ml-4 border-l border-piano-linen pl-3 mb-1">
+                    {cat.brands.map((brand) => (
+                      <Link
+                        key={brand.href}
+                        href={brand.href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="block py-2 text-piano-stone/70 hover:text-piano-black font-display text-[10px] tracking-[0.2em] uppercase transition-colors"
+                      >
+                        {brand.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
             ))}
             <div className="pt-5 mt-5 border-t border-piano-linen space-y-1">
               {NAV_LINKS.map((link) => (
