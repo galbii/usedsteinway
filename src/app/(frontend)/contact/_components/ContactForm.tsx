@@ -3,31 +3,54 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { cn } from '@/utilities/ui'
 
-type InquiryType = 'buy' | 'sell' | 'general' | 'visit'
+type InquiryType = 'buy' | 'sell' | 'general'
 
 const inquiryTypes: { id: InquiryType; label: string; description: string }[] = [
   { id: 'buy', label: 'Buy a Piano', description: 'Browse inventory or find a specific instrument' },
   { id: 'sell', label: 'Sell a Piano', description: 'Request an appraisal for your piano' },
-  { id: 'visit', label: 'Visit', description: 'Come see the showroom and play the pianos' },
   { id: 'general', label: 'Contact', description: 'Advice, appraisals, or anything else' },
 ]
 
 export function ContactForm() {
   const [inquiryType, setInquiryType] = useState<InquiryType>('general')
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [form, setForm] = useState({
     name: '',
     email: '',
     phone: '',
     message: '',
-    subject: '',
     budget: '',
     timeline: '',
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSubmitted(true)
+    setLoading(true)
+    setError(null)
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...form,
+          inquiryType,
+        }),
+      })
+
+      if (!res.ok) {
+        const json = await res.json().catch(() => ({}))
+        throw new Error((json as { error?: string }).error || 'Something went wrong. Please try again.')
+      }
+
+      setSubmitted(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (submitted) {
@@ -59,7 +82,7 @@ export function ContactForm() {
         </div>
 
         <p className="text-piano-stone text-base leading-relaxed max-w-sm mb-12 font-light">
-          Roger reviews every message personally and will respond within one business day.
+          Roger reviews every message personally and will respond within one business day. A confirmation has been sent to your email.
         </p>
 
         <Link
@@ -208,12 +231,17 @@ export function ContactForm() {
               ? "Tell us what you're looking for — brand preferences, room size, musical style, specific models you've been considering..."
               : inquiryType === 'sell'
                 ? "Tell us about your piano — make, model, approximate year, condition, and what you know about its history."
-                : inquiryType === 'visit'
-                  ? "Let us know when you'd like to visit and what you'd like to see..."
-                  : "What can we help you with?"
+                : "What can we help you with?"
           }
         />
       </div>
+
+      {/* Error message */}
+      {error && (
+        <p className="font-display text-xs tracking-[0.2em] uppercase text-red-600 border border-red-200 bg-red-50 px-5 py-4">
+          {error}
+        </p>
+      )}
 
       {/* Submit */}
       <div className="pt-4">
@@ -221,9 +249,13 @@ export function ContactForm() {
         <div className="flex flex-col sm:flex-row sm:items-center gap-6">
           <button
             type="submit"
-            className="bg-piano-black text-piano-cream px-14 py-5 font-display text-xs tracking-[0.45em] uppercase hover:bg-piano-charcoal transition-all duration-300 whitespace-nowrap"
+            disabled={loading}
+            className={cn(
+              'bg-piano-black text-piano-cream px-14 py-5 font-display text-xs tracking-[0.45em] uppercase transition-all duration-300 whitespace-nowrap',
+              loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-piano-charcoal',
+            )}
           >
-            Send Message
+            {loading ? 'Sending...' : 'Send Message'}
           </button>
           <p className="text-piano-stone text-sm leading-relaxed">
             Roger responds personally to every message,<br className="hidden sm:block" /> typically within one business day.

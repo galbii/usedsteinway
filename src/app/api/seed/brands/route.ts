@@ -1,0 +1,41 @@
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
+import { seedSteinwayBrand } from '@/collections/Brands/seed'
+import { NextResponse } from 'next/server'
+
+// GET /api/seed/brands?secret=<SEED_SECRET>  — secret-protected, for CLI/CI use
+export async function GET(request: Request): Promise<NextResponse> {
+  const { searchParams } = new URL(request.url)
+  const secret = searchParams.get('secret')
+
+  if (!process.env.SEED_SECRET || secret !== process.env.SEED_SECRET) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  try {
+    const payload = await getPayload({ config: configPromise })
+    await seedSteinwayBrand(payload)
+    return NextResponse.json({ success: true, message: 'Steinway brand seeded.' })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
+}
+
+// POST /api/seed/brands  — authenticated admin session, used by the admin UI button
+export async function POST(request: Request): Promise<NextResponse> {
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const { user } = await payload.auth({ headers: request.headers as Headers })
+
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    await seedSteinwayBrand(payload)
+    return NextResponse.json({ success: true, message: 'Steinway brand seeded.' })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
+}

@@ -72,6 +72,7 @@ export interface Config {
     media: Media;
     categories: Category;
     users: User;
+    brands: Brand;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -94,6 +95,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    brands: BrandsSelect<false> | BrandsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -834,6 +836,101 @@ export interface Form {
   createdAt: string;
 }
 /**
+ * Piano brands with embedded model specifications.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "brands".
+ */
+export interface Brand {
+  id: string;
+  /**
+   * e.g. "Steinway & Sons"
+   */
+  name: string;
+  /**
+   * e.g. "steinway"
+   */
+  slug: string;
+  country?: string | null;
+  founded?: number | null;
+  category?: ('steinway' | 'european' | 'shigeru-kawai' | 'other') | null;
+  prestige?: ('Ultra Premium' | 'Premium' | 'Professional') | null;
+  tagline?: string | null;
+  description?: string | null;
+  whyBuyPreowned?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * e.g. "$30,000 – $200,000+"
+   */
+  priceRange?: string | null;
+  accentColor?: string | null;
+  heroImage?: (string | null) | Media;
+  /**
+   * Piano models offered by this brand.
+   */
+  models?:
+    | {
+        /**
+         * e.g. "Model B"
+         */
+        name: string;
+        /**
+         * e.g. "model-b"
+         */
+        slug: string;
+        type: 'Grand' | 'Upright' | 'Concert Grand';
+        /**
+         * e.g. "6'10""
+         */
+        size?: string | null;
+        /**
+         * e.g. "82"
+         */
+        sizeInches?: string | null;
+        weight?: string | null;
+        stringLength?: string | null;
+        /**
+         * e.g. "1884 – present"
+         */
+        yearRange?: string | null;
+        description: string;
+        highlights?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        priceGuide?:
+          | {
+              era: string;
+              condition: string;
+              priceRange: string;
+              id?: string | null;
+            }[]
+          | null;
+        adjacentModels?:
+          | {
+              adjacentSlug: string;
+              adjacentName: string;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Lower numbers appear first
+         */
+        order?: number | null;
+        image?: (string | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
@@ -1042,6 +1139,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: string | User;
+      } | null)
+    | ({
+        relationTo: 'brands';
+        value: string | Brand;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1405,6 +1506,68 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "brands_select".
+ */
+export interface BrandsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  country?: T;
+  founded?: T;
+  category?: T;
+  prestige?: T;
+  tagline?: T;
+  description?: T;
+  whyBuyPreowned?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  priceRange?: T;
+  accentColor?: T;
+  heroImage?: T;
+  models?:
+    | T
+    | {
+        name?: T;
+        slug?: T;
+        type?: T;
+        size?: T;
+        sizeInches?: T;
+        weight?: T;
+        stringLength?: T;
+        yearRange?: T;
+        description?: T;
+        highlights?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        priceGuide?:
+          | T
+          | {
+              era?: T;
+              condition?: T;
+              priceRange?: T;
+              id?: T;
+            };
+        adjacentModels?:
+          | T
+          | {
+              adjacentSlug?: T;
+              adjacentName?: T;
+              id?: T;
+            };
+        order?: T;
+        image?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

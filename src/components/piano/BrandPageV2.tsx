@@ -185,7 +185,7 @@ export function BrandPageV2({ brand, pianos, models }: BrandPageV2Props) {
                     {model.name}
                   </h3>
                   <p className="text-piano-stone text-sm mb-5">
-                    {model.size} · {model.yearRange}
+                    {model.size}
                   </p>
                   <p className="text-piano-stone text-base leading-relaxed line-clamp-2 mb-5">
                     {model.description}

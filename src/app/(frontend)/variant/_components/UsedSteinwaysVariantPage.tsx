@@ -1,33 +1,34 @@
 /* eslint-disable react/no-unescaped-entities */
 /**
- * UsedSteinways — Variant Design
+ * UsedSteinways — Variant Design (Optimized)
  * ─────────────────────────────────────────────────────────────
- * Palette: Deep Midnight Indigo + Warm Ivory + Burnished Gold
+ * Palette: Deep Midnight Burgundy + Warm Ivory + Burnished Gold
  *
  * Conceptual direction: A concert hall at night. Warm ivory base
- * sections (like candlelit programme notes) against deep indigo
- * darks (like velvet seats and stage shadow). Burnished gold accent
- * carries the heat — more vibrant and present than the original brass.
+ * sections (like candlelit programme notes) against deep burgundy
+ * darks (like velvet seats and stage shadow). Burnished gold accent.
  *
- * The warm-cool tension between ivory and indigo creates visual energy
- * that the original warm-on-warm palette doesn't have. Indigo reads
- * as prestigious, modern, serious — Christie's or a Tiffany box.
+ * Hero redesign: True geometric diagonal slash — a clip-path
+ * polygon cuts the ivory panel into the photo, no soft gradient.
+ * The CTA button is gold (not dark) to tie the accent into the
+ * primary action and soften the ivory panel. Tagline scales up.
  *
- * Design twists:
- *   Hero        → diagonal slash between panels
- *   Ticker      → deep indigo bar — first palette reveal
- *   Instruments → shadow cards with 4px gold top border, hover lift
- *   Philosophy  → full-bleed piano-keys image, indigo overlay
- *   Brands      → left gold accent bar animates in on hover
- *   Guides      → ivory cards floating on deep indigo bg
- *   Testimonial → burnished gold section bg — palette inversion
- *   CTA         → warm ivory, same typographic gravity
+ * Cleaned up throughout:
+ *   Hero        → diagonal clip-path slash (implemented from original intent)
+ *   Primary CTA → gold fill (warmer, more on-brand)
+ *   Tagline     → text-lg, more generous leading
+ *   Stats       → larger Cormorant numbers, full stat labels
+ *   Ticker      → increased text visibility (0.28 → 0.42 opacity)
+ *   Categories  → unified border system, richer tag styling
+ *   Guides      → minor card refinements
+ *   Testimonial → tighter attribution block
  * ─────────────────────────────────────────────────────────────
  */
 import Link from 'next/link'
 import Image from 'next/image'
-import { getFeaturedPianos, BRANDS, CATEGORIES, GUIDES, TESTIMONIALS } from '@/lib/piano-data'
+import { getFeaturedPianos, GUIDES, TESTIMONIALS } from '@/lib/piano-data'
 import { FeaturedCarousel } from './FeaturedCarousel'
+import { PianoLogo } from '@/components/layout'
 
 const C = {
   bg:          'hsl(36, 22%, 96%)',
@@ -36,12 +37,12 @@ const C = {
   accent:      'hsl(40, 72%, 52%)',
   accentLight: 'hsl(40, 65%, 88%)',
   accentMid:   'hsl(40, 58%, 68%)',
-  accentFaded: 'hsl(40, 72%, 52%, 0.28)',
+  accentFaded: 'hsla(40, 72%, 52%, 0.22)',
+  accentDim:   'hsla(40, 72%, 52%, 0.12)',
   text:        'hsl(350, 12%, 11%)',
   muted:       'hsl(350, 5%, 46%)',
   border:      'hsl(36, 18%, 89%)',
-  borderDark:  'hsl(350, 48%, 40%)',
-  hover:       'hsl(350, 8%, 93%)',
+  borderDark:  'hsl(350, 45%, 38%)',
   ivory:       'hsl(36, 22%, 96%)',
 }
 
@@ -54,109 +55,94 @@ export function UsedSteinwaysVariantPage() {
     <div style={{ backgroundColor: C.bg }}>
 
       {/* ═══════════════════════════════════════════════
-          HERO — Solid ivory panel left, photo right
+          HERO — True diagonal clip-path slash
+          The ivory panel cuts diagonally into the photo
+          using clip-path polygon, replacing the old
+          soft gradient fade.
       ═══════════════════════════════════════════════ */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
 
-        {/* Photo — full bleed, shows through on right */}
+        {/* Photo — full bleed */}
         <div className="absolute inset-0">
           <Image
             src="/Roger-at-work-2-for-web.jpg"
             alt="Roger evaluating a piano in the showroom"
             fill
             priority
-            className="object-cover object-[62%_center]"
+            className="object-cover object-[65%_center]"
             sizes="100vw"
           />
         </div>
 
-        {/* Desktop: solid ivory panel — widened for larger wordmark */}
+        {/* Desktop: ivory panel with geometric diagonal cut
+            Width 60% — clip-path narrows it to ~50% at bottom,
+            creating a ~10% diagonal slice into the photo.         */}
         <div
           className="absolute inset-y-0 left-0 hidden lg:block"
           style={{
-            width: 'calc(54% + 1px)',
+            width: '60%',
             backgroundColor: C.bg,
+            clipPath: 'polygon(0 0, 100% 0, 84% 100%, 0 100%)',
           }}
         />
 
-        {/* Desktop: feather at panel edge */}
-        <div
-          className="absolute inset-y-0 hidden lg:block"
-          style={{
-            left: '54%',
-            width: '80px',
-            background: `linear-gradient(to right, ${C.bg}, transparent)`,
-          }}
-        />
-
-        {/* Mobile: ivory fade downward — text reads on top, photo shows below */}
+        {/* Mobile: ivory gradient — clean top-to-bottom fade */}
         <div
           className="absolute inset-0 lg:hidden"
           style={{
-            background: `linear-gradient(to bottom, ${C.bg} 0%, ${C.bg} 52%, transparent 78%)`,
+            background: `linear-gradient(to bottom, ${C.bg} 0%, ${C.bg} 56%, transparent 82%)`,
           }}
         />
 
         {/* Content */}
         <div className="relative z-10 w-full max-w-7xl mx-auto px-8 md:px-14 xl:px-20 py-28 lg:py-0">
-          <div className="max-w-[560px] lg:max-w-[500px]">
+          <div className="max-w-[540px] lg:max-w-[480px]">
 
             {/* Overline */}
             <div
               className="flex items-center gap-4 mb-12 animate-fade-up"
               style={{ animationDelay: '0.05s', opacity: 0 }}
             >
-              <div className="h-px w-8" style={{ backgroundColor: C.accent }} />
+              <div className="h-px w-10" style={{ backgroundColor: C.accent }} />
               <span
-                className="font-display text-[11px] tracking-[0.5em] uppercase"
+                className="font-display text-[10px] tracking-[0.5em] uppercase"
                 style={{ color: C.muted }}
               >
                 New Hampshire · Est. 1993
               </span>
             </div>
 
-            {/* Wordmark — "Used Steinways" as the logo */}
-            <h1
-              className="font-cormorant font-light leading-[0.95] mb-10 animate-fade-up"
+            {/* Wordmark — primary identity mark */}
+            <div
+              className="mb-12 animate-fade-up"
               style={{ animationDelay: '0.14s', opacity: 0 }}
             >
-              <span
-                className="block italic"
-                style={{ fontSize: 'clamp(2.2rem, 3.5vw, 4rem)', color: C.accent }}
-              >
-                Used
-              </span>
-              <span
-                className="block"
-                style={{ fontSize: 'clamp(4rem, 7vw, 9rem)', color: C.text, letterSpacing: '-0.01em' }}
-              >
-                Steinways
-              </span>
-            </h1>
+              <PianoLogo size="xl" theme="light" noLink />
+            </div>
 
-            {/* Tagline */}
+            {/* Tagline — scaled up from text-base for better impact */}
             <p
-              className="text-base leading-[1.8] mb-12 animate-fade-up"
+              className="text-lg leading-[1.75] mb-14 animate-fade-up"
               style={{
                 animationDelay: '0.24s',
                 opacity: 0,
                 color: C.muted,
-                maxWidth: '34ch',
+                maxWidth: '30ch',
               }}
             >
               Every instrument personally evaluated by Roger —
               a Registered Piano Technician with thirty years of experience.
             </p>
 
-            {/* CTAs */}
+            {/* CTAs — primary in gold (accent), secondary ghost */}
             <div
               className="flex items-center gap-8 animate-fade-up"
               style={{ animationDelay: '0.32s', opacity: 0 }}
             >
               <Link
                 href="/pianos"
-                className="inline-flex items-center justify-center px-10 py-4 font-display text-[11px] tracking-[0.35em] uppercase transition-opacity duration-200 hover:opacity-75"
-                style={{ backgroundColor: C.text, color: C.bg }}
+                className="inline-flex items-center justify-center px-10 py-4 font-display text-[11px] tracking-[0.35em] uppercase transition-opacity duration-200 hover:opacity-80"
+                style={{ backgroundColor: C.accent, color: 'hsl(350, 62%, 14%)' }}
               >
                 Browse Collection
               </Link>
@@ -170,7 +156,7 @@ export function UsedSteinwaysVariantPage() {
               </Link>
             </div>
 
-            {/* Stats */}
+            {/* Stats — larger Cormorant numbers, full labels */}
             <div
               className="flex items-start mt-16 pt-10 animate-fade-up"
               style={{ animationDelay: '0.42s', opacity: 0, borderTop: `1px solid ${C.border}` }}
@@ -190,12 +176,12 @@ export function UsedSteinwaysVariantPage() {
                   <div>
                     <p
                       className="font-cormorant font-light leading-none"
-                      style={{ fontSize: 'clamp(2rem, 2.8vw, 3rem)', color: C.text }}
+                      style={{ fontSize: 'clamp(2.4rem, 3.2vw, 3.6rem)', color: C.text }}
                     >
                       {n}
                     </p>
                     <p
-                      className="font-display text-[10px] tracking-[0.4em] uppercase mt-2"
+                      className="font-display text-[9px] tracking-[0.42em] uppercase mt-2"
                       style={{ color: C.muted }}
                     >
                       {l}
@@ -210,7 +196,8 @@ export function UsedSteinwaysVariantPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          TICKER — First indigo reveal
+          TICKER — Brand names scroll
+          Increased opacity from 0.28 → 0.42 for legibility
       ═══════════════════════════════════════════════ */}
       <div
         className="h-12 flex items-center overflow-hidden"
@@ -223,14 +210,17 @@ export function UsedSteinwaysVariantPage() {
         <div className="flex items-center animate-ticker whitespace-nowrap">
           {[0, 1].map((i) => (
             <div key={i} className="flex items-center shrink-0">
-              {['Steinway & Sons', '·', 'Handcrafted European Pianos', '·', 'Bösendorfer', '·', 'C. Bechstein', '·', 'Blüthner', '·', 'Petrof', '·', 'Schimmel', '·', 'Shigeru Kawai'].map((item, idx) => (
-                <span key={idx} className="flex items-center">
-                  <span
-                    className="font-display text-[10px] tracking-[0.45em] uppercase px-8"
-                    style={{ color: 'rgba(245, 235, 220, 0.28)' }}
-                  >
-                    {item}
-                  </span>
+              {[
+                'Steinway & Sons', '·', 'Handcrafted European Pianos', '·',
+                'Bösendorfer', '·', 'C. Bechstein', '·', 'Blüthner', '·',
+                'Petrof', '·', 'Schimmel', '·', 'Shigeru Kawai',
+              ].map((item, idx) => (
+                <span
+                  key={idx}
+                  className="font-display text-[10px] tracking-[0.45em] uppercase px-8"
+                  style={{ color: 'rgba(245, 235, 220, 0.42)' }}
+                >
+                  {item}
                 </span>
               ))}
             </div>
@@ -239,7 +229,7 @@ export function UsedSteinwaysVariantPage() {
       </div>
 
       {/* ═══════════════════════════════════════════════
-          FEATURED INSTRUMENTS — Shadow cards, gold top border
+          FEATURED INSTRUMENTS
       ═══════════════════════════════════════════════ */}
       <section className="py-36 px-8" style={{ backgroundColor: C.bg }}>
         <div className="max-w-7xl mx-auto">
@@ -247,13 +237,13 @@ export function UsedSteinwaysVariantPage() {
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
             <div>
               <span
-                className="font-display text-[11px] tracking-[0.45em] uppercase block mb-5"
+                className="font-display text-[10px] tracking-[0.48em] uppercase block mb-5"
                 style={{ color: C.accent }}
               >
                 Hand-Selected
               </span>
               <h2
-                className="font-cormorant font-light leading-tight"
+                className="font-cormorant font-light leading-[1.05]"
                 style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)', color: C.text }}
               >
                 Featured Instruments
@@ -261,7 +251,7 @@ export function UsedSteinwaysVariantPage() {
             </div>
             <Link
               href="/pianos"
-              className="group flex items-center gap-2 font-display text-[11px] tracking-[0.3em] uppercase transition-colors"
+              className="group flex items-center gap-2 font-display text-[10px] tracking-[0.32em] uppercase transition-opacity hover:opacity-50"
               style={{ color: C.muted }}
             >
               View all 25 pianos
@@ -274,13 +264,11 @@ export function UsedSteinwaysVariantPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          PHILOSOPHY — Full-bleed piano-keys image, indigo overlay
+          PHILOSOPHY — Roger's voice + three pillars
       ═══════════════════════════════════════════════ */}
-      <section
-        className="relative py-36 px-8"
-        style={{ backgroundColor: C.darkBg }}
-      >
-        {/* Background: Roger working in the showroom */}
+      <section className="relative py-36 px-8" style={{ backgroundColor: C.darkBg }}>
+
+        {/* Background: Roger working */}
         <div className="absolute inset-0 overflow-hidden">
           <Image
             src="/Roger-at-work-2-for-web.jpg"
@@ -289,23 +277,22 @@ export function UsedSteinwaysVariantPage() {
             className="object-cover object-[center_30%]"
             sizes="100vw"
           />
-          {/* Heavy overlay — image serves as texture/atmosphere, text stays legible */}
           <div
             className="absolute inset-0"
-            style={{ backgroundColor: 'hsl(350, 62%, 26%, 0.88)' }}
+            style={{ backgroundColor: 'hsla(350, 62%, 16%, 0.90)' }}
           />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-[1fr_1px_1fr] items-start">
+          <div className="grid lg:grid-cols-[1fr_1px_1fr] items-start gap-0">
 
             {/* Left: Quote */}
-            <div className="lg:pr-20 pb-16 lg:pb-0">
+            <div className="lg:pr-24 pb-16 lg:pb-0">
               <div className="h-px w-10 mb-14" style={{ backgroundColor: C.accent }} />
               <blockquote
-                className="font-cormorant font-light italic leading-snug mb-12"
+                className="font-cormorant font-light italic leading-[1.2] mb-12"
                 style={{
-                  fontSize: 'clamp(1.8rem, 2.8vw, 2.8rem)',
+                  fontSize: 'clamp(1.9rem, 3vw, 3rem)',
                   color: C.ivory,
                 }}
               >
@@ -315,11 +302,11 @@ export function UsedSteinwaysVariantPage() {
               </blockquote>
               <div className="flex items-center gap-5">
                 <div
-                  className="w-11 h-11 flex items-center justify-center shrink-0"
-                  style={{ border: `1px solid ${C.accentMid}` }}
+                  className="w-10 h-10 flex items-center justify-center shrink-0"
+                  style={{ border: `1px solid ${C.borderDark}` }}
                 >
                   <span
-                    className="font-display text-xs font-bold"
+                    className="font-display text-xs font-semibold"
                     style={{ color: C.accent }}
                   >
                     R
@@ -333,8 +320,8 @@ export function UsedSteinwaysVariantPage() {
                     Roger
                   </p>
                   <p
-                    className="font-display text-[10px] tracking-[0.35em] uppercase"
-                    style={{ color: C.muted }}
+                    className="font-display text-[9px] tracking-[0.38em] uppercase"
+                    style={{ color: 'rgba(245, 235, 220, 0.40)' }}
                   >
                     Founder · RPT · 30 Years
                   </p>
@@ -344,30 +331,31 @@ export function UsedSteinwaysVariantPage() {
 
             {/* Divider */}
             <div
-              className="hidden lg:block w-px self-stretch mx-14"
-              style={{ backgroundColor: C.borderDark }}
+              className="hidden lg:block self-stretch mx-16"
+              style={{ width: '1px', backgroundColor: C.borderDark }}
             />
 
             {/* Right: Pillars */}
             <div
-              className="lg:pl-20 pt-16 lg:pt-0 border-t lg:border-0"
+              className="lg:pl-24 pt-16 lg:pt-0 border-t lg:border-0"
               style={{ borderColor: C.borderDark }}
             >
               <span
-                className="font-display text-[11px] tracking-[0.45em] uppercase block mb-10"
+                className="font-display text-[10px] tracking-[0.48em] uppercase block mb-10"
                 style={{ color: C.accent }}
               >
                 The Difference
               </span>
               <h3
-                className="font-cormorant font-light mb-14 leading-snug"
+                className="font-cormorant font-light mb-14 leading-[1.1]"
                 style={{
-                  fontSize: 'clamp(2.2rem, 3.5vw, 3.4rem)',
+                  fontSize: 'clamp(2.4rem, 3.8vw, 3.6rem)',
                   color: C.ivory,
                 }}
               >
                 The Curator,<br />Not the Warehouse
               </h3>
+
               <div className="space-y-10">
                 {[
                   {
@@ -383,26 +371,26 @@ export function UsedSteinwaysVariantPage() {
                   {
                     n: '03',
                     title: 'Personal Expertise',
-                    body: 'Every instrument evaluated by Roger personally. A 30-year RPT who has worked on concert grands at Symphony Hall.',
+                    body: 'Every instrument evaluated by Roger personally — a 30-year RPT who has worked on concert grands at Symphony Hall.',
                   },
                 ].map(({ n, title, body }) => (
-                  <div key={n} className="flex gap-7">
+                  <div key={n} className="flex gap-8">
                     <span
-                      className="font-display text-[10px] tracking-widest pt-0.5 shrink-0 w-7"
-                      style={{ color: 'hsl(40, 72%, 52%, 0.30)' }}
+                      className="font-display text-[9px] tracking-widest pt-1 shrink-0 w-6"
+                      style={{ color: 'hsla(40, 72%, 52%, 0.28)' }}
                     >
                       {n}
                     </span>
                     <div>
                       <h4
-                        className="font-cormorant text-2xl font-light mb-2"
+                        className="font-cormorant text-[1.4rem] font-light mb-2 leading-snug"
                         style={{ color: C.ivory }}
                       >
                         {title}
                       </h4>
                       <p
-                        className="text-base leading-relaxed"
-                        style={{ color: C.muted }}
+                        className="text-sm leading-relaxed"
+                        style={{ color: 'rgba(245, 235, 220, 0.52)' }}
                       >
                         {body}
                       </p>
@@ -410,6 +398,7 @@ export function UsedSteinwaysVariantPage() {
                   </div>
                 ))}
               </div>
+
               <div
                 className="mt-12 pt-8"
                 style={{ borderTop: `1px solid ${C.borderDark}` }}
@@ -417,18 +406,20 @@ export function UsedSteinwaysVariantPage() {
                 <Link
                   href="/about"
                   className="font-display text-[10px] tracking-[0.35em] uppercase transition-opacity hover:opacity-100 inline-flex items-center gap-2"
-                  style={{ color: C.accentFaded }}
+                  style={{ color: 'hsla(40, 72%, 52%, 0.45)' }}
                 >
                   Roger's story →
                 </Link>
               </div>
             </div>
+
           </div>
         </div>
       </section>
 
       {/* ═══════════════════════════════════════════════
           CATEGORIES — Three editorial pillars
+          Unified border system. Left gold accent bar on hover.
       ═══════════════════════════════════════════════ */}
       <section className="py-36 px-8" style={{ backgroundColor: C.bg }}>
         <div className="max-w-7xl mx-auto">
@@ -436,46 +427,50 @@ export function UsedSteinwaysVariantPage() {
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
             <div>
               <span
-                className="font-display text-[11px] tracking-[0.45em] uppercase block mb-5"
+                className="font-display text-[10px] tracking-[0.48em] uppercase block mb-5"
                 style={{ color: C.accent }}
               >
                 The Collection
               </span>
               <h2
-                className="font-cormorant font-light leading-tight"
+                className="font-cormorant font-light leading-[1.05]"
                 style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)', color: C.text }}
               >
                 Three Traditions.<br />One Standard.
               </h2>
             </div>
             <p
-              className="text-base max-w-xs leading-relaxed"
+              className="text-base max-w-[28ch] leading-relaxed"
               style={{ color: C.muted }}
             >
               Every instrument personally selected — regardless of nameplate.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 border" style={{ borderColor: C.border }}>
+          {/* Cards — use border-collapse pattern to avoid double borders */}
+          <div
+            className="grid grid-cols-1 lg:grid-cols-3"
+            style={{ border: `1px solid ${C.border}` }}
+          >
 
             {/* Steinway */}
             <Link
               href="/pianos/steinway"
               className="group relative flex flex-col p-12 overflow-hidden transition-colors duration-300"
-              style={{ borderRight: `1px solid ${C.border}`, borderBottom: `1px solid ${C.border}` }}
+              style={{ borderRight: `1px solid ${C.border}` }}
             >
               <div
                 className="absolute left-0 top-0 bottom-0 w-0 group-hover:w-[3px] transition-all duration-300 ease-out"
                 style={{ backgroundColor: C.accent }}
               />
               <p
-                className="font-display text-[9px] tracking-[0.4em] uppercase mb-6"
+                className="font-display text-[9px] tracking-[0.42em] uppercase mb-7"
                 style={{ color: C.muted }}
               >
                 Hamburg · Est. 1853
               </p>
               <h3
-                className="font-cormorant font-light mb-5 leading-tight"
+                className="font-cormorant font-light mb-5 leading-[1.05]"
                 style={{ fontSize: 'clamp(2.2rem, 3vw, 3.2rem)', color: C.text }}
               >
                 Steinway<br />&amp; Sons
@@ -486,21 +481,22 @@ export function UsedSteinwaysVariantPage() {
               >
                 The standard by which all concert grands are measured. We carry Models S through D — the full Hamburg and New York range.
               </p>
-              <div className="flex items-center justify-between">
-                <div className="flex gap-2 flex-wrap">
-                  {['Model B', 'Model D', 'Model M', 'Model S'].map((m) => (
-                    <span
-                      key={m}
-                      className="font-display text-[9px] tracking-[0.2em] uppercase px-2 py-1"
-                      style={{ backgroundColor: `${C.accent}10`, color: C.accent }}
-                    >
-                      {m}
-                    </span>
-                  ))}
-                </div>
+              <div className="flex gap-2 flex-wrap mb-8">
+                {['Model B', 'Model D', 'Model M', 'Model S'].map((m) => (
+                  <span
+                    key={m}
+                    className="font-display text-[8px] tracking-[0.22em] uppercase px-2.5 py-1.5"
+                    style={{
+                      backgroundColor: C.accentDim,
+                      color: 'hsl(40, 55%, 38%)',
+                    }}
+                  >
+                    {m}
+                  </span>
+                ))}
               </div>
               <p
-                className="font-display text-[10px] tracking-[0.3em] uppercase mt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                className="font-display text-[9px] tracking-[0.3em] uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                 style={{ color: C.accent }}
               >
                 Explore →
@@ -511,43 +507,49 @@ export function UsedSteinwaysVariantPage() {
             <Link
               href="/pianos/european"
               className="group relative flex flex-col p-12 overflow-hidden transition-colors duration-300"
-              style={{ borderRight: `1px solid ${C.border}`, borderBottom: `1px solid ${C.border}`, backgroundColor: C.darkBg }}
+              style={{
+                borderRight: `1px solid ${C.border}`,
+                backgroundColor: C.darkBg,
+              }}
             >
               <div
                 className="absolute left-0 top-0 bottom-0 w-0 group-hover:w-[3px] transition-all duration-300 ease-out"
                 style={{ backgroundColor: C.accent }}
               />
               <p
-                className="font-display text-[9px] tracking-[0.4em] uppercase mb-6"
-                style={{ color: 'rgba(245,235,220,0.35)' }}
+                className="font-display text-[9px] tracking-[0.42em] uppercase mb-7"
+                style={{ color: 'rgba(245,235,220,0.30)' }}
               >
-                Vienna · Berlin · Leipzig · Hradec Králové
+                Vienna · Berlin · Leipzig
               </p>
               <h3
-                className="font-cormorant font-light mb-5 leading-tight"
+                className="font-cormorant font-light mb-5 leading-[1.05]"
                 style={{ fontSize: 'clamp(2.2rem, 3vw, 3.2rem)', color: C.ivory }}
               >
-                Handcrafted<br />European Pianos
+                Handcrafted<br />European
               </h3>
               <p
                 className="text-sm leading-relaxed mb-8 flex-1"
-                style={{ color: 'rgba(245,235,220,0.50)' }}
+                style={{ color: 'rgba(245,235,220,0.48)' }}
               >
                 The great ateliers of Europe. Each maker with a distinct voice — from Bösendorfer's Viennese warmth to Bechstein's crystalline clarity.
               </p>
-              <div className="flex gap-2 flex-wrap">
-                {['Bösendorfer', 'C. Bechstein', 'Blüthner', 'Petrof', 'Schimmel'].map((b) => (
+              <div className="flex gap-2 flex-wrap mb-8">
+                {['Bösendorfer', 'C. Bechstein', 'Blüthner', 'Petrof'].map((b) => (
                   <span
                     key={b}
-                    className="font-display text-[9px] tracking-[0.15em] uppercase px-2 py-1"
-                    style={{ border: `1px solid rgba(245,235,220,0.15)`, color: 'rgba(245,235,220,0.45)' }}
+                    className="font-display text-[8px] tracking-[0.15em] uppercase px-2.5 py-1.5"
+                    style={{
+                      border: `1px solid rgba(245,235,220,0.14)`,
+                      color: 'rgba(245,235,220,0.38)',
+                    }}
                   >
                     {b}
                   </span>
                 ))}
               </div>
               <p
-                className="font-display text-[10px] tracking-[0.3em] uppercase mt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                className="font-display text-[9px] tracking-[0.3em] uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                 style={{ color: C.accent }}
               >
                 Explore →
@@ -558,20 +560,19 @@ export function UsedSteinwaysVariantPage() {
             <Link
               href="/pianos/shigeru-kawai"
               className="group relative flex flex-col p-12 overflow-hidden transition-colors duration-300"
-              style={{ borderBottom: `1px solid ${C.border}` }}
             >
               <div
                 className="absolute left-0 top-0 bottom-0 w-0 group-hover:w-[3px] transition-all duration-300 ease-out"
                 style={{ backgroundColor: C.accent }}
               />
               <p
-                className="font-display text-[9px] tracking-[0.4em] uppercase mb-6"
+                className="font-display text-[9px] tracking-[0.42em] uppercase mb-7"
                 style={{ color: C.muted }}
               >
                 Hamamatsu, Japan · Est. 1927
               </p>
               <h3
-                className="font-cormorant font-light mb-5 leading-tight"
+                className="font-cormorant font-light mb-5 leading-[1.05]"
                 style={{ fontSize: 'clamp(2.2rem, 3vw, 3.2rem)', color: C.text }}
               >
                 Shigeru<br />Kawai
@@ -582,19 +583,22 @@ export function UsedSteinwaysVariantPage() {
               >
                 Japan's finest concert instrument. A revelatory alternative to European grands — world-class tone at a fraction of the price.
               </p>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap mb-8">
                 {['SK-2', 'SK-3', 'SK-5', 'SK-6', 'SK-7'].map((m) => (
                   <span
                     key={m}
-                    className="font-display text-[9px] tracking-[0.2em] uppercase px-2 py-1"
-                    style={{ backgroundColor: `${C.accent}10`, color: C.accent }}
+                    className="font-display text-[8px] tracking-[0.22em] uppercase px-2.5 py-1.5"
+                    style={{
+                      backgroundColor: C.accentDim,
+                      color: 'hsl(40, 55%, 38%)',
+                    }}
                   >
                     {m}
                   </span>
                 ))}
               </div>
               <p
-                className="font-display text-[10px] tracking-[0.3em] uppercase mt-8 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                className="font-display text-[9px] tracking-[0.3em] uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                 style={{ color: C.accent }}
               >
                 Explore →
@@ -606,7 +610,7 @@ export function UsedSteinwaysVariantPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          GUIDES — Ivory cards floating on deep indigo
+          GUIDES — Ivory cards on deep burgundy
       ═══════════════════════════════════════════════ */}
       <section className="py-36 px-8" style={{ backgroundColor: C.darkBg }}>
         <div className="max-w-7xl mx-auto">
@@ -614,13 +618,13 @@ export function UsedSteinwaysVariantPage() {
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
             <div>
               <span
-                className="font-display text-[11px] tracking-[0.45em] uppercase block mb-5"
+                className="font-display text-[10px] tracking-[0.48em] uppercase block mb-5"
                 style={{ color: C.accent }}
               >
                 Expert Knowledge
               </span>
               <h2
-                className="font-cormorant font-light leading-tight"
+                className="font-cormorant font-light leading-[1.05]"
                 style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)', color: C.ivory }}
               >
                 Buy With Confidence
@@ -628,15 +632,14 @@ export function UsedSteinwaysVariantPage() {
             </div>
             <Link
               href="/guides"
-              className="group flex items-center gap-2 font-display text-[11px] tracking-[0.3em] uppercase transition-colors"
-              style={{ color: C.muted }}
+              className="group flex items-center gap-2 font-display text-[10px] tracking-[0.32em] uppercase transition-opacity hover:opacity-50"
+              style={{ color: 'rgba(245,235,220,0.42)' }}
             >
               All guides
               <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
             </Link>
           </div>
 
-          {/* Ivory cards — cool indigo shadow creates depth against dark bg */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {featuredGuides.map((guide) => (
               <Link
@@ -646,31 +649,31 @@ export function UsedSteinwaysVariantPage() {
                 style={{
                   backgroundColor: C.bg,
                   border: `1px solid ${C.border}`,
-                  boxShadow: '0 2px 20px hsl(350 62% 26% / 0.45)',
+                  boxShadow: '0 4px 28px hsla(350, 62%, 16%, 0.40)',
                 }}
               >
                 <div className="flex items-center justify-between mb-8">
                   <span
-                    className="font-display text-[10px] tracking-[0.35em] uppercase"
+                    className="font-display text-[9px] tracking-[0.38em] uppercase"
                     style={{ color: C.accentMid }}
                   >
                     {guide.category}
                   </span>
                   <span
-                    className="font-display text-[10px] tracking-wide"
+                    className="font-display text-[9px] tracking-wide"
                     style={{ color: C.muted }}
                   >
                     {guide.readTime}
                   </span>
                 </div>
                 <h3
-                  className="font-cormorant text-[2rem] font-light leading-snug mb-5 flex-1"
+                  className="font-cormorant text-[1.9rem] font-light leading-[1.1] mb-5 flex-1"
                   style={{ color: C.text }}
                 >
                   {guide.title}
                 </h3>
                 <p
-                  className="text-base leading-relaxed line-clamp-3 mb-8"
+                  className="text-sm leading-relaxed line-clamp-3 mb-8"
                   style={{ color: C.muted }}
                 >
                   {guide.description}
@@ -680,8 +683,8 @@ export function UsedSteinwaysVariantPage() {
                   style={{ borderTop: `1px solid ${C.border}` }}
                 >
                   <span
-                    className="font-display text-[10px] tracking-[0.3em] uppercase inline-flex items-center gap-2 transition-opacity group-hover:opacity-80"
-                    style={{ color: C.accentFaded }}
+                    className="font-display text-[9px] tracking-[0.32em] uppercase inline-flex items-center gap-2 transition-opacity group-hover:opacity-60"
+                    style={{ color: C.accentMid }}
                   >
                     Read guide
                     <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
@@ -694,23 +697,23 @@ export function UsedSteinwaysVariantPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          TESTIMONIAL — Burnished gold section — palette inversion
-          Deep indigo text on warm gold: maximum contrast, most
-          striking moment on the page.
+          TESTIMONIAL — Burnished gold inversion
+          Deep burgundy text on warm gold: maximum
+          contrast, most striking moment on the page.
       ═══════════════════════════════════════════════ */}
       {testimonial && (
         <section
           className="relative py-32 px-8 overflow-hidden"
           style={{ backgroundColor: C.accent }}
         >
-          {/* Large decorative opening quote — structural atmosphere */}
+          {/* Decorative oversized opening quote mark */}
           <div
             className="absolute select-none pointer-events-none"
             style={{
               fontFamily: "'Cormorant Garamond', serif",
               fontSize: 'clamp(18rem, 30vw, 28rem)',
               lineHeight: 1,
-              color: 'hsl(350, 62%, 26%, 0.07)',
+              color: 'hsla(350, 62%, 26%, 0.06)',
               top: '-2rem',
               left: '-1rem',
               fontStyle: 'italic',
@@ -721,12 +724,12 @@ export function UsedSteinwaysVariantPage() {
           </div>
 
           <div className="relative z-10 max-w-5xl mx-auto">
-            {/* Top rule + label */}
+            {/* Label */}
             <div className="flex items-center gap-5 mb-16">
-              <div className="h-px flex-1 max-w-[3rem]" style={{ backgroundColor: 'hsl(350, 62%, 26%, 0.35)' }} />
+              <div className="h-px max-w-[3rem] flex-1" style={{ backgroundColor: 'hsla(350, 62%, 26%, 0.28)' }} />
               <span
-                className="font-display text-[12px] tracking-[0.42em] uppercase"
-                style={{ color: 'hsl(350, 62%, 26%, 0.70)' }}
+                className="font-display text-[11px] tracking-[0.45em] uppercase"
+                style={{ color: 'hsla(350, 62%, 26%, 0.65)' }}
               >
                 Client Story
               </span>
@@ -734,7 +737,7 @@ export function UsedSteinwaysVariantPage() {
 
             {/* Quote */}
             <blockquote
-              className="font-cormorant font-light italic leading-[1.25] mb-16"
+              className="font-cormorant font-light italic leading-[1.22] mb-16"
               style={{
                 fontSize: 'clamp(2rem, 3.5vw, 3.4rem)',
                 color: 'hsl(350, 62%, 14%)',
@@ -744,48 +747,42 @@ export function UsedSteinwaysVariantPage() {
               &ldquo;{testimonial.quote}&rdquo;
             </blockquote>
 
-            {/* Attribution + CTA row */}
+            {/* Attribution + CTA */}
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-10">
-
-              {/* Attribution */}
               <div className="flex items-center gap-5">
-                {/* Small monogram mark */}
                 <div
-                  className="w-11 h-11 flex items-center justify-center shrink-0"
-                  style={{
-                    border: '1px solid hsl(350, 62%, 26%, 0.35)',
-                  }}
+                  className="w-10 h-10 flex items-center justify-center shrink-0"
+                  style={{ border: '1px solid hsla(350, 62%, 26%, 0.28)' }}
                 >
                   <span
                     className="font-cormorant text-xl font-light"
-                    style={{ color: 'hsl(350, 62%, 26%, 0.70)' }}
+                    style={{ color: 'hsla(350, 62%, 26%, 0.65)' }}
                   >
                     {testimonial.name.charAt(0)}
                   </span>
                 </div>
                 <div>
                   <p
-                    className="font-display text-[13px] tracking-[0.38em] uppercase mb-2"
-                    style={{ color: 'hsl(350, 12%, 11%, 0.85)' }}
+                    className="font-display text-[12px] tracking-[0.38em] uppercase mb-1.5"
+                    style={{ color: 'hsla(350, 12%, 11%, 0.82)' }}
                   >
                     {testimonial.name}
                   </p>
                   <p
-                    className="font-display text-[12px] tracking-[0.26em] uppercase"
-                    style={{ color: 'hsl(350, 12%, 11%, 0.58)' }}
+                    className="font-display text-[11px] tracking-[0.24em] uppercase"
+                    style={{ color: 'hsla(350, 12%, 11%, 0.50)' }}
                   >
                     {testimonial.piano} · {testimonial.location}
                   </p>
                 </div>
               </div>
 
-              {/* Black CTA button */}
               <Link
                 href="/testimonials"
-                className="inline-flex items-center gap-3 px-9 py-4 font-display text-[12px] tracking-[0.35em] uppercase transition-opacity duration-200 hover:opacity-80 shrink-0"
+                className="inline-flex items-center gap-3 px-9 py-4 font-display text-[11px] tracking-[0.35em] uppercase transition-opacity duration-200 hover:opacity-80 shrink-0"
                 style={{
                   backgroundColor: 'hsl(350, 12%, 11%)',
-                  color: '#ffffff',
+                  color: '#fff',
                 }}
               >
                 More Stories
@@ -801,26 +798,27 @@ export function UsedSteinwaysVariantPage() {
       ═══════════════════════════════════════════════ */}
       <section className="py-36 px-8" style={{ backgroundColor: C.bg }}>
         <div className="max-w-3xl mx-auto text-center">
+
           <div className="flex items-center justify-center gap-5 mb-12">
-            <div className="h-px w-12" style={{ backgroundColor: 'hsl(40, 72%, 52%, 0.45)' }} />
+            <div className="h-px w-10" style={{ backgroundColor: 'hsla(40, 72%, 52%, 0.38)' }} />
             <span
-              className="font-display text-[10px] tracking-[0.45em] uppercase"
+              className="font-display text-[10px] tracking-[0.48em] uppercase"
               style={{ color: C.muted }}
             >
               New Hampshire Showroom
             </span>
-            <div className="h-px w-12" style={{ backgroundColor: 'hsl(40, 72%, 52%, 0.45)' }} />
+            <div className="h-px w-10" style={{ backgroundColor: 'hsla(40, 72%, 52%, 0.38)' }} />
           </div>
 
           <h2
-            className="font-cormorant font-light leading-tight mb-8"
+            className="font-cormorant font-light leading-[1.0] mb-8"
             style={{ fontSize: 'clamp(3.5rem, 7vw, 7.5rem)', color: C.text }}
           >
             Begin Your<br />Search
           </h2>
 
           <p
-            className="text-lg leading-relaxed max-w-md mx-auto mb-14"
+            className="text-lg leading-relaxed max-w-[36ch] mx-auto mb-14"
             style={{ color: C.muted }}
           >
             Tell us what you're looking for — or come hear the pianos yourself.
@@ -845,13 +843,13 @@ export function UsedSteinwaysVariantPage() {
           </div>
 
           <p
-            className="mt-10 text-base font-display tracking-wide"
+            className="mt-10 font-display text-sm tracking-wide"
             style={{ color: C.muted }}
           >
             or call{' '}
             <a
               href="tel:+16035550123"
-              className="transition-colors hover:opacity-80"
+              className="transition-opacity hover:opacity-70"
               style={{ color: C.text }}
             >
               (603) 555-0123
