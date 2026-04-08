@@ -43,12 +43,19 @@ interface FeaturedCarouselProps {
 }
 
 export function FeaturedCarousel({ pianos }: FeaturedCarouselProps) {
+  const prefersReducedMotion =
+    typeof window !== 'undefined'
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false
+
   const [activeIndex,    setActiveIndex]    = useState(0)
   const [transitionKey,  setTransitionKey]  = useState(0)   // bump → restart curtain CSS anim
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [direction,      setDirection]      = useState<'next' | 'prev'>('next')
   const [isPaused,       setIsPaused]       = useState(false)
   const [progress,       setProgress]       = useState(0)   // 0–100 for active dot fill
+  const [touchStartX,    setTouchStartX]    = useState(0)
+  const [touchStartY,    setTouchStartY]    = useState(0)
 
   const progressStart = useRef<number>(Date.now())
   const rafRef        = useRef<number | null>(null)
@@ -87,6 +94,20 @@ export function FeaturedCarousel({ pianos }: FeaturedCarouselProps) {
     () => navigate((activeIndex - 1 + pianos.length) % pianos.length, 'prev'),
     [activeIndex, pianos.length, navigate],
   )
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.targetTouches[0]!.clientX)
+    setTouchStartY(e.targetTouches[0]!.clientY)
+  }
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const dx = touchStartX - e.changedTouches[0]!.clientX
+    const dy = Math.abs(touchStartY - e.changedTouches[0]!.clientY)
+    if (Math.abs(dx) > 48 && dy < 80) {
+      if (dx > 0) goNext()
+      else goPrev()
+    }
+  }
 
   // ── Auto-advance + rAF progress bar ──────────────────────────
   useEffect(() => {
@@ -188,6 +209,8 @@ export function FeaturedCarousel({ pianos }: FeaturedCarouselProps) {
         className="relative"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
 
         {/* ── Outer card shell ───────────────────────────────────── */}
@@ -225,7 +248,7 @@ export function FeaturedCarousel({ pianos }: FeaturedCarouselProps) {
                 key={`kb-${activeIndex}`}
                 className="absolute inset-0"
                 style={{
-                  animation: isTransitioning
+                  animation: isTransitioning || prefersReducedMotion
                     ? undefined
                     : `kb-zoom ${DURATION + TRANS}ms linear forwards`,
                 }}
@@ -259,7 +282,7 @@ export function FeaturedCarousel({ pianos }: FeaturedCarouselProps) {
                   className="absolute inset-0 z-20 pointer-events-none"
                   style={{
                     backgroundColor: C.accent,
-                    animation: `curtain-sweep-${direction} ${TRANS}ms cubic-bezier(0.76, 0, 0.24, 1) forwards`,
+                    animation: `curtain-sweep-${direction} ${TRANS}ms cubic-bezier(0.4, 0, 0.2, 1) forwards`,
                   }}
                 />
               )}
@@ -446,17 +469,19 @@ export function FeaturedCarousel({ pianos }: FeaturedCarouselProps) {
                 key={i}
                 onClick={() => navigate(i, i > activeIndex ? 'next' : 'prev')}
                 aria-label={`Go to slide ${i + 1}`}
-                className="relative overflow-hidden"
+                className="relative overflow-hidden hover:opacity-75 transition-opacity duration-150"
                 style={{ width: '40px', height: '1px', backgroundColor: C.border }}
               >
                 {/* Active: live fill */}
                 {i === activeIndex && (
                   <span
-                    className="absolute inset-y-0 left-0"
                     style={{
-                      width: `${progress}%`,
+                      position: 'absolute',
+                      inset: 0,
+                      transform: `scaleX(${progress / 100})`,
+                      transformOrigin: 'left',
                       backgroundColor: C.accent,
-                      transition: 'width 80ms linear',
+                      transition: 'transform 80ms linear',
                     }}
                   />
                 )}
@@ -476,7 +501,7 @@ export function FeaturedCarousel({ pianos }: FeaturedCarouselProps) {
             <button
               onClick={goPrev}
               aria-label="Previous"
-              className="group flex items-center justify-center w-10 h-10 transition-all duration-300 hover:border-[hsl(40,72%,52%)]"
+              className="group flex items-center justify-center w-10 h-10 transition-all duration-300 hover:border-[hsl(40,72%,52%)] hover:bg-[hsl(40,72%,52%)]"
               style={{ border: `1px solid ${C.border}` }}
             >
               <svg
@@ -484,7 +509,7 @@ export function FeaturedCarousel({ pianos }: FeaturedCarouselProps) {
                 height="12"
                 viewBox="0 0 12 12"
                 fill="none"
-                className="transition-transform duration-300 group-hover:-translate-x-0.5"
+                className="transition-transform duration-300 group-hover:-translate-x-0.5 group-hover:[&_path]:stroke-white"
               >
                 <path
                   d="M8 6H4M5.5 3.5L3 6l2.5 2.5"

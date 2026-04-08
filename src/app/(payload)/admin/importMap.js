@@ -21,6 +21,7 @@ import { MediaSelectorButton as MediaSelectorButton_5915b45382c28678be5ee78e6a78
 import { FolderTableCell as FolderTableCell_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 import { FolderField as FolderField_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 import { SeedButton as SeedButton_bbbefcd69fe3a7cc8d543ddc32add190 } from '@/collections/Brands/SeedButton'
+import { SeedButton as SeedButton_4007fb73756df8a7f4889871c786aa43 } from '@/collections/Pianos/SeedButton'
 import { LinkToDoc as LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { ReindexButton as ReindexButton_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { FolderTypeField as FolderTypeField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
@@ -53,6 +54,7 @@ export const importMap = {
   "@payloadcms/next/rsc#FolderTableCell": FolderTableCell_f9c02e79a4aed9a3924487c0cd4cafb1,
   "@payloadcms/next/rsc#FolderField": FolderField_f9c02e79a4aed9a3924487c0cd4cafb1,
   "@/collections/Brands/SeedButton#SeedButton": SeedButton_bbbefcd69fe3a7cc8d543ddc32add190,
+  "@/collections/Pianos/SeedButton#SeedButton": SeedButton_4007fb73756df8a7f4889871c786aa43,
   "@payloadcms/plugin-search/client#LinkToDoc": LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/plugin-search/client#ReindexButton": ReindexButton_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/next/client#FolderTypeField": FolderTypeField_2b8867833a34864a02ddf429b0728a40,

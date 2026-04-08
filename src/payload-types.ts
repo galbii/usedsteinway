@@ -73,6 +73,7 @@ export interface Config {
     categories: Category;
     users: User;
     brands: Brand;
+    pianos: Piano;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -96,6 +97,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     brands: BrandsSelect<false> | BrandsSelect<true>;
+    pianos: PianosSelect<false> | PianosSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -931,6 +933,131 @@ export interface Brand {
   createdAt: string;
 }
 /**
+ * Individual piano listings available for sale.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pianos".
+ */
+export interface Piano {
+  id: string;
+  /**
+   * e.g. "2015 Steinway Model B — Satin Ebony"
+   */
+  title: string;
+  brand: string | Brand;
+  /**
+   * e.g. "Model B"
+   */
+  model?: string | null;
+  /**
+   * Manufacturing year
+   */
+  year?: number | null;
+  serialNumber?: string | null;
+  /**
+   * e.g. "Satin Ebony"
+   */
+  finish?: string | null;
+  specifications?: {
+    /**
+     * e.g. "6'10" (211 cm)"
+     */
+    size?: string | null;
+    /**
+     * e.g. "6'10""
+     */
+    length?: string | null;
+    /**
+     * e.g. "58"
+     */
+    width?: string | null;
+    stringLength?: string | null;
+    keys?: number | null;
+  };
+  /**
+   * e.g. 89500
+   */
+  price: number;
+  /**
+   * Optional. Original price when new — shows value contrast to buyers.
+   */
+  retailPrice?: number | null;
+  condition: 'new' | 'used' | 'reconditioned' | 'rebuilt';
+  /**
+   * Detailed notes on the piano's current condition.
+   */
+  conditionReport?: string | null;
+  /**
+   * Full listing description. Include provenance and history here.
+   */
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Optional. Notes on any restoration or rebuilding work performed.
+   */
+  restorationHistory?: string | null;
+  /**
+   * Optional freeform tags e.g. "concert-quality", "single-owner"
+   */
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Upload piano photos. First image is used as the listing thumbnail.
+   */
+  images?:
+    | {
+        image: string | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional YouTube or Vimeo link.
+   */
+  videoUrl?: string | null;
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+    description?: string | null;
+  };
+  /**
+   * Uncheck when the piano has been sold.
+   */
+  isAvailable?: boolean | null;
+  /**
+   * Featured pianos appear prominently on the homepage.
+   */
+  isFeatured?: boolean | null;
+  publishedAt?: string | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
@@ -983,10 +1110,15 @@ export interface Search {
   id: string;
   title?: string | null;
   priority?: number | null;
-  doc: {
-    relationTo: 'posts';
-    value: string | Post;
-  };
+  doc:
+    | {
+        relationTo: 'posts';
+        value: string | Post;
+      }
+    | {
+        relationTo: 'pianos';
+        value: string | Piano;
+      };
   slug?: string | null;
   meta?: {
     title?: string | null;
@@ -1143,6 +1275,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'brands';
         value: string | Brand;
+      } | null)
+    | ({
+        relationTo: 'pianos';
+        value: string | Piano;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1568,6 +1704,61 @@ export interface BrandsSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pianos_select".
+ */
+export interface PianosSelect<T extends boolean = true> {
+  title?: T;
+  brand?: T;
+  model?: T;
+  year?: T;
+  serialNumber?: T;
+  finish?: T;
+  specifications?:
+    | T
+    | {
+        size?: T;
+        length?: T;
+        width?: T;
+        stringLength?: T;
+        keys?: T;
+      };
+  price?: T;
+  retailPrice?: T;
+  condition?: T;
+  conditionReport?: T;
+  description?: T;
+  restorationHistory?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  images?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  videoUrl?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
+  isAvailable?: T;
+  isFeatured?: T;
+  publishedAt?: T;
+  generateSlug?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2067,6 +2258,10 @@ export interface TaskSchedulePublish {
       | ({
           relationTo: 'posts';
           value: string | Post;
+        } | null)
+      | ({
+          relationTo: 'pianos';
+          value: string | Piano;
         } | null);
     global?: string | null;
     user?: (string | null) | User;

@@ -35,18 +35,18 @@ export function ModelsDropdown({ models, scrolled, onMouseEnter, onMouseLeave }:
 
         {/* Brand label — left anchor */}
         <div
-          className="shrink-0 py-5 pr-8"
+          className="shrink-0 py-9 pr-12"
           style={{ borderRight: '1px solid rgba(200, 160, 75, 0.12)' }}
         >
           <p
-            className="font-display text-[8px] tracking-[0.55em] uppercase"
-            style={{ color: 'rgba(200, 160, 75, 0.55)' }}
+            className="font-display text-[11px] tracking-[0.55em] uppercase"
+            style={{ color: 'rgba(200, 160, 75, 0.65)' }}
           >
             Steinway
           </p>
           <p
-            className="font-display text-[8px] tracking-[0.5em] uppercase mt-0.5"
-            style={{ color: 'rgba(255, 248, 235, 0.22)' }}
+            className="font-display text-[11px] tracking-[0.5em] uppercase mt-1.5"
+            style={{ color: 'rgba(255, 248, 235, 0.28)' }}
           >
             Models
           </p>
@@ -54,7 +54,7 @@ export function ModelsDropdown({ models, scrolled, onMouseEnter, onMouseLeave }:
 
         {/* Horizontally scrollable model strip */}
         <div
-          className="flex-1 overflow-x-auto py-4 px-6"
+          className="flex-1 overflow-x-auto py-6 px-8"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           <div className="flex items-stretch gap-0" style={{ minWidth: 'max-content' }}>
@@ -62,10 +62,10 @@ export function ModelsDropdown({ models, scrolled, onMouseEnter, onMouseLeave }:
               <Link
                 key={model.id ?? model.slug}
                 href={`/pianos/steinway/${model.slug}`}
-                className="group relative flex flex-col justify-center px-6 py-3 cursor-pointer transition-all duration-200"
+                className="group relative flex flex-col justify-center px-10 py-6 cursor-pointer transition-all duration-200"
                 style={{
                   borderRight: '1px solid rgba(200, 160, 75, 0.08)',
-                  minWidth: '130px',
+                  minWidth: '190px',
                   animationDelay: `${i * 35}ms`,
                 }}
               >
@@ -78,8 +78,8 @@ export function ModelsDropdown({ models, scrolled, onMouseEnter, onMouseLeave }:
 
                 {/* Type label */}
                 <span
-                  className="relative block font-display text-[7.5px] tracking-[0.5em] uppercase mb-1.5 transition-colors duration-200"
-                  style={{ color: 'rgba(200, 160, 75, 0.5)' }}
+                  className="relative block font-display text-[11px] tracking-[0.45em] uppercase mb-2.5 transition-colors duration-200"
+                  style={{ color: 'rgba(200, 160, 75, 0.6)' }}
                 >
                   {model.type === 'Concert Grand' ? 'Concert' : model.type}
                 </span>
@@ -89,10 +89,10 @@ export function ModelsDropdown({ models, scrolled, onMouseEnter, onMouseLeave }:
                   className="relative block transition-colors duration-200"
                   style={{
                     fontFamily: "'Cormorant Garamond', serif",
-                    fontSize: '21px',
+                    fontSize: '38px',
                     fontWeight: 400,
                     lineHeight: 1,
-                    color: 'rgba(255, 248, 235, 0.82)',
+                    color: 'rgba(255, 248, 235, 0.88)',
                   }}
                 >
                   {model.name}
@@ -101,8 +101,8 @@ export function ModelsDropdown({ models, scrolled, onMouseEnter, onMouseLeave }:
                 {/* Size */}
                 {model.size && (
                   <span
-                    className="relative block font-display text-[8px] tracking-[0.28em] mt-1.5 transition-colors duration-200"
-                    style={{ color: 'rgba(255, 248, 235, 0.3)' }}
+                    className="relative block font-display text-[11px] tracking-[0.3em] mt-2.5 transition-colors duration-200"
+                    style={{ color: 'rgba(255, 248, 235, 0.38)' }}
                   >
                     {model.size}
                   </span>
@@ -110,8 +110,8 @@ export function ModelsDropdown({ models, scrolled, onMouseEnter, onMouseLeave }:
 
                 {/* Gold underline on hover */}
                 <span
-                  className="absolute bottom-0 left-4 right-4 h-px transition-all duration-200 opacity-0 group-hover:opacity-100"
-                  style={{ backgroundColor: 'rgba(200, 160, 75, 0.35)' }}
+                  className="absolute bottom-0 left-6 right-6 h-px transition-all duration-200 opacity-0 group-hover:opacity-100"
+                  style={{ backgroundColor: 'rgba(200, 160, 75, 0.45)' }}
                   aria-hidden
                 />
               </Link>
@@ -121,22 +121,22 @@ export function ModelsDropdown({ models, scrolled, onMouseEnter, onMouseLeave }:
 
         {/* View all — right anchor */}
         <div
-          className="shrink-0 py-5 pl-8"
+          className="shrink-0 py-9 pl-12"
           style={{ borderLeft: '1px solid rgba(200, 160, 75, 0.12)' }}
         >
           <Link
             href="/pianos/steinway"
-            className="group flex items-center gap-2 transition-colors duration-200"
+            className="group flex items-center gap-3 transition-colors duration-200"
           >
             <span
-              className="font-display text-[8px] tracking-[0.45em] uppercase transition-colors duration-200"
-              style={{ color: 'rgba(255, 248, 235, 0.28)' }}
+              className="font-display text-[11px] tracking-[0.45em] uppercase transition-colors duration-200 group-hover:text-[rgba(255,248,235,0.5)]"
+              style={{ color: 'rgba(255, 248, 235, 0.32)' }}
             >
               View All
             </span>
             <span
-              className="font-display text-[10px] transition-all duration-200 group-hover:translate-x-0.5"
-              style={{ color: 'rgba(200, 160, 75, 0.4)' }}
+              className="font-display text-[15px] transition-all duration-200 group-hover:translate-x-1"
+              style={{ color: 'rgba(200, 160, 75, 0.5)' }}
             >
               →
             </span>

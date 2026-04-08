@@ -1,3 +1,4 @@
+'use client'
 /* eslint-disable react/no-unescaped-entities */
 /**
  * UsedSteinways — Variant Design (Optimized)
@@ -24,11 +25,31 @@
  *   Testimonial → tighter attribution block
  * ─────────────────────────────────────────────────────────────
  */
+import { useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { getFeaturedPianos, GUIDES, TESTIMONIALS } from '@/lib/piano-data'
 import { FeaturedCarousel } from './FeaturedCarousel'
 import { PianoLogo } from '@/components/layout'
+
+function useScrollReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll('.sr, .sr-fade')
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible')
+            io.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -48px 0px' }
+    )
+    els.forEach((el) => io.observe(el))
+    return () => io.disconnect()
+  }, [])
+}
 
 const C = {
   bg:          'hsl(36, 22%, 96%)',
@@ -47,6 +68,7 @@ const C = {
 }
 
 export function UsedSteinwaysVariantPage() {
+  useScrollReveal()
   const featured = getFeaturedPianos()
   const featuredGuides = GUIDES.slice(0, 3)
   const testimonial = TESTIMONIALS[0]
@@ -162,11 +184,11 @@ export function UsedSteinwaysVariantPage() {
               style={{ animationDelay: '0.42s', opacity: 0, borderTop: `1px solid ${C.border}` }}
             >
               {[
-                { n: '30+', l: 'Years' },
-                { n: '25',  l: 'Instruments' },
-                { n: '10',  l: 'Brands' },
-              ].map(({ n, l }, i) => (
-                <div key={l} className="flex items-stretch">
+                { n: '30+', l: 'Years',       delay: '0.45s' },
+                { n: '25',  l: 'Instruments', delay: '0.55s' },
+                { n: '10',  l: 'Brands',      delay: '0.65s' },
+              ].map(({ n, l, delay }, i) => (
+                <div key={l} className="flex items-stretch" style={{ animationDelay: delay }}>
                   {i > 0 && (
                     <div
                       className="w-px mx-10 self-stretch"
@@ -200,7 +222,7 @@ export function UsedSteinwaysVariantPage() {
           Increased opacity from 0.28 → 0.42 for legibility
       ═══════════════════════════════════════════════ */}
       <div
-        className="h-12 flex items-center overflow-hidden"
+        className="h-16 flex items-center overflow-hidden sr-fade"
         style={{
           backgroundColor: C.darkBg,
           borderTop:    `1px solid ${C.borderDark}`,
@@ -218,7 +240,7 @@ export function UsedSteinwaysVariantPage() {
                 <span
                   key={idx}
                   className="font-display text-[10px] tracking-[0.45em] uppercase px-8"
-                  style={{ color: 'rgba(245, 235, 220, 0.42)' }}
+                  style={{ color: 'rgba(245, 235, 220, 0.65)' }}
                 >
                   {item}
                 </span>
@@ -235,7 +257,7 @@ export function UsedSteinwaysVariantPage() {
         <div className="max-w-7xl mx-auto">
 
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
-            <div>
+            <div className="sr">
               <span
                 className="font-display text-[10px] tracking-[0.48em] uppercase block mb-5"
                 style={{ color: C.accent }}
@@ -251,7 +273,7 @@ export function UsedSteinwaysVariantPage() {
             </div>
             <Link
               href="/pianos"
-              className="group flex items-center gap-2 font-display text-[10px] tracking-[0.32em] uppercase transition-opacity hover:opacity-50"
+              className="sr sr-d1 group flex items-center gap-2 font-display text-[10px] tracking-[0.32em] uppercase transition-opacity hover:opacity-50"
               style={{ color: C.muted }}
             >
               View all 25 pianos
@@ -259,7 +281,9 @@ export function UsedSteinwaysVariantPage() {
             </Link>
           </div>
 
-          <FeaturedCarousel pianos={featured} />
+          <div className="sr sr-d2">
+            <FeaturedCarousel pianos={featured} />
+          </div>
         </div>
       </section>
 
@@ -287,7 +311,7 @@ export function UsedSteinwaysVariantPage() {
           <div className="grid lg:grid-cols-[1fr_1px_1fr] items-start gap-0">
 
             {/* Left: Quote */}
-            <div className="lg:pr-24 pb-16 lg:pb-0">
+            <div className="sr lg:pr-24 pb-16 lg:pb-0">
               <div className="h-px w-10 mb-14" style={{ backgroundColor: C.accent }} />
               <blockquote
                 className="font-cormorant font-light italic leading-[1.2] mb-12"
@@ -337,7 +361,7 @@ export function UsedSteinwaysVariantPage() {
 
             {/* Right: Pillars */}
             <div
-              className="lg:pl-24 pt-16 lg:pt-0 border-t lg:border-0"
+              className="sr sr-d2 lg:pl-24 pt-16 lg:pt-0 border-t lg:border-0"
               style={{ borderColor: C.borderDark }}
             >
               <span
@@ -362,19 +386,22 @@ export function UsedSteinwaysVariantPage() {
                     n: '01',
                     title: 'Multi-Brand Authority',
                     body: 'Steinway, Bösendorfer, Bechstein, Shigeru Kawai — we evaluate them all equally. You get the right piano, not the piano we happen to stock.',
+                    delay: 'sr-d1',
                   },
                   {
                     n: '02',
                     title: 'Radical Transparency',
                     body: 'Prices shown. Condition reports detailed. Video demos recorded. We hide nothing because serious buyers deserve complete information.',
+                    delay: 'sr-d2',
                   },
                   {
                     n: '03',
                     title: 'Personal Expertise',
                     body: 'Every instrument evaluated by Roger personally — a 30-year RPT who has worked on concert grands at Symphony Hall.',
+                    delay: 'sr-d3',
                   },
-                ].map(({ n, title, body }) => (
-                  <div key={n} className="flex gap-8">
+                ].map(({ n, title, body, delay }) => (
+                  <div key={n} className={`sr ${delay} flex gap-8`}>
                     <span
                       className="font-display text-[9px] tracking-widest pt-1 shrink-0 w-6"
                       style={{ color: 'hsla(40, 72%, 52%, 0.28)' }}
@@ -424,7 +451,9 @@ export function UsedSteinwaysVariantPage() {
       <section className="py-36 px-8" style={{ backgroundColor: C.bg }}>
         <div className="max-w-7xl mx-auto">
 
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
+          <div className="w-16 h-px mb-16 sr" style={{ backgroundColor: C.accent }} />
+
+          <div className="sr flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
             <div>
               <span
                 className="font-display text-[10px] tracking-[0.48em] uppercase block mb-5"
@@ -456,7 +485,7 @@ export function UsedSteinwaysVariantPage() {
             {/* Steinway */}
             <Link
               href="/pianos/steinway"
-              className="group relative flex flex-col p-12 overflow-hidden transition-colors duration-300"
+              className="sr sr-d1 group relative flex flex-col p-12 overflow-hidden transition-colors duration-300"
               style={{ borderRight: `1px solid ${C.border}` }}
             >
               <div
@@ -506,7 +535,7 @@ export function UsedSteinwaysVariantPage() {
             {/* Handcrafted European */}
             <Link
               href="/pianos/european"
-              className="group relative flex flex-col p-12 overflow-hidden transition-colors duration-300"
+              className="sr sr-d2 group relative flex flex-col p-12 overflow-hidden transition-colors duration-300"
               style={{
                 borderRight: `1px solid ${C.border}`,
                 backgroundColor: C.darkBg,
@@ -559,7 +588,7 @@ export function UsedSteinwaysVariantPage() {
             {/* Shigeru Kawai */}
             <Link
               href="/pianos/shigeru-kawai"
-              className="group relative flex flex-col p-12 overflow-hidden transition-colors duration-300"
+              className="sr sr-d3 group relative flex flex-col p-12 overflow-hidden transition-colors duration-300"
             >
               <div
                 className="absolute left-0 top-0 bottom-0 w-0 group-hover:w-[3px] transition-all duration-300 ease-out"
@@ -615,7 +644,9 @@ export function UsedSteinwaysVariantPage() {
       <section className="py-36 px-8" style={{ backgroundColor: C.darkBg }}>
         <div className="max-w-7xl mx-auto">
 
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
+          <div className="w-16 h-px mb-16 sr" style={{ backgroundColor: C.accent }} />
+
+          <div className="sr flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
             <div>
               <span
                 className="font-display text-[10px] tracking-[0.48em] uppercase block mb-5"
@@ -641,11 +672,11 @@ export function UsedSteinwaysVariantPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featuredGuides.map((guide) => (
+            {featuredGuides.map((guide, gi) => (
               <Link
                 key={guide.slug}
                 href={`/guides/${guide.slug}`}
-                className="group flex flex-col p-10 transition-all duration-300 hover:-translate-y-1"
+                className={`sr sr-d${gi + 1} group flex flex-col p-10 transition-all duration-300 hover:-translate-y-1`}
                 style={{
                   backgroundColor: C.bg,
                   border: `1px solid ${C.border}`,
@@ -708,7 +739,7 @@ export function UsedSteinwaysVariantPage() {
         >
           {/* Decorative oversized opening quote mark */}
           <div
-            className="absolute select-none pointer-events-none"
+            className="sr-fade absolute select-none pointer-events-none"
             style={{
               fontFamily: "'Cormorant Garamond', serif",
               fontSize: 'clamp(18rem, 30vw, 28rem)',
@@ -737,7 +768,7 @@ export function UsedSteinwaysVariantPage() {
 
             {/* Quote */}
             <blockquote
-              className="font-cormorant font-light italic leading-[1.22] mb-16"
+              className="sr font-cormorant font-light italic leading-[1.22] mb-16"
               style={{
                 fontSize: 'clamp(2rem, 3.5vw, 3.4rem)',
                 color: 'hsl(350, 62%, 14%)',
@@ -748,7 +779,7 @@ export function UsedSteinwaysVariantPage() {
             </blockquote>
 
             {/* Attribution + CTA */}
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-10">
+            <div className="sr sr-d2 flex flex-col sm:flex-row sm:items-end justify-between gap-10">
               <div className="flex items-center gap-5">
                 <div
                   className="w-10 h-10 flex items-center justify-center shrink-0"
@@ -777,17 +808,19 @@ export function UsedSteinwaysVariantPage() {
                 </div>
               </div>
 
-              <Link
-                href="/testimonials"
-                className="inline-flex items-center gap-3 px-9 py-4 font-display text-[11px] tracking-[0.35em] uppercase transition-opacity duration-200 hover:opacity-80 shrink-0"
-                style={{
-                  backgroundColor: 'hsl(350, 12%, 11%)',
-                  color: '#fff',
-                }}
-              >
-                More Stories
-                <span className="text-xs">→</span>
-              </Link>
+              <div className="sr sr-d3 shrink-0">
+                <Link
+                  href="/testimonials"
+                  className="inline-flex items-center gap-3 px-9 py-4 font-display text-[11px] tracking-[0.35em] uppercase transition-opacity duration-200 hover:opacity-80"
+                  style={{
+                    backgroundColor: 'hsl(350, 12%, 11%)',
+                    color: '#fff',
+                  }}
+                >
+                  More Stories
+                  <span className="text-xs">→</span>
+                </Link>
+              </div>
             </div>
           </div>
         </section>
@@ -799,7 +832,7 @@ export function UsedSteinwaysVariantPage() {
       <section className="py-36 px-8" style={{ backgroundColor: C.bg }}>
         <div className="max-w-3xl mx-auto text-center">
 
-          <div className="flex items-center justify-center gap-5 mb-12">
+          <div className="sr flex items-center justify-center gap-5 mb-12">
             <div className="h-px w-10" style={{ backgroundColor: 'hsla(40, 72%, 52%, 0.38)' }} />
             <span
               className="font-display text-[10px] tracking-[0.48em] uppercase"
@@ -811,21 +844,21 @@ export function UsedSteinwaysVariantPage() {
           </div>
 
           <h2
-            className="font-cormorant font-light leading-[1.0] mb-8"
+            className="sr sr-d1 font-cormorant font-light leading-[1.0] mb-8"
             style={{ fontSize: 'clamp(3.5rem, 7vw, 7.5rem)', color: C.text }}
           >
             Begin Your<br />Search
           </h2>
 
           <p
-            className="text-lg leading-relaxed max-w-[36ch] mx-auto mb-14"
+            className="sr sr-d2 text-lg leading-relaxed max-w-[36ch] mx-auto mb-14"
             style={{ color: C.muted }}
           >
             Tell us what you're looking for — or come hear the pianos yourself.
             Every conversation starts with listening.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="sr sr-d3 flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/contact"
               className="inline-flex items-center justify-center px-12 py-4 font-display text-[11px] tracking-[0.3em] uppercase transition-opacity duration-200 hover:opacity-80"

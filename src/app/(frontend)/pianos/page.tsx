@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { FeaturedCarousel } from '@/components/piano/FeaturedCarousel'
 import { InquiryCTA } from '@/components/piano/InquiryCTA'
-import { getAvailablePianos, getFeaturedPianos } from '@/lib/piano-data'
+import { queryAvailablePianos, queryFeaturedPianos } from '@/lib/payload/pianos'
 
 const C = {
   bg:     'hsl(36, 22%, 96%)',
@@ -17,9 +17,11 @@ export const metadata: Metadata = {
   description: 'Browse our curated collection of pre-owned Steinway, Bösendorfer, Bechstein, and world-class pianos. Every instrument personally selected by Roger.',
 }
 
-export default function PianosPage() {
-  const allPianos = getAvailablePianos()
-  const featured = getFeaturedPianos()
+export default async function PianosPage() {
+  const [allPianos, featured] = await Promise.all([
+    queryAvailablePianos(),
+    queryFeaturedPianos(),
+  ])
 
   return (
     <main className="min-h-screen bg-piano-cream">

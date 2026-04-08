@@ -6,6 +6,11 @@ import type { Piano } from '@/types/piano'
 import { ConditionBadge } from './ConditionBadge'
 import { InquiryCTA } from './InquiryCTA'
 import { cn } from '@/utilities/ui'
+import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
+import dynamic from 'next/dynamic'
+
+// Loaded lazily so the heavy Lexical runtime doesn't bloat the initial bundle
+const RichText = dynamic(() => import('@/components/RichText'), { ssr: true })
 
 interface PianoDetailV2Props {
   piano: Piano
@@ -98,6 +103,16 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
                 <p className="font-cormorant font-light text-3xl text-piano-cream">
                   {piano.priceDisplay}
                 </p>
+                {piano.retailPrice && (
+                  <p className="text-piano-silver/50 text-xs font-display tracking-wide mt-2">
+                    New retail:{' '}
+                    {new Intl.NumberFormat('en-US', {
+                      style: 'currency',
+                      currency: 'USD',
+                      maximumFractionDigits: 0,
+                    }).format(piano.retailPrice)}
+                  </p>
+                )}
               </div>
 
               {/* 3 CTAs */}
@@ -147,16 +162,18 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
                 >
                   {piano.title}
                 </h2>
-                <p className="text-piano-stone text-lg leading-relaxed">{piano.description}</p>
+                {piano.richTextDescription ? (
+                  <div className="text-piano-stone text-lg leading-relaxed [&_p]:mb-4 [&_h2]:font-cormorant [&_h2]:font-light [&_h2]:text-piano-black [&_h3]:font-display [&_h3]:text-piano-gold [&_h3]:tracking-widest [&_h3]:uppercase [&_h3]:text-sm">
+                    <RichText
+                      data={piano.richTextDescription as DefaultTypedEditorState}
+                      enableGutter={false}
+                      enableProse={false}
+                    />
+                  </div>
+                ) : (
+                  <p className="text-piano-stone text-lg leading-relaxed">{piano.description}</p>
+                )}
               </div>
-
-              {/* Provenance */}
-              {piano.provenance && (
-                <div className="border-l-2 border-piano-gold pl-8">
-                  <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-3">Provenance</p>
-                  <p className="text-piano-stone text-lg leading-relaxed italic">{piano.provenance}</p>
-                </div>
-              )}
 
               {/* Restoration */}
               {piano.restorationHistory && (

@@ -10,7 +10,9 @@ export interface Piano {
   serialNumber?: string
   price: number | null
   priceDisplay: string
-  condition: 'Excellent' | 'Very Good' | 'Good' | 'Fair'
+  /** Optional: original new retail price — shown on detail page for value contrast */
+  retailPrice?: number
+  condition: 'new' | 'used' | 'reconditioned' | 'rebuilt' | 'Excellent' | 'Very Good' | 'Good' | 'Fair'
   finish: string
   size: string
   isAvailable: boolean
@@ -18,6 +20,8 @@ export interface Piano {
   imageUrls: string[]
   videoUrl?: string
   description: string
+  /** Lexical rich text state from CMS — rendered by RichText component on detail page */
+  richTextDescription?: unknown
   provenance?: string
   restorationHistory?: string
   conditionReport?: string
