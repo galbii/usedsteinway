@@ -147,3 +147,33 @@ export const queryFeaturedPianos = cache(async (): Promise<Piano[]> => {
 
   return result.docs.map(adaptPayloadPiano)
 })
+
+export const querySearchPianos = cache(async (query: string): Promise<Piano[]> => {
+  const payload = await getPayload({ config: configPromise })
+
+  const result = await payload.find({
+    collection: 'pianos',
+    draft: false,
+    limit: 100,
+    overrideAccess: false,
+    pagination: false,
+    depth: 1,
+    where: {
+      and: [
+        { isAvailable: { equals: true } },
+        { _status: { equals: 'published' } },
+        {
+          or: [
+            { title:      { like: query } },
+            { model:      { like: query } },
+            { finish:     { like: query } },
+            { 'tags.tag': { like: query } },
+          ],
+        },
+      ],
+    },
+    sort: '-publishedAt',
+  })
+
+  return result.docs.map(adaptPayloadPiano)
+})

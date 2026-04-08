@@ -11,7 +11,12 @@ export const metadata: Metadata = {
 }
 
 
-export default async function ContactPage() {
+interface ContactPageProps {
+  searchParams: Promise<{ piano?: string }>
+}
+
+export default async function ContactPage({ searchParams }: ContactPageProps) {
+  const { piano: defaultPiano } = await searchParams
   const siteSettings = (await getCachedGlobal('site-settings', 0)()) as SiteSetting
   const { phone, email, hoursOfOperation } = siteSettings?.contactInfo ?? {}
   const locations = siteSettings?.locations ?? []
@@ -71,7 +76,7 @@ export default async function ContactPage() {
               </p>
               <div className="flex-1 h-px bg-piano-linen" />
             </div>
-            <ContactForm />
+            <ContactForm defaultPiano={defaultPiano} />
           </div>
 
           {/* Sidebar — dark panel */}

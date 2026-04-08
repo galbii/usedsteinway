@@ -11,8 +11,12 @@ const inquiryTypes: { id: InquiryType; label: string; description: string }[] = 
   { id: 'general', label: 'Contact', description: 'Advice, appraisals, or anything else' },
 ]
 
-export function ContactForm() {
-  const [inquiryType, setInquiryType] = useState<InquiryType>('general')
+interface ContactFormProps {
+  defaultPiano?: string
+}
+
+export function ContactForm({ defaultPiano }: ContactFormProps) {
+  const [inquiryType, setInquiryType] = useState<InquiryType>(defaultPiano ? 'buy' : 'general')
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -20,7 +24,7 @@ export function ContactForm() {
     name: '',
     email: '',
     phone: '',
-    message: '',
+    message: defaultPiano ? `I'm interested in the ${defaultPiano}.\n\n` : '',
     budget: '',
     timeline: '',
   })
@@ -97,6 +101,19 @@ export function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-12">
+
+      {/* Piano context banner — shown when arriving from a piano detail page */}
+      {defaultPiano && (
+        <div className="flex items-start gap-4 border border-piano-linen bg-piano-linen/30 px-5 py-4">
+          <div className="w-0.5 self-stretch bg-piano-gold/50 shrink-0" />
+          <div>
+            <p className="font-display text-[10px] tracking-[0.45em] uppercase text-piano-stone/60 mb-1">
+              Regarding
+            </p>
+            <p className="font-display text-sm text-piano-black tracking-wide">{defaultPiano}</p>
+          </div>
+        </div>
+      )}
 
       {/* Inquiry Type Tabs */}
       <div>

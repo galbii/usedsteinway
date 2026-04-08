@@ -36,9 +36,16 @@ export const plugins: Plugin[] = [
     ? [
         s3Storage({
           collections: {
-            media: true, // Enable R2 storage for Media collection
+            media: {
+              // Generate correct public URLs using the R2 public bucket URL
+              // rather than the private S3-compatible endpoint URL
+              generateFileURL: ({ filename, prefix }) => {
+                const base = process.env.NEXT_PUBLIC_R2_PUBLIC_URL ?? ''
+                return prefix ? `${base}/${prefix}/${filename}` : `${base}/${filename}`
+              },
+            },
           },
-          bucket: process.env.R2_BUCKET,
+          bucket: process.env.R2_BUCKET || '',
           config: {
             credentials: {
               accessKeyId: process.env.R2_ACCESS_KEY_ID || '',

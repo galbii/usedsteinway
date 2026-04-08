@@ -65,8 +65,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
       <header
         className={cn(
           'w-full relative animate-header-reveal overflow-visible',
-          'transition-all duration-500 ease-out',
-          scrolled && 'backdrop-blur-xl',
+          'transition-[background-color,box-shadow] duration-300 ease-out',
         )}
         style={{
           backgroundColor: scrolled ? 'hsl(350, 68%, 19%)' : 'hsl(350, 62%, 26%)',
@@ -79,7 +78,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
         <div
           className={cn(
             'max-w-7xl mx-auto px-6 lg:px-10 flex items-center justify-between',
-            'transition-[height] duration-500 ease-out',
+            'transition-[height] duration-300 ease-out',
             scrolled ? 'h-[60px]' : 'h-[72px]',
           )}
         >

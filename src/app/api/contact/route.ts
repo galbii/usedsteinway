@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
 import {
-  resend,
-  FROM_ADDRESS,
-  FROM_NAME,
-  ADMIN_EMAIL,
   adminEmailSubject,
   adminEmailHtml,
   confirmationEmailSubject,
   confirmationEmailHtml,
 } from '@/lib/email'
 import type { ContactFormData } from '@/lib/email'
+
+const ADMIN_EMAIL = process.env.RESEND_ADMIN_EMAIL ?? 'usedsteinwayadmin@gmail.com'
 
 export async function POST(req: NextRequest) {
   let body: unknown
@@ -22,7 +22,6 @@ export async function POST(req: NextRequest) {
 
   const data = body as Partial<ContactFormData>
 
-  // Validate required fields
   if (!data.name?.trim() || !data.email?.trim() || !data.message?.trim() || !data.inquiryType) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
@@ -37,34 +36,29 @@ export async function POST(req: NextRequest) {
     timeline: data.timeline || undefined,
   }
 
-  // Send both emails concurrently — Resend returns { data, error } rather than throwing
-  const [adminResult, confirmResult] = await Promise.all([
-    resend.emails.send({
-      from: `${FROM_NAME} <${FROM_ADDRESS}>`,
+  const payload = await getPayload({ config: configPromise })
+
+  // Admin notification — required. If this fails, surface the error to the user.
+  try {
+    await payload.sendEmail({
       to: ADMIN_EMAIL,
       replyTo: validated.email,
       subject: adminEmailSubject(validated),
       html: adminEmailHtml(validated),
-    }),
-    resend.emails.send({
-      from: `${FROM_NAME} <${FROM_ADDRESS}>`,
-      to: validated.email,
-      subject: confirmationEmailSubject(),
-      html: confirmationEmailHtml(validated),
-    }),
-  ])
-
-  if (adminResult.error) {
-    console.error('[contact] Admin email failed:', adminResult.error)
+    })
+  } catch (err) {
+    console.error('[contact] Admin email failed:', err)
     return NextResponse.json({ error: 'Failed to send message. Please try again.' }, { status: 500 })
   }
 
-  if (confirmResult.error) {
-    // Admin email went out — don't fail the whole request, just log it
-    console.error('[contact] Confirmation email failed:', confirmResult.error)
-  }
-
-  console.log('[contact] Emails sent — admin:', adminResult.data?.id, 'confirm:', confirmResult.data?.id)
+  // User confirmation — best effort. Admin email already went out, so don't fail the request.
+  payload
+    .sendEmail({
+      to: validated.email,
+      subject: confirmationEmailSubject(),
+      html: confirmationEmailHtml(validated),
+    })
+    .catch((err) => console.error('[contact] Confirmation email failed:', err))
 
   return NextResponse.json({ success: true })
 }

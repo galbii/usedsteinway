@@ -1,20 +1,13 @@
-/* eslint-disable react/no-unescaped-entities */
 import type { Metadata } from 'next'
-import Link from 'next/link'
-import { FeaturedCarousel } from '@/components/piano/FeaturedCarousel'
+import { HeroCarousel } from '@/components/piano/HeroCarousel'
+import { PianoBrowser } from '@/components/piano/PianoBrowser'
 import { InquiryCTA } from '@/components/piano/InquiryCTA'
 import { queryAvailablePianos, queryFeaturedPianos } from '@/lib/payload/pianos'
 
-const C = {
-  bg:     'hsl(36, 22%, 96%)',
-  accent: 'hsl(40, 72%, 52%)',
-  text:   'hsl(350, 12%, 11%)',
-  muted:  'hsl(350, 5%, 46%)',
-}
-
 export const metadata: Metadata = {
   title: 'Piano Inventory | UsedSteinways.com',
-  description: 'Browse our curated collection of pre-owned Steinway, Bösendorfer, Bechstein, and world-class pianos. Every instrument personally selected by Roger.',
+  description:
+    'Browse our curated collection of pre-owned Steinway, Bösendorfer, Bechstein, and world-class pianos. Every instrument personally selected by Roger.',
 }
 
 export default async function PianosPage() {
@@ -24,137 +17,12 @@ export default async function PianosPage() {
   ])
 
   return (
-    <main className="min-h-screen bg-piano-cream">
-      {/* Hero */}
-      <section className="bg-piano-burgundy py-32 px-8">
-        <div className="max-w-7xl mx-auto">
-          <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-5">
-            New Hampshire · Est. 2005
-          </p>
-          <h1
-            className="font-cormorant font-light text-white mb-6 leading-none max-w-4xl"
-            style={{ fontSize: 'clamp(3.6rem, 7vw, 8.5rem)' }}
-          >
-            A Curated Collection
-          </h1>
-          <p className="text-piano-cream/70 text-xl max-w-2xl leading-relaxed mb-4">
-            Every piano personally selected. Every detail inspected.
-          </p>
-          <p className="text-piano-silver font-display text-sm tracking-wide">
-            {allPianos.length} instruments currently available
-          </p>
-        </div>
-      </section>
+    <main className="min-h-screen">
+      {/* Full-viewport featured piano slideshow */}
+      <HeroCarousel pianos={featured} />
 
-      {/* Featured Pianos */}
-      <section className="py-36 px-8" style={{ backgroundColor: C.bg }}>
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
-            <div>
-              <span
-                className="font-display text-[11px] tracking-[0.45em] uppercase block mb-5"
-                style={{ color: C.accent }}
-              >
-                Hand-Selected
-              </span>
-              <h2
-                className="font-cormorant font-light leading-tight"
-                style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)', color: C.text }}
-              >
-                Featured Instruments
-              </h2>
-            </div>
-            <p
-              className="font-display text-[11px] tracking-[0.3em] uppercase"
-              style={{ color: C.muted }}
-            >
-              {featured.length} instrument{featured.length !== 1 ? 's' : ''}
-            </p>
-          </div>
-          <FeaturedCarousel pianos={featured} />
-        </div>
-      </section>
-
-      {/* Category Browser */}
-      <section className="py-28 px-8 bg-piano-burgundy border-t border-piano-gold/10">
-        <div className="max-w-7xl mx-auto">
-          <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-3">Browse by Category</p>
-          <h2
-            className="font-cormorant font-light text-piano-cream mb-14"
-            style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)' }}
-          >
-            Three Traditions
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-
-            {/* Steinway */}
-            <Link
-              href="/pianos/steinway"
-              className="group p-8 border border-piano-gold/15 hover:border-piano-gold/50 bg-piano-indigo-card transition-all duration-200"
-            >
-              <p className="font-display text-[9px] tracking-[0.3em] uppercase text-piano-gold/60 group-hover:text-piano-gold transition-colors mb-4">
-                Hamburg · Est. 1853
-              </p>
-              <h3 className="font-cormorant font-light text-piano-cream text-4xl mb-3 group-hover:text-white transition-colors">
-                Steinway & Sons
-              </h3>
-              <p className="text-piano-silver/60 text-sm leading-relaxed mb-6">
-                The standard by which all concert grands are measured.
-              </p>
-              <span className="text-piano-gold/50 group-hover:text-piano-gold font-display text-xs tracking-widest uppercase transition-colors">
-                View Collection →
-              </span>
-            </Link>
-
-            {/* European */}
-            <Link
-              href="/pianos/european"
-              className="group p-8 border border-piano-gold/15 hover:border-piano-gold/50 bg-piano-indigo-card transition-all duration-200"
-            >
-              <p className="font-display text-[9px] tracking-[0.3em] uppercase text-piano-gold/60 group-hover:text-piano-gold transition-colors mb-4">
-                Vienna · Berlin · Leipzig · Prague
-              </p>
-              <h3 className="font-cormorant font-light text-piano-cream text-4xl mb-3 group-hover:text-white transition-colors">
-                Handcrafted European
-              </h3>
-              <p className="text-piano-silver/60 text-sm leading-relaxed mb-3">
-                Bösendorfer · C. Bechstein · Blüthner · Petrof · Schimmel
-              </p>
-              <span className="text-piano-gold/50 group-hover:text-piano-gold font-display text-xs tracking-widest uppercase transition-colors">
-                View Collection →
-              </span>
-            </Link>
-
-            {/* Shigeru Kawai */}
-            <Link
-              href="/pianos/shigeru-kawai"
-              className="group p-8 border border-piano-gold/15 hover:border-piano-gold/50 bg-piano-indigo-card transition-all duration-200"
-            >
-              <p className="font-display text-[9px] tracking-[0.3em] uppercase text-piano-gold/60 group-hover:text-piano-gold transition-colors mb-4">
-                Hamamatsu, Japan · Est. 1927
-              </p>
-              <h3 className="font-cormorant font-light text-piano-cream text-4xl mb-3 group-hover:text-white transition-colors">
-                Shigeru Kawai
-              </h3>
-              <p className="text-piano-silver/60 text-sm leading-relaxed mb-6">
-                Japan's finest concert instrument. World-class at a revelatory price.
-              </p>
-              <span className="text-piano-gold/50 group-hover:text-piano-gold font-display text-xs tracking-widest uppercase transition-colors">
-                View Collection →
-              </span>
-            </Link>
-
-          </div>
-
-          {/* All brands link */}
-          <p className="font-display text-[10px] tracking-[0.3em] uppercase text-piano-gold/50 text-center">
-            Looking for another maker?{' '}
-            <Link href="/pianos" className="text-piano-gold hover:text-piano-cream transition-colors">
-              Browse all inventory →
-            </Link>
-          </p>
-        </div>
-      </section>
+      {/* Filterable inventory browser */}
+      <PianoBrowser pianos={allPianos} />
 
       <InquiryCTA variant="dark" />
     </main>

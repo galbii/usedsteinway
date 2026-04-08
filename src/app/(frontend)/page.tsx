@@ -1,9 +1,14 @@
 import type { Metadata } from 'next'
 import { getServerSideURL } from '@/utilities/getURL'
+import { getCachedGlobal } from '@/utilities/getGlobals'
+import type { SiteSetting } from '@/payload-types'
 import { UsedSteinwaysVariantPage } from './variant/_components/UsedSteinwaysVariantPage'
 
-export default function HomePage() {
-  return <UsedSteinwaysVariantPage />
+export default async function HomePage() {
+  const siteSettings = (await getCachedGlobal('site-settings', 0)()) as SiteSetting
+  const locations = siteSettings?.locations ?? []
+  const phone = siteSettings?.contactInfo?.phone ?? '508-545-0766'
+  return <UsedSteinwaysVariantPage locations={locations} phone={phone} />
 }
 
 export const metadata: Metadata = {

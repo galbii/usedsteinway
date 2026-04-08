@@ -2,6 +2,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { InquiryCTA } from '@/components/piano/InquiryCTA'
+import { SellQuoteModal } from '@/components/piano/SellQuoteModal'
 
 export const metadata: Metadata = {
   title: 'Sell Your Piano | UsedSteinways.com',
@@ -390,6 +391,7 @@ export default function SellYourPianoPage() {
       </section>
 
       <InquiryCTA variant="light" />
+      <SellQuoteModal />
     </main>
   )
 }

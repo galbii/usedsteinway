@@ -147,48 +147,111 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Three Pillars */}
-      <section className="py-28 px-8 bg-piano-burgundy border-t border-piano-gold/10">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-14">
-            <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-3">
-              What Sets Us Apart
+      {/* The Three P's */}
+      <section className="bg-piano-burgundy border-t border-piano-gold/10 overflow-hidden">
+
+        {/* Section header */}
+        <div className="max-w-7xl mx-auto px-8 pt-28 pb-16">
+          <div className="flex items-center gap-5 mb-10">
+            <div className="h-px w-10 shrink-0 bg-piano-gold/50" />
+            <p className="font-display text-[10px] tracking-[0.5em] uppercase text-piano-gold">
+              Our Philosophy
             </p>
-            <h2
-              className="font-cormorant font-light text-piano-cream"
-              style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)' }}
-            >
-              Three Pillars
-            </h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                number: '01',
-                title: 'Multi-Brand Authority',
-                body: "We're not married to any single manufacturer. We select the finest instruments regardless of nameplate — Steinway, Bösendorfer, Bechstein, Kawai, Blüthner. Our only criterion is: is this instrument exceptional?",
-              },
-              {
-                number: '02',
-                title: 'Radical Transparency',
-                body: "We show prices. We provide detailed condition reports. We record video demos of every piano. We disclose everything — because serious buyers deserve to make informed decisions, not guesses.",
-              },
-              {
-                number: '03',
-                title: 'Boutique Curation',
-                body: "We never carry more than 25–30 instruments at a time. Not because we can't find more — because we won't carry anything we haven't personally approved. Fewer pianos. Deeper expertise. Better outcomes for you.",
-              },
-            ].map(({ number, title, body }) => (
-              <div key={number} className="border border-piano-gold/15 p-8">
-                <p className="text-piano-gold/30 font-display text-5xl font-bold mb-6">{number}</p>
-                <h3 className="font-cormorant font-light text-piano-cream text-3xl mb-4">
-                  {title}
+          <h2
+            className="font-cormorant font-light text-piano-cream leading-[1.02]"
+            style={{ fontSize: 'clamp(3.2rem, 5.5vw, 6rem)' }}
+          >
+            People, Policies<br />and Pianos.
+          </h2>
+        </div>
+
+        {/* Three columns */}
+        <div className="max-w-7xl mx-auto px-8 pb-0">
+          <div className="grid grid-cols-1 lg:grid-cols-3 border-t border-piano-gold/10">
+
+            <div className="py-12 lg:pr-14 border-b lg:border-b-0 lg:border-r border-piano-gold/10">
+              <div className="flex items-baseline gap-4 mb-6">
+                <span className="font-cormorant font-light italic leading-none select-none text-[5rem] text-piano-gold/15">P</span>
+                <h3 className="font-cormorant font-light text-piano-cream" style={{ fontSize: 'clamp(1.8rem, 2.5vw, 2.4rem)', lineHeight: 1.1 }}>
+                  People
                 </h3>
-                <p className="text-piano-silver/80 text-base leading-relaxed">{body}</p>
               </div>
-            ))}
+              <p className="text-piano-silver/55 text-lg leading-[1.85]">
+                We are passionate and educated in and about all things piano. Whether you are
+                selecting your first piano or the dream-come-true instrument, we spend as much
+                time as needed to help you find the right fit — covering country of origin,
+                scale design, materials, and how each piano compares to another. No detail is
+                too small, and nothing makes us happier than knowing that together we have
+                found the perfect piano for your needs.
+              </p>
+            </div>
+
+            <div className="py-12 lg:px-14 border-b lg:border-b-0 lg:border-r border-piano-gold/10">
+              <div className="flex items-baseline gap-4 mb-6">
+                <span className="font-cormorant font-light italic leading-none select-none text-[5rem] text-piano-gold/15">P</span>
+                <h3 className="font-cormorant font-light text-piano-cream" style={{ fontSize: 'clamp(1.8rem, 2.5vw, 2.4rem)', lineHeight: 1.1 }}>
+                  Policies
+                </h3>
+              </div>
+              <p className="text-piano-silver/55 text-lg leading-[1.85]">
+                Since the journey of music is lifelong, we have created policies to help you
+                navigate your way down this path as you feel best. Our full trade-up policies
+                give you the opportunity to select a piano fitting your current situation.
+                When you are ready to move to a better piano, you can trade in your existing
+                instrument based on the original price paid. Your piano purchase is an
+                investment — and we want to help you protect it.
+              </p>
+            </div>
+
+            <div className="py-12 lg:pl-14">
+              <div className="flex items-baseline gap-4 mb-6">
+                <span className="font-cormorant font-light italic leading-none select-none text-[5rem] text-piano-gold/15">P</span>
+                <h3 className="font-cormorant font-light text-piano-cream" style={{ fontSize: 'clamp(1.8rem, 2.5vw, 2.4rem)', lineHeight: 1.1 }}>
+                  Pianos
+                </h3>
+              </div>
+              <p className="text-piano-silver/55 text-lg leading-[1.85]">
+                We believe no single manufacturer can provide the perfect piano for everyone
+                at every level. We carefully select over two hundred pianos from makers around
+                the world — from Asia to the oldest and newest ateliers of Europe — to match
+                as many pianists as possible with the most appropriate instrument for their
+                needs. We have traveled the world to visit these factories and find the best
+                products with value.
+              </p>
+            </div>
+
           </div>
         </div>
+
+        {/* Fazioli quote */}
+        <div className="border-t border-piano-gold/10 mt-0">
+          <div className="max-w-7xl mx-auto px-8 py-16">
+            <div className="grid lg:grid-cols-[auto_1fr] gap-10 items-start">
+              <div className="w-12 h-12 flex items-center justify-center border border-piano-gold/20 shrink-0">
+                <span className="font-display text-[9px] tracking-[0.3em] uppercase text-piano-gold">F</span>
+              </div>
+              <div>
+                <p className="font-display text-[9px] tracking-[0.42em] uppercase text-piano-silver/30 mb-5">
+                  Fazioli — on artistic freedom
+                </p>
+                <blockquote
+                  className="font-cormorant font-light italic text-piano-cream/70 leading-[1.4] mb-6"
+                  style={{ fontSize: 'clamp(1.5rem, 2.2vw, 2.2rem)', maxWidth: '72ch' }}
+                >
+                  "Fazioli refuses to impose limitations on musical artists, convinced that
+                  they should have the freedom to choose which instrument to play, based purely
+                  on the belief that it is the best vehicle to express their talent."
+                </blockquote>
+                <p className="text-piano-silver/35 text-base leading-relaxed" style={{ maxWidth: '60ch' }}>
+                  This is why at Roger's Piano, you will find the widest range of pianos
+                  than any other showroom in New England.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </section>
 
       {/* Credentials / Timeline */}

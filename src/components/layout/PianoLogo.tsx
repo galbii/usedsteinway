@@ -9,7 +9,7 @@ import { cn } from '@/utilities/ui'
 const MONOGRAM_SRC = '/UsedSteinway.png'
 
 /** Wordmark text displayed next to the monogram */
-const WORDMARK_TEXT = 'UsedSteinway'
+const WORDMARK_TEXT = 'UsedSteinways'
 
 /** Wordmark color on dark backgrounds (header, dark sections) */
 const WORDMARK_COLOR_DARK = 'hsl(42, 82%, 62%)'
@@ -22,6 +22,9 @@ const WORDMARK_FONT = "'Cormorant Garamond', serif"
 
 /** Letter spacing for the wordmark */
 const WORDMARK_TRACKING = '0.06em'
+
+/** Font weight for the wordmark */
+const WORDMARK_WEIGHT = 700
 
 // ─── Size scale ───────────────────────────────────────────────────────────────
 const MONOGRAM_PX  = { sm: 50, md: 64, lg: 90, xl: 130 } as const
@@ -59,7 +62,7 @@ export interface PianoLogoProps {
 }
 
 /**
- * UsedSteinway brand logo lockup.
+ * UsedSteinways brand logo lockup.
  *
  * Horizontal layout: [SW monogram] + [wordmark]
  *
@@ -104,7 +107,7 @@ export function PianoLogo({
         style={{
           fontFamily: WORDMARK_FONT,
           fontSize: WORDMARK_REM[size],
-          fontWeight: 400,
+          fontWeight: WORDMARK_WEIGHT,
           letterSpacing: WORDMARK_TRACKING,
           color: theme === 'dark' ? WORDMARK_COLOR_DARK : WORDMARK_COLOR_LIGHT,
         }}

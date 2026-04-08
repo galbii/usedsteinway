@@ -31,6 +31,22 @@ import Image from 'next/image'
 import { getFeaturedPianos, GUIDES, TESTIMONIALS } from '@/lib/piano-data'
 import { FeaturedCarousel } from './FeaturedCarousel'
 import { PianoLogo } from '@/components/layout'
+import { LocationTabs } from '@/components/piano/LocationTabs'
+
+type Location = {
+  name: string
+  streetAddress: string
+  city: string
+  state: string
+  zip: string
+  googleMapsUrl?: string | null
+  id?: string | null
+}
+
+type Props = {
+  locations?: Location[]
+  phone?: string
+}
 
 function useScrollReveal() {
   useEffect(() => {
@@ -67,7 +83,7 @@ const C = {
   ivory:       'hsl(36, 22%, 96%)',
 }
 
-export function UsedSteinwaysVariantPage() {
+export function UsedSteinwaysVariantPage({ locations = [], phone }: Props) {
   useScrollReveal()
   const featured = getFeaturedPianos()
   const featuredGuides = GUIDES.slice(0, 3)
@@ -288,12 +304,13 @@ export function UsedSteinwaysVariantPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════
-          PHILOSOPHY — Roger's voice + three pillars
+          PHILOSOPHY — The Three P's
+          Roger's actual philosophy: People, Policies, Pianos
       ═══════════════════════════════════════════════ */}
-      <section className="relative py-36 px-8" style={{ backgroundColor: C.darkBg }}>
+      <section className="relative overflow-hidden" style={{ backgroundColor: C.darkBg }}>
 
         {/* Background: Roger working */}
-        <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0">
           <Image
             src="/Roger-at-work-2-for-web.jpg"
             alt="Roger evaluating a piano in the showroom"
@@ -303,157 +320,194 @@ export function UsedSteinwaysVariantPage() {
           />
           <div
             className="absolute inset-0"
-            style={{ backgroundColor: 'hsla(350, 62%, 16%, 0.90)' }}
+            style={{ backgroundColor: 'hsla(350, 62%, 14%, 0.93)' }}
           />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-[1fr_1px_1fr] items-start gap-0">
+        <div className="relative z-10 max-w-7xl mx-auto px-8 pt-36 pb-0">
 
-            {/* Left: Quote */}
-            <div className="sr lg:pr-24 pb-16 lg:pb-0">
-              <div className="h-px w-10 mb-14" style={{ backgroundColor: C.accent }} />
-              <blockquote
-                className="font-cormorant font-light italic leading-[1.2] mb-12"
-                style={{
-                  fontSize: 'clamp(1.9rem, 3vw, 3rem)',
-                  color: C.ivory,
-                }}
-              >
-                "We're not married to any manufacturer. We select the finest
-                instruments regardless of nameplate — the only criterion is
-                excellence."
-              </blockquote>
-              <div className="flex items-center gap-5">
-                <div
-                  className="w-10 h-10 flex items-center justify-center shrink-0"
-                  style={{ border: `1px solid ${C.borderDark}` }}
-                >
-                  <span
-                    className="font-display text-xs font-semibold"
-                    style={{ color: C.accent }}
-                  >
-                    R
-                  </span>
-                </div>
-                <div>
-                  <p
-                    className="font-cormorant text-xl font-light leading-none mb-1.5"
-                    style={{ color: C.ivory }}
-                  >
-                    Roger
-                  </p>
-                  <p
-                    className="font-display text-[9px] tracking-[0.38em] uppercase"
-                    style={{ color: 'rgba(245, 235, 220, 0.40)' }}
-                  >
-                    Founder · RPT · 30 Years
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div
-              className="hidden lg:block self-stretch mx-16"
-              style={{ width: '1px', backgroundColor: C.borderDark }}
-            />
-
-            {/* Right: Pillars */}
-            <div
-              className="sr sr-d2 lg:pl-24 pt-16 lg:pt-0 border-t lg:border-0"
-              style={{ borderColor: C.borderDark }}
-            >
+          {/* Section label + title */}
+          <div className="sr mb-20">
+            <div className="flex items-center gap-5 mb-10">
+              <div className="h-px w-10 shrink-0" style={{ backgroundColor: C.accent }} />
               <span
-                className="font-display text-[10px] tracking-[0.48em] uppercase block mb-10"
+                className="font-display text-[10px] tracking-[0.5em] uppercase"
                 style={{ color: C.accent }}
               >
-                The Difference
+                Our Philosophy
               </span>
-              <h3
-                className="font-cormorant font-light mb-14 leading-[1.1]"
-                style={{
-                  fontSize: 'clamp(2.4rem, 3.8vw, 3.6rem)',
-                  color: C.ivory,
-                }}
-              >
-                The Curator,<br />Not the Warehouse
-              </h3>
+            </div>
+            <h2
+              className="font-cormorant font-light leading-[1.02]"
+              style={{ fontSize: 'clamp(3.2rem, 5.5vw, 6rem)', color: C.ivory }}
+            >
+              People, Policies<br />and Pianos.
+            </h2>
+          </div>
 
-              <div className="space-y-10">
-                {[
-                  {
-                    n: '01',
-                    title: 'Multi-Brand Authority',
-                    body: 'Steinway, Bösendorfer, Bechstein, Shigeru Kawai — we evaluate them all equally. You get the right piano, not the piano we happen to stock.',
-                    delay: 'sr-d1',
-                  },
-                  {
-                    n: '02',
-                    title: 'Radical Transparency',
-                    body: 'Prices shown. Condition reports detailed. Video demos recorded. We hide nothing because serious buyers deserve complete information.',
-                    delay: 'sr-d2',
-                  },
-                  {
-                    n: '03',
-                    title: 'Personal Expertise',
-                    body: 'Every instrument evaluated by Roger personally — a 30-year RPT who has worked on concert grands at Symphony Hall.',
-                    delay: 'sr-d3',
-                  },
-                ].map(({ n, title, body, delay }) => (
-                  <div key={n} className={`sr ${delay} flex gap-8`}>
-                    <span
-                      className="font-display text-[9px] tracking-widest pt-1 shrink-0 w-6"
-                      style={{ color: 'hsla(40, 72%, 52%, 0.28)' }}
-                    >
-                      {n}
-                    </span>
-                    <div>
-                      <h4
-                        className="font-cormorant text-[1.4rem] font-light mb-2 leading-snug"
-                        style={{ color: C.ivory }}
-                      >
-                        {title}
-                      </h4>
-                      <p
-                        className="text-sm leading-relaxed"
-                        style={{ color: 'rgba(245, 235, 220, 0.52)' }}
-                      >
-                        {body}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+          {/* Three P columns */}
+          <div
+            className="grid grid-cols-1 lg:grid-cols-3"
+            style={{ borderTop: `1px solid ${C.borderDark}` }}
+          >
 
-              <div
-                className="mt-12 pt-8"
-                style={{ borderTop: `1px solid ${C.borderDark}` }}
-              >
-                <Link
-                  href="/about"
-                  className="font-display text-[10px] tracking-[0.35em] uppercase transition-opacity hover:opacity-100 inline-flex items-center gap-2"
-                  style={{ color: 'hsla(40, 72%, 52%, 0.45)' }}
+            {/* PEOPLE */}
+            <div
+              className="sr sr-d1 py-14 lg:pr-14"
+              style={{ borderRight: `1px solid ${C.borderDark}` }}
+            >
+              <div className="flex items-baseline gap-5 mb-8">
+                <span
+                  className="font-cormorant font-light italic leading-none select-none"
+                  style={{ fontSize: '5rem', color: 'hsla(40, 72%, 52%, 0.20)' }}
                 >
-                  Roger's story →
-                </Link>
+                  P
+                </span>
+                <h3
+                  className="font-cormorant font-light"
+                  style={{ fontSize: 'clamp(2rem, 2.8vw, 2.8rem)', color: C.ivory, lineHeight: 1.1 }}
+                >
+                  People
+                </h3>
               </div>
+              <p
+                className="text-lg leading-[1.85]"
+                style={{ color: 'rgba(245, 235, 220, 0.52)' }}
+              >
+                We are passionate and educated in and about all things piano. Whether you are
+                selecting your first piano for your home or the dream-come-true instrument,
+                we spend as much time as needed to help you select the right piano — covering
+                country of origin, scale design, materials, and how a piano compares to
+                another. No detail is too small, and nothing makes us happier than knowing
+                that together we have found the perfect piano for your needs.
+              </p>
+            </div>
+
+            {/* POLICIES */}
+            <div
+              className="sr sr-d2 py-14 lg:px-14"
+              style={{ borderRight: `1px solid ${C.borderDark}` }}
+            >
+              <div className="flex items-baseline gap-5 mb-8">
+                <span
+                  className="font-cormorant font-light italic leading-none select-none"
+                  style={{ fontSize: '5rem', color: 'hsla(40, 72%, 52%, 0.20)' }}
+                >
+                  P
+                </span>
+                <h3
+                  className="font-cormorant font-light"
+                  style={{ fontSize: 'clamp(2rem, 2.8vw, 2.8rem)', color: C.ivory, lineHeight: 1.1 }}
+                >
+                  Policies
+                </h3>
+              </div>
+              <p
+                className="text-lg leading-[1.85]"
+                style={{ color: 'rgba(245, 235, 220, 0.52)' }}
+              >
+                Since the journey of music is lifelong, we have created policies to help you
+                navigate your way down this path as you feel best. Our full trade-up policies
+                give you the opportunity to select a piano fitting your current situation.
+                When you are ready to move to a different and better piano, you can trade in
+                your existing piano based on the original price paid. Your piano purchase is
+                an investment — and we want to help you protect it.
+              </p>
+            </div>
+
+            {/* PIANOS */}
+            <div className="sr sr-d3 py-14 lg:pl-14">
+              <div className="flex items-baseline gap-5 mb-8">
+                <span
+                  className="font-cormorant font-light italic leading-none select-none"
+                  style={{ fontSize: '5rem', color: 'hsla(40, 72%, 52%, 0.20)' }}
+                >
+                  P
+                </span>
+                <h3
+                  className="font-cormorant font-light"
+                  style={{ fontSize: 'clamp(2rem, 2.8vw, 2.8rem)', color: C.ivory, lineHeight: 1.1 }}
+                >
+                  Pianos
+                </h3>
+              </div>
+              <p
+                className="text-lg leading-[1.85]"
+                style={{ color: 'rgba(245, 235, 220, 0.52)' }}
+              >
+                We believe no single manufacturer can provide the perfect piano for everyone
+                at every level. We carefully select over two hundred pianos from makers around
+                the world — from Asia to the oldest and newest ateliers of Europe — to match
+                as many pianists as possible with the most appropriate instrument for their
+                needs. We have traveled the world to visit these factories and find the best
+                products with value.
+              </p>
             </div>
 
           </div>
         </div>
+
+        {/* Fazioli quote — full bleed callout */}
+        <div
+          className="relative z-10 mt-0"
+          style={{ borderTop: `1px solid ${C.borderDark}` }}
+        >
+          <div className="max-w-7xl mx-auto px-8 py-16">
+            <div className="sr grid lg:grid-cols-[auto_1fr] gap-12 items-start">
+              <div
+                className="shrink-0 w-14 h-14 flex items-center justify-center"
+                style={{ border: `1px solid ${C.borderDark}` }}
+              >
+                <span
+                  className="font-display text-[9px] tracking-[0.3em] uppercase"
+                  style={{ color: C.accent }}
+                >
+                  F
+                </span>
+              </div>
+              <div>
+                <p
+                  className="font-display text-[9px] tracking-[0.42em] uppercase mb-6"
+                  style={{ color: 'rgba(245,235,220,0.28)' }}
+                >
+                  Fazioli — on artistic freedom
+                </p>
+                <blockquote
+                  className="font-cormorant font-light italic leading-[1.4] mb-8"
+                  style={{
+                    fontSize: 'clamp(1.7rem, 2.4vw, 2.4rem)',
+                    color: 'rgba(245, 235, 220, 0.72)',
+                    maxWidth: '72ch',
+                  }}
+                >
+                  "Fazioli refuses to impose limitations on musical artists, convinced that
+                  they should have the freedom to choose which instrument to play, based purely
+                  on the belief that it is the best vehicle to express their talent."
+                </blockquote>
+                <p
+                  className="text-lg leading-relaxed"
+                  style={{ color: 'rgba(245, 235, 220, 0.36)', maxWidth: '64ch' }}
+                >
+                  This is why at Roger's Piano, you will find the widest range of pianos
+                  than any other showroom in New England.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </section>
 
       {/* ═══════════════════════════════════════════════
-          CATEGORIES — Three editorial pillars
-          Unified border system. Left gold accent bar on hover.
+          OUR PIANOS — Three full-width category rows
+          Stacked horizontal panels, each with distinct
+          visual identity and richer editorial copy.
       ═══════════════════════════════════════════════ */}
-      <section className="py-36 px-8" style={{ backgroundColor: C.bg }}>
-        <div className="max-w-7xl mx-auto">
+      <section style={{ backgroundColor: C.bg }}>
 
-          <div className="w-16 h-px mb-16 sr" style={{ backgroundColor: C.accent }} />
-
-          <div className="sr flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
+        {/* Section header */}
+        <div className="px-8 pt-36 pb-20 max-w-7xl mx-auto">
+          <div className="sr flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
               <span
                 className="font-display text-[10px] tracking-[0.48em] uppercase block mb-5"
@@ -462,180 +516,139 @@ export function UsedSteinwaysVariantPage() {
                 The Collection
               </span>
               <h2
-                className="font-cormorant font-light leading-[1.05]"
+                className="font-cormorant font-light leading-[1.02]"
                 style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)', color: C.text }}
               >
-                Three Traditions.<br />One Standard.
+                Our Pianos
               </h2>
             </div>
             <p
-              className="text-base max-w-[28ch] leading-relaxed"
+              className="text-lg leading-relaxed max-w-[32ch]"
               style={{ color: C.muted }}
             >
-              Every instrument personally selected — regardless of nameplate.
+              We carry over two hundred instruments from the world's finest makers — selected
+              individually, not by catalogue.
             </p>
           </div>
-
-          {/* Cards — use border-collapse pattern to avoid double borders */}
-          <div
-            className="grid grid-cols-1 lg:grid-cols-3"
-            style={{ border: `1px solid ${C.border}` }}
-          >
-
-            {/* Steinway */}
-            <Link
-              href="/pianos/steinway"
-              className="sr sr-d1 group relative flex flex-col p-12 overflow-hidden transition-colors duration-300"
-              style={{ borderRight: `1px solid ${C.border}` }}
-            >
-              <div
-                className="absolute left-0 top-0 bottom-0 w-0 group-hover:w-[3px] transition-all duration-300 ease-out"
-                style={{ backgroundColor: C.accent }}
-              />
-              <p
-                className="font-display text-[9px] tracking-[0.42em] uppercase mb-7"
-                style={{ color: C.muted }}
-              >
-                Hamburg · Est. 1853
-              </p>
-              <h3
-                className="font-cormorant font-light mb-5 leading-[1.05]"
-                style={{ fontSize: 'clamp(2.2rem, 3vw, 3.2rem)', color: C.text }}
-              >
-                Steinway<br />&amp; Sons
-              </h3>
-              <p
-                className="text-sm leading-relaxed mb-8 flex-1"
-                style={{ color: C.muted }}
-              >
-                The standard by which all concert grands are measured. We carry Models S through D — the full Hamburg and New York range.
-              </p>
-              <div className="flex gap-2 flex-wrap mb-8">
-                {['Model B', 'Model D', 'Model M', 'Model S'].map((m) => (
-                  <span
-                    key={m}
-                    className="font-display text-[8px] tracking-[0.22em] uppercase px-2.5 py-1.5"
-                    style={{
-                      backgroundColor: C.accentDim,
-                      color: 'hsl(40, 55%, 38%)',
-                    }}
-                  >
-                    {m}
-                  </span>
-                ))}
-              </div>
-              <p
-                className="font-display text-[9px] tracking-[0.3em] uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                style={{ color: C.accent }}
-              >
-                Explore →
-              </p>
-            </Link>
-
-            {/* Handcrafted European */}
-            <Link
-              href="/pianos/european"
-              className="sr sr-d2 group relative flex flex-col p-12 overflow-hidden transition-colors duration-300"
-              style={{
-                borderRight: `1px solid ${C.border}`,
-                backgroundColor: C.darkBg,
-              }}
-            >
-              <div
-                className="absolute left-0 top-0 bottom-0 w-0 group-hover:w-[3px] transition-all duration-300 ease-out"
-                style={{ backgroundColor: C.accent }}
-              />
-              <p
-                className="font-display text-[9px] tracking-[0.42em] uppercase mb-7"
-                style={{ color: 'rgba(245,235,220,0.30)' }}
-              >
-                Vienna · Berlin · Leipzig
-              </p>
-              <h3
-                className="font-cormorant font-light mb-5 leading-[1.05]"
-                style={{ fontSize: 'clamp(2.2rem, 3vw, 3.2rem)', color: C.ivory }}
-              >
-                Handcrafted<br />European
-              </h3>
-              <p
-                className="text-sm leading-relaxed mb-8 flex-1"
-                style={{ color: 'rgba(245,235,220,0.48)' }}
-              >
-                The great ateliers of Europe. Each maker with a distinct voice — from Bösendorfer's Viennese warmth to Bechstein's crystalline clarity.
-              </p>
-              <div className="flex gap-2 flex-wrap mb-8">
-                {['Bösendorfer', 'C. Bechstein', 'Blüthner', 'Petrof'].map((b) => (
-                  <span
-                    key={b}
-                    className="font-display text-[8px] tracking-[0.15em] uppercase px-2.5 py-1.5"
-                    style={{
-                      border: `1px solid rgba(245,235,220,0.14)`,
-                      color: 'rgba(245,235,220,0.38)',
-                    }}
-                  >
-                    {b}
-                  </span>
-                ))}
-              </div>
-              <p
-                className="font-display text-[9px] tracking-[0.3em] uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                style={{ color: C.accent }}
-              >
-                Explore →
-              </p>
-            </Link>
-
-            {/* Shigeru Kawai */}
-            <Link
-              href="/pianos/shigeru-kawai"
-              className="sr sr-d3 group relative flex flex-col p-12 overflow-hidden transition-colors duration-300"
-            >
-              <div
-                className="absolute left-0 top-0 bottom-0 w-0 group-hover:w-[3px] transition-all duration-300 ease-out"
-                style={{ backgroundColor: C.accent }}
-              />
-              <p
-                className="font-display text-[9px] tracking-[0.42em] uppercase mb-7"
-                style={{ color: C.muted }}
-              >
-                Hamamatsu, Japan · Est. 1927
-              </p>
-              <h3
-                className="font-cormorant font-light mb-5 leading-[1.05]"
-                style={{ fontSize: 'clamp(2.2rem, 3vw, 3.2rem)', color: C.text }}
-              >
-                Shigeru<br />Kawai
-              </h3>
-              <p
-                className="text-sm leading-relaxed mb-8 flex-1"
-                style={{ color: C.muted }}
-              >
-                Japan's finest concert instrument. A revelatory alternative to European grands — world-class tone at a fraction of the price.
-              </p>
-              <div className="flex gap-2 flex-wrap mb-8">
-                {['SK-2', 'SK-3', 'SK-5', 'SK-6', 'SK-7'].map((m) => (
-                  <span
-                    key={m}
-                    className="font-display text-[8px] tracking-[0.22em] uppercase px-2.5 py-1.5"
-                    style={{
-                      backgroundColor: C.accentDim,
-                      color: 'hsl(40, 55%, 38%)',
-                    }}
-                  >
-                    {m}
-                  </span>
-                ))}
-              </div>
-              <p
-                className="font-display text-[9px] tracking-[0.3em] uppercase opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                style={{ color: C.accent }}
-              >
-                Explore →
-              </p>
-            </Link>
-
-          </div>
         </div>
+
+        {/* ── ROW 1: Steinway & Sons ─────────────────── */}
+        <Link
+          href="/pianos/steinway"
+          className="sr sr-d1 group block transition-colors duration-300 hover:bg-[hsl(36,22%,93%)]"
+          style={{ borderTop: `1px solid ${C.border}` }}
+        >
+          <div className="h-[2px] w-0 group-hover:w-full transition-all duration-500 ease-out" style={{ backgroundColor: C.accent }} />
+          <div className="max-w-7xl mx-auto px-8 py-14">
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+              <div>
+                <p className="font-display text-[9px] tracking-[0.42em] uppercase mb-5" style={{ color: C.muted }}>
+                  Hamburg &amp; New York · Est. 1853
+                </p>
+                <h3
+                  className="font-cormorant font-light leading-[0.95]"
+                  style={{ fontSize: 'clamp(4rem, 8vw, 9rem)', color: C.text }}
+                >
+                  Steinway &amp; Sons
+                </h3>
+              </div>
+              <div className="flex items-end gap-8 shrink-0">
+                <div className="flex gap-2 flex-wrap justify-end">
+                  {['Model S', 'Model M', 'Model B', 'Model D'].map((m) => (
+                    <span key={m} className="font-display text-[8px] tracking-[0.22em] uppercase px-2.5 py-1.5"
+                      style={{ backgroundColor: C.accentDim, color: 'hsl(40, 55%, 38%)' }}>
+                      {m}
+                    </span>
+                  ))}
+                </div>
+                <span className="font-display text-[9px] tracking-[0.35em] uppercase transition-all duration-200 opacity-0 group-hover:opacity-100 shrink-0"
+                  style={{ color: C.accent }}>
+                  Browse →
+                </span>
+              </div>
+            </div>
+          </div>
+        </Link>
+
+        {/* ── ROW 2: Handcrafted European ───────────── */}
+        <Link
+          href="/pianos/european"
+          className="sr sr-d2 group block transition-colors duration-300"
+          style={{ backgroundColor: C.darkBg, borderTop: `1px solid ${C.borderDark}` }}
+        >
+          <div className="h-[2px] w-0 group-hover:w-full transition-all duration-500 ease-out" style={{ backgroundColor: C.accent }} />
+          <div className="max-w-7xl mx-auto px-8 py-14">
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+              <div>
+                <p className="font-display text-[9px] tracking-[0.42em] uppercase mb-5" style={{ color: 'rgba(245,235,220,0.28)' }}>
+                  Vienna · Berlin · Leipzig · Hradec Králové
+                </p>
+                <h3
+                  className="font-cormorant font-light leading-[0.95]"
+                  style={{ fontSize: 'clamp(4rem, 8vw, 9rem)', color: C.ivory }}
+                >
+                  Handcrafted European
+                </h3>
+              </div>
+              <div className="flex items-end gap-8 shrink-0">
+                <div className="flex gap-2 flex-wrap justify-end">
+                  {['Bösendorfer', 'C. Bechstein', 'Blüthner', 'Petrof'].map((b) => (
+                    <span key={b} className="font-display text-[8px] tracking-[0.15em] uppercase px-2.5 py-1.5"
+                      style={{ border: `1px solid rgba(245,235,220,0.14)`, color: 'rgba(245,235,220,0.40)' }}>
+                      {b}
+                    </span>
+                  ))}
+                </div>
+                <span className="font-display text-[9px] tracking-[0.35em] uppercase transition-all duration-200 opacity-0 group-hover:opacity-100 shrink-0"
+                  style={{ color: C.accent }}>
+                  Browse →
+                </span>
+              </div>
+            </div>
+          </div>
+        </Link>
+
+        {/* ── ROW 3: Shigeru Kawai ──────────────────── */}
+        <Link
+          href="/pianos/shigeru-kawai"
+          className="sr sr-d3 group block transition-colors duration-300 hover:bg-[hsl(36,22%,93%)]"
+          style={{ borderTop: `1px solid ${C.border}` }}
+        >
+          <div className="h-[2px] w-0 group-hover:w-full transition-all duration-500 ease-out" style={{ backgroundColor: C.accent }} />
+          <div className="max-w-7xl mx-auto px-8 py-14">
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+              <div>
+                <p className="font-display text-[9px] tracking-[0.42em] uppercase mb-5" style={{ color: C.muted }}>
+                  Hamamatsu, Japan · Est. 1927
+                </p>
+                <h3
+                  className="font-cormorant font-light leading-[0.95]"
+                  style={{ fontSize: 'clamp(4rem, 8vw, 9rem)', color: C.text }}
+                >
+                  Shigeru Kawai
+                </h3>
+              </div>
+              <div className="flex items-end gap-8 shrink-0">
+                <div className="flex gap-2 flex-wrap justify-end">
+                  {['SK-2', 'SK-3', 'SK-5', 'SK-6', 'SK-7'].map((m) => (
+                    <span key={m} className="font-display text-[8px] tracking-[0.22em] uppercase px-2.5 py-1.5"
+                      style={{ backgroundColor: C.accentDim, color: 'hsl(40, 55%, 38%)' }}>
+                      {m}
+                    </span>
+                  ))}
+                </div>
+                <span className="font-display text-[9px] tracking-[0.35em] uppercase transition-all duration-200 opacity-0 group-hover:opacity-100 shrink-0"
+                  style={{ color: C.accent }}>
+                  Browse →
+                </span>
+              </div>
+            </div>
+          </div>
+        </Link>
+
+        {/* Bottom border */}
+        <div style={{ borderTop: `1px solid ${C.border}` }} />
+
       </section>
 
       {/* ═══════════════════════════════════════════════
@@ -821,6 +834,29 @@ export function UsedSteinwaysVariantPage() {
                   <span className="text-xs">→</span>
                 </Link>
               </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ═══════════════════════════════════════════════
+          LOCATIONS
+      ═══════════════════════════════════════════════ */}
+      {locations.length > 0 && (
+        <section className="px-8 py-24" style={{ backgroundColor: C.bg }}>
+          <div className="max-w-7xl mx-auto">
+            <div className="sr flex items-center gap-5 mb-14">
+              <div className="h-px w-10 shrink-0" style={{ backgroundColor: C.accent }} />
+              <span
+                className="font-display text-[10px] tracking-[0.5em] uppercase shrink-0"
+                style={{ color: C.muted }}
+              >
+                Our Locations
+              </span>
+              <div className="flex-1 h-px" style={{ backgroundColor: C.border }} />
+            </div>
+            <div className="sr sr-d1">
+              <LocationTabs locations={locations} phone={phone} />
             </div>
           </div>
         </section>
