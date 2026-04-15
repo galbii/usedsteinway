@@ -333,27 +333,6 @@ export interface Media {
     muted?: boolean | null;
   };
   /**
-   * Responsive image variants (generated automatically when uploaded)
-   */
-  variants?: {
-    /**
-     * Optimized for mobile devices (480px width)
-     */
-    mobile?: (string | null) | Media;
-    /**
-     * Optimized for tablets (768px width)
-     */
-    tablet?: (string | null) | Media;
-    /**
-     * Optimized for desktop (1200px width)
-     */
-    desktop?: (string | null) | Media;
-    /**
-     * Optimized for large screens (1920px width)
-     */
-    largeDesktop?: (string | null) | Media;
-  };
-  /**
    * SEO and technical metadata
    */
   seoMeta?: {
@@ -1524,14 +1503,6 @@ export interface MediaSelect<T extends boolean = true> {
         thumbnail?: T;
         autoplay?: T;
         muted?: T;
-      };
-  variants?:
-    | T
-    | {
-        mobile?: T;
-        tablet?: T;
-        desktop?: T;
-        largeDesktop?: T;
       };
   seoMeta?:
     | T

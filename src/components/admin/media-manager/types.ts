@@ -29,7 +29,6 @@ export interface MediaItem {
   filename: string
   alt: string
   url: string
-  publicUrl: string | null
   mimeType: string
   filesize: number
   width?: number

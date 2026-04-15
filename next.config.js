@@ -21,6 +21,17 @@ const nextConfig = {
           protocol: url.protocol.replace(':', ''),
         }
       }),
+      // Allow Cloudflare R2 public bucket URLs when using S3 storage
+      ...(process.env.NEXT_PUBLIC_R2_PUBLIC_URL
+        ? (() => {
+            try {
+              const r2Url = new URL(process.env.NEXT_PUBLIC_R2_PUBLIC_URL)
+              return [{ hostname: r2Url.hostname, protocol: r2Url.protocol.replace(':', '') }]
+            } catch {
+              return []
+            }
+          })()
+        : []),
       {
         hostname: 'images.unsplash.com',
         protocol: 'https',

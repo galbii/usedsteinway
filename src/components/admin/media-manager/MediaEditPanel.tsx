@@ -263,7 +263,7 @@ export function MediaEditPanel({ media, onClose }: MediaEditPanelProps) {
             >
               <Image
                 unoptimized
-                src={media.sizes?.card?.url || media.publicUrl || media.url || ''}
+                src={media.sizes?.card?.url || media.url || ''}
                 alt={media.alt}
                 width={800}
                 height={450}

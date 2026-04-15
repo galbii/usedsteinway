@@ -678,7 +678,7 @@ export function MediaManagerModal() {
                       >
                         <Image
                           unoptimized
-                          src={selectedMedia.sizes?.thumbnail?.url || selectedMedia.publicUrl || selectedMedia.url || ''}
+                          src={selectedMedia.sizes?.thumbnail?.url || selectedMedia.url || ''}
                           alt={selectedMedia.alt}
                           width={80}
                           height={80}
@@ -961,7 +961,7 @@ export function MediaManagerModal() {
 
                     {/* Copy URL */}
                     <button
-                      onClick={() => copyPublicUrl(selectedMedia.publicUrl || selectedMedia.url)}
+                      onClick={() => copyPublicUrl(selectedMedia.url)}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -1000,7 +1000,7 @@ export function MediaManagerModal() {
 
                     {/* Open in New Tab */}
                     <a
-                      href={selectedMedia.publicUrl || selectedMedia.url}
+                      href={selectedMedia.url}
                       target="_blank"
                       rel="noopener noreferrer"
                       style={{

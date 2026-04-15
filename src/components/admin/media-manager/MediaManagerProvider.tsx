@@ -159,7 +159,6 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
       filename?: string | null
       alt?: string | null
       url?: string | null
-      publicUrl?: string | null
       mimeType?: string | null
       filesize?: number | null
       width?: number | null
@@ -181,7 +180,6 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
       filename: d.filename || '',
       alt: d.alt || '',
       url: d.url || '',
-      publicUrl: d.publicUrl || null,
       mimeType: d.mimeType || '',
       filesize: d.filesize || 0,
       width: d.width ?? undefined,
@@ -237,6 +235,7 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
       const response = await fetch('/api/payload-folders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           name,
           folder: parentId || null,
@@ -265,6 +264,7 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
     try {
       const response = await fetch(`/api/payload-folders/${id}`, {
         method: 'DELETE',
+        credentials: 'include',
       })
 
       if (!response.ok) {
@@ -309,6 +309,7 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
       const response = await fetch(`/api/media/${mediaId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           folder: folderId,
         }),
@@ -707,7 +708,6 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
       console.log('✅ [UPLOAD WITH METADATA] Upload successful:', {
         id: result.doc?.id,
         url: result.doc?.url,
-        publicUrl: result.doc?.publicUrl,
         sizes: result.doc?.sizes ? Object.keys(result.doc.sizes) : 'none',
       })
 
@@ -758,9 +758,10 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
     try {
       showToast('info', 'Loading image for editing...')
 
-      // Download the image
-      const url = media.publicUrl || media.url
-      const response = await fetch(url)
+      // Always download via Payload's file proxy endpoint — same-origin, no CORS issues
+      // regardless of whether direct R2 URLs or proxy URLs are active.
+      const proxyUrl = `/api/media/file/${media.filename}`
+      const response = await fetch(proxyUrl, { credentials: 'include' })
 
       if (!response.ok) {
         throw new Error('Failed to download image')
@@ -795,6 +796,7 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
     try {
       const response = await fetch(`/api/media/${id}`, {
         method: 'DELETE',
+        credentials: 'include',
       })
 
       if (!response.ok) {

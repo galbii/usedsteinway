@@ -6,6 +6,38 @@ import { authenticated } from '../access/authenticated'
 export const Media: CollectionConfig = {
   slug: 'media',
   folders: true,
+  hooks: {
+    // Normalize legacy relative URLs (/media/...) to R2 public URLs when
+    // NEXT_PUBLIC_R2_PUBLIC_URL is configured. This fixes documents that were
+    // uploaded before the env var was set (URLs stored in DB are never re-generated
+    // automatically, so we correct them on every read).
+    afterRead: [
+      ({ doc }) => {
+        const base = process.env.NEXT_PUBLIC_R2_PUBLIC_URL
+        if (!base) return doc
+
+        const rewrite = (url: unknown, filename: unknown): string | unknown => {
+          if (typeof url === 'string' && !url.startsWith('http') && typeof filename === 'string') {
+            return `${base}/${filename}`
+          }
+          return url
+        }
+
+        doc.url = rewrite(doc.url, doc.filename)
+
+        if (doc.sizes && typeof doc.sizes === 'object') {
+          for (const size of Object.values(doc.sizes as Record<string, unknown>)) {
+            if (size && typeof size === 'object') {
+              const s = size as Record<string, unknown>
+              s['url'] = rewrite(s['url'], s['filename'])
+            }
+          }
+        }
+
+        return doc
+      },
+    ],
+  },
   admin: {
     group: 'Content',
     description: 'Media library for images, videos, and documents',
@@ -97,38 +129,6 @@ export const Media: CollectionConfig = {
             description: 'Start video muted (recommended for autoplay)',
           },
         },
-      ],
-    },
-
-    // Responsive Image Variants
-    {
-      name: 'variants',
-      type: 'group',
-      admin: {
-        condition: (data) => data.mediaType === 'image',
-        description: 'Responsive image variants (generated automatically when uploaded)',
-      },
-      fields: [
-        imageField('mobile', {
-          admin: {
-            description: 'Optimized for mobile devices (480px width)',
-          },
-        }),
-        imageField('tablet', {
-          admin: {
-            description: 'Optimized for tablets (768px width)',
-          },
-        }),
-        imageField('desktop', {
-          admin: {
-            description: 'Optimized for desktop (1200px width)',
-          },
-        }),
-        imageField('largeDesktop', {
-          admin: {
-            description: 'Optimized for large screens (1920px width)',
-          },
-        }),
       ],
     },
 

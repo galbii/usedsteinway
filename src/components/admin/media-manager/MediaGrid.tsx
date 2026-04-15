@@ -162,7 +162,7 @@ export function MediaGrid() {
               item={item}
               isSelected={selectedMedia?.id === item.id}
               onSelect={() => selectMedia(selectedMedia?.id === item.id ? null : item)}
-              onCopyUrl={() => copyPublicUrl(item.publicUrl || item.url)}
+              onCopyUrl={() => copyPublicUrl(item.url)}
               onDelete={() => deleteMedia(item.id)}
               onEditImage={() => editMediaImage(item)}
               folders={folders}
@@ -286,6 +286,20 @@ interface MediaGridItemProps {
 }
 
 /**
+ * Resolve a media URL to an absolute URL.
+ * Payload stores URLs as relative (/media/...) until NEXT_PUBLIC_R2_PUBLIC_URL is
+ * configured. The afterRead hook normalises them, but this provides an extra safety
+ * net so the admin grid never renders a broken src.
+ */
+function resolveMediaUrl(url: string | undefined | null): string {
+  if (!url) return ''
+  if (url.startsWith('http://') || url.startsWith('https://')) return url
+  // Relative URL — prepend current origin (safe in 'use client' admin context)
+  if (typeof window !== 'undefined') return `${window.location.origin}${url}`
+  return url
+}
+
+/**
  * Individual media item in the grid
  */
 function MediaGridItem({ item, isSelected, onSelect, onCopyUrl, onDelete, onEditImage, folders, onMoveToFolder }: MediaGridItemProps) {
@@ -296,7 +310,7 @@ function MediaGridItem({ item, isSelected, onSelect, onCopyUrl, onDelete, onEdit
   const moreButtonRef = useRef<HTMLButtonElement>(null)
   const leaveTimerRef = useRef<NodeJS.Timeout | null>(null)
   const isImage = item.mimeType?.startsWith('image/')
-  const thumbnailUrl = item.sizes?.thumbnail?.url || item.publicUrl || item.url
+  const thumbnailUrl = resolveMediaUrl(item.sizes?.thumbnail?.url || item.url)
 
   // Get current folder name if item is in a folder
   const currentFolderName = typeof item.folder === 'object' && item.folder
@@ -746,7 +760,7 @@ function MediaGridItem({ item, isSelected, onSelect, onCopyUrl, onDelete, onEdit
             )}
 
             <a
-              href={item.publicUrl || item.url}
+              href={item.url}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}

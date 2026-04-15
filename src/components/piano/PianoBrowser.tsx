@@ -33,7 +33,8 @@ import {
 } from '@/lib/pianoFilters'
 
 // Fallback header height used on SSR and before measurement fires
-const HEADER_H_DEFAULT = 110
+// Actual header is h-[72px] (not scrolled) or h-[60px] (scrolled), no border
+const HEADER_H_DEFAULT = 72
 
 const C = {
   gold:       'hsl(40, 72%, 52%)',
@@ -57,14 +58,33 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
   const [headerH, setHeaderH] = useState(HEADER_H_DEFAULT)
 
   useLayoutEffect(() => {
+    let rafId: number | null = null
+
     const measure = () => {
       const header = document.querySelector('header')
       if (header) setHeaderH(header.getBoundingClientRect().height)
     }
+
+    const onScroll = () => {
+      // RAF-throttled so we don't thrash layout on every scroll tick
+      if (rafId) return
+      rafId = requestAnimationFrame(() => {
+        measure()
+        rafId = null
+      })
+    }
+
     measure()
-    // Re-measure on resize (e.g. mobile menu expands header)
+    // Re-measure on resize (mobile menu, viewport change)
     window.addEventListener('resize', measure)
-    return () => window.removeEventListener('resize', measure)
+    // Re-measure on scroll — header shrinks from 72px → 60px after 40px scroll
+    window.addEventListener('scroll', onScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener('resize', measure)
+      window.removeEventListener('scroll', onScroll)
+      if (rafId) cancelAnimationFrame(rafId)
+    }
   }, [])
 
   const [sidebarOpen,     setSidebarOpen]     = useState(false)
@@ -118,7 +138,7 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
       ════════════════════════════════════════ */}
       <div
         className="sticky z-30 w-full"
-        style={{ top: `${headerH - 1}px`, backgroundColor: C.charcoal }}
+        style={{ top: `${headerH}px`, backgroundColor: C.charcoal }}
       >
         <div
           className="max-w-7xl mx-auto flex items-center justify-between"

@@ -178,12 +178,7 @@ export default function AboutPage() {
                 </h3>
               </div>
               <p className="text-piano-silver/55 text-lg leading-[1.85]">
-                We are passionate and educated in and about all things piano. Whether you are
-                selecting your first piano or the dream-come-true instrument, we spend as much
-                time as needed to help you find the right fit — covering country of origin,
-                scale design, materials, and how each piano compares to another. No detail is
-                too small, and nothing makes us happier than knowing that together we have
-                found the perfect piano for your needs.
+                Passionate and educated in all things piano. We spend as much time as needed — covering origin, scale design, materials, and how instruments compare — until we've found the right piano for you. No detail is too small.
               </p>
             </div>
 
@@ -195,12 +190,7 @@ export default function AboutPage() {
                 </h3>
               </div>
               <p className="text-piano-silver/55 text-lg leading-[1.85]">
-                Since the journey of music is lifelong, we have created policies to help you
-                navigate your way down this path as you feel best. Our full trade-up policies
-                give you the opportunity to select a piano fitting your current situation.
-                When you are ready to move to a better piano, you can trade in your existing
-                instrument based on the original price paid. Your piano purchase is an
-                investment — and we want to help you protect it.
+                Your piano purchase is an investment in your musical life. Our full trade-up policy lets you trade in at the original price paid — so you can start where you are, and move forward when you're ready.
               </p>
             </div>
 
@@ -212,12 +202,7 @@ export default function AboutPage() {
                 </h3>
               </div>
               <p className="text-piano-silver/55 text-lg leading-[1.85]">
-                We believe no single manufacturer can provide the perfect piano for everyone
-                at every level. We carefully select over two hundred pianos from makers around
-                the world — from Asia to the oldest and newest ateliers of Europe — to match
-                as many pianists as possible with the most appropriate instrument for their
-                needs. We have traveled the world to visit these factories and find the best
-                products with value.
+                No single manufacturer makes the perfect piano for everyone. We select over two hundred instruments from makers across Asia and Europe — traveling to the factories ourselves — so we can match each pianist to the instrument that truly fits.
               </p>
             </div>
 

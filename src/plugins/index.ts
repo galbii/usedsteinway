@@ -24,39 +24,44 @@ const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
   return doc?.slug ? `${url}/${doc.slug}` : url
 }
 
-// Storage mode configuration
-// Set STORAGE_MODE=local in .env to use local filesystem storage
-// Set STORAGE_MODE=r2 in .env to use Cloudflare R2 storage
-const storageMode = process.env.STORAGE_MODE || 'local'
-const useR2Storage = storageMode === 'r2'
-
 export const plugins: Plugin[] = [
-  // Conditionally add R2 storage plugin if STORAGE_MODE=r2
-  ...(useR2Storage && process.env.R2_BUCKET
-    ? [
-        s3Storage({
-          collections: {
-            media: {
-              // Generate correct public URLs using the R2 public bucket URL
-              // rather than the private S3-compatible endpoint URL
-              generateFileURL: ({ filename, prefix }) => {
-                const base = process.env.NEXT_PUBLIC_R2_PUBLIC_URL ?? ''
-                return prefix ? `${base}/${prefix}/${filename}` : `${base}/${filename}`
+  // Cloudflare R2 storage via S3-compatible API.
+  // Activated whenever R2_BUCKET is present in the environment.
+  // Upload/delete go to the private S3 endpoint; files are served from
+  // NEXT_PUBLIC_R2_PUBLIC_URL (enable "Public access" on the bucket in
+  // the Cloudflare dashboard to obtain this URL, then set the env var).
+  s3Storage({
+    enabled: Boolean(process.env.R2_BUCKET),
+    collections: {
+      media: {
+        // When the public R2 URL is configured, bypass Payload's proxy and serve files
+        // directly from R2. Without it, Payload proxies requests through its built-in
+        // /api/media/file/:filename endpoint — slower but correct. Do NOT provide a
+        // custom generateFileURL in that case; the wrong fallback (/media/*) points to
+        // local disk which doesn't exist when using S3 storage.
+        ...(process.env.NEXT_PUBLIC_R2_PUBLIC_URL
+          ? ({
+              disablePayloadAccessControl: true,
+              generateFileURL: ({ filename, prefix }: { filename: string; prefix?: string }) => {
+                const key = prefix ? `${prefix}/${filename}` : filename
+                return `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL}/${key}`
               },
-            },
-          },
-          bucket: process.env.R2_BUCKET || '',
-          config: {
-            credentials: {
-              accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
-              secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
-            },
-            region: 'auto',
-            endpoint: process.env.R2_ENDPOINT,
-          },
-        }),
-      ]
-    : []),
+            } as const)
+          : {}),
+      },
+    },
+    bucket: process.env.R2_BUCKET ?? '',
+    config: {
+      credentials: {
+        accessKeyId: process.env.R2_ACCESS_KEY_ID ?? '',
+        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY ?? '',
+      },
+      region: 'auto',
+      endpoint: process.env.R2_ENDPOINT,
+      // Required for Cloudflare R2 — uses path-style URLs instead of virtual-hosted
+      forcePathStyle: true,
+    },
+  }),
   redirectsPlugin({
     collections: ['pages', 'posts'],
     overrides: {

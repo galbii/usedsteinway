@@ -30,9 +30,10 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { getFeaturedPianos, BRANDS, GUIDES, TESTIMONIALS } from '@/lib/piano-data'
+import { HeroCarousel } from '@/components/piano/HeroCarousel'
 
 export function UsedSteinwaysHomePage() {
-  const featured = getFeaturedPianos().slice(0, 3)
+  const featured = getFeaturedPianos()
   const featuredGuides = GUIDES.slice(0, 3)
   const testimonial = TESTIMONIALS[0]
 
@@ -162,84 +163,23 @@ export function UsedSteinwaysHomePage() {
       </div>
 
       {/* ═══════════════════════════════════════════════
-          FEATURED INSTRUMENTS
+          FEATURED INSTRUMENTS — Cinematic carousel
       ═══════════════════════════════════════════════ */}
-      <section className="bg-piano-cream py-36 px-8">
-        <div className="max-w-7xl mx-auto">
+      <HeroCarousel pianos={featured} />
 
-          {/* Section header */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
-            <div>
-              <span className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold block mb-5">
-                Hand-Selected
-              </span>
-              <h2
-                className="font-cormorant font-light text-piano-black leading-tight"
-                style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)' }}
-              >
-                Featured Instruments
-              </h2>
-            </div>
-            <Link
-              href="/pianos"
-              className="group flex items-center gap-2 font-display text-[11px] tracking-[0.3em] uppercase text-piano-stone hover:text-piano-black transition-colors"
-            >
-              View all 25 pianos
-              <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
-            </Link>
-          </div>
-
-          {/* Piano cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-piano-linen border border-piano-linen">
-            {featured.map((piano) => (
-              <Link
-                key={piano.id}
-                href={`/pianos/${piano.slug}`}
-                className="group bg-piano-cream block overflow-hidden"
-              >
-                <div className="relative aspect-[4/3] overflow-hidden bg-piano-black">
-                  {piano.imageUrls[0] && (
-                    <Image
-                      src={piano.imageUrls[0]}
-                      alt={piano.title}
-                      fill
-                      className="object-cover opacity-90 group-hover:opacity-100 group-hover:scale-[1.04] transition-all duration-700"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                  )}
-                  {piano.isFeatured && (
-                    <div className="absolute top-5 left-5">
-                      <span className="bg-piano-gold text-piano-black font-display text-[9px] tracking-[0.35em] uppercase px-3.5 py-2">
-                        Featured
-                      </span>
-                    </div>
-                  )}
-                </div>
-                <div className="p-9 border-t border-piano-linen">
-                  <p className="font-display text-[10px] tracking-[0.4em] uppercase text-piano-gold mb-4">
-                    {piano.brand} · {piano.year}
-                  </p>
-                  <h3 className="font-cormorant text-4xl font-light text-piano-black leading-snug mb-3">
-                    {piano.model}
-                  </h3>
-                  <p className="text-piano-stone text-sm leading-relaxed mb-7">
-                    {piano.finish} · {piano.size}
-                  </p>
-                  <div className="flex items-center justify-between border-t border-piano-linen pt-6">
-                    <span className="font-cormorant text-2xl font-light text-piano-black">
-                      {piano.priceDisplay}
-                    </span>
-                    <span className="font-display text-[10px] tracking-[0.3em] uppercase text-piano-stone group-hover:text-piano-black transition-colors inline-flex items-center gap-2">
-                      View
-                      <span className="group-hover:translate-x-0.5 transition-transform inline-block">→</span>
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Featured sub-bar — section label + view-all link */}
+      <div className="bg-piano-black border-t border-piano-gold/10 flex items-center justify-between px-10 h-11">
+        <span className="font-display text-[10px] tracking-[0.45em] uppercase text-piano-cream/20">
+          Hand-Selected · Featured Instruments
+        </span>
+        <Link
+          href="/pianos"
+          className="group flex items-center gap-2 font-display text-[10px] tracking-[0.3em] uppercase text-piano-stone hover:text-piano-cream transition-colors"
+        >
+          View all 25 pianos
+          <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
+        </Link>
+      </div>
 
       {/* ═══════════════════════════════════════════════
           PHILOSOPHY — The curator story

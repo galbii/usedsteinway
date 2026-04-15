@@ -23,9 +23,11 @@ bun run generate:importmap   # Regenerate import map after component changes
 - ✅ **ALWAYS** set `overrideAccess: false` when passing `user` to Local API
 - ✅ **ALWAYS** pass `req` in hooks for transaction safety
 - ✅ **ALWAYS** run `bun run build` before code is complete
+- ✅ **ALWAYS** use `<Media resource={...} />` from `@/components/Media` to render media fields
 - ❌ **NEVER** duplicate UI components in page folders
 - ❌ **NEVER** use raw `type: 'upload'` fields (use field utilities)
 - ❌ **NEVER** skip null checks (strict TypeScript mode enabled)
+- ❌ **NEVER** use `<img src={field.url}>` for Payload media — always use `<Media>`
 
 ---
 
@@ -780,6 +782,79 @@ export const Posts: CollectionConfig = {
   },
 }
 ```
+
+---
+
+## Rendering Media on the Frontend
+
+**Always use the `<Media>` component** — never construct `<img>` or `<Image>` tags manually for Payload media fields. It handles images, video, URL resolution (including R2 public URLs), and Next.js optimization automatically.
+
+### The component
+
+```typescript
+import { Media } from '@/components/Media'
+```
+
+### Usage patterns
+
+```typescript
+// Standard — pass the populated Payload media object directly
+<Media resource={piano.featuredImage} />
+
+// Fill mode (parent must be position:relative with explicit dimensions)
+<div className="relative h-64 w-full">
+  <Media resource={piano.featuredImage} fill imgClassName="object-cover" />
+</div>
+
+// With custom sizes hint for responsive loading
+<Media
+  resource={piano.featuredImage}
+  size="(max-width: 768px) 100vw, 50vw"
+/>
+
+// Eager load above-the-fold images
+<Media resource={piano.featuredImage} priority />
+```
+
+### Type-safe null check (strict TypeScript)
+
+Relationship fields come back as `string | Media | null`. Always check before rendering:
+
+```typescript
+import type { Media as MediaType } from '@/payload-types'
+
+// Type guard
+function isMediaObject(val: MediaType | string | null | undefined): val is MediaType {
+  return typeof val === 'object' && val !== null
+}
+
+// In JSX
+{isMediaObject(piano.featuredImage) && (
+  <Media resource={piano.featuredImage} />
+)}
+```
+
+### Fetching with depth
+
+Media fields only populate as objects (not IDs) when fetched with `depth >= 1`:
+
+```typescript
+const piano = await payload.findByID({
+  collection: 'pianos',
+  id,
+  depth: 1,           // populates all relationship fields one level deep
+  overrideAccess: false,
+})
+```
+
+### Rules
+
+- ✅ Use `<Media resource={...} />` for every Payload media field
+- ✅ Use `fill` + a positioned parent for fluid/responsive containers
+- ✅ Add `priority` for the first visible image on a page (LCP)
+- ✅ Always null-check: `isMediaObject(field) && <Media resource={field} />`
+- ❌ Never use `<img src={field.url}>` — bypasses URL resolution and optimization
+- ❌ Never hardcode `getMediaUrl()` calls in components — `<Media>` does this for you
 
 ---
 

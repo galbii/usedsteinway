@@ -28,10 +28,11 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { getFeaturedPianos, GUIDES, TESTIMONIALS } from '@/lib/piano-data'
+import { getFeaturedPianos } from '@/lib/piano-data'
 import { FeaturedCarousel } from './FeaturedCarousel'
 import { PianoLogo } from '@/components/layout'
 import { LocationTabs } from '@/components/piano/LocationTabs'
+import type { Piano } from '@/types/piano'
 
 type Location = {
   name: string
@@ -46,6 +47,7 @@ type Location = {
 type Props = {
   locations?: Location[]
   phone?: string
+  featured?: Piano[]
 }
 
 function useScrollReveal() {
@@ -83,11 +85,9 @@ const C = {
   ivory:       'hsl(36, 22%, 96%)',
 }
 
-export function UsedSteinwaysVariantPage({ locations = [], phone }: Props) {
+export function UsedSteinwaysVariantPage({ locations = [], phone, featured: featuredProp }: Props) {
   useScrollReveal()
-  const featured = getFeaturedPianos()
-  const featuredGuides = GUIDES.slice(0, 3)
-  const testimonial = TESTIMONIALS[0]
+  const featured = featuredProp ?? getFeaturedPianos()
 
   return (
     <div style={{ backgroundColor: C.bg }}>
@@ -374,12 +374,7 @@ export function UsedSteinwaysVariantPage({ locations = [], phone }: Props) {
                 className="text-lg leading-[1.85]"
                 style={{ color: 'rgba(245, 235, 220, 0.52)' }}
               >
-                We are passionate and educated in and about all things piano. Whether you are
-                selecting your first piano for your home or the dream-come-true instrument,
-                we spend as much time as needed to help you select the right piano — covering
-                country of origin, scale design, materials, and how a piano compares to
-                another. No detail is too small, and nothing makes us happier than knowing
-                that together we have found the perfect piano for your needs.
+                Passionate and educated in all things piano. We spend as much time as needed — covering origin, scale design, materials, and how instruments compare — until we've found the right piano for you. No detail is too small.
               </p>
             </div>
 
@@ -406,12 +401,7 @@ export function UsedSteinwaysVariantPage({ locations = [], phone }: Props) {
                 className="text-lg leading-[1.85]"
                 style={{ color: 'rgba(245, 235, 220, 0.52)' }}
               >
-                Since the journey of music is lifelong, we have created policies to help you
-                navigate your way down this path as you feel best. Our full trade-up policies
-                give you the opportunity to select a piano fitting your current situation.
-                When you are ready to move to a different and better piano, you can trade in
-                your existing piano based on the original price paid. Your piano purchase is
-                an investment — and we want to help you protect it.
+                Your piano purchase is an investment in your musical life. Our full trade-up policy lets you trade in at the original price paid — so you can start where you are, and move forward when you're ready.
               </p>
             </div>
 
@@ -435,12 +425,7 @@ export function UsedSteinwaysVariantPage({ locations = [], phone }: Props) {
                 className="text-lg leading-[1.85]"
                 style={{ color: 'rgba(245, 235, 220, 0.52)' }}
               >
-                We believe no single manufacturer can provide the perfect piano for everyone
-                at every level. We carefully select over two hundred pianos from makers around
-                the world — from Asia to the oldest and newest ateliers of Europe — to match
-                as many pianists as possible with the most appropriate instrument for their
-                needs. We have traveled the world to visit these factories and find the best
-                products with value.
+                No single manufacturer makes the perfect piano for everyone. We select over two hundred instruments from makers across Asia and Europe — traveling to the factories ourselves — so we can match each pianist to the instrument that truly fits.
               </p>
             </div>
 
@@ -651,193 +636,6 @@ export function UsedSteinwaysVariantPage({ locations = [], phone }: Props) {
 
       </section>
 
-      {/* ═══════════════════════════════════════════════
-          GUIDES — Ivory cards on deep burgundy
-      ═══════════════════════════════════════════════ */}
-      <section className="py-36 px-8" style={{ backgroundColor: C.darkBg }}>
-        <div className="max-w-7xl mx-auto">
-
-          <div className="w-16 h-px mb-16 sr" style={{ backgroundColor: C.accent }} />
-
-          <div className="sr flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
-            <div>
-              <span
-                className="font-display text-[10px] tracking-[0.48em] uppercase block mb-5"
-                style={{ color: C.accent }}
-              >
-                Expert Knowledge
-              </span>
-              <h2
-                className="font-cormorant font-light leading-[1.05]"
-                style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)', color: C.ivory }}
-              >
-                Buy With Confidence
-              </h2>
-            </div>
-            <Link
-              href="/guides"
-              className="group flex items-center gap-2 font-display text-[10px] tracking-[0.32em] uppercase transition-opacity hover:opacity-50"
-              style={{ color: 'rgba(245,235,220,0.42)' }}
-            >
-              All guides
-              <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featuredGuides.map((guide, gi) => (
-              <Link
-                key={guide.slug}
-                href={`/guides/${guide.slug}`}
-                className={`sr sr-d${gi + 1} group flex flex-col p-10 transition-all duration-300 hover:-translate-y-1`}
-                style={{
-                  backgroundColor: C.bg,
-                  border: `1px solid ${C.border}`,
-                  boxShadow: '0 4px 28px hsla(350, 62%, 16%, 0.40)',
-                }}
-              >
-                <div className="flex items-center justify-between mb-8">
-                  <span
-                    className="font-display text-[9px] tracking-[0.38em] uppercase"
-                    style={{ color: C.accentMid }}
-                  >
-                    {guide.category}
-                  </span>
-                  <span
-                    className="font-display text-[9px] tracking-wide"
-                    style={{ color: C.muted }}
-                  >
-                    {guide.readTime}
-                  </span>
-                </div>
-                <h3
-                  className="font-cormorant text-[1.9rem] font-light leading-[1.1] mb-5 flex-1"
-                  style={{ color: C.text }}
-                >
-                  {guide.title}
-                </h3>
-                <p
-                  className="text-sm leading-relaxed line-clamp-3 mb-8"
-                  style={{ color: C.muted }}
-                >
-                  {guide.description}
-                </p>
-                <div
-                  className="pt-6"
-                  style={{ borderTop: `1px solid ${C.border}` }}
-                >
-                  <span
-                    className="font-display text-[9px] tracking-[0.32em] uppercase inline-flex items-center gap-2 transition-opacity group-hover:opacity-60"
-                    style={{ color: C.accentMid }}
-                  >
-                    Read guide
-                    <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════
-          TESTIMONIAL — Burnished gold inversion
-          Deep burgundy text on warm gold: maximum
-          contrast, most striking moment on the page.
-      ═══════════════════════════════════════════════ */}
-      {testimonial && (
-        <section
-          className="relative py-32 px-8 overflow-hidden"
-          style={{ backgroundColor: C.accent }}
-        >
-          {/* Decorative oversized opening quote mark */}
-          <div
-            className="sr-fade absolute select-none pointer-events-none"
-            style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: 'clamp(18rem, 30vw, 28rem)',
-              lineHeight: 1,
-              color: 'hsla(350, 62%, 26%, 0.06)',
-              top: '-2rem',
-              left: '-1rem',
-              fontStyle: 'italic',
-              fontWeight: 300,
-            }}
-          >
-            &ldquo;
-          </div>
-
-          <div className="relative z-10 max-w-5xl mx-auto">
-            {/* Label */}
-            <div className="flex items-center gap-5 mb-16">
-              <div className="h-px max-w-[3rem] flex-1" style={{ backgroundColor: 'hsla(350, 62%, 26%, 0.28)' }} />
-              <span
-                className="font-display text-[11px] tracking-[0.45em] uppercase"
-                style={{ color: 'hsla(350, 62%, 26%, 0.65)' }}
-              >
-                Client Story
-              </span>
-            </div>
-
-            {/* Quote */}
-            <blockquote
-              className="sr font-cormorant font-light italic leading-[1.22] mb-16"
-              style={{
-                fontSize: 'clamp(2rem, 3.5vw, 3.4rem)',
-                color: 'hsl(350, 62%, 14%)',
-                maxWidth: '52rem',
-              }}
-            >
-              &ldquo;{testimonial.quote}&rdquo;
-            </blockquote>
-
-            {/* Attribution + CTA */}
-            <div className="sr sr-d2 flex flex-col sm:flex-row sm:items-end justify-between gap-10">
-              <div className="flex items-center gap-5">
-                <div
-                  className="w-10 h-10 flex items-center justify-center shrink-0"
-                  style={{ border: '1px solid hsla(350, 62%, 26%, 0.28)' }}
-                >
-                  <span
-                    className="font-cormorant text-xl font-light"
-                    style={{ color: 'hsla(350, 62%, 26%, 0.65)' }}
-                  >
-                    {testimonial.name.charAt(0)}
-                  </span>
-                </div>
-                <div>
-                  <p
-                    className="font-display text-[12px] tracking-[0.38em] uppercase mb-1.5"
-                    style={{ color: 'hsla(350, 12%, 11%, 0.82)' }}
-                  >
-                    {testimonial.name}
-                  </p>
-                  <p
-                    className="font-display text-[11px] tracking-[0.24em] uppercase"
-                    style={{ color: 'hsla(350, 12%, 11%, 0.50)' }}
-                  >
-                    {testimonial.piano} · {testimonial.location}
-                  </p>
-                </div>
-              </div>
-
-              <div className="sr sr-d3 shrink-0">
-                <Link
-                  href="/testimonials"
-                  className="inline-flex items-center gap-3 px-9 py-4 font-display text-[11px] tracking-[0.35em] uppercase transition-opacity duration-200 hover:opacity-80"
-                  style={{
-                    backgroundColor: 'hsl(350, 12%, 11%)',
-                    color: '#fff',
-                  }}
-                >
-                  More Stories
-                  <span className="text-xs">→</span>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* ═══════════════════════════════════════════════
           LOCATIONS
