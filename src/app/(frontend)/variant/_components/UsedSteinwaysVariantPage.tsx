@@ -96,10 +96,11 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
     <div style={{ backgroundColor: C.bg }}>
 
       {/* ═══════════════════════════════════════════════
-          HERO — True diagonal clip-path slash
-          The ivory panel cuts diagonally into the photo
-          using clip-path polygon, replacing the old
-          soft gradient fade.
+          HERO — Cinematic dark continuation
+          Deep burgundy gradient flows from the header
+          into the hero. Photo reveals on the right.
+          PianoLogo uses dark theme (gold wordmark)
+          to match the header exactly.
       ═══════════════════════════════════════════════ */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
 
@@ -115,23 +116,41 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
           />
         </div>
 
-        {/* Desktop: ivory panel with geometric diagonal cut
-            Width 60% — clip-path narrows it to ~50% at bottom,
-            creating a ~10% diagonal slice into the photo.         */}
+        {/* Desktop: burgundy gradient left → transparent right
+            Mirrors the header's hsl(350, 62–68%, 14–26%) palette */}
         <div
-          className="absolute inset-y-0 left-0 hidden lg:block"
+          className="absolute inset-0 hidden lg:block"
           style={{
-            width: '60%',
-            backgroundColor: C.bg,
-            clipPath: 'polygon(0 0, 100% 0, 84% 100%, 0 100%)',
+            background: `linear-gradient(
+              to right,
+              hsl(350, 65%, 12%) 0%,
+              hsl(350, 63%, 14%) 28%,
+              hsla(350, 62%, 16%, 0.90) 48%,
+              hsla(350, 62%, 16%, 0.42) 68%,
+              hsla(350, 62%, 14%, 0.06) 100%
+            )`,
           }}
         />
 
-        {/* Mobile: ivory gradient — clean top-to-bottom fade */}
+        {/* Desktop: subtle top vignette for nav legibility */}
+        <div
+          className="absolute inset-0 hidden lg:block"
+          style={{
+            background: `linear-gradient(to bottom, rgba(28, 5, 8, 0.38) 0%, transparent 36%)`,
+          }}
+        />
+
+        {/* Mobile: top-down dark overlay */}
         <div
           className="absolute inset-0 lg:hidden"
           style={{
-            background: `linear-gradient(to bottom, ${C.bg} 0%, ${C.bg} 56%, transparent 82%)`,
+            background: `linear-gradient(
+              to bottom,
+              hsl(350, 65%, 12%) 0%,
+              hsl(350, 65%, 12%) 48%,
+              hsla(350, 62%, 14%, 0.70) 72%,
+              transparent 100%
+            )`,
           }}
         />
 
@@ -147,27 +166,27 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
               <div className="h-px w-10" style={{ backgroundColor: C.accent }} />
               <span
                 className="font-display text-[10px] tracking-[0.5em] uppercase"
-                style={{ color: C.muted }}
+                style={{ color: 'rgba(245, 235, 220, 0.38)' }}
               >
                 New Hampshire · Est. 1993
               </span>
             </div>
 
-            {/* Wordmark — primary identity mark */}
+            {/* Wordmark — gold, matching the header */}
             <div
               className="mb-12 animate-fade-up"
               style={{ animationDelay: '0.14s', opacity: 0 }}
             >
-              <PianoLogo size="xl" theme="light" noLink />
+              <PianoLogo size="xl" theme="dark" noLink />
             </div>
 
-            {/* Tagline — scaled up from text-base for better impact */}
+            {/* Tagline */}
             <p
               className="text-lg leading-[1.75] mb-14 animate-fade-up"
               style={{
                 animationDelay: '0.24s',
                 opacity: 0,
-                color: C.muted,
+                color: 'rgba(245, 235, 220, 0.50)',
                 maxWidth: '30ch',
               }}
             >
@@ -175,7 +194,7 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
               a Registered Piano Technician with thirty years of experience.
             </p>
 
-            {/* CTAs — primary in gold (accent), secondary ghost */}
+            {/* CTAs */}
             <div
               className="flex items-center gap-8 animate-fade-up"
               style={{ animationDelay: '0.32s', opacity: 0 }}
@@ -190,40 +209,40 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
               <Link
                 href="/contact"
                 className="group font-display text-[11px] tracking-[0.35em] uppercase inline-flex items-center gap-2.5 transition-opacity duration-200 hover:opacity-50"
-                style={{ color: C.muted }}
+                style={{ color: 'rgba(245, 235, 220, 0.48)' }}
               >
                 Talk to Roger
                 <span className="group-hover:translate-x-0.5 transition-transform inline-block">→</span>
               </Link>
             </div>
 
-            {/* Stats — larger Cormorant numbers, full labels */}
+            {/* Stats */}
             <div
               className="flex items-start mt-16 pt-10 animate-fade-up"
-              style={{ animationDelay: '0.42s', opacity: 0, borderTop: `1px solid ${C.border}` }}
+              style={{ animationDelay: '0.42s', opacity: 0, borderTop: `1px solid rgba(200, 160, 75, 0.15)` }}
             >
               {[
-                { n: '30+', l: 'Years',       delay: '0.45s' },
-                { n: '25',  l: 'Instruments', delay: '0.55s' },
-                { n: '10',  l: 'Brands',      delay: '0.65s' },
-              ].map(({ n, l, delay }, i) => (
-                <div key={l} className="flex items-stretch" style={{ animationDelay: delay }}>
+                { n: '30+', l: 'Years' },
+                { n: '25',  l: 'Instruments' },
+                { n: '10',  l: 'Brands' },
+              ].map(({ n, l }, i) => (
+                <div key={l} className="flex items-stretch">
                   {i > 0 && (
                     <div
                       className="w-px mx-10 self-stretch"
-                      style={{ backgroundColor: C.border }}
+                      style={{ backgroundColor: 'rgba(200, 160, 75, 0.14)' }}
                     />
                   )}
                   <div>
                     <p
                       className="font-cormorant font-light leading-none"
-                      style={{ fontSize: 'clamp(2.4rem, 3.2vw, 3.6rem)', color: C.text }}
+                      style={{ fontSize: 'clamp(2.4rem, 3.2vw, 3.6rem)', color: C.ivory }}
                     >
                       {n}
                     </p>
                     <p
                       className="font-display text-[9px] tracking-[0.42em] uppercase mt-2"
-                      style={{ color: C.muted }}
+                      style={{ color: 'rgba(245, 235, 220, 0.30)' }}
                     >
                       {l}
                     </p>

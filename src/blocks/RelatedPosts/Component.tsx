@@ -1,32 +1,54 @@
-import clsx from 'clsx'
 import React from 'react'
-import RichText from '@/components/RichText'
-
 import type { Post } from '@/payload-types'
-
 import { Card } from '../../components/Card'
-import { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
+
+const C = {
+  accent:  'hsl(40, 72%, 52%)',
+  text:    'hsl(350, 12%, 11%)',
+  muted:   'hsl(350, 5%, 46%)',
+  border:  'hsl(36, 18%, 89%)',
+  ivory:   'hsl(36, 22%, 96%)',
+}
 
 export type RelatedPostsProps = {
   className?: string
   docs?: Post[]
-  introContent?: DefaultTypedEditorState
 }
 
-export const RelatedPosts: React.FC<RelatedPostsProps> = (props) => {
-  const { className, docs, introContent } = props
+export const RelatedPosts: React.FC<RelatedPostsProps> = ({ docs }) => {
+  if (!docs?.length) return null
 
   return (
-    <div className={clsx('lg:container', className)}>
-      {introContent && <RichText data={introContent} enableGutter={false} />}
+    <section style={{ backgroundColor: C.ivory, borderTop: `1px solid ${C.border}` }}>
+      <div className="max-w-7xl mx-auto px-8 py-20">
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-stretch">
-        {docs?.map((doc, index) => {
-          if (typeof doc === 'string') return null
+        {/* Header */}
+        <div className="flex items-center gap-5 mb-14">
+          <div style={{ height: '1px', width: '2.5rem', backgroundColor: C.accent, flexShrink: 0 }} />
+          <span
+            className="font-display text-[9px] tracking-[0.48em] uppercase"
+            style={{ color: C.accent }}
+          >
+            Continue Reading
+          </span>
+          <div style={{ flex: 1, height: '1px', backgroundColor: C.border }} />
+        </div>
 
-          return <Card key={index} doc={doc} relationTo="posts" showCategories />
-        })}
+        {/* Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10">
+          {docs.map((doc, i) => {
+            if (typeof doc === 'string') return null
+            return (
+              <Card
+                key={i}
+                doc={doc}
+                relationTo="posts"
+                showCategories
+              />
+            )
+          })}
+        </div>
       </div>
-    </div>
+    </section>
   )
 }

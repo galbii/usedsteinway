@@ -59,9 +59,9 @@ export function StatsRow({ stats }: StatsRowProps) {
         <a key={stat.label} href={stat.href} className="usw-stat-card">
           <div
             style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontSize: 'clamp(40px, 3.5vw, 56px)',
-              fontWeight: 300,
+              fontFamily: 'inherit',
+              fontSize: 'clamp(32px, 3vw, 44px)',
+              fontWeight: 200,
               lineHeight: 1,
               color: COLORS.gold,
               marginBottom: '10px',

@@ -1,6 +1,6 @@
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import { seedSteinwayBrand } from '@/collections/Brands/seed'
+import { seedAllBrands } from '@/collections/Brands/seed'
 import { NextResponse } from 'next/server'
 
 // GET /api/seed/brands?secret=<SEED_SECRET>  — secret-protected, for CLI/CI use
@@ -14,8 +14,11 @@ export async function GET(request: Request): Promise<NextResponse> {
 
   try {
     const payload = await getPayload({ config: configPromise })
-    await seedSteinwayBrand(payload)
-    return NextResponse.json({ success: true, message: 'Steinway brand seeded.' })
+    const { created, skipped } = await seedAllBrands(payload)
+    return NextResponse.json({
+      success: true,
+      message: `Created ${created} brand(s), skipped ${skipped} existing.`,
+    })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
     return NextResponse.json({ error: message }, { status: 500 })
@@ -32,8 +35,11 @@ export async function POST(request: Request): Promise<NextResponse> {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    await seedSteinwayBrand(payload)
-    return NextResponse.json({ success: true, message: 'Steinway brand seeded.' })
+    const { created, skipped } = await seedAllBrands(payload)
+    return NextResponse.json({
+      success: true,
+      message: `Created ${created} brand(s), skipped ${skipped} existing.`,
+    })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
     return NextResponse.json({ error: message }, { status: 500 })

@@ -113,10 +113,10 @@ export function Greeting() {
         >
           <p
             style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontSize: '13px',
-              fontWeight: 400,
-              letterSpacing: '0.3em',
+              fontFamily: 'inherit',
+              fontSize: '11px',
+              fontWeight: 500,
+              letterSpacing: '0.25em',
               textTransform: 'uppercase',
               color: COLORS.gold,
               margin: '0 0 14px',
@@ -151,10 +151,10 @@ export function Greeting() {
         >
           <p
             style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif",
-              fontSize: '15px',
+              fontFamily: 'inherit',
+              fontSize: '11px',
               fontWeight: 400,
-              letterSpacing: '0.16em',
+              letterSpacing: '0.14em',
               textTransform: 'uppercase',
               color: COLORS.silver,
               margin: '0 0 10px',
@@ -173,10 +173,10 @@ export function Greeting() {
             <div style={{ width: '24px', height: '1px', background: COLORS.gold, opacity: 0.35 }} />
             <p
               style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
-                fontSize: '12px',
+                fontFamily: 'inherit',
+                fontSize: '11px',
                 fontWeight: 400,
-                letterSpacing: '0.32em',
+                letterSpacing: '0.28em',
                 textTransform: 'uppercase',
                 color: COLORS.goldMuted,
                 margin: 0,

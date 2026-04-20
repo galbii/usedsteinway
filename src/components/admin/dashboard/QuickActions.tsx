@@ -94,9 +94,9 @@ export function QuickActions({ actions = DEFAULT_ACTIONS }: QuickActionsProps) {
       >
         <h2
           style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontSize: '22px',
-            fontWeight: 400,
+            fontFamily: 'inherit',
+            fontSize: '14px',
+            fontWeight: 600,
             color: COLORS.cream,
             margin: 0,
             letterSpacing: '0.02em',

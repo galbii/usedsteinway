@@ -74,12 +74,12 @@ export function RecentPianos({ pianos, adminBaseURL = '/admin' }: RecentPianosPr
       >
         <h2
           style={{
-            fontFamily: "'Cormorant Garamond', Georgia, serif",
-            fontSize: '22px',
-            fontWeight: 400,
+            fontFamily: 'inherit',
+            fontSize: '14px',
+            fontWeight: 600,
             color: COLORS.cream,
             margin: 0,
-            letterSpacing: '0.02em',
+            letterSpacing: '0.03em',
           }}
         >
           Recent Listings
@@ -131,9 +131,9 @@ export function RecentPianos({ pianos, adminBaseURL = '/admin' }: RecentPianosPr
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div
                     style={{
-                      fontFamily: "'Cormorant Garamond', Georgia, serif",
-                      fontSize: '19px',
-                      fontWeight: 400,
+                      fontFamily: 'inherit',
+                      fontSize: '14px',
+                      fontWeight: 500,
                       color: COLORS.cream,
                       marginBottom: '4px',
                       overflow: 'hidden',
@@ -159,9 +159,9 @@ export function RecentPianos({ pianos, adminBaseURL = '/admin' }: RecentPianosPr
                 >
                   <div
                     style={{
-                      fontFamily: "'Cormorant Garamond', Georgia, serif",
-                      fontSize: '19px',
-                      fontWeight: 400,
+                      fontFamily: 'inherit',
+                      fontSize: '14px',
+                      fontWeight: 600,
                       color: COLORS.gold,
                     }}
                   >

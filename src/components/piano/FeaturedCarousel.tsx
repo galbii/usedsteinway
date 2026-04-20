@@ -205,24 +205,20 @@ export function FeaturedCarousel({ pianos }: FeaturedCarouselProps) {
         }
       `}</style>
 
+      {/* Single self-contained card — no orphaned nav below */}
       <div
-        className="relative"
+        className="relative overflow-hidden"
+        style={{
+          boxShadow:
+            '0 16px 72px hsl(350 62% 26% / 0.16),' +
+            '0 4px 16px hsl(350 62% 26% / 0.08)',
+          backgroundColor: '#fff',
+        }}
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-
-        {/* ── Outer card shell ───────────────────────────────────── */}
-        <div
-          className="relative overflow-hidden"
-          style={{
-            boxShadow:
-              '0 16px 72px hsl(350 62% 26% / 0.16),' +
-              '0 4px 16px hsl(350 62% 26% / 0.08)',
-            backgroundColor: '#fff',
-          }}
-        >
 
           {/* Animated gold top border */}
           <div
@@ -394,13 +390,10 @@ export function FeaturedCarousel({ pianos }: FeaturedCarouselProps) {
                 </p>
               </div>
 
-              {/* Price + CTA */}
+              {/* Footer row 1: price + view link */}
               <div
                 className="mt-12 pt-7 flex items-end justify-between"
-                style={{
-                  borderTop: `1px solid ${C.border}`,
-                  ...reveal(0.30),
-                }}
+                style={{ borderTop: `1px solid ${C.border}`, ...reveal(0.30) }}
               >
                 <div>
                   <p
@@ -411,141 +404,92 @@ export function FeaturedCarousel({ pianos }: FeaturedCarouselProps) {
                   </p>
                   <span
                     className="font-cormorant font-light"
-                    style={{
-                      fontSize: 'clamp(1.8rem, 2.6vw, 2.6rem)',
-                      color: C.text,
-                      lineHeight: 1,
-                    }}
+                    style={{ fontSize: 'clamp(1.8rem, 2.6vw, 2.6rem)', color: C.text, lineHeight: 1 }}
                   >
                     {piano.priceDisplay}
                   </span>
                 </div>
 
-                <Link
-                  href={`/pianos/${piano.slug}`}
-                  className="group inline-flex items-center gap-3.5"
-                  tabIndex={0}
-                >
+                <Link href={`/pianos/${piano.slug}`} className="group inline-flex items-center gap-3.5" tabIndex={0}>
                   <span
                     className="font-display text-[10px] tracking-[0.35em] uppercase transition-opacity duration-200 group-hover:opacity-50"
                     style={{ color: C.muted }}
                   >
                     View instrument
                   </span>
-                  {/* Arrow icon in bordered square */}
                   <span
                     className="inline-flex items-center justify-center w-9 h-9 transition-all duration-300 group-hover:border-[hsl(40,72%,52%)] group-hover:bg-[hsl(40,72%,52%)]"
                     style={{ border: `1px solid ${C.border}` }}
                   >
-                    <svg
-                      width="11"
-                      height="11"
-                      viewBox="0 0 11 11"
-                      fill="none"
-                      className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:[&_path]:stroke-white"
-                    >
-                      <path
-                        d="M2.5 5.5h6M6 3l2.5 2.5L6 8"
-                        stroke={C.text}
-                        strokeWidth="1"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
+                    <svg width="11" height="11" viewBox="0 0 11 11" fill="none"
+                      className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:[&_path]:stroke-white">
+                      <path d="M2.5 5.5h6M6 3l2.5 2.5L6 8" stroke={C.text}
+                        strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </span>
                 </Link>
               </div>
+
+              {/* Footer row 2: progress segments + arrows */}
+              <div
+                className="mt-5 pt-5 flex items-center justify-between"
+                style={{ borderTop: `1px solid ${C.border}`, ...reveal(0.36) }}
+              >
+                <div className="flex items-center gap-2.5">
+                  {pianos.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => navigate(i, i > activeIndex ? 'next' : 'prev')}
+                      aria-label={`Go to slide ${i + 1}`}
+                      className="relative overflow-hidden hover:opacity-75 transition-opacity duration-150"
+                      style={{ width: '32px', height: '1px', backgroundColor: C.border }}
+                    >
+                      {i === activeIndex && (
+                        <span style={{
+                          position: 'absolute', inset: 0,
+                          transform: `scaleX(${progress / 100})`,
+                          transformOrigin: 'left',
+                          backgroundColor: C.accent,
+                          transition: 'transform 80ms linear',
+                        }} />
+                      )}
+                      {i < activeIndex && (
+                        <span className="absolute inset-0" style={{ backgroundColor: C.accentFaint }} />
+                      )}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={goPrev}
+                    aria-label="Previous"
+                    className="group flex items-center justify-center w-8 h-8 transition-all duration-300 hover:border-[hsl(40,72%,52%)] hover:bg-[hsl(40,72%,52%)]"
+                    style={{ border: `1px solid ${C.border}` }}
+                  >
+                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none"
+                      className="transition-transform duration-300 group-hover:-translate-x-0.5 group-hover:[&_path]:stroke-white">
+                      <path d="M8 6H4M5.5 3.5L3 6l2.5 2.5" stroke={C.muted}
+                        strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={goNext}
+                    aria-label="Next"
+                    className="group flex items-center justify-center w-8 h-8 transition-all duration-300 hover:border-[hsl(40,72%,52%)] hover:bg-[hsl(40,72%,52%)]"
+                    style={{ border: `1px solid ${C.border}` }}
+                  >
+                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none"
+                      className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:[&_path]:stroke-white">
+                      <path d="M4 6h4M6.5 3.5L9 6l-2.5 2.5" stroke={C.muted}
+                        strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-
-        {/* ── Navigation row ─────────────────────────────────────── */}
-        <div className="flex items-center justify-between mt-8">
-
-          {/* Segment progress bars */}
-          <div className="flex items-center gap-3">
-            {pianos.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => navigate(i, i > activeIndex ? 'next' : 'prev')}
-                aria-label={`Go to slide ${i + 1}`}
-                className="relative overflow-hidden hover:opacity-75 transition-opacity duration-150"
-                style={{ width: '40px', height: '1px', backgroundColor: C.border }}
-              >
-                {/* Active: live fill */}
-                {i === activeIndex && (
-                  <span
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      transform: `scaleX(${progress / 100})`,
-                      transformOrigin: 'left',
-                      backgroundColor: C.accent,
-                      transition: 'transform 80ms linear',
-                    }}
-                  />
-                )}
-                {/* Past: already viewed */}
-                {i < activeIndex && (
-                  <span
-                    className="absolute inset-0"
-                    style={{ backgroundColor: C.accentFaint }}
-                  />
-                )}
-              </button>
-            ))}
-          </div>
-
-          {/* Chevron buttons */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={goPrev}
-              aria-label="Previous"
-              className="group flex items-center justify-center w-10 h-10 transition-all duration-300 hover:border-[hsl(40,72%,52%)] hover:bg-[hsl(40,72%,52%)]"
-              style={{ border: `1px solid ${C.border}` }}
-            >
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 12 12"
-                fill="none"
-                className="transition-transform duration-300 group-hover:-translate-x-0.5 group-hover:[&_path]:stroke-white"
-              >
-                <path
-                  d="M8 6H4M5.5 3.5L3 6l2.5 2.5"
-                  stroke={C.muted}
-                  strokeWidth="1"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-
-            <button
-              onClick={goNext}
-              aria-label="Next"
-              className="group flex items-center justify-center w-10 h-10 transition-all duration-300 hover:border-[hsl(40,72%,52%)] hover:bg-[hsl(40,72%,52%)]"
-              style={{ border: `1px solid ${C.border}` }}
-            >
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 12 12"
-                fill="none"
-                className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:[&_path]:stroke-white"
-              >
-                <path
-                  d="M4 6h4M6.5 3.5L9 6l-2.5 2.5"
-                  stroke={C.muted}
-                  strokeWidth="1"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
     </>
   )
 }

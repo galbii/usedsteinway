@@ -54,14 +54,14 @@ export default async function TestimonialPage({ params: paramsPromise }: Args) {
       {draft && <LivePreviewListener />}
 
       {/* Hero */}
-      <div className="relative -mt-[10.4rem] flex items-end min-h-[60vh]">
-        <div className="container z-10 relative pb-12 pt-40 text-white">
-          <div className="max-w-3xl">
-            <h1 className="mb-4 text-3xl md:text-5xl font-display font-bold leading-tight">
+      <div className="bg-white pt-[10.4rem]">
+        <div className="container pb-12 pt-16">
+          <div className="max-w-4xl">
+            <h1 className="mb-6 text-[clamp(2rem,5vw,4.5rem)] font-display font-bold leading-tight text-foreground">
               {title}
             </h1>
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-white/80">
-              <span className="font-semibold text-white">{customerName}</span>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-base text-muted-foreground">
+              <span className="font-semibold text-foreground text-lg">{customerName}</span>
               {location && <span>{location}</span>}
               {publishedAt && (
                 <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
@@ -70,23 +70,26 @@ export default async function TestimonialPage({ params: paramsPromise }: Args) {
           </div>
         </div>
 
-        {hasImage ? (
-          <Media
-            fill
-            priority
-            imgClassName="-z-10 object-cover"
-            resource={featuredImage as MediaType}
-          />
-        ) : (
-          <div className="-z-10 absolute inset-0 bg-orca-deep" />
+        {hasImage && (
+          <div className="container pb-0">
+            <div className="relative w-full aspect-[16/7] overflow-hidden rounded-xl">
+              <Media
+                fill
+                priority
+                imgClassName="object-cover"
+                resource={featuredImage as MediaType}
+              />
+            </div>
+          </div>
         )}
-        <div className="absolute pointer-events-none left-0 bottom-0 w-full h-2/3 bg-gradient-to-t from-black/80 to-transparent" />
       </div>
 
       {/* Content */}
-      <div className="container py-16">
-        <div className="max-w-3xl mx-auto">
-          <RichText data={content} enableGutter={false} />
+      <div className="bg-white">
+        <div className="container py-16">
+          <div className="max-w-3xl mx-auto">
+            <RichText data={content} enableGutter={false} className="prose-xl md:prose-2xl" />
+          </div>
         </div>
       </div>
     </article>

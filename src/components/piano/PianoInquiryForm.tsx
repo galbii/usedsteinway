@@ -59,13 +59,13 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
         </p>
 
         <h3
-          className="font-cormorant font-light text-white leading-tight mb-6"
+          className="font-cormorant font-light text-piano-cream leading-tight mb-6"
           style={{ fontSize: 'clamp(3rem, 6vw, 5rem)' }}
         >
           Roger Will Be In Touch
         </h3>
 
-        <p className="text-white/70 text-lg leading-relaxed max-w-sm mb-12">
+        <p className="text-piano-silver text-lg leading-relaxed max-w-sm mb-12">
           You&apos;ll receive a confirmation shortly. Roger reviews every inquiry personally and
           responds within one business day.
         </p>
@@ -90,11 +90,11 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
         <div className="flex items-start gap-5">
           <div className="w-0.5 self-stretch bg-piano-gold/50 shrink-0 mt-1" />
           <div>
-            <p className="font-display text-sm tracking-[0.5em] uppercase text-white/50 mb-2">
+            <p className="font-display text-sm tracking-[0.5em] uppercase text-piano-silver mb-2">
               Regarding
             </p>
             <p
-              className="font-cormorant font-light text-white leading-snug"
+              className="font-cormorant font-light text-piano-cream leading-snug"
               style={{ fontSize: 'clamp(2rem, 3vw, 2.8rem)' }}
             >
               {pianoTitle}
@@ -105,7 +105,7 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
         {/* Name + Email row */}
         <div className="grid sm:grid-cols-2 gap-10">
           <div className="group">
-            <label className="block font-display text-sm tracking-[0.45em] uppercase text-white/60 mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+            <label className="block font-display text-sm font-bold tracking-[0.45em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
               Full Name <span className="text-piano-gold">*</span>
             </label>
             <input
@@ -113,12 +113,12 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
               required
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full bg-transparent border-b border-white/20 text-white text-lg py-3 focus:outline-none focus:border-piano-gold transition-colors duration-200 placeholder:text-white/30"
+              className="w-full bg-transparent border-b border-piano-cream/20 text-piano-cream text-xl py-3 focus:outline-none focus:border-piano-gold transition-colors duration-200 placeholder:text-piano-cream/30"
               placeholder="Your name"
             />
           </div>
           <div className="group">
-            <label className="block font-display text-sm tracking-[0.45em] uppercase text-white/60 mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+            <label className="block font-display text-sm font-bold tracking-[0.45em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
               Email <span className="text-piano-gold">*</span>
             </label>
             <input
@@ -126,7 +126,7 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
               required
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full bg-transparent border-b border-white/20 text-white text-lg py-3 focus:outline-none focus:border-piano-gold transition-colors duration-200 placeholder:text-white/30"
+              className="w-full bg-transparent border-b border-piano-cream/20 text-piano-cream text-xl py-3 focus:outline-none focus:border-piano-gold transition-colors duration-200 placeholder:text-piano-cream/30"
               placeholder="you@email.com"
             />
           </div>
@@ -134,9 +134,9 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
 
         {/* Phone */}
         <div className="group">
-          <label className="block font-display text-sm tracking-[0.45em] uppercase text-white/60 mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+          <label className="block font-display text-sm font-bold tracking-[0.45em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
             Phone{' '}
-            <span className="text-white/30 normal-case font-sans text-base tracking-normal ml-1">
+            <span className="text-piano-cream/30 normal-case font-sans text-base tracking-normal ml-1">
               optional
             </span>
           </label>
@@ -144,14 +144,14 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
             type="tel"
             value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
-            className="w-full bg-transparent border-b border-white/20 text-white text-lg py-3 focus:outline-none focus:border-piano-gold transition-colors duration-200 placeholder:text-white/30"
+            className="w-full bg-transparent border-b border-piano-cream/20 text-piano-cream text-xl py-3 focus:outline-none focus:border-piano-gold transition-colors duration-200 placeholder:text-piano-cream/30"
             placeholder="(508) 555-0000"
           />
         </div>
 
         {/* Message */}
         <div className="group">
-          <label className="block font-display text-sm tracking-[0.45em] uppercase text-white/60 mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+          <label className="block font-display text-sm font-bold tracking-[0.45em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
             Message <span className="text-piano-gold">*</span>
           </label>
           <textarea
@@ -159,7 +159,7 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
             rows={5}
             value={form.message}
             onChange={(e) => setForm({ ...form, message: e.target.value })}
-            className="w-full bg-transparent border-b border-white/20 text-white text-lg py-3 focus:outline-none focus:border-piano-gold transition-colors duration-200 placeholder:text-white/30 resize-none leading-loose"
+            className="w-full bg-transparent border-b border-piano-cream/20 text-piano-cream text-xl py-3 focus:outline-none focus:border-piano-gold transition-colors duration-200 placeholder:text-piano-cream/30 resize-none leading-loose"
             placeholder="What would you like to know? Schedule a viewing, request additional photos, discuss pricing..."
           />
         </div>
@@ -173,7 +173,7 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
 
         {/* Submit */}
         <div className="pt-2">
-          <div className="h-px bg-white/10 mb-8" />
+          <div className="h-px bg-piano-gold/10 mb-8" />
           <button
             type="submit"
             disabled={loading}
@@ -188,14 +188,14 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
       </form>
 
       {/* ── Right: Sidebar ── */}
-      <div className="lg:border-l lg:border-white/10 lg:pl-16 space-y-12 pt-2">
+      <div className="lg:border-l lg:border-piano-gold/10 lg:pl-16 space-y-12 pt-2">
 
         {/* Full contact page funnel */}
         <div>
           <p className="font-display text-sm tracking-[0.5em] uppercase text-piano-gold mb-4">
             Prefer a Full Conversation?
           </p>
-          <p className="text-white/65 text-lg leading-relaxed mb-7">
+          <p className="text-piano-silver text-lg leading-relaxed mb-7">
             Visit the contact page to schedule a showroom visit, discuss trade-ins, explore
             financing, or simply have a more detailed conversation with Roger about this instrument.
           </p>
@@ -210,30 +210,30 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
 
         {/* Divider */}
         <div className="flex items-center gap-4">
-          <div className="flex-1 h-px bg-white/10" />
-          <span className="text-white/25 text-base">or</span>
-          <div className="flex-1 h-px bg-white/10" />
+          <div className="flex-1 h-px bg-piano-gold/10" />
+          <span className="text-piano-cream/25 text-base">or</span>
+          <div className="flex-1 h-px bg-piano-gold/10" />
         </div>
 
         {/* Phone */}
         <div>
-          <p className="font-display text-sm tracking-[0.5em] uppercase text-white/40 mb-3">
+          <p className="font-display text-sm tracking-[0.5em] uppercase text-piano-silver mb-3">
             Call Directly
           </p>
           <a
             href="tel:+15085450766"
-            className="font-cormorant font-light text-white hover:text-piano-gold transition-colors duration-200"
+            className="font-cormorant font-light text-piano-cream hover:text-piano-gold transition-colors duration-200"
             style={{ fontSize: 'clamp(2rem, 3vw, 2.8rem)' }}
           >
             (508) 545-0766
           </a>
-          <p className="text-white/35 text-sm font-display tracking-[0.35em] uppercase mt-2">
+          <p className="text-piano-silver/70 text-sm font-display tracking-[0.35em] uppercase mt-2">
             Mon–Sat, 10am–6pm EST
           </p>
         </div>
 
         {/* Reassurance */}
-        <p className="text-white/35 text-base leading-relaxed border-t border-white/10 pt-8">
+        <p className="text-piano-silver/70 text-base leading-relaxed border-t border-piano-gold/10 pt-8">
           Every inquiry is read by Roger personally. No sales teams, no automated responses.
         </p>
       </div>

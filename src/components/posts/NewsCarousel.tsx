@@ -1,15 +1,5 @@
 'use client'
 
-/**
- * NewsCarousel
- * ─────────────────────────────────────────────────────────────
- * Displays recent posts on the homepage beneath the hero.
- * Transition: same "Gold Curtain Reveal" pattern as FeaturedCarousel —
- * a burnished-gold bar sweeps across to hide the outgoing slide and
- * reveal the new one. Text staggered-fades in with each advance.
- * ─────────────────────────────────────────────────────────────
- */
-
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -17,16 +7,15 @@ import type { PostCard } from '@/lib/payload/posts'
 
 const C = {
   bg:          'hsl(36, 22%, 96%)',
-  darkBg:      'hsl(350, 62%, 26%)',
-  darkCard:    'hsl(350, 56%, 32%)',
   accent:      'hsl(40, 72%, 52%)',
-  accentFaint: 'hsla(40, 72%, 52%, 0.18)',
+  accentFaint: 'hsla(40, 72%, 52%, 0.07)',
+  accentMid:   'hsla(40, 72%, 52%, 0.28)',
+  accentTag:   'hsla(40, 72%, 52%, 0.10)',
+  accentTagFg: 'hsl(40, 55%, 36%)',
   text:        'hsl(350, 12%, 11%)',
   muted:       'hsl(350, 5%, 46%)',
-  mutedOnDark: 'rgba(245, 235, 220, 0.42)',
-  ivory:       'hsl(36, 22%, 96%)',
   border:      'hsl(36, 18%, 89%)',
-  borderDark:  'hsl(350, 45%, 38%)',
+  imageBg:     'hsl(36, 14%, 90%)',
 }
 
 const DURATION   = 7000
@@ -74,7 +63,6 @@ export function NewsCarousel({ posts }: Props) {
       setIsTransitioning(true)
       setTransitionKey(k => k + 1)
       setProgress(0)
-
       swapRef.current = setTimeout(() => setActiveIndex(toIndex), TRANS_HALF)
       doneRef.current = setTimeout(() => {
         setIsTransitioning(false)
@@ -111,21 +99,17 @@ export function NewsCarousel({ posts }: Props) {
       if (timerRef.current) clearTimeout(timerRef.current)
       return
     }
-
     progressStart.current = Date.now()
-
     const tick = () => {
       const pct = Math.min(((Date.now() - progressStart.current) / DURATION) * 100, 100)
       setProgress(pct)
       if (pct < 100) rafRef.current = requestAnimationFrame(tick)
     }
     rafRef.current = requestAnimationFrame(tick)
-
     timerRef.current = setTimeout(
       () => navigate((activeIndex + 1) % posts.length, 'next'),
       DURATION,
     )
-
     return () => {
       if (rafRef.current)   cancelAnimationFrame(rafRef.current)
       if (timerRef.current) clearTimeout(timerRef.current)
@@ -145,34 +129,26 @@ export function NewsCarousel({ posts }: Props) {
     return (
       <div
         className="flex items-center justify-center"
-        style={{
-          minHeight: '340px',
-          backgroundColor: C.darkBg,
-          border: `1px solid ${C.borderDark}`,
-        }}
+        style={{ minHeight: '520px', backgroundColor: C.bg, border: `1px solid ${C.border}` }}
       >
         <div className="text-center">
-          <p
-            className="font-cormorant font-light italic mb-3"
-            style={{ fontSize: '2rem', color: 'rgba(245,235,220,0.22)' }}
-          >
+          <p className="font-cormorant font-light italic mb-3"
+            style={{ fontSize: '2.2rem', color: 'hsla(40, 72%, 52%, 0.28)' }}>
             No articles yet
           </p>
-          <p
-            className="font-display text-[10px] tracking-[0.35em] uppercase"
-            style={{ color: 'rgba(245,235,220,0.18)' }}
-          >
-            Publish posts in the admin to populate this carousel
+          <p className="font-display text-[10px] tracking-[0.35em] uppercase" style={{ color: C.muted }}>
+            Publish posts in the admin to populate this section
           </p>
         </div>
       </div>
     )
   }
+
   const post = posts[activeIndex]!
 
   const reveal = (delay: number) =>
     isTransitioning
-      ? { opacity: 0, transform: 'translateY(10px)', transition: 'none' }
+      ? { opacity: 0, transform: 'translateY(8px)', transition: 'none' }
       : {
           opacity: 1,
           transform: 'translateY(0)',
@@ -190,304 +166,258 @@ export function NewsCarousel({ posts }: Props) {
   return (
     <>
       <style>{`
-        @keyframes news-curtain-next {
+        @keyframes nc-curtain-next {
           0%   { transform: translateX(-101%); }
           42%  { transform: translateX(0%);    }
           58%  { transform: translateX(0%);    }
           100% { transform: translateX(101%);  }
         }
-        @keyframes news-curtain-prev {
+        @keyframes nc-curtain-prev {
           0%   { transform: translateX(101%);  }
           42%  { transform: translateX(0%);    }
           58%  { transform: translateX(0%);    }
           100% { transform: translateX(-101%); }
         }
-        @keyframes news-kb-zoom {
+        @keyframes nc-kb-zoom {
           from { transform: scale(1);    }
           to   { transform: scale(1.05); }
         }
       `}</style>
 
+      {/* Single self-contained card — no orphaned nav below */}
       <div
-        className="relative"
+        className="relative overflow-hidden"
+        style={{ backgroundColor: C.bg, border: `1px solid ${C.border}` }}
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Card shell — dark burgundy */}
-        <div
-          className="relative overflow-hidden"
-          style={{
-            backgroundColor: C.darkBg,
-            boxShadow: '0 20px 80px hsl(350 62% 14% / 0.28), 0 4px 20px hsl(350 62% 14% / 0.14)',
-          }}
-        >
-          {/* Animated gold top border */}
+        {/* Progress line — top edge of card */}
+        <div className="relative" style={{ height: '2px', backgroundColor: C.border }}>
+          <div style={{
+            position: 'absolute', top: 0, left: 0, bottom: 0,
+            width: `${progress}%`,
+            backgroundColor: C.accent,
+            transition: 'width 80ms linear',
+          }} />
+        </div>
+
+        {/* Body: text left + image right */}
+        <div className="flex flex-col lg:flex-row" style={{ minHeight: 'clamp(480px, 56vw, 620px)' }}>
+
+          {/* ── TEXT PANEL ─────────────────────────────────────────── */}
           <div
-            style={{
-              height: '3px',
-              backgroundColor: C.accent,
-              transformOrigin: direction === 'next' ? 'left' : 'right',
-              ...lineReveal(0.06),
-            }}
-          />
-
-          <div className="flex flex-col lg:flex-row lg:min-h-[560px]">
-
-            {/* ── IMAGE PANEL ────────────────────────────────────── */}
-            <div
-              className="relative lg:w-[52%] aspect-[16/10] lg:aspect-auto flex-shrink-0 overflow-hidden"
-              style={{ backgroundColor: C.darkCard }}
+            className="relative flex flex-col justify-between flex-1 overflow-hidden"
+            style={{ padding: 'clamp(2.5rem, 5vw, 5.5rem)' }}
+          >
+            {/* Decorative faded index numeral */}
+            <span
+              className="absolute pointer-events-none select-none font-cormorant font-light"
+              style={{
+                fontSize: 'clamp(9rem, 15vw, 14rem)',
+                color: C.accentFaint,
+                bottom: '-0.14em',
+                right: '-0.04em',
+                lineHeight: 1,
+              }}
             >
-              {/* Ken Burns zoom on active image */}
-              <div
-                key={`news-kb-${activeIndex}`}
-                className="absolute inset-0"
-                style={{
-                  animation: isTransitioning || prefersReducedMotion
-                    ? undefined
-                    : `news-kb-zoom ${DURATION + TRANS}ms linear forwards`,
-                }}
-              >
-                {post.imageUrl ? (
-                  <Image
-                    src={post.imageUrl}
-                    alt={post.title}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 52vw"
-                    priority={activeIndex === 0}
-                  />
-                ) : (
-                  /* Placeholder when no image */
-                  <div
-                    className="absolute inset-0 flex items-center justify-center"
-                    style={{ backgroundColor: C.darkCard }}
-                  >
-                    <span
-                      className="font-cormorant font-light italic"
-                      style={{ fontSize: '5rem', color: 'hsla(40, 72%, 52%, 0.12)' }}
-                    >
-                      News
-                    </span>
-                  </div>
-                )}
-              </div>
+              {String(activeIndex + 1).padStart(2, '0')}
+            </span>
 
-              {/* Gradient — stronger on right side to blend into text panel */}
-              <div
-                className="absolute inset-0 z-10 pointer-events-none"
-                style={{
-                  background:
-                    'linear-gradient(to top,  rgba(58,15,20,0.65) 0%,  rgba(58,15,20,0.10) 50%, transparent 75%),' +
-                    'linear-gradient(to right, transparent 60%, hsl(350,62%,26%) 100%)',
-                }}
-              />
-
-              {/* Gold curtain */}
-              {isTransitioning && (
-                <div
-                  key={`news-curtain-${transitionKey}`}
-                  className="absolute inset-0 z-20 pointer-events-none"
-                  style={{
-                    backgroundColor: C.accent,
-                    animation: `news-curtain-${direction} ${TRANS}ms cubic-bezier(0.4, 0, 0.2, 1) forwards`,
-                  }}
-                />
-              )}
-
-              {/* Category badge */}
-              {post.category && (
-                <div className="absolute top-6 left-6 z-30" style={{ ...reveal(0) }}>
+            {/* Top content */}
+            <div className="relative z-10">
+              <div className="flex items-center gap-3.5 mb-7" style={{ ...reveal(0) }}>
+                {post.category && (
                   <span
-                    className="font-display text-[9px] tracking-[0.4em] uppercase px-3.5 py-2 block"
-                    style={{ backgroundColor: C.accent, color: C.darkBg }}
+                    className="font-display text-[9px] tracking-[0.42em] uppercase px-3 py-1.5"
+                    style={{ backgroundColor: C.accentTag, color: C.accentTagFg }}
                   >
                     {post.category}
                   </span>
-                </div>
-              )}
-
-              {/* Slide counter */}
-              <div className="absolute bottom-6 right-6 z-30">
-                <span
-                  className="font-display text-[10px] tracking-[0.3em] tabular-nums"
-                  style={{ color: 'rgba(245,235,220,0.35)' }}
-                >
-                  {String(activeIndex + 1).padStart(2, '0')}
-                  <span style={{ opacity: 0.5 }}> / </span>
-                  {String(posts.length).padStart(2, '0')}
-                </span>
-              </div>
-
-              {/* Mobile tap zones */}
-              <button onClick={goPrev} aria-label="Previous article" className="absolute left-0 top-0 bottom-0 w-2/5 z-40 lg:hidden" />
-              <button onClick={goNext} aria-label="Next article"     className="absolute right-0 top-0 bottom-0 w-2/5 z-40 lg:hidden" />
-            </div>
-
-            {/* ── TEXT PANEL ─────────────────────────────────────── */}
-            <div
-              className="flex flex-col justify-between flex-1"
-              style={{
-                padding: 'clamp(2.2rem, 4.5vw, 5rem)',
-                backgroundColor: C.darkBg,
-              }}
-            >
-              <div>
-                {/* Date + overline */}
-                <p
-                  className="font-display text-[10px] tracking-[0.48em] uppercase mb-5"
-                  style={{ color: C.accent, ...reveal(0) }}
-                >
-                  {post.category ? `${post.category} · ` : ''}
-                  {formatDate(post.publishedAt)}
-                </p>
-
-                {/* Title */}
-                <h3
-                  className="font-cormorant font-light leading-[1.08]"
-                  style={{
-                    fontSize: 'clamp(2.4rem, 3.8vw, 4.8rem)',
-                    color: C.ivory,
-                    marginBottom: '1.25rem',
-                    ...reveal(0.07),
-                  }}
-                >
-                  {post.title}
-                </h3>
-
-                {/* Divider line */}
-                <div
-                  style={{
-                    height: '1px',
-                    backgroundColor: C.borderDark,
-                    transformOrigin: 'left',
-                    marginBottom: '1.75rem',
-                    ...lineReveal(0.16),
-                  }}
-                />
-
-                {/* Excerpt / subheading */}
-                {post.excerpt && (
-                  <p
-                    className="text-base leading-[1.85] max-w-[42ch]"
-                    style={{ color: C.mutedOnDark, ...reveal(0.20) }}
-                  >
-                    {post.excerpt.length > 220
-                      ? post.excerpt.slice(0, 220) + '…'
-                      : post.excerpt}
-                  </p>
                 )}
-              </div>
-
-              {/* Read link */}
-              <div
-                className="mt-10 pt-7 flex items-center justify-between"
-                style={{ borderTop: `1px solid ${C.borderDark}`, ...reveal(0.28) }}
-              >
                 <span
                   className="font-display text-[9px] tracking-[0.38em] uppercase"
-                  style={{ color: 'rgba(245,235,220,0.22)' }}
+                  style={{ color: C.muted }}
                 >
-                  From the showroom
+                  {formatDate(post.publishedAt)}
                 </span>
+              </div>
 
-                <Link
-                  href={`/posts/${post.slug}`}
-                  className="group inline-flex items-center gap-3.5"
+              <div style={{
+                height: '1px', backgroundColor: C.border,
+                transformOrigin: 'left', marginBottom: '1.75rem',
+                ...lineReveal(0.08),
+              }} />
+
+              <h3
+                className="font-cormorant font-light leading-[1.06]"
+                style={{
+                  fontSize: 'clamp(2.2rem, 3.2vw, 4rem)',
+                  color: C.text,
+                  marginBottom: '1.5rem',
+                  maxWidth: '22ch',
+                  ...reveal(0.12),
+                }}
+              >
+                {post.title}
+              </h3>
+
+              {post.excerpt && (
+                <p
+                  className="text-base leading-[1.85] max-w-[40ch]"
+                  style={{ color: C.muted, ...reveal(0.20) }}
                 >
-                  <span
-                    className="font-display text-[10px] tracking-[0.35em] uppercase transition-opacity duration-200 group-hover:opacity-50"
-                    style={{ color: 'rgba(245,235,220,0.55)' }}
-                  >
-                    Read article
-                  </span>
-                  <span
-                    className="inline-flex items-center justify-center w-9 h-9 transition-all duration-300 group-hover:bg-[hsl(40,72%,52%)] group-hover:border-[hsl(40,72%,52%)]"
-                    style={{ border: `1px solid ${C.borderDark}` }}
-                  >
-                    <svg
-                      width="11"
-                      height="11"
-                      viewBox="0 0 11 11"
-                      fill="none"
-                      className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:[&_path]:stroke-[hsl(350,62%,14%)]"
+                  {post.excerpt.length > 200
+                    ? post.excerpt.slice(0, 200) + '…'
+                    : post.excerpt}
+                </p>
+              )}
+            </div>
+
+            {/* Card footer — read link + progress segments + arrows, all in one row */}
+            <div
+              className="relative z-10 mt-10 pt-6 flex items-center justify-between gap-6"
+              style={{ borderTop: `1px solid ${C.border}`, ...reveal(0.28) }}
+            >
+              {/* Read article */}
+              <Link href={`/posts/${post.slug}`} className="group inline-flex items-center gap-3 shrink-0">
+                <span
+                  className="font-display text-[10px] tracking-[0.35em] uppercase transition-opacity duration-200 group-hover:opacity-50"
+                  style={{ color: C.text }}
+                >
+                  Read article
+                </span>
+                <span
+                  className="inline-flex items-center justify-center w-8 h-8 transition-all duration-300 group-hover:bg-[hsl(40,72%,52%)] group-hover:border-[hsl(40,72%,52%)]"
+                  style={{ border: `1px solid ${C.border}` }}
+                >
+                  <svg width="10" height="10" viewBox="0 0 11 11" fill="none"
+                    className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:[&_path]:stroke-[hsl(350,62%,14%)]">
+                    <path d="M2.5 5.5h6M6 3l2.5 2.5L6 8" stroke={C.text}
+                      strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+              </Link>
+
+              {/* Progress segments + arrows grouped right */}
+              <div className="flex items-center gap-5">
+                {/* Segment bars */}
+                <div className="flex items-center gap-2.5">
+                  {posts.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => navigate(i, i > activeIndex ? 'next' : 'prev')}
+                      aria-label={`Go to article ${i + 1}`}
+                      className="relative overflow-hidden hover:opacity-75 transition-opacity duration-150"
+                      style={{ width: '32px', height: '1px', backgroundColor: C.border }}
                     >
-                      <path
-                        d="M2.5 5.5h6M6 3l2.5 2.5L6 8"
-                        stroke="rgba(245,235,220,0.55)"
-                        strokeWidth="1"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
+                      {i === activeIndex && (
+                        <span style={{
+                          position: 'absolute', inset: 0,
+                          transform: `scaleX(${progress / 100})`,
+                          transformOrigin: 'left',
+                          backgroundColor: C.accent,
+                          transition: 'transform 80ms linear',
+                        }} />
+                      )}
+                      {i < activeIndex && (
+                        <span className="absolute inset-0" style={{ backgroundColor: C.accentMid }} />
+                      )}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Arrows */}
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={goPrev}
+                    aria-label="Previous"
+                    className="group flex items-center justify-center w-8 h-8 transition-all duration-300 hover:border-[hsl(40,72%,52%)] hover:bg-[hsl(40,72%,52%)]"
+                    style={{ border: `1px solid ${C.border}` }}
+                  >
+                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none"
+                      className="transition-transform duration-300 group-hover:-translate-x-0.5 group-hover:[&_path]:stroke-[hsl(350,62%,14%)]">
+                      <path d="M8 6H4M5.5 3.5L3 6l2.5 2.5" stroke={C.muted}
+                        strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
-                  </span>
-                </Link>
+                  </button>
+                  <button
+                    onClick={goNext}
+                    aria-label="Next"
+                    className="group flex items-center justify-center w-8 h-8 transition-all duration-300 hover:border-[hsl(40,72%,52%)] hover:bg-[hsl(40,72%,52%)]"
+                    style={{ border: `1px solid ${C.border}` }}
+                  >
+                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none"
+                      className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:[&_path]:stroke-[hsl(350,62%,14%)]">
+                      <path d="M4 6h4M6.5 3.5L9 6l-2.5 2.5" stroke={C.muted}
+                        strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* ── Navigation row ─────────────────────────────────────── */}
-        <div className="flex items-center justify-between mt-8">
+          {/* Column separator — desktop */}
+          <div className="hidden lg:block w-px shrink-0" style={{ backgroundColor: C.border }} />
+          {/* Row separator — mobile */}
+          <div className="block lg:hidden" style={{ height: '1px', backgroundColor: C.border }} />
 
-          {/* Segment progress bars */}
-          <div className="flex items-center gap-3">
-            {posts.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => navigate(i, i > activeIndex ? 'next' : 'prev')}
-                aria-label={`Go to slide ${i + 1}`}
-                className="relative overflow-hidden hover:opacity-75 transition-opacity duration-150"
-                style={{ width: '40px', height: '1px', backgroundColor: C.borderDark }}
-              >
-                {i === activeIndex && (
-                  <span
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      transform: `scaleX(${progress / 100})`,
-                      transformOrigin: 'left',
-                      backgroundColor: C.accent,
-                      transition: 'transform 80ms linear',
-                    }}
-                  />
-                )}
-                {i < activeIndex && (
-                  <span className="absolute inset-0" style={{ backgroundColor: C.accentFaint }} />
-                )}
-              </button>
-            ))}
-          </div>
-
-          {/* Chevron buttons */}
-          <div className="flex items-center gap-3">
-            <button
-              onClick={goPrev}
-              aria-label="Previous"
-              className="group flex items-center justify-center w-10 h-10 transition-all duration-300 hover:border-[hsl(40,72%,52%)] hover:bg-[hsl(40,72%,52%)]"
-              style={{ border: `1px solid ${C.borderDark}` }}
+          {/* ── IMAGE PANEL ──────────────────────────────────────────── */}
+          <div
+            className="relative lg:w-[50%] aspect-[4/3] lg:aspect-auto flex-shrink-0 overflow-hidden"
+            style={{ backgroundColor: C.imageBg }}
+          >
+            <div
+              key={`nc-kb-${activeIndex}`}
+              className="absolute inset-0"
+              style={{
+                animation: isTransitioning || prefersReducedMotion
+                  ? undefined
+                  : `nc-kb-zoom ${DURATION + TRANS}ms linear forwards`,
+              }}
             >
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
-                className="transition-transform duration-300 group-hover:-translate-x-0.5 group-hover:[&_path]:stroke-[hsl(350,62%,14%)]">
-                <path d="M8 6H4M5.5 3.5L3 6l2.5 2.5" stroke={C.mutedOnDark}
-                  strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
+              {post.imageUrl ? (
+                <Image
+                  src={post.imageUrl}
+                  alt={post.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  priority={activeIndex === 0}
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: C.imageBg }}>
+                  <span className="font-cormorant font-light italic"
+                    style={{ fontSize: '4rem', color: 'hsla(40, 72%, 52%, 0.22)' }}>
+                    News
+                  </span>
+                </div>
+              )}
+            </div>
 
-            <button
-              onClick={goNext}
-              aria-label="Next"
-              className="group flex items-center justify-center w-10 h-10 transition-all duration-300 hover:border-[hsl(40,72%,52%)] hover:bg-[hsl(40,72%,52%)]"
-              style={{ border: `1px solid ${C.borderDark}` }}
-            >
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"
-                className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:[&_path]:stroke-[hsl(350,62%,14%)]">
-                <path d="M4 6h4M6.5 3.5L9 6l-2.5 2.5" stroke={C.mutedOnDark}
-                  strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </button>
+            {/* Subtle bottom depth gradient */}
+            <div
+              className="absolute inset-0 z-10 pointer-events-none"
+              style={{ background: 'linear-gradient(to top, rgba(18, 4, 6, 0.22) 0%, transparent 32%)' }}
+            />
+
+            {/* Gold curtain */}
+            {isTransitioning && (
+              <div
+                key={`nc-curtain-${transitionKey}`}
+                className="absolute inset-0 z-20 pointer-events-none"
+                style={{
+                  backgroundColor: C.accent,
+                  animation: `nc-curtain-${direction} ${TRANS}ms cubic-bezier(0.4, 0, 0.2, 1) forwards`,
+                }}
+              />
+            )}
+
+            {/* Mobile tap zones */}
+            <button onClick={goPrev} aria-label="Previous article" className="absolute left-0 top-0 bottom-0 w-2/5 z-40 lg:hidden" />
+            <button onClick={goNext} aria-label="Next article"     className="absolute right-0 top-0 bottom-0 w-2/5 z-40 lg:hidden" />
           </div>
         </div>
       </div>

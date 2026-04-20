@@ -64,7 +64,7 @@ export function SeedButton() {
             }}
           />
         )}
-        {status === 'idle' && '🌱'}
+        {status === 'idle' && '🌱 Seed All Brands (10)'}
         {status === 'loading' && 'Seeding…'}
         {status === 'done' && '✓ Seeded'}
         {status === 'error' && '⚠ Retry Seed'}
@@ -78,7 +78,7 @@ export function SeedButton() {
             color: 'var(--theme-elevation-500)',
           }}
         >
-          Populates the Steinway brand document with all hardcoded models. Safe to run — skips if already seeded.
+          Seeds 10 brands with full model specs: Steinway, Bösendorfer, C. Bechstein, Blüthner, Shigeru Kawai, Petrof, Kayserburg, Yamaha, Wendl & Lung, and Brodmann. Safe to run — skips brands that already exist.
         </p>
       )}
 

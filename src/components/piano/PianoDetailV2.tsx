@@ -6,6 +6,7 @@ import type { Piano } from '@/types/piano'
 import { ConditionBadge } from './ConditionBadge'
 import { InquiryCTA } from './InquiryCTA'
 import { PianoInquiryForm } from './PianoInquiryForm'
+import { PianoMediaCarousel } from './PianoMediaCarousel'
 import { cn } from '@/utilities/ui'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import dynamic from 'next/dynamic'
@@ -229,6 +230,11 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
           </div>
         </div>
       </section>
+
+      {/* ── Media Carousel ── */}
+      {piano.imageUrls.length > 0 && (
+        <PianoMediaCarousel images={piano.imageUrls} title={piano.title} />
+      )}
 
       {/* ── Inquiry Form ── */}
       <section className="bg-piano-black border-t border-piano-gold/10 py-24 px-8">

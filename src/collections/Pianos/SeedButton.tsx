@@ -64,7 +64,7 @@ export function SeedButton() {
             }}
           />
         )}
-        {status === 'idle' && '🌱 Seed Sample Pianos'}
+        {status === 'idle' && '🌱 Seed Pianos (34 listings)'}
         {status === 'loading' && 'Seeding…'}
         {status === 'done' && '✓ Seeded'}
         {status === 'error' && '⚠ Retry Seed'}
@@ -72,7 +72,7 @@ export function SeedButton() {
 
       {status === 'idle' && (
         <p style={{ margin: '6px 0 0', fontSize: '11px', color: 'var(--theme-elevation-500)' }}>
-          Creates 4 sample pianos as drafts. Safe to run — skips slugs that already exist. Add images and publish when ready.
+          Seeds 34 piano listings as drafts across all brands (Steinway, Bösendorfer, Bechstein, Blüthner, Shigeru Kawai, Petrof, Kayserburg, Yamaha, Wendl & Lung, Brodmann). Safe to run — skips slugs that already exist. Seed brands first, then add images and publish.
         </p>
       )}
 

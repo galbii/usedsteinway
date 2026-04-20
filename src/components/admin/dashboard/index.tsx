@@ -4,6 +4,7 @@ import { Greeting } from './Greeting'
 import { StatsRow, type StatItem } from './StatsRow'
 import { RecentPianos } from './RecentPianos'
 import { QuickActions } from './QuickActions'
+import { QuickLinks } from './QuickLinks'
 
 const COLORS = {
   black: 'hsl(25, 6%, 9%)',
@@ -50,6 +51,9 @@ export default async function Dashboard() {
         <div style={{ marginBottom: '24px' }}>
           <Greeting />
         </div>
+
+        {/* Quick Links */}
+        <QuickLinks />
 
         {/* Stats row */}
         <div style={{ marginBottom: '24px' }}>

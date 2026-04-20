@@ -304,6 +304,15 @@ export const Pianos: CollectionConfig<'pianos'> = {
               label: 'Photos',
             },
             {
+              name: 'stockImageUrl',
+              type: 'text',
+              label: 'Stock Image URL',
+              admin: {
+                description:
+                  'Optional reference image from the brand website. Used as a fallback when no photos have been uploaded yet.',
+              },
+            },
+            {
               name: 'videoUrl',
               type: 'text',
               label: 'Video URL',
