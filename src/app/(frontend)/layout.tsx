@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 
+import { GoogleTagManager } from '@next/third-parties/google'
 import { cn } from '@/utilities/ui'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
@@ -26,6 +27,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
       </head>
+      <GoogleTagManager gtmId="GTM-K9WBC7XC" />
       <body>
         <Providers>
           <AdminBar

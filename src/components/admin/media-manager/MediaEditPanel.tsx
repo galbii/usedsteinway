@@ -61,6 +61,7 @@ export function MediaEditPanel({ media, onClose }: MediaEditPanelProps) {
   const { updateMedia } = useMediaManager()
 
   // Form state
+  const [filename, setFilename] = useState(media.filename || '')
   const [alt, setAlt] = useState(media.alt || '')
   const [caption, setCaption] = useState(media.caption || '')
   const [description, setDescription] = useState(media.description || '')
@@ -86,6 +87,7 @@ export function MediaEditPanel({ media, onClose }: MediaEditPanelProps) {
   // Track changes
   useEffect(() => {
     const changed =
+      filename !== (media.filename || '') ||
       alt !== (media.alt || '') ||
       caption !== (media.caption || '') ||
       description !== (media.description || '') ||
@@ -102,7 +104,7 @@ export function MediaEditPanel({ media, onClose }: MediaEditPanelProps) {
       seoCopyright !== (media.seoMeta?.copyrightInfo || '') ||
       seoSource !== (media.seoMeta?.originalSource || '')
     setHasChanges(changed)
-  }, [alt, caption, description, mediaType, tags, featured, videoDuration, videoAutoplay, videoMuted, seoKeywords, seoPhotographer, seoCopyright, seoSource, media])
+  }, [filename, alt, caption, description, mediaType, tags, featured, videoDuration, videoAutoplay, videoMuted, seoKeywords, seoPhotographer, seoCopyright, seoSource, media])
 
   // Handle tag add
   const addTag = useCallback(() => {
@@ -126,6 +128,7 @@ export function MediaEditPanel({ media, onClose }: MediaEditPanelProps) {
     try {
       // Build update data object
       const updateData: Record<string, unknown> = {
+        filename: filename.trim() || media.filename,
         alt,
         mediaType,
         featured,
@@ -160,7 +163,7 @@ export function MediaEditPanel({ media, onClose }: MediaEditPanelProps) {
     } finally {
       setIsSaving(false)
     }
-  }, [hasChanges, updateMedia, media.id, alt, caption, description, mediaType, tags, featured, videoDuration, videoAutoplay, videoMuted, seoKeywords, seoPhotographer, seoCopyright, seoSource, onClose])
+  }, [hasChanges, updateMedia, media.id, filename, media.filename, alt, caption, description, mediaType, tags, featured, videoDuration, videoAutoplay, videoMuted, seoKeywords, seoPhotographer, seoCopyright, seoSource, onClose])
 
   return (
     <div
@@ -271,6 +274,42 @@ export function MediaEditPanel({ media, onClose }: MediaEditPanelProps) {
               />
             </div>
           )}
+
+          {/* Filename */}
+          <div>
+            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 500, marginBottom: '0.5rem', color: colors.textPrimary }}>
+              Filename
+            </label>
+            <input
+              type="text"
+              value={filename}
+              onChange={(e) => setFilename(e.target.value)}
+              placeholder="file-name.jpg"
+              style={{
+                width: '100%',
+                padding: '0.75rem 1rem',
+                fontSize: '1rem',
+                border: `1px solid ${colors.border}`,
+                borderRadius: '0.75rem',
+                outline: 'none',
+                transition: 'all 0.2s ease',
+                backgroundColor: colors.inputBg,
+                color: colors.textPrimary,
+                fontFamily: 'monospace',
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = colors.borderFocus
+                e.currentTarget.style.boxShadow = `0 0 0 3px ${colors.primary}20`
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = colors.border
+                e.currentTarget.style.boxShadow = 'none'
+              }}
+            />
+            <p style={{ fontSize: '0.75rem', marginTop: '0.375rem', color: colors.textMuted }}>
+              Include the file extension (e.g. my-photo.jpg)
+            </p>
+          </div>
 
           {/* Alt Text (required) */}
           <div>

@@ -107,18 +107,18 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
             {/* Vertical rule */}
             <div className="hidden lg:block w-px h-[18px] bg-piano-cream/10" />
 
-            {/* Inquire CTA — filled cream */}
+            {/* Contact CTA */}
             <Link
               href="/contact"
               className={cn(
                 'hidden lg:inline-flex items-center',
-                'px-[16px] py-[8px] transition-all duration-300',
-                'bg-piano-cream/90 hover:bg-piano-cream',
-                'text-piano-burgundy',
+                'px-[18px] py-[7px] transition-all duration-300',
+                'border border-piano-cream/25 hover:border-piano-cream/60',
+                'font-display font-medium text-[11px] tracking-[0.22em] uppercase',
+                'text-piano-cream/70 hover:text-piano-cream',
               )}
-              style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic', fontSize: '15px', letterSpacing: '0.06em' }}
             >
-              Inquire
+              Contact
             </Link>
 
             {/* Mobile hamburger */}
@@ -224,7 +224,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
             </div>
           ))}
 
-          {/* Inquire in sidebar */}
+          {/* Contact in sidebar */}
           <div
             style={{
               borderBottom: '1px solid rgba(200, 160, 75, 0.07)',
@@ -241,7 +241,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
                 'text-piano-gold/65 hover:text-piano-gold transition-colors duration-150',
               )}
             >
-              Inquire
+              Contact
             </Link>
           </div>
         </nav>

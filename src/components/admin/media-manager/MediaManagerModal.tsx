@@ -9,6 +9,7 @@ import { ToastContainer } from './Toast'
 import { ImageEditor } from './ImageEditor'
 import { MediaUploadMetadataForm } from './MediaUploadMetadataForm'
 import { MediaEditPanel } from './MediaEditPanel'
+import { MediaBatchReviewScreen } from './MediaBatchReviewScreen'
 
 // Dark theme color palette - Modern, sleek, professional
 const colors = {
@@ -88,6 +89,8 @@ export function MediaManagerModal() {
     folders,
     moveMediaToFolder,
     modalOptions,
+    updateMedia,
+    batchReviewFiles,
   } = useMediaManager()
 
   const [isDragging, setIsDragging] = useState(false)
@@ -95,6 +98,13 @@ export function MediaManagerModal() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const dragCounterRef = useRef(0)
+
+  // Footer tag state
+  const [footerTags, setFooterTags] = useState<string[]>([])
+  const [footerTagInput, setFooterTagInput] = useState('')
+  const [editingTagIndex, setEditingTagIndex] = useState<number | null>(null)
+  const [editingTagValue, setEditingTagValue] = useState('')
+  const [isSavingTags, setIsSavingTags] = useState(false)
 
   // Debug logging
   useEffect(() => {
@@ -138,6 +148,53 @@ export function MediaManagerModal() {
       document.body.style.overflow = ''
     }
   }, [isOpen, editingFile, metadataEditingFile, editingMedia])
+
+  // Sync footer tags when selected media changes. Intentionally depend only on the ID so
+  // we don't re-sync from server state after our own optimistic tag updates.
+  /* eslint-disable react-hooks/exhaustive-deps */
+  useEffect(() => {
+    setFooterTags(selectedMedia?.tags ?? [])
+    setFooterTagInput('')
+    setEditingTagIndex(null)
+  }, [selectedMedia?.id])
+  /* eslint-enable react-hooks/exhaustive-deps */
+
+  // Footer tag handlers (auto-save on every mutation)
+  const addFooterTag = useCallback(async () => {
+    const trimmed = footerTagInput.trim().toLowerCase()
+    if (!trimmed || footerTags.includes(trimmed) || !selectedMedia) return
+    const next = [...footerTags, trimmed]
+    setFooterTags(next)
+    setFooterTagInput('')
+    setIsSavingTags(true)
+    await updateMedia(selectedMedia.id, { tags: next })
+    setIsSavingTags(false)
+  }, [footerTagInput, footerTags, selectedMedia, updateMedia])
+
+  const removeFooterTag = useCallback(async (index: number) => {
+    if (!selectedMedia) return
+    const next = footerTags.filter((_, i) => i !== index)
+    setFooterTags(next)
+    setIsSavingTags(true)
+    await updateMedia(selectedMedia.id, { tags: next })
+    setIsSavingTags(false)
+  }, [footerTags, selectedMedia, updateMedia])
+
+  const startEditTag = useCallback((index: number, value: string) => {
+    setEditingTagIndex(index)
+    setEditingTagValue(value)
+  }, [])
+
+  const commitEditTag = useCallback(async (index: number) => {
+    const trimmed = editingTagValue.trim().toLowerCase()
+    setEditingTagIndex(null)
+    if (!trimmed || trimmed === footerTags[index] || footerTags.includes(trimmed) || !selectedMedia) return
+    const next = footerTags.map((t, i) => (i === index ? trimmed : t))
+    setFooterTags(next)
+    setIsSavingTags(true)
+    await updateMedia(selectedMedia.id, { tags: next })
+    setIsSavingTags(false)
+  }, [editingTagValue, footerTags, selectedMedia, updateMedia])
 
   // Drag and drop handlers
   const handleDragEnter = useCallback((e: DragEvent) => {
@@ -661,7 +718,11 @@ export function MediaManagerModal() {
                   boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.3)',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                  onDoubleClick={() => setEditingMedia(selectedMedia)}
+                  title="Double-click to edit metadata"
+                >
                   {/* Left: Thumbnail + Info */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                     {selectedMedia.mimeType?.startsWith('image/') && (
@@ -1041,6 +1102,183 @@ export function MediaManagerModal() {
                     </a>
                   </div>
                 </div>
+
+                {/* Tags Row */}
+                <div
+                  style={{
+                    marginTop: '16px',
+                    paddingTop: '16px',
+                    borderTop: `1px solid ${colors.border}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    flexWrap: 'wrap',
+                    minHeight: '32px',
+                  }}
+                >
+                  {/* Label */}
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      color: colors.textMuted,
+                      flexShrink: 0,
+                      marginRight: '4px',
+                    }}
+                  >
+                    <svg style={{ width: '13px', height: '13px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    <span style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                      Tags
+                    </span>
+                  </div>
+
+                  {/* Tag pills */}
+                  {footerTags.map((tag, i) =>
+                    editingTagIndex === i ? (
+                      <input
+                        key={i}
+                        value={editingTagValue}
+                        onChange={(e) => setEditingTagValue(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') { e.preventDefault(); void commitEditTag(i) }
+                          if (e.key === 'Escape') setEditingTagIndex(null)
+                        }}
+                        onBlur={() => void commitEditTag(i)}
+                        autoFocus
+                        style={{
+                          fontSize: '12px',
+                          fontWeight: 500,
+                          padding: '3px 8px',
+                          borderRadius: '6px',
+                          border: `1px solid ${colors.primary}`,
+                          backgroundColor: colors.inputBg,
+                          color: colors.textPrimary,
+                          outline: 'none',
+                          width: `${Math.max(60, editingTagValue.length * 8)}px`,
+                          minWidth: '60px',
+                          maxWidth: '160px',
+                        }}
+                      />
+                    ) : (
+                      <div
+                        key={i}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          padding: '3px 6px 3px 8px',
+                          borderRadius: '6px',
+                          backgroundColor: colors.cardBg,
+                          border: `1px solid ${colors.borderLight}`,
+                          fontSize: '12px',
+                          fontWeight: 500,
+                          color: colors.textSecondary,
+                        }}
+                      >
+                        <span
+                          onClick={() => startEditTag(i, tag)}
+                          title="Click to edit"
+                          style={{ cursor: 'text', userSelect: 'none' }}
+                          onMouseEnter={(e) => { e.currentTarget.style.color = colors.textPrimary }}
+                          onMouseLeave={(e) => { e.currentTarget.style.color = colors.textSecondary }}
+                        >
+                          {tag}
+                        </span>
+                        <button
+                          onClick={() => void removeFooterTag(i)}
+                          title="Remove tag"
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: '14px',
+                            height: '14px',
+                            borderRadius: '3px',
+                            border: 'none',
+                            backgroundColor: 'transparent',
+                            color: colors.textMuted,
+                            cursor: 'pointer',
+                            padding: 0,
+                            lineHeight: 1,
+                            fontSize: '13px',
+                            flexShrink: 0,
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = colors.errorBg
+                            e.currentTarget.style.color = colors.error
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'transparent'
+                            e.currentTarget.style.color = colors.textMuted
+                          }}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    )
+                  )}
+
+                  {/* Add tag input */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <input
+                      value={footerTagInput}
+                      onChange={(e) => setFooterTagInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') { e.preventDefault(); void addFooterTag() }
+                      }}
+                      placeholder={footerTags.length === 0 ? 'Add a tag...' : 'Add tag...'}
+                      style={{
+                        fontSize: '12px',
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        border: `1px solid ${footerTagInput ? colors.borderFocus : colors.border}`,
+                        backgroundColor: 'transparent',
+                        color: colors.textPrimary,
+                        outline: 'none',
+                        width: footerTagInput ? `${Math.max(80, footerTagInput.length * 8)}px` : '90px',
+                        transition: 'border-color 0.15s ease, width 0.1s ease',
+                      }}
+                      onFocus={(e) => { e.currentTarget.style.borderColor = colors.borderFocus }}
+                      onBlur={(e) => { e.currentTarget.style.borderColor = footerTagInput ? colors.borderFocus : colors.border }}
+                    />
+                    {footerTagInput.trim() && (
+                      <button
+                        onClick={() => void addFooterTag()}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: '22px',
+                          height: '22px',
+                          borderRadius: '6px',
+                          border: 'none',
+                          backgroundColor: colors.primary,
+                          color: colors.white,
+                          cursor: 'pointer',
+                          fontSize: '16px',
+                          lineHeight: 1,
+                          flexShrink: 0,
+                          transition: 'background-color 0.15s ease',
+                        }}
+                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = colors.primaryHover }}
+                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = colors.primary }}
+                        title="Add tag"
+                      >
+                        +
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Saving indicator */}
+                  {isSavingTags && (
+                    <span style={{ fontSize: '11px', color: colors.textMuted, marginLeft: '4px' }}>
+                      Saving...
+                    </span>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -1094,6 +1332,9 @@ export function MediaManagerModal() {
 
       {/* Media Edit Panel - Always rendered when editingMedia exists, independent of modal */}
       {editingMedia && <MediaEditPanel key={editingMedia.id} media={editingMedia} onClose={() => setEditingMedia(null)} />}
+
+      {/* Batch Review Screen - shown when multiple files are selected for upload */}
+      {batchReviewFiles.length > 0 && <MediaBatchReviewScreen />}
 
       {/* Toast Notifications - Always rendered */}
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />

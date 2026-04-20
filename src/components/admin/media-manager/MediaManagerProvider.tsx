@@ -20,6 +20,7 @@ interface ExtendedState extends MediaManagerState {
   editingMedia: MediaItem | null
   editingMediaId: string | null // Track which media item is being re-edited via ImageEditor
   pendingFiles: File[]
+  batchReviewFiles: File[]
   modalOptions: import('./types').MediaManagerModalOptions | null
 }
 
@@ -40,6 +41,7 @@ const initialState: ExtendedState = {
   editingMedia: null,
   editingMediaId: null,
   pendingFiles: [],
+  batchReviewFiles: [],
   modalOptions: null,
   // Folder state
   folders: [],
@@ -58,6 +60,7 @@ interface ExtendedContextValue extends MediaManagerContextValue {
   editingMedia: MediaItem | null
   editingMediaId: string | null
   pendingFiles: File[]
+  batchReviewFiles: File[]
   modalOptions: import('./types').MediaManagerModalOptions | null
   setEditingFile: (file: File | null) => void
   setMetadataEditingFile: (file: File | null) => void
@@ -68,6 +71,8 @@ interface ExtendedContextValue extends MediaManagerContextValue {
   uploadWithMetadata: (file: File, metadata: MediaMetadata) => void
   uploadEditedFile: (file: File) => Promise<void>
   skipEditing: () => void
+  uploadBatchFiles: (files: File[]) => Promise<void>
+  clearBatchReview: () => void
 }
 
 const MediaManagerContext = createContext<ExtendedContextValue | null>(null)
@@ -256,6 +261,35 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
       console.error('Failed to create folder:', error)
       showToast('error', 'Failed to create folder')
       return null
+    }
+  }, [fetchFolders, showToast])
+
+  // Rename folder
+  const renameFolder = useCallback(async (id: string, name: string) => {
+    try {
+      const response = await fetch(`/api/payload-folders/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ name }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to rename folder')
+      }
+
+      await fetchFolders()
+
+      // Update currentFolder name in state if it's the renamed folder
+      setState(prev => ({
+        ...prev,
+        currentFolder: prev.currentFolder?.id === id
+          ? { ...prev.currentFolder, name }
+          : prev.currentFolder,
+      }))
+    } catch (error) {
+      console.error('Failed to rename folder:', error)
+      showToast('error', 'Failed to rename folder')
     }
   }, [fetchFolders, showToast])
 
@@ -478,37 +512,24 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
     }
   }, [fetchMedia, showToast, state.currentFolder])
 
-  // Handle file selection - show editor for images
+  // Handle file selection
   const handleFilesSelected = useCallback((files: FileList | File[]) => {
-    console.log('🎯 [HANDLE FILES] Called with files:', files.length)
     const fileArray = Array.from(files)
 
-    // Filter to get image files for editing
-    const imageFiles = fileArray.filter(f => f.type.startsWith('image/'))
-    const otherFiles = fileArray.filter(f => !f.type.startsWith('image/'))
-
-    console.log('🎯 [HANDLE FILES] Image files:', imageFiles.length, 'Other files:', otherFiles.length)
-
-    // If there are non-image files, upload them directly
-    if (otherFiles.length > 0) {
-      console.log('🎯 [HANDLE FILES] Uploading non-image files directly')
-      uploadFilesDirectly(otherFiles)
+    // Multiple files → batch review screen (skip editor/metadata entirely)
+    if (fileArray.length > 1) {
+      setState(prev => ({ ...prev, batchReviewFiles: fileArray }))
+      return
     }
 
-    // If there are image files, queue them for editing
-    if (imageFiles.length > 0) {
-      const firstFile = imageFiles[0]
-      if (firstFile) {
-        console.log('🎯 [HANDLE FILES] Setting editingFile to:', firstFile.name)
-        setState(prev => {
-          console.log('🎯 [HANDLE FILES] Previous state - isOpen:', prev.isOpen, 'editingFile:', prev.editingFile?.name)
-          return {
-            ...prev,
-            pendingFiles: imageFiles,
-            editingFile: firstFile,
-          }
-        })
-      }
+    // Single file → existing editor flow
+    const file = fileArray[0]
+    if (!file) return
+
+    if (file.type.startsWith('image/')) {
+      setState(prev => ({ ...prev, pendingFiles: [file], editingFile: file }))
+    } else {
+      uploadFilesDirectly([file])
     }
   }, [uploadFilesDirectly])
 
@@ -599,6 +620,18 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
       showToast('error', errorMessage)
     }
   }, [fetchMedia, showToast, state.currentFolder, state.editingMediaId, state.currentPage])
+
+  // Upload selected files from batch review (no editor, no metadata form)
+  const uploadBatchFiles = useCallback(async (files: File[]) => {
+    if (files.length === 0) return
+    setState(prev => ({ ...prev, batchReviewFiles: [] }))
+    await uploadFilesDirectly(files)
+  }, [uploadFilesDirectly])
+
+  // Cancel batch review without uploading
+  const clearBatchReview = useCallback(() => {
+    setState(prev => ({ ...prev, batchReviewFiles: [] }))
+  }, [])
 
   // Skip editing current file
   const skipEditing = useCallback(() => {
@@ -944,9 +977,12 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
     uploadWithMetadata,
     uploadEditedFile,
     skipEditing,
+    uploadBatchFiles,
+    clearBatchReview,
     // Folder actions
     fetchFolders,
     createFolder,
+    renameFolder,
     deleteFolder,
     setCurrentFolder,
     toggleFolderExpanded,

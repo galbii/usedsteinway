@@ -32,7 +32,9 @@ import { getFeaturedPianos } from '@/lib/piano-data'
 import { FeaturedCarousel } from './FeaturedCarousel'
 import { PianoLogo } from '@/components/layout'
 import { LocationTabs } from '@/components/piano/LocationTabs'
+import { NewsCarousel } from '@/components/posts/NewsCarousel'
 import type { Piano } from '@/types/piano'
+import type { PostCard } from '@/lib/payload/posts'
 
 type Location = {
   name: string
@@ -48,6 +50,7 @@ type Props = {
   locations?: Location[]
   phone?: string
   featured?: Piano[]
+  recentPosts?: PostCard[]
 }
 
 function useScrollReveal() {
@@ -85,7 +88,7 @@ const C = {
   ivory:       'hsl(36, 22%, 96%)',
 }
 
-export function UsedSteinwaysVariantPage({ locations = [], phone, featured: featuredProp }: Props) {
+export function UsedSteinwaysVariantPage({ locations = [], phone, featured: featuredProp, recentPosts = [] }: Props) {
   useScrollReveal()
   const featured = featuredProp ?? getFeaturedPianos()
 
@@ -265,6 +268,43 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
           ))}
         </div>
       </div>
+
+      {/* ═══════════════════════════════════════════════
+          NEWS — Latest articles from the showroom
+      ═══════════════════════════════════════════════ */}
+      <section className="py-36 px-8" style={{ backgroundColor: C.bg }}>
+        <div className="max-w-7xl mx-auto">
+
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
+            <div className="sr">
+              <span
+                className="font-display text-[10px] tracking-[0.48em] uppercase block mb-5"
+                style={{ color: C.accent }}
+              >
+                From the Showroom
+              </span>
+              <h2
+                className="font-cormorant font-light leading-[1.05]"
+                style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)', color: C.text }}
+              >
+                News &amp; Insights
+              </h2>
+            </div>
+            <Link
+              href="/posts"
+              className="sr sr-d1 group flex items-center gap-2 font-display text-[10px] tracking-[0.32em] uppercase transition-opacity hover:opacity-50"
+              style={{ color: C.muted }}
+            >
+              All articles
+              <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
+            </Link>
+          </div>
+
+          <div className="sr sr-d2">
+            <NewsCarousel posts={recentPosts} />
+          </div>
+        </div>
+      </section>
 
       {/* ═══════════════════════════════════════════════
           FEATURED INSTRUMENTS

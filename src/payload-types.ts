@@ -74,6 +74,7 @@ export interface Config {
     users: User;
     brands: Brand;
     pianos: Piano;
+    testimonials: Testimonial;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -98,6 +99,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     brands: BrandsSelect<false> | BrandsSelect<true>;
     pianos: PianosSelect<false> | PianosSelect<true>;
+    testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -262,6 +264,20 @@ export interface Post {
   };
   relatedPosts?: (string | Post)[] | null;
   categories?: (string | Category)[] | null;
+  /**
+   * Mark this post as a News item
+   */
+  isNews?: boolean | null;
+  /**
+   * Mark this post as a Guide
+   */
+  isGuide?: boolean | null;
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
   meta?: {
     title?: string | null;
     /**
@@ -1038,6 +1054,61 @@ export interface Piano {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials".
+ */
+export interface Testimonial {
+  id: string;
+  /**
+   * Article headline for this testimonial
+   */
+  title: string;
+  /**
+   * Featured image displayed at the top of the testimonial page
+   */
+  featuredImage?: (string | null) | Media;
+  /**
+   * Full name of the customer
+   */
+  customerName: string;
+  /**
+   * City, State (e.g. "Waltham, MA")
+   */
+  location?: string | null;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (string | null) | Media;
+    description?: string | null;
+  };
+  publishedAt?: string | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1260,6 +1331,10 @@ export interface PayloadLockedDocument {
         value: string | Piano;
       } | null)
     | ({
+        relationTo: 'testimonials';
+        value: string | Testimonial;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: string | Redirect;
       } | null)
@@ -1466,6 +1541,14 @@ export interface PostsSelect<T extends boolean = true> {
   content?: T;
   relatedPosts?: T;
   categories?: T;
+  isNews?: T;
+  isGuide?: T;
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
   meta?:
     | T
     | {
@@ -1724,6 +1807,30 @@ export interface PianosSelect<T extends boolean = true> {
       };
   isAvailable?: T;
   isFeatured?: T;
+  publishedAt?: T;
+  generateSlug?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials_select".
+ */
+export interface TestimonialsSelect<T extends boolean = true> {
+  title?: T;
+  featuredImage?: T;
+  customerName?: T;
+  location?: T;
+  content?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
   publishedAt?: T;
   generateSlug?: T;
   slug?: T;
@@ -2233,6 +2340,10 @@ export interface TaskSchedulePublish {
       | ({
           relationTo: 'pianos';
           value: string | Piano;
+        } | null)
+      | ({
+          relationTo: 'testimonials';
+          value: string | Testimonial;
         } | null);
     global?: string | null;
     user?: (string | null) | User;

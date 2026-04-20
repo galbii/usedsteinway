@@ -6,6 +6,7 @@ import type { Header as HeaderType, Brand } from '@/payload-types'
 
 import { CMSLink } from '@/components/Link'
 import { ModelsDropdown } from './ModelsDropdown'
+import { ResourcesDropdown } from './ResourcesDropdown'
 
 type BrandModel = NonNullable<Brand['models']>[number]
 
@@ -15,8 +16,6 @@ interface HeaderNavProps {
   scrolled?: boolean
 }
 
-// Mirror the href resolution logic from CMSLink so we can detect the steinway link
-// regardless of whether it's configured as a custom URL or an internal reference.
 function resolveNavHref(link: NonNullable<HeaderType['navItems']>[number]['link']): string {
   if (
     link?.type === 'reference' &&
@@ -31,54 +30,72 @@ function resolveNavHref(link: NonNullable<HeaderType['navItems']>[number]['link'
   return link?.url ?? ''
 }
 
+type ActiveDropdown = 'models' | 'resources' | null
+
 export const HeaderNav: React.FC<HeaderNavProps> = ({ data, models = [], scrolled = false }) => {
   const allItems = data?.navItems || []
-  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [activeDropdown, setActiveDropdown] = useState<ActiveDropdown>(null)
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Contact is handled separately in the right-side slot
   const mainItems = allItems.filter(({ link }) => {
     const href = resolveNavHref(link)
     const label = link?.label?.toLowerCase() ?? ''
     return !href.includes('/contact') && label !== 'contact'
   })
 
-  const openDropdown = useCallback(() => {
+  const openDropdown = useCallback((which: ActiveDropdown) => {
     if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
-    setDropdownOpen(true)
+    setActiveDropdown(which)
   }, [])
 
   const scheduleClose = useCallback(() => {
-    closeTimerRef.current = setTimeout(() => setDropdownOpen(false), 120)
+    closeTimerRef.current = setTimeout(() => setActiveDropdown(null), 120)
   }, [])
 
   return (
     <nav className="hidden lg:flex items-center gap-10">
       {mainItems.map(({ link }, i) => {
         const href = resolveNavHref(link)
+        const label = link?.label?.toLowerCase() ?? ''
+
         const isSteinwayLink = href === '/pianos/steinway' || href.startsWith('/pianos/steinway')
-        const hasDropdown = isSteinwayLink && models.length > 0
+        const isResourcesLink = label === 'resources'
+
+        const hasModelsDropdown = isSteinwayLink && models.length > 0
+        const hasResourcesDropdown = isResourcesLink
+
+        const isActive =
+          (hasModelsDropdown && activeDropdown === 'models') ||
+          (hasResourcesDropdown && activeDropdown === 'resources')
 
         return (
           <span
             key={i}
             className="relative group animate-nav-in"
             style={{ animationDelay: `${i * 80 + 200}ms` }}
-            onMouseEnter={hasDropdown ? openDropdown : undefined}
-            onMouseLeave={hasDropdown ? scheduleClose : undefined}
+            onMouseEnter={
+              hasModelsDropdown
+                ? () => openDropdown('models')
+                : hasResourcesDropdown
+                  ? () => openDropdown('resources')
+                  : undefined
+            }
+            onMouseLeave={
+              hasModelsDropdown || hasResourcesDropdown ? scheduleClose : undefined
+            }
           >
             <CMSLink
               {...link}
               appearance="link"
               className="font-display font-medium text-[13px] tracking-[0.2em] uppercase text-piano-cream/72 group-hover:text-piano-cream transition-colors duration-300"
             />
-            {/* Subtle indicator dot for items with dropdown */}
-            {hasDropdown && (
+            {/* Indicator dot for items with a dropdown */}
+            {(hasModelsDropdown || hasResourcesDropdown) && (
               <span
                 className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-[3px] h-[3px] rounded-full transition-opacity duration-200"
                 style={{
                   backgroundColor: 'rgba(200, 160, 75, 0.6)',
-                  opacity: dropdownOpen ? 1 : 0,
+                  opacity: isActive ? 1 : 0,
                 }}
                 aria-hidden
               />
@@ -87,12 +104,19 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ data, models = [], scrolle
         )
       })}
 
-      {/* Models dropdown — rendered outside nav items to avoid overflow clipping */}
-      {dropdownOpen && models.length > 0 && (
+      {activeDropdown === 'models' && models.length > 0 && (
         <ModelsDropdown
           models={models}
           scrolled={scrolled}
-          onMouseEnter={openDropdown}
+          onMouseEnter={() => openDropdown('models')}
+          onMouseLeave={scheduleClose}
+        />
+      )}
+
+      {activeDropdown === 'resources' && (
+        <ResourcesDropdown
+          scrolled={scrolled}
+          onMouseEnter={() => openDropdown('resources')}
           onMouseLeave={scheduleClose}
         />
       )}

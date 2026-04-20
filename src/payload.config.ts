@@ -11,6 +11,7 @@ import { Brands } from './collections/Brands'
 import { Pianos } from './collections/Pianos'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
+import { Testimonials } from './collections/Testimonials'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
@@ -25,8 +26,13 @@ const dirname = path.dirname(filename)
 export default buildConfig({
   admin: {
     components: {
-      // Admin Root Provider - wraps entire admin UI with Media Manager context, modal, and button
       providers: ['/components/admin/AdminRootProvider#AdminRootProvider'],
+      beforeLogin: ['/components/admin/LoginBranding#default'],
+      views: {
+        dashboard: {
+          Component: '/components/admin/dashboard#default',
+        },
+      },
     },
     importMap: {
       baseDir: path.resolve(dirname),
@@ -60,7 +66,7 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URL || '',
   }),
-  collections: [Pages, Posts, Media, Categories, Users, Brands, Pianos],
+  collections: [Pages, Posts, Media, Categories, Users, Brands, Pianos, Testimonials],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, SiteSettings],
   plugins,

@@ -22,13 +22,16 @@ import { FolderTableCell as FolderTableCell_f9c02e79a4aed9a3924487c0cd4cafb1 } f
 import { FolderField as FolderField_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 import { SeedButton as SeedButton_bbbefcd69fe3a7cc8d543ddc32add190 } from '@/collections/Brands/SeedButton'
 import { SeedButton as SeedButton_4007fb73756df8a7f4889871c786aa43 } from '@/collections/Pianos/SeedButton'
+import { SeedButton as SeedButton_527d224592b6018c4fc431e2b0f20e4c } from '@/collections/Testimonials/SeedButton'
 import { LinkToDoc as LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { ReindexButton as ReindexButton_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { FolderTypeField as FolderTypeField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { RowLabel as RowLabel_ec255a65fa6fa8d1faeb09cf35284224 } from '@/Header/RowLabel'
 import { RowLabel as RowLabel_1f6ff6ff633e3695d348f4f3c58f1466 } from '@/Footer/RowLabel'
+import { default as default_59246f61952b9d616d374a3e41b16f35 } from '../../../components/admin/LoginBranding'
 import { AdminRootProvider as AdminRootProvider_90270e1a289c41a7c07e2a0de98e46c1 } from '../../../components/admin/AdminRootProvider'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
+import { default as default_17cbb53d1dcdedc66c123d519d2cff79 } from '../../../components/admin/dashboard'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 export const importMap = {
@@ -56,12 +59,15 @@ export const importMap = {
   "@payloadcms/next/rsc#FolderField": FolderField_f9c02e79a4aed9a3924487c0cd4cafb1,
   "@/collections/Brands/SeedButton#SeedButton": SeedButton_bbbefcd69fe3a7cc8d543ddc32add190,
   "@/collections/Pianos/SeedButton#SeedButton": SeedButton_4007fb73756df8a7f4889871c786aa43,
+  "@/collections/Testimonials/SeedButton#SeedButton": SeedButton_527d224592b6018c4fc431e2b0f20e4c,
   "@payloadcms/plugin-search/client#LinkToDoc": LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/plugin-search/client#ReindexButton": ReindexButton_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/next/client#FolderTypeField": FolderTypeField_2b8867833a34864a02ddf429b0728a40,
   "@/Header/RowLabel#RowLabel": RowLabel_ec255a65fa6fa8d1faeb09cf35284224,
   "@/Footer/RowLabel#RowLabel": RowLabel_1f6ff6ff633e3695d348f4f3c58f1466,
+  "/components/admin/LoginBranding#default": default_59246f61952b9d616d374a3e41b16f35,
   "/components/admin/AdminRootProvider#AdminRootProvider": AdminRootProvider_90270e1a289c41a7c07e2a0de98e46c1,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
+  "/components/admin/dashboard#default": default_17cbb53d1dcdedc66c123d519d2cff79,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

@@ -129,13 +129,13 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
               <div className="grid grid-cols-2 gap-3">
                 <Link
                   href="/visit"
-                  className="block text-center border border-piano-silver/15 py-4 text-piano-silver/45 font-display text-xs tracking-[0.3em] uppercase hover:border-piano-gold/50 hover:text-piano-gold/80 transition-all duration-200"
+                  className="block text-center border border-piano-silver/30 py-4 text-piano-silver/70 font-display text-xs tracking-widest uppercase hover:border-piano-gold/60 hover:text-piano-gold transition-all duration-200"
                 >
                   Plan Your Visit
                 </Link>
                 <Link
                   href="/sell-your-piano"
-                  className="block text-center border border-piano-silver/15 py-4 text-piano-silver/45 font-display text-xs tracking-[0.3em] uppercase hover:border-piano-gold/50 hover:text-piano-gold/80 transition-all duration-200"
+                  className="block text-center border border-piano-silver/30 py-4 text-piano-silver/70 font-display text-xs tracking-widest uppercase hover:border-piano-gold/60 hover:text-piano-gold transition-all duration-200"
                 >
                   Sell Your Piano
                 </Link>

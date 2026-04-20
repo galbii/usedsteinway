@@ -1,0 +1,248 @@
+// =============================================================================
+// Used Steinways — Payload Admin Theme Overrides
+// Applied globally to all admin pages via src/app/(payload)/layout.tsx
+//
+// Structure:
+//   1. Font import
+//   2. CSS variable overrides (primary color → gold, base palette → warm dark)
+//   3. Legibility — scale up font sizes
+//   4. Component-level refinements (nav, login, forms)
+// =============================================================================
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap');
+
+// -----------------------------------------------------------------------------
+// 1. Primary color — replace Payload's blue scale with piano gold
+// -----------------------------------------------------------------------------
+:root {
+  --color-blue-50:  hsl(40, 60%, 95%);
+  --color-blue-100: hsl(40, 62%, 88%);
+  --color-blue-200: hsl(40, 65%, 78%);
+  --color-blue-250: hsl(40, 67%, 73%);
+  --color-blue-300: hsl(40, 68%, 66%);
+  --color-blue-350: hsl(40, 69%, 62%);
+  --color-blue-400: hsl(40, 70%, 58%);
+  --color-blue-450: hsl(40, 71%, 55%);
+  --color-blue-500: hsl(40, 72%, 52%);
+  --color-blue-600: hsl(38, 72%, 44%);
+  --color-blue-700: hsl(36, 70%, 36%);
+  --color-blue-800: hsl(34, 68%, 28%);
+  --color-blue-900: hsl(32, 65%, 20%);
+}
+
+// -----------------------------------------------------------------------------
+// 2. Dark theme base palette — warm piano-black instead of neutral gray
+// -----------------------------------------------------------------------------
+[data-theme='dark'] {
+  --color-base-1000: hsl(25, 6%, 6%);
+  --color-base-950:  hsl(25, 6%, 9%);   // piano-black
+  --color-base-900:  hsl(25, 5%, 11%);
+  --color-base-850:  hsl(25, 5%, 13%);  // piano-charcoal
+  --color-base-800:  hsl(25, 5%, 16%);
+  --color-base-750:  hsl(25, 4%, 20%);
+  --color-base-700:  hsl(25, 4%, 25%);
+  --color-base-650:  hsl(25, 4%, 30%);
+  --color-base-600:  hsl(25, 3%, 36%);
+  --color-base-550:  hsl(25, 3%, 42%);
+  --color-base-500:  hsl(25, 3%, 48%);  // piano-stone
+  --color-base-0:    hsl(36, 18%, 97%); // piano-cream
+  --color-base-50:   hsl(36, 14%, 92%);
+  --color-base-100:  hsl(36, 10%, 85%);
+  --color-base-150:  hsl(30, 6%, 76%);
+  --color-base-200:  hsl(25, 5%, 65%);
+}
+
+// -----------------------------------------------------------------------------
+// 3. Legibility — scale up font sizes across the admin
+// -----------------------------------------------------------------------------
+html {
+  font-size: 15.5px;
+}
+
+// Payload sets font-size on specific elements — boost them proportionally
+.nav__link,
+.nav__label,
+.collection-list__item,
+.doc-header__title h1,
+.list-controls__count {
+  font-size: 1rem;
+}
+
+// Larger field labels
+.field-label,
+label {
+  font-size: 0.9rem;
+}
+
+// Larger input text
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='number'],
+input[type='search'],
+textarea,
+select {
+  font-size: 1rem !important;
+}
+
+// Table / list row text
+.cell,
+.row-title {
+  font-size: 0.95rem;
+}
+
+// -----------------------------------------------------------------------------
+// 4. Nav sidebar — warm dark, gold accent on active
+// -----------------------------------------------------------------------------
+.nav {
+  background-color: hsl(25, 5%, 10%) !important;
+  border-right: 1px solid rgba(184, 134, 57, 0.12) !important;
+}
+
+.nav__link--active,
+.nav__link:hover {
+  color: hsl(40, 72%, 52%) !important;
+}
+
+// Nav brand / logo area
+.nav__header {
+  border-bottom-color: rgba(184, 134, 57, 0.12) !important;
+}
+
+// -----------------------------------------------------------------------------
+// 5. Login page — full redesign
+// -----------------------------------------------------------------------------
+
+// Full-page background
+.template-minimal,
+.template-minimal__wrap,
+.login,
+.login__content {
+  background-color: hsl(25, 6%, 9%) !important;
+}
+
+// Hide Payload's default logo — LoginBranding component replaces it
+.template-minimal__wrap > a:first-child,
+.template-minimal__wrap > a > svg,
+.template-minimal__wrap > a > img,
+.login__logo {
+  display: none !important;
+}
+
+// Dissolve the form card — let fields sit directly on the dark page
+.login__form,
+.template-minimal__wrap > form,
+.template-minimal form {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+// Input fields — dark fill, gold border, cream text
+.template-minimal input[type='email'],
+.template-minimal input[type='password'],
+.template-minimal input[type='text'] {
+  background-color: hsl(25, 5%, 7%) !important;
+  color: hsl(36, 18%, 97%) !important;
+  border: 1px solid rgba(184, 134, 57, 0.2) !important;
+  border-radius: 2px !important;
+  caret-color: hsl(40, 72%, 52%) !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+
+  &:focus,
+  &:focus-visible {
+    background-color: hsl(25, 5%, 9%) !important;
+    border-color: rgba(184, 134, 57, 0.55) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(184, 134, 57, 0.07) !important;
+  }
+}
+
+// Browser autofill injects a white background — override it
+.template-minimal input:-webkit-autofill,
+.template-minimal input:-webkit-autofill:hover,
+.template-minimal input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px hsl(25, 5%, 7%) inset !important;
+  -webkit-text-fill-color: hsl(36, 18%, 97%) !important;
+  caret-color: hsl(36, 18%, 97%) !important;
+  border-color: rgba(184, 134, 57, 0.2) !important;
+}
+
+// Field labels — muted, spaced, uppercase
+.template-minimal .field-label,
+.template-minimal label {
+  color: hsl(25, 5%, 52%) !important;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  font-weight: 400 !important;
+}
+
+// Required asterisk — softer gold
+.template-minimal .required {
+  color: rgba(184, 134, 57, 0.55) !important;
+}
+
+// Login / submit button — piano gold
+.template-minimal .btn--style-primary,
+.template-minimal button[type='submit'],
+.template-minimal .form-submit .btn {
+  background-color: hsl(40, 72%, 52%) !important;
+  background-image: none !important;
+  color: hsl(25, 6%, 9%) !important;
+  border: none !important;
+  border-radius: 2px !important;
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  padding: 14px 28px !important;
+  transition: background-color 0.18s ease !important;
+
+  &:hover {
+    background-color: hsl(40, 72%, 60%) !important;
+  }
+
+  &:disabled {
+    background-color: rgba(184, 134, 57, 0.28) !important;
+    color: rgba(20, 16, 10, 0.5) !important;
+  }
+}
+
+// Forgot password link — quiet, gold on hover
+.template-minimal .login__forgot-password,
+.template-minimal a[href*='forgot'] {
+  color: hsl(25, 5%, 42%) !important;
+  font-size: 0.78rem !important;
+  text-decoration: none !important;
+  transition: color 0.18s ease !important;
+
+  &:hover {
+    color: hsl(40, 72%, 52%) !important;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// 6. General surface refinements
+// -----------------------------------------------------------------------------
+
+// Card / panel backgrounds — slightly warm
+.render-fields,
+.collection-edit,
+.doc-controls {
+  background-color: hsl(25, 5%, 11%) !important;
+}
+
+// Primary buttons — already handled by --color-blue-* override above
+// but reinforce focus ring color
+button:focus-visible,
+a:focus-visible {
+  outline-color: hsl(40, 72%, 52%) !important;
+}
+
+// Subtle gold tint on table row hover
+.row:hover,
+.table tbody tr:hover {
+  background-color: rgba(184, 134, 57, 0.04) !important;
+}

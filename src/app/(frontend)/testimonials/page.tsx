@@ -1,7 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { TESTIMONIALS } from '@/lib/piano-data'
+import React from 'react'
+
 import { InquiryCTA } from '@/components/piano/InquiryCTA'
+import configPromise from '@payload-config'
+import { getPayload } from 'payload'
 
 export const metadata: Metadata = {
   title: 'Customer Testimonials | UsedSteinways.com',
@@ -9,7 +12,23 @@ export const metadata: Metadata = {
     'What our clients say about buying through UsedSteinways.com. Real stories from pianists across New England.',
 }
 
-export default function TestimonialsPage() {
+export default async function TestimonialsPage() {
+  const payload = await getPayload({ config: configPromise })
+
+  const { docs: testimonials } = await payload.find({
+    collection: 'testimonials',
+    draft: false,
+    limit: 100,
+    overrideAccess: false,
+    pagination: false,
+    sort: '-publishedAt',
+    where: {
+      _status: {
+        equals: 'published',
+      },
+    },
+  })
+
   return (
     <main className="min-h-screen bg-piano-cream">
       {/* Hero */}
@@ -31,107 +50,32 @@ export default function TestimonialsPage() {
         </div>
       </section>
 
-      {/* Featured Testimonial */}
-      <section className="py-24 px-8 border-b border-piano-gold/10">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-piano-gold text-5xl mb-6" aria-hidden="true">
-            &ldquo;
-          </p>
-          <blockquote
-            className="font-cormorant font-light text-piano-black leading-snug mb-8"
-            style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)' }}
-          >
-            {TESTIMONIALS[0]?.quote}
-          </blockquote>
-          <footer>
-            <p className="font-display text-sm tracking-widest uppercase text-piano-stone">
-              {TESTIMONIALS[0]?.name}
-            </p>
-            <p className="text-piano-stone text-sm mt-1">
-              {TESTIMONIALS[0]?.piano} · {TESTIMONIALS[0]?.location}
-            </p>
-          </footer>
-        </div>
-      </section>
-
-      {/* All Testimonials Grid */}
+      {/* Testimonials Grid */}
       <section className="py-24 px-8">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-          {TESTIMONIALS.map((testimonial) => (
-            <div
-              key={testimonial.id}
-              className="bg-piano-cream border border-piano-linen p-8 hover:border-piano-gold/30 transition-colors"
-            >
-              {/* Stars */}
-              <div className="flex gap-1 mb-5">
-                {Array.from({ length: testimonial.rating }).map((_, i) => (
-                  <span key={i} className="text-piano-gold text-sm">
-                    ★
-                  </span>
-                ))}
-              </div>
-              <blockquote
-                className="font-cormorant font-light text-piano-stone leading-relaxed mb-6 text-xl italic"
-              >
-                &ldquo;{testimonial.quote}&rdquo;
-              </blockquote>
-              <footer className="border-t border-piano-linen pt-5">
-                <p className="font-medium text-piano-black text-base">{testimonial.name}</p>
-                <p className="text-piano-stone text-xs mt-0.5">{testimonial.piano}</p>
-                <p className="text-piano-stone/70 text-xs mt-0.5">{testimonial.location}</p>
-              </footer>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Extended Testimonials (additional hardcoded) */}
-      <section className="py-8 px-8 bg-piano-burgundy border-t border-piano-gold/10">
         <div className="max-w-7xl mx-auto">
-          <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-8 text-center">
-            More from Our Clients
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {[
-              {
-                name: 'Eleanor Vasquez',
-                location: 'Hartford, CT',
-                piano: '2005 Blüthner Model 6',
-                quote:
-                  "The Blüthner Roger found for me is extraordinary. I had never played a Blüthner before — I had no idea what I was missing. The aliquot stringing in the treble is unlike anything I've heard.",
-              },
-              {
-                name: 'Thomas H.',
-                location: 'Portland, ME',
-                piano: '2012 Steinway Model A',
-                quote: 'Roger talked me out of a Model B and into an A because my room simply couldn\'t do justice to a larger instrument. He was right. The A sings in that space.',
-              },
-              {
-                name: 'Linda Park-Morrison',
-                location: 'Newton, MA',
-                piano: '2018 Shigeru Kawai SK-3',
-                quote:
-                  "As a piano teacher, I was skeptical of anything that wasn't a Steinway. Roger played both a Shigeru Kawai and a comparable Steinway back-to-back. I bought the Kawai.",
-              },
-            ].map(({ name, location, piano, quote }) => (
-              <div key={name} className="border border-piano-gold/15 p-6">
-                <p className="text-piano-gold text-xl mb-3" aria-hidden="true">
-                  &ldquo;
-                </p>
-                <p className="font-cormorant font-light text-piano-cream/80 text-xl leading-relaxed mb-5 italic">
-                  {quote}
-                </p>
-                <div className="border-t border-piano-gold/10 pt-4">
-                  <p className="text-piano-cream text-xs font-display tracking-widest uppercase">
-                    {name}
-                  </p>
-                  <p className="text-piano-silver/60 text-xs mt-0.5">
-                    {piano} · {location}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+          {testimonials.length === 0 ? (
+            <p className="text-piano-stone text-center text-lg">No testimonials published yet.</p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {testimonials.map((testimonial) => (
+                <Link
+                  key={testimonial.id}
+                  href={`/testimonials/${testimonial.slug}`}
+                  className="group bg-piano-cream border border-piano-linen p-8 hover:border-piano-gold/30 transition-colors block"
+                >
+                  <h2 className="font-cormorant font-light text-piano-black leading-snug mb-4 text-2xl group-hover:text-piano-burgundy transition-colors">
+                    {testimonial.title}
+                  </h2>
+                  <footer className="border-t border-piano-linen pt-5">
+                    <p className="font-medium text-piano-black text-base">{testimonial.customerName}</p>
+                    {testimonial.location && (
+                      <p className="text-piano-stone/70 text-xs mt-0.5">{testimonial.location}</p>
+                    )}
+                  </footer>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

@@ -42,6 +42,7 @@ export const Posts: CollectionConfig<'posts'> = {
     title: true,
     slug: true,
     categories: true,
+    tags: true,
     meta: {
       image: true,
       description: true,
@@ -128,6 +129,45 @@ export const Posts: CollectionConfig<'posts'> = {
               },
               hasMany: true,
               relationTo: 'categories',
+            },
+            {
+              name: 'isNews',
+              type: 'checkbox',
+              label: 'News',
+              defaultValue: false,
+              admin: {
+                position: 'sidebar',
+                description: 'Mark this post as a News item',
+              },
+            },
+            {
+              name: 'isGuide',
+              type: 'checkbox',
+              label: 'Guide',
+              defaultValue: false,
+              admin: {
+                position: 'sidebar',
+                description: 'Mark this post as a Guide',
+              },
+            },
+            {
+              name: 'tags',
+              type: 'array',
+              admin: {
+                position: 'sidebar',
+                initCollapsed: true,
+              },
+              fields: [
+                {
+                  name: 'tag',
+                  type: 'text',
+                  required: true,
+                },
+              ],
+              labels: {
+                singular: 'Tag',
+                plural: 'Tags',
+              },
             },
           ],
           label: 'Meta',

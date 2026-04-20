@@ -94,6 +94,7 @@ export interface MediaManagerActions {
   // Folder actions
   fetchFolders: () => Promise<void>
   createFolder: (name: string, parentId?: string) => Promise<FolderItem | null>
+  renameFolder: (id: string, name: string) => Promise<void>
   deleteFolder: (id: string) => Promise<void>
   setCurrentFolder: (folder: FolderItem | null) => void
   toggleFolderExpanded: (folderId: string) => void

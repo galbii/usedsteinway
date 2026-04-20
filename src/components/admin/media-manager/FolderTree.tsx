@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useMediaManager } from './MediaManagerProvider'
 import type { FolderItem, FolderTreeNode } from './types'
 
@@ -67,6 +67,7 @@ interface FolderTreeItemProps {
   onSelect: (folder: FolderItem | null) => void
   onToggle: (folderId: string) => void
   onDelete: (folderId: string) => void
+  onRename: (folderId: string, name: string) => Promise<void>
   onCreateChild: (parentId: string) => void
   expandedFolders: Set<string>
 }
@@ -78,13 +79,46 @@ function FolderTreeItem({
   onSelect,
   onToggle,
   onDelete,
+  onRename,
   onCreateChild,
   expandedFolders,
 }: FolderTreeItemProps) {
   const [showActions, setShowActions] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editValue, setEditValue] = useState(folder.name)
+  const [isSaving, setIsSaving] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+
   const hasChildren = folder.children.length > 0
   const isExpanded = expandedFolders.has(folder.id)
   const isSelected = selectedFolderId === folder.id
+
+  useEffect(() => {
+    if (isEditing) {
+      inputRef.current?.focus()
+      inputRef.current?.select()
+    }
+  }, [isEditing])
+
+  const startEditing = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation()
+    setEditValue(folder.name)
+    setIsEditing(true)
+  }, [folder.name])
+
+  const commitRename = useCallback(async () => {
+    const trimmed = editValue.trim()
+    setIsEditing(false)
+    if (!trimmed || trimmed === folder.name) return
+    setIsSaving(true)
+    await onRename(folder.id, trimmed)
+    setIsSaving(false)
+  }, [editValue, folder.name, folder.id, onRename])
+
+  const cancelEditing = useCallback(() => {
+    setIsEditing(false)
+    setEditValue(folder.name)
+  }, [folder.name])
 
   return (
     <div>
@@ -95,22 +129,22 @@ function FolderTreeItem({
           gap: '12px',
           padding: '12px 16px',
           borderRadius: '12px',
-          cursor: 'pointer',
+          cursor: isEditing ? 'default' : 'pointer',
           transition: 'all 0.15s ease',
           marginBottom: '4px',
           marginLeft: `${depth * 20}px`,
           backgroundColor: isSelected ? colors.hoverBg : 'transparent',
           borderLeft: isSelected ? `3px solid ${colors.primary}` : '3px solid transparent',
         }}
-        onClick={() => onSelect(folder)}
-        onMouseEnter={() => setShowActions(true)}
+        onClick={() => { if (!isEditing) onSelect(folder) }}
+        onMouseEnter={() => { if (!isEditing) setShowActions(true) }}
         onMouseLeave={() => setShowActions(false)}
       >
         {/* Expand/collapse button */}
         <button
           onClick={(e) => {
             e.stopPropagation()
-            onToggle(folder.id)
+            if (!isEditing) onToggle(folder.id)
           }}
           style={{
             width: '24px',
@@ -161,7 +195,8 @@ function FolderTreeItem({
             style={{
               width: '20px',
               height: '20px',
-              color: isSelected ? colors.primary : colors.gold,
+              color: isSaving ? colors.textMuted : isSelected ? colors.primary : colors.gold,
+              transition: 'color 0.2s ease',
             }}
             fill="currentColor"
             viewBox="0 0 24 24"
@@ -174,24 +209,78 @@ function FolderTreeItem({
           </svg>
         </div>
 
-        {/* Folder name */}
-        <span
-          style={{
-            flex: 1,
-            fontSize: '16px',
-            fontWeight: 500,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            color: isSelected ? colors.textAccent : colors.textPrimary,
-          }}
-        >
-          {folder.name}
-        </span>
+        {/* Folder name / inline edit input */}
+        {isEditing ? (
+          <input
+            ref={inputRef}
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') { e.preventDefault(); void commitRename() }
+              if (e.key === 'Escape') cancelEditing()
+            }}
+            onBlur={() => void commitRename()}
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              flex: 1,
+              fontSize: '15px',
+              fontWeight: 500,
+              padding: '4px 10px',
+              borderRadius: '8px',
+              border: `1.5px solid ${colors.borderFocus}`,
+              backgroundColor: colors.inputBg,
+              color: colors.textPrimary,
+              outline: 'none',
+              minWidth: 0,
+            }}
+          />
+        ) : (
+          <span
+            style={{
+              flex: 1,
+              fontSize: '16px',
+              fontWeight: 500,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              color: isSaving ? colors.textMuted : isSelected ? colors.textAccent : colors.textPrimary,
+              transition: 'color 0.2s ease',
+            }}
+          >
+            {folder.name}
+          </span>
+        )}
 
-        {/* Actions */}
-        {showActions && (
+        {/* Actions — hidden while editing */}
+        {showActions && !isEditing && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            {/* Rename */}
+            <button
+              onClick={startEditing}
+              style={{
+                padding: '8px',
+                borderRadius: '8px',
+                transition: 'opacity 0.2s ease',
+                backgroundColor: colors.cardBg,
+                color: colors.textSecondary,
+                border: 'none',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.opacity = '0.8'
+                e.currentTarget.style.color = colors.primary
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = '1'
+                e.currentTarget.style.color = colors.textSecondary
+              }}
+              title="Rename folder"
+            >
+              <svg style={{ width: '16px', height: '16px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            </button>
+            {/* Add subfolder */}
             <button
               onClick={(e) => {
                 e.stopPropagation()
@@ -214,6 +303,7 @@ function FolderTreeItem({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
             </button>
+            {/* Delete */}
             <button
               onClick={(e) => {
                 e.stopPropagation()
@@ -254,6 +344,7 @@ function FolderTreeItem({
               onSelect={onSelect}
               onToggle={onToggle}
               onDelete={onDelete}
+              onRename={onRename}
               onCreateChild={onCreateChild}
               expandedFolders={expandedFolders}
             />
@@ -420,6 +511,7 @@ export function FolderTree() {
     expandedFolders,
     isFoldersLoading,
     createFolder,
+    renameFolder,
     deleteFolder,
     showToast,
   } = useMediaManager()
@@ -434,6 +526,11 @@ export function FolderTree() {
       showToast('success', `Created folder "${name}"`)
     }
   }, [createFolder, showToast])
+
+  const handleRenameFolder = useCallback(async (folderId: string, name: string) => {
+    await renameFolder(folderId, name)
+    showToast('success', `Renamed to "${name}"`)
+  }, [renameFolder, showToast])
 
   const handleDeleteFolder = useCallback(async (folderId: string) => {
     await deleteFolder(folderId)
@@ -615,6 +712,7 @@ export function FolderTree() {
               onSelect={setCurrentFolder}
               onToggle={toggleFolderExpanded}
               onDelete={handleDeleteFolder}
+              onRename={handleRenameFolder}
               onCreateChild={(parentId) => openCreateDialog(parentId, folder.name)}
               expandedFolders={expandedFolders}
             />

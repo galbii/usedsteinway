@@ -11,17 +11,24 @@ import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/
 import { searchFields } from '@/search/fieldOverrides'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
 
-import { Page, Post } from '@/payload-types'
+import { Page, Post, Testimonial } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 
-const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
-  return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
+const collectionPrefixMap: Record<string, string> = {
+  posts: '/posts',
+  testimonials: '/testimonials',
+  pages: '',
 }
 
-const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
-  const url = getServerSideURL()
+const generateTitle: GenerateTitle<Post | Page | Testimonial> = ({ doc }) => {
+  return doc?.title ? `${doc.title} | UsedSteinways.com` : 'UsedSteinways.com'
+}
 
-  return doc?.slug ? `${url}/${doc.slug}` : url
+const generateURL: GenerateURL<Post | Page | Testimonial> = ({ doc, collectionSlug }) => {
+  const siteURL = getServerSideURL()
+  const prefix = (collectionSlug && collectionPrefixMap[collectionSlug as string]) ?? ''
+
+  return doc?.slug ? `${siteURL}${prefix}/${doc.slug}` : siteURL
 }
 
 export const plugins: Plugin[] = [
