@@ -116,9 +116,9 @@ function DefaultCard({
               <span
                 className="font-display uppercase block"
                 style={{
-                  fontSize:        '7px',
+                  fontSize:        '10px',
                   letterSpacing:   '0.5em',
-                  padding:         '0.3rem 0.85rem',
+                  padding:         '0.45rem 1.1rem',
                   backgroundColor: 'hsl(40 72% 52%)',
                   color:           'hsl(25 6% 9%)',
                   fontWeight:      600,
@@ -135,9 +135,9 @@ function DefaultCard({
               <span
                 className="font-display uppercase block"
                 style={{
-                  fontSize:        '7px',
-                  letterSpacing:   '0.4em',
-                  padding:         '0.28rem 0.65rem',
+                  fontSize:        '10px',
+                  letterSpacing:   '0.35em',
+                  padding:         '0.4rem 0.9rem',
                   backgroundColor: 'rgba(255,255,255,0.84)',
                   backdropFilter:  'blur(8px)',
                   color:           'hsl(25 5% 28%)',
@@ -150,16 +150,16 @@ function DefaultCard({
         </div>
 
         {/* Content */}
-        <div style={{ padding: 'clamp(1.4rem, 2.2vw, 1.9rem) clamp(1.4rem, 2.2vw, 1.9rem) clamp(1.2rem, 1.8vw, 1.6rem)' }}>
+        <div style={{ padding: 'clamp(1.8rem, 2.8vw, 2.5rem) clamp(1.8rem, 2.8vw, 2.5rem) clamp(1.5rem, 2.2vw, 2rem)' }}>
 
           {/* Brand with animated leading bar */}
           <p
             className="font-display uppercase"
             style={{
-              fontSize:      '8.5px',
+              fontSize:      '11px',
               letterSpacing: '0.5em',
               color:         'hsl(40 72% 52%)',
-              marginBottom:  '0.6rem',
+              marginBottom:  '0.75rem',
             }}
           >
             <span className="pcard-brand-bar" />
@@ -170,10 +170,10 @@ function DefaultCard({
           <h3
             className="font-cormorant font-light text-piano-black"
             style={{
-              fontSize:      'clamp(1.45rem, 1.9vw, 1.9rem)',
+              fontSize:      'clamp(1.8rem, 2.4vw, 2.4rem)',
               lineHeight:    1.12,
               letterSpacing: '-0.01em',
-              marginBottom:  piano.finish ? '0.45rem' : 'clamp(1rem, 1.6vw, 1.4rem)',
+              marginBottom:  piano.finish ? '0.55rem' : 'clamp(1.2rem, 2vw, 1.8rem)',
             }}
           >
             {piano.model || piano.title}
@@ -184,10 +184,10 @@ function DefaultCard({
             <p
               className="font-display uppercase"
               style={{
-                fontSize:      '10px',
+                fontSize:      '12px',
                 letterSpacing: '0.2em',
                 color:         'hsl(25 4% 52%)',
-                marginBottom:  'clamp(1rem, 1.6vw, 1.4rem)',
+                marginBottom:  'clamp(1.2rem, 2vw, 1.8rem)',
               }}
             >
               {piano.finish}
@@ -197,24 +197,24 @@ function DefaultCard({
           {/* Footer */}
           <div
             className="flex items-center justify-between"
-            style={{ paddingTop: 'clamp(0.8rem, 1.2vw, 1rem)', borderTop: '1px solid hsl(36 18% 90%)' }}
+            style={{ paddingTop: 'clamp(1rem, 1.5vw, 1.3rem)', borderTop: '1px solid hsl(36 18% 90%)' }}
           >
             <p
               className="font-display uppercase"
-              style={{ fontSize: '10px', letterSpacing: '0.2em', color: 'hsl(25 4% 58%)' }}
+              style={{ fontSize: '12px', letterSpacing: '0.2em', color: 'hsl(25 4% 58%)' }}
             >
               {piano.size || '—'}
             </p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               <span
                 className="font-cormorant font-light text-piano-black"
-                style={{ fontSize: 'clamp(1.25rem, 1.7vw, 1.65rem)', lineHeight: 1 }}
+                style={{ fontSize: 'clamp(1.55rem, 2.1vw, 2.1rem)', lineHeight: 1 }}
               >
                 {piano.priceDisplay}
               </span>
               <span
                 className="pcard-arrow font-display"
-                style={{ fontSize: '0.78rem', color: 'hsl(25 4% 72%)' }}
+                style={{ fontSize: '1rem', color: 'hsl(25 4% 72%)' }}
               >
                 →
               </span>
@@ -306,17 +306,17 @@ function FeaturedCard({
           {/* Content — right 46% */}
           <div
             className="flex flex-col justify-between md:w-[46%]"
-            style={{ padding: 'clamp(2rem, 3vw, 3rem) clamp(2rem, 3.5vw, 3.5rem)' }}
+            style={{ padding: 'clamp(2.5rem, 4vw, 4rem) clamp(2.5rem, 4.5vw, 4.5rem)' }}
           >
             <div>
               {/* Featured eyebrow */}
               <p
                 className="font-display uppercase"
                 style={{
-                  fontSize:      '7.5px',
+                  fontSize:      '10px',
                   letterSpacing: '0.55em',
                   color:         'hsl(40 72% 52%)',
-                  marginBottom:  '1.4rem',
+                  marginBottom:  '1.6rem',
                 }}
               >
                 ◆ Featured Instrument
@@ -326,10 +326,10 @@ function FeaturedCard({
               <p
                 className="font-display uppercase"
                 style={{
-                  fontSize:      '9px',
+                  fontSize:      '12px',
                   letterSpacing: '0.48em',
                   color:         'hsl(40 72% 52%)',
-                  marginBottom:  '0.5rem',
+                  marginBottom:  '0.65rem',
                 }}
               >
                 {piano.brand}
@@ -339,10 +339,10 @@ function FeaturedCard({
               <h3
                 className="font-cormorant font-light text-piano-black"
                 style={{
-                  fontSize:      'clamp(1.9rem, 2.8vw, 2.8rem)',
+                  fontSize:      'clamp(2.4rem, 3.5vw, 3.5rem)',
                   lineHeight:    1.08,
                   letterSpacing: '-0.01em',
-                  marginBottom:  '1.1rem',
+                  marginBottom:  '1.3rem',
                 }}
               >
                 {piano.model || piano.title}
@@ -351,7 +351,7 @@ function FeaturedCard({
               {/* Spec row: condition · finish · size */}
               <div
                 className="flex items-center flex-wrap gap-x-3 gap-y-1"
-                style={{ marginBottom: '1.4rem' }}
+                style={{ marginBottom: '1.6rem' }}
               >
                 {[piano.condition, piano.finish, piano.size]
                   .filter(Boolean)
@@ -359,12 +359,12 @@ function FeaturedCard({
                     <span key={val} className="flex items-center gap-3">
                       <span
                         className="font-display uppercase"
-                        style={{ fontSize: '9px', letterSpacing: '0.3em', color: 'hsl(25 4% 52%)' }}
+                        style={{ fontSize: '12px', letterSpacing: '0.3em', color: 'hsl(25 4% 52%)' }}
                       >
                         {val}
                       </span>
                       {i < arr.length - 1 && (
-                        <span style={{ color: 'hsl(36 18% 85%)', fontSize: '11px' }}>·</span>
+                        <span style={{ color: 'hsl(36 18% 85%)', fontSize: '13px' }}>·</span>
                       )}
                     </span>
                   ))}
@@ -375,10 +375,10 @@ function FeaturedCard({
                 <p
                   className="line-clamp-3"
                   style={{
-                    fontSize:     '0.875rem',
-                    lineHeight:   1.7,
+                    fontSize:     '1rem',
+                    lineHeight:   1.75,
                     color:        'hsl(25 4% 42%)',
-                    marginBottom: '1.75rem',
+                    marginBottom: '2rem',
                   }}
                 >
                   {piano.description}
@@ -389,17 +389,17 @@ function FeaturedCard({
             {/* Price + CTA */}
             <div
               className="flex items-center justify-between"
-              style={{ paddingTop: '1.5rem', borderTop: '1px solid hsl(36 18% 90%)' }}
+              style={{ paddingTop: '1.75rem', borderTop: '1px solid hsl(36 18% 90%)' }}
             >
               <span
                 className="font-cormorant font-light text-piano-black"
-                style={{ fontSize: 'clamp(1.55rem, 2.2vw, 2.1rem)', lineHeight: 1 }}
+                style={{ fontSize: 'clamp(2rem, 2.8vw, 2.7rem)', lineHeight: 1 }}
               >
                 {piano.priceDisplay}
               </span>
               <span
                 className="pcard-feat-cta font-display uppercase text-piano-stone"
-                style={{ fontSize: '9px', letterSpacing: '0.4em' }}
+                style={{ fontSize: '12px', letterSpacing: '0.4em' }}
               >
                 View Details →
               </span>

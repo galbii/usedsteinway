@@ -7,6 +7,7 @@ import { ConditionBadge } from './ConditionBadge'
 import { InquiryCTA } from './InquiryCTA'
 import { PianoInquiryForm } from './PianoInquiryForm'
 import { PianoMediaCarousel } from './PianoMediaCarousel'
+import { LocationTabs } from './LocationTabs'
 import { cn } from '@/utilities/ui'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import dynamic from 'next/dynamic'
@@ -14,12 +15,34 @@ import dynamic from 'next/dynamic'
 // Loaded lazily so the heavy Lexical runtime doesn't bloat the initial bundle
 const RichText = dynamic(() => import('@/components/RichText'), { ssr: true })
 
-interface PianoDetailV2Props {
-  piano: Piano
+type Location = {
+  name: string
+  streetAddress: string
+  city: string
+  state: string
+  zip: string
+  googleMapsUrl?: string | null
+  id?: string | null
 }
 
-export function PianoDetailV2({ piano }: PianoDetailV2Props) {
+interface PianoDetailV2Props {
+  piano: Piano
+  locations?: Location[]
+  phone?: string | null
+}
+
+export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Props) {
   const [activeImage, setActiveImage] = useState(0)
+
+  // Combine uploaded photos with the stock image URL (stock goes last)
+  const allImages = [
+    ...piano.imageUrls,
+    ...(piano.stockImageUrl && !piano.imageUrls.includes(piano.stockImageUrl)
+      ? [piano.stockImageUrl]
+      : []),
+  ]
+  const stockImageIndex = piano.stockImageUrl ? allImages.indexOf(piano.stockImageUrl) : -1
+  const isActiveStockImage = activeImage === stockImageIndex && stockImageIndex !== -1
 
   return (
     <main className="min-h-screen bg-piano-cream">
@@ -41,9 +64,9 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
             {/* Main Gallery */}
             <div>
               <div className="relative aspect-[16/10] overflow-hidden bg-piano-burgundy">
-                {piano.imageUrls[activeImage] && (
+                {allImages[activeImage] && (
                   <Image
-                    src={piano.imageUrls[activeImage] ?? ''}
+                    src={allImages[activeImage] ?? ''}
                     alt={piano.title}
                     fill
                     className="object-cover"
@@ -52,14 +75,19 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
                   />
                 )}
                 <div className="absolute bottom-4 right-4 bg-piano-black/70 px-3 py-1.5 text-piano-cream/70 font-display text-[11px] tracking-[0.45em]">
-                  {activeImage + 1} / {piano.imageUrls.length}
+                  {activeImage + 1} / {allImages.length}
                 </div>
+                {isActiveStockImage && (
+                  <div className="absolute top-4 left-4 bg-piano-black/70 px-3 py-1.5 text-piano-silver/70 font-display text-[10px] tracking-[0.35em] uppercase">
+                    Reference image
+                  </div>
+                )}
               </div>
 
               {/* Thumbnail Strip */}
-              {piano.imageUrls.length > 1 && (
+              {allImages.length > 1 && (
                 <div className="flex gap-2 mt-3 pb-6">
-                  {piano.imageUrls.map((url, i) => (
+                  {allImages.map((url, i) => (
                     <button
                       key={i}
                       onClick={() => setActiveImage(i)}
@@ -71,6 +99,11 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
                       )}
                     >
                       <Image src={url} alt={`View ${i + 1}`} fill className="object-cover" sizes="80px" />
+                      {i === stockImageIndex && (
+                        <div className="absolute inset-x-0 bottom-0 bg-piano-black/60 text-piano-silver/80 font-display text-[8px] tracking-widest uppercase text-center py-0.5">
+                          Ref
+                        </div>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -125,12 +158,12 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
                 >
                   Schedule a Viewing
                 </Link>
-                <Link
-                  href={`/contact?subject=${encodeURIComponent(`Request Details: ${piano.title}`)}`}
+                <a
+                  href="#inquiry"
                   className="w-full text-center border border-piano-gold/50 text-piano-gold px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:border-piano-gold transition-colors"
                 >
-                  Request More Details
-                </Link>
+                  Check Availability
+                </a>
                 <a
                   href="tel:+16035550123"
                   className="w-full text-center border border-piano-cream/20 text-piano-cream/70 px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:border-piano-cream/50 hover:text-piano-cream transition-colors"
@@ -232,12 +265,30 @@ export function PianoDetailV2({ piano }: PianoDetailV2Props) {
       </section>
 
       {/* ── Media Carousel ── */}
-      {piano.imageUrls.length > 0 && (
-        <PianoMediaCarousel images={piano.imageUrls} title={piano.title} />
+      {allImages.length > 0 && (
+        <PianoMediaCarousel images={allImages} title={piano.title} stockImageIndex={stockImageIndex} />
+      )}
+
+      {/* ── Locations ── */}
+      {locations.length > 0 && (
+        <section className="py-20 px-8 bg-piano-cream">
+          <div className="max-w-7xl mx-auto">
+            <p className="font-display text-[11px] tracking-[0.55em] uppercase text-piano-gold mb-4">
+              Visit Our Showroom
+            </p>
+            <h2
+              className="font-cormorant font-light text-piano-black mb-10"
+              style={{ fontSize: 'clamp(2.4rem, 4vw, 4rem)' }}
+            >
+              See It In Person
+            </h2>
+            <LocationTabs locations={locations} phone={phone} />
+          </div>
+        </section>
       )}
 
       {/* ── Inquiry Form ── */}
-      <section className="bg-piano-black border-t border-piano-gold/10 py-24 px-8">
+      <section id="inquiry" className="bg-piano-black border-t border-piano-gold/10 py-24 px-8">
         <div className="max-w-7xl mx-auto">
           <div className="mb-14">
             <p className="font-display text-[11px] tracking-[0.55em] uppercase text-piano-gold mb-4">

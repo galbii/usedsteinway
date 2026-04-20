@@ -18,6 +18,7 @@ export interface Piano {
   isAvailable: boolean
   isFeatured: boolean
   imageUrls: string[]
+  stockImageUrl?: string
   videoUrl?: string
   description: string
   /** Lexical rich text state from CMS — rendered by RichText component on detail page */

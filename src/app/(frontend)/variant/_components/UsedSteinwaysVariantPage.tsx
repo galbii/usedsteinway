@@ -29,12 +29,14 @@ import { useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { getFeaturedPianos } from '@/lib/piano-data'
-import { FeaturedCarousel } from './FeaturedCarousel'
+import { HeroCarousel } from '@/components/piano/HeroCarousel'
+import { ShowroomGallerySection } from './ShowroomGallerySection'
 import { PianoLogo } from '@/components/layout'
 import { LocationTabs } from '@/components/piano/LocationTabs'
 import { NewsCarousel } from '@/components/posts/NewsCarousel'
 import type { Piano } from '@/types/piano'
 import type { PostCard } from '@/lib/payload/posts'
+import type { Media } from '@/payload-types'
 
 type Location = {
   name: string
@@ -51,6 +53,7 @@ type Props = {
   phone?: string
   featured?: Piano[]
   recentPosts?: PostCard[]
+  galleryImages?: Media[]
 }
 
 function useScrollReveal() {
@@ -88,7 +91,7 @@ const C = {
   ivory:       'hsl(36, 22%, 96%)',
 }
 
-export function UsedSteinwaysVariantPage({ locations = [], phone, featured: featuredProp, recentPosts = [] }: Props) {
+export function UsedSteinwaysVariantPage({ locations = [], phone, featured: featuredProp, recentPosts = [], galleryImages = [] }: Props) {
   useScrollReveal()
   const featured = featuredProp ?? getFeaturedPianos()
 
@@ -289,6 +292,16 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
       </div>
 
       {/* ═══════════════════════════════════════════════
+          FEATURED INSTRUMENTS — cinematic hero carousel
+      ═══════════════════════════════════════════════ */}
+      <HeroCarousel pianos={featured} />
+
+      {/* ═══════════════════════════════════════════════
+          SHOWROOM GALLERY — Bento grid preview
+      ═══════════════════════════════════════════════ */}
+      <ShowroomGallerySection images={galleryImages} />
+
+      {/* ═══════════════════════════════════════════════
           NEWS — Latest articles from the showroom
       ═══════════════════════════════════════════════ */}
       <section className="py-36 px-8" style={{ backgroundColor: C.bg }}>
@@ -326,220 +339,72 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
       </section>
 
       {/* ═══════════════════════════════════════════════
-          FEATURED INSTRUMENTS
+          PHILOSOPHY
       ═══════════════════════════════════════════════ */}
-      <section className="py-36 px-8" style={{ backgroundColor: C.bg }}>
-        <div className="max-w-7xl mx-auto">
+      <section className="relative overflow-hidden py-36 px-8" style={{ backgroundColor: C.darkBg }}>
 
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
-            <div className="sr">
-              <span
-                className="font-display text-[10px] tracking-[0.48em] uppercase block mb-5"
-                style={{ color: C.accent }}
-              >
-                Hand-Selected
-              </span>
-              <h2
-                className="font-cormorant font-light leading-[1.05]"
-                style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)', color: C.text }}
-              >
-                Featured Instruments
-              </h2>
-            </div>
-            <Link
-              href="/pianos"
-              className="sr sr-d1 group flex items-center gap-2 font-display text-[10px] tracking-[0.32em] uppercase transition-opacity hover:opacity-50"
-              style={{ color: C.muted }}
-            >
-              View all 25 pianos
-              <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
-            </Link>
-          </div>
-
-          <div className="sr sr-d2">
-            <FeaturedCarousel pianos={featured} />
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════
-          PHILOSOPHY — The Three P's
-          Roger's actual philosophy: People, Policies, Pianos
-      ═══════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden" style={{ backgroundColor: C.darkBg }}>
-
-        {/* Background: Roger working */}
+        {/* Background image — subtle */}
         <div className="absolute inset-0">
           <Image
             src="/Roger-at-work-2-for-web.jpg"
-            alt="Roger evaluating a piano in the showroom"
+            alt=""
             fill
             className="object-cover object-[center_30%]"
             sizes="100vw"
           />
-          <div
-            className="absolute inset-0"
-            style={{ backgroundColor: 'hsla(350, 62%, 14%, 0.93)' }}
-          />
+          <div className="absolute inset-0" style={{ backgroundColor: 'hsla(350, 62%, 14%, 0.94)' }} />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-8 pt-36 pb-0">
+        <div className="relative z-10 max-w-3xl mx-auto text-center">
 
-          {/* Section label + title */}
-          <div className="sr mb-20">
-            <div className="flex items-center gap-5 mb-10">
-              <div className="h-px w-10 shrink-0" style={{ backgroundColor: C.accent }} />
-              <span
-                className="font-display text-[10px] tracking-[0.5em] uppercase"
-                style={{ color: C.accent }}
-              >
-                Our Philosophy
-              </span>
-            </div>
-            <h2
-              className="font-cormorant font-light leading-[1.02]"
-              style={{ fontSize: 'clamp(3.2rem, 5.5vw, 6rem)', color: C.ivory }}
+          {/* Eyebrow */}
+          <div className="sr flex items-center justify-center gap-5 mb-12">
+            <div className="h-px w-10 shrink-0" style={{ backgroundColor: 'hsla(40,72%,52%,0.40)' }} />
+            <span
+              className="font-display text-[10px] tracking-[0.5em] uppercase"
+              style={{ color: C.accent }}
             >
-              People, Policies<br />and Pianos.
-            </h2>
+              Our Philosophy
+            </span>
+            <div className="h-px w-10 shrink-0" style={{ backgroundColor: 'hsla(40,72%,52%,0.40)' }} />
           </div>
 
-          {/* Three P columns */}
-          <div
-            className="grid grid-cols-1 lg:grid-cols-3"
-            style={{ borderTop: `1px solid ${C.borderDark}` }}
+          {/* Heading */}
+          <h2
+            className="sr sr-d1 font-cormorant font-light leading-[1.05] mb-8"
+            style={{ fontSize: 'clamp(3rem, 6vw, 6.5rem)', color: C.ivory }}
           >
+            People, Policies<br />and Pianos.
+          </h2>
 
-            {/* PEOPLE */}
-            <div
-              className="sr sr-d1 py-14 lg:pr-14"
-              style={{ borderRight: `1px solid ${C.borderDark}` }}
+          {/* Supporting line */}
+          <p
+            className="sr sr-d2 leading-relaxed mx-auto mb-14"
+            style={{ fontSize: '1.125rem', color: 'rgba(245,235,220,0.50)', maxWidth: '42ch' }}
+          >
+            Thirty years of expertise. A trade-up policy that lets you grow.
+            Over two hundred instruments — selected individually, not by catalogue.
+          </p>
+
+          {/* CTAs */}
+          <div className="sr sr-d3 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="/about"
+              className="inline-flex items-center justify-center px-10 py-4 font-display text-[11px] tracking-[0.35em] uppercase transition-opacity duration-200 hover:opacity-80"
+              style={{ backgroundColor: C.accent, color: 'hsl(350, 62%, 14%)' }}
             >
-              <div className="flex items-baseline gap-5 mb-8">
-                <span
-                  className="font-cormorant font-light italic leading-none select-none"
-                  style={{ fontSize: '5rem', color: 'hsla(40, 72%, 52%, 0.20)' }}
-                >
-                  P
-                </span>
-                <h3
-                  className="font-cormorant font-light"
-                  style={{ fontSize: 'clamp(2rem, 2.8vw, 2.8rem)', color: C.ivory, lineHeight: 1.1 }}
-                >
-                  People
-                </h3>
-              </div>
-              <p
-                className="text-lg leading-[1.85]"
-                style={{ color: 'rgba(245, 235, 220, 0.52)' }}
-              >
-                Passionate and educated in all things piano. We spend as much time as needed — covering origin, scale design, materials, and how instruments compare — until we've found the right piano for you. No detail is too small.
-              </p>
-            </div>
-
-            {/* POLICIES */}
-            <div
-              className="sr sr-d2 py-14 lg:px-14"
-              style={{ borderRight: `1px solid ${C.borderDark}` }}
+              Our Story
+            </Link>
+            <Link
+              href="/pianos"
+              className="inline-flex items-center justify-center px-10 py-4 font-display text-[11px] tracking-[0.35em] uppercase transition-opacity duration-200 hover:opacity-60"
+              style={{ border: `1px solid ${C.borderDark}`, color: 'rgba(245,235,220,0.70)' }}
             >
-              <div className="flex items-baseline gap-5 mb-8">
-                <span
-                  className="font-cormorant font-light italic leading-none select-none"
-                  style={{ fontSize: '5rem', color: 'hsla(40, 72%, 52%, 0.20)' }}
-                >
-                  P
-                </span>
-                <h3
-                  className="font-cormorant font-light"
-                  style={{ fontSize: 'clamp(2rem, 2.8vw, 2.8rem)', color: C.ivory, lineHeight: 1.1 }}
-                >
-                  Policies
-                </h3>
-              </div>
-              <p
-                className="text-lg leading-[1.85]"
-                style={{ color: 'rgba(245, 235, 220, 0.52)' }}
-              >
-                Your piano purchase is an investment in your musical life. Our full trade-up policy lets you trade in at the original price paid — so you can start where you are, and move forward when you're ready.
-              </p>
-            </div>
-
-            {/* PIANOS */}
-            <div className="sr sr-d3 py-14 lg:pl-14">
-              <div className="flex items-baseline gap-5 mb-8">
-                <span
-                  className="font-cormorant font-light italic leading-none select-none"
-                  style={{ fontSize: '5rem', color: 'hsla(40, 72%, 52%, 0.20)' }}
-                >
-                  P
-                </span>
-                <h3
-                  className="font-cormorant font-light"
-                  style={{ fontSize: 'clamp(2rem, 2.8vw, 2.8rem)', color: C.ivory, lineHeight: 1.1 }}
-                >
-                  Pianos
-                </h3>
-              </div>
-              <p
-                className="text-lg leading-[1.85]"
-                style={{ color: 'rgba(245, 235, 220, 0.52)' }}
-              >
-                No single manufacturer makes the perfect piano for everyone. We select over two hundred instruments from makers across Asia and Europe — traveling to the factories ourselves — so we can match each pianist to the instrument that truly fits.
-              </p>
-            </div>
-
+              Browse Pianos
+            </Link>
           </div>
-        </div>
 
-        {/* Fazioli quote — full bleed callout */}
-        <div
-          className="relative z-10 mt-0"
-          style={{ borderTop: `1px solid ${C.borderDark}` }}
-        >
-          <div className="max-w-7xl mx-auto px-8 py-16">
-            <div className="sr grid lg:grid-cols-[auto_1fr] gap-12 items-start">
-              <div
-                className="shrink-0 w-14 h-14 flex items-center justify-center"
-                style={{ border: `1px solid ${C.borderDark}` }}
-              >
-                <span
-                  className="font-display text-[9px] tracking-[0.3em] uppercase"
-                  style={{ color: C.accent }}
-                >
-                  F
-                </span>
-              </div>
-              <div>
-                <p
-                  className="font-display text-[9px] tracking-[0.42em] uppercase mb-6"
-                  style={{ color: 'rgba(245,235,220,0.28)' }}
-                >
-                  Fazioli — on artistic freedom
-                </p>
-                <blockquote
-                  className="font-cormorant font-light italic leading-[1.4] mb-8"
-                  style={{
-                    fontSize: 'clamp(1.7rem, 2.4vw, 2.4rem)',
-                    color: 'rgba(245, 235, 220, 0.72)',
-                    maxWidth: '72ch',
-                  }}
-                >
-                  "Fazioli refuses to impose limitations on musical artists, convinced that
-                  they should have the freedom to choose which instrument to play, based purely
-                  on the belief that it is the best vehicle to express their talent."
-                </blockquote>
-                <p
-                  className="text-lg leading-relaxed"
-                  style={{ color: 'rgba(245, 235, 220, 0.36)', maxWidth: '64ch' }}
-                >
-                  This is why at Roger's Piano, you will find the widest range of pianos
-                  than any other showroom in New England.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
-
       </section>
 
       {/* ═══════════════════════════════════════════════

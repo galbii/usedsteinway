@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { HeroCarousel } from '@/components/piano/HeroCarousel'
+import { PianosHero } from '@/components/piano/PianosHero'
 import { PianoBrowser } from '@/components/piano/PianoBrowser'
 import { InquiryCTA } from '@/components/piano/InquiryCTA'
 import { queryAvailablePianos, queryFeaturedPianos } from '@/lib/payload/pianos'
@@ -18,8 +18,8 @@ export default async function PianosPage() {
 
   return (
     <main className="min-h-screen">
-      {/* Full-viewport featured piano slideshow */}
-      <HeroCarousel pianos={featured} />
+      {/* Full-bleed piano hero (mirrors GalleryHero) */}
+      <PianosHero pianos={allPianos} />
 
       {/* Filterable inventory browser */}
       <PianoBrowser pianos={allPianos} />

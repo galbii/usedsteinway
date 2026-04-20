@@ -117,20 +117,20 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
         {/* ── Row 1: label + active chips + count + filters button ── */}
         <div
           className="max-w-7xl mx-auto flex items-center justify-between"
-          style={{ padding: '1.2rem 2.5rem' }}
+          style={{ padding: '2rem 2.5rem' }}
         >
           {/* Left: section label + active chips */}
-          <div className="flex items-center gap-5 min-w-0">
+          <div className="flex items-center gap-6 min-w-0">
             <div className="flex-shrink-0">
               <p
                 className="font-display uppercase leading-none"
-                style={{ fontSize: '8.5px', letterSpacing: '0.45em', color: C.gold, marginBottom: '0.35rem' }}
+                style={{ fontSize: '11px', letterSpacing: '0.45em', color: C.gold, marginBottom: '0.55rem' }}
               >
                 Complete Inventory
               </p>
               <h2
                 className="font-cormorant font-light leading-none text-white"
-                style={{ fontSize: 'clamp(1.7rem, 3vw, 2.4rem)' }}
+                style={{ fontSize: 'clamp(2.6rem, 4vw, 3.6rem)' }}
               >
                 Browse Instruments
               </h2>
@@ -152,17 +152,17 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
                       onClick={clear}
                       className="inline-flex items-center gap-1 transition-opacity duration-150 hover:opacity-70"
                       style={{
-                        padding:       '0.26rem 0.6rem',
+                        padding:       '0.4rem 0.9rem',
                         border:        `1px solid ${C.goldBorder}`,
                         color:         C.gold,
-                        fontSize:      '8.5px',
+                        fontSize:      '11px',
                         letterSpacing: '0.3em',
                         fontFamily:    'var(--font-display, sans-serif)',
                         textTransform: 'uppercase',
                       }}
                     >
                       {label}
-                      <span style={{ opacity: 0.5, fontSize: '10px' }}>×</span>
+                      <span style={{ opacity: 0.5, fontSize: '13px' }}>×</span>
                     </button>
                   )
                 })}
@@ -171,25 +171,25 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
                     onClick={() => setQuery('')}
                     className="inline-flex items-center gap-1 transition-opacity duration-150 hover:opacity-70"
                     style={{
-                      padding:       '0.26rem 0.6rem',
+                      padding:       '0.4rem 0.9rem',
                       border:        `1px solid ${C.goldBorder}`,
                       color:         C.gold,
-                      fontSize:      '8.5px',
+                      fontSize:      '11px',
                       letterSpacing: '0.3em',
                       fontFamily:    'var(--font-display, sans-serif)',
                       textTransform: 'uppercase',
-                      maxWidth:      '120px',
+                      maxWidth:      '160px',
                     }}
                   >
-                    <span className="truncate">"{query}"</span>
-                    <span style={{ opacity: 0.5, fontSize: '10px', flexShrink: 0 }}>×</span>
+                    <span className="truncate">&ldquo;{query}&rdquo;</span>
+                    <span style={{ opacity: 0.5, fontSize: '13px', flexShrink: 0 }}>×</span>
                   </button>
                 )}
                 {hasFilters && (
                   <button
                     onClick={clearAll}
                     className="font-display uppercase transition-opacity hover:opacity-60 flex-shrink-0"
-                    style={{ fontSize: '8.5px', letterSpacing: '0.3em', color: C.muted }}
+                    style={{ fontSize: '11px', letterSpacing: '0.3em', color: C.muted }}
                   >
                     Clear all
                   </button>
@@ -202,7 +202,7 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
           <div className="flex items-center gap-5 flex-shrink-0">
             <p
               className="font-display uppercase tabular-nums hidden sm:block"
-              style={{ fontSize: '11px', letterSpacing: '0.28em', color: C.muted }}
+              style={{ fontSize: '15px', letterSpacing: '0.28em', color: C.muted }}
             >
               <span style={{ color: C.gold }}>{filtered.length}</span>
               {' '}/ {pianos.length}
@@ -210,14 +210,14 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
 
             <button
               onClick={() => setSidebarOpen(true)}
-              className="group flex items-center gap-2.5 transition-all duration-200"
+              className="group flex items-center gap-3 transition-all duration-200"
               style={{
-                padding:         '0.58rem 1.1rem',
+                padding:         '0.9rem 1.8rem',
                 border:          `1px solid ${sidebarFilterCount > 0 ? C.gold : C.goldBorder}`,
                 backgroundColor: sidebarFilterCount > 0 ? C.goldFaint : 'transparent',
               }}
             >
-              <svg width="13" height="10" viewBox="0 0 13 10" fill="none">
+              <svg width="17" height="13" viewBox="0 0 13 10" fill="none">
                 <line x1="0" y1="2"  x2="13" y2="2"  stroke={sidebarFilterCount > 0 ? C.gold : C.muted} strokeWidth="1.1" />
                 <line x1="0" y1="8"  x2="13" y2="8"  stroke={sidebarFilterCount > 0 ? C.gold : C.muted} strokeWidth="1.1" />
                 <circle cx="4"  cy="2" r="1.8" fill={C.charcoal} stroke={sidebarFilterCount > 0 ? C.gold : C.muted} strokeWidth="1.1" />
@@ -225,7 +225,7 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
               </svg>
               <span
                 className="font-display uppercase"
-                style={{ fontSize: '11px', letterSpacing: '0.38em', color: sidebarFilterCount > 0 ? C.gold : C.muted }}
+                style={{ fontSize: '14px', letterSpacing: '0.38em', color: sidebarFilterCount > 0 ? C.gold : C.muted }}
               >
                 Filters
               </span>
@@ -233,12 +233,12 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
                 <span
                   className="font-display tabular-nums flex items-center justify-center"
                   style={{
-                    width:           '18px',
-                    height:          '18px',
+                    width:           '22px',
+                    height:          '22px',
                     borderRadius:    '50%',
                     backgroundColor: C.gold,
                     color:           'hsl(25 6% 9%)',
-                    fontSize:        '8px',
+                    fontSize:        '10px',
                     fontWeight:      700,
                     lineHeight:      1,
                   }}
@@ -269,8 +269,8 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
                     onClick={() => setBrandFilter(key)}
                     className="font-display uppercase flex-shrink-0 transition-all duration-150"
                     style={{
-                      padding:       '0.85rem 1rem',
-                      fontSize:      '8.5px',
+                      padding:       '1.3rem 1.6rem',
+                      fontSize:      '12px',
                       letterSpacing: '0.38em',
                       color:         active ? C.gold : C.muted,
                       borderBottom:  active ? `2px solid ${C.gold}` : '2px solid transparent',
@@ -289,7 +289,7 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
               className="hidden sm:flex items-center gap-2 flex-shrink-0"
               style={{ paddingLeft: '2rem' }}
             >
-              <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+              <svg width="15" height="15" viewBox="0 0 12 12" fill="none">
                 <circle cx="5" cy="5" r="4" stroke="rgba(255,255,255,0.28)" strokeWidth="1.2" />
                 <line x1="8.2" y1="8.2" x2="11" y2="11" stroke="rgba(255,255,255,0.28)" strokeWidth="1.2" strokeLinecap="round" />
               </svg>
@@ -300,18 +300,18 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
                 placeholder="Search instruments..."
                 className="font-display bg-transparent outline-none uppercase"
                 style={{
-                  fontSize:    '8.5px',
+                  fontSize:     '12px',
                   letterSpacing: '0.28em',
-                  color:       'rgba(255,255,255,0.65)',
-                  width:       '155px',
+                  color:        'rgba(255,255,255,0.65)',
+                  width:        '220px',
                   borderBottom: '1px solid rgba(255,255,255,0.12)',
-                  padding:     '0.4rem 0',
+                  padding:      '0.5rem 0',
                 }}
               />
               {query && (
                 <button
                   onClick={() => setQuery('')}
-                  style={{ color: C.muted, fontSize: '14px', lineHeight: 1 }}
+                  style={{ color: C.muted, fontSize: '18px', lineHeight: 1 }}
                 >
                   ×
                 </button>

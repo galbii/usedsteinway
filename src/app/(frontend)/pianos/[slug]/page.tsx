@@ -7,6 +7,8 @@ import { PianoDetailV2 } from '@/components/piano/PianoDetailV2'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { generateMeta } from '@/utilities/generateMeta'
 import { queryPianoBySlug } from '@/lib/payload/pianos'
+import { getCachedGlobal } from '@/utilities/getGlobals'
+import type { SiteSetting } from '@/payload-types'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -45,10 +47,14 @@ export default async function PianoDetailPage({ params }: Props) {
 
   if (!piano) notFound()
 
+  const siteSettings = (await getCachedGlobal('site-settings', 0)()) as SiteSetting
+  const locations = siteSettings?.locations ?? []
+  const phone = siteSettings?.contactInfo?.phone ?? undefined
+
   return (
     <>
       {draft && <LivePreviewListener />}
-      <PianoDetailV2 piano={piano} />
+      <PianoDetailV2 piano={piano} locations={locations} phone={phone} />
     </>
   )
 }

@@ -8,9 +8,10 @@ import { cn } from '@/utilities/ui'
 interface PianoMediaCarouselProps {
   images: string[]
   title: string
+  stockImageIndex?: number
 }
 
-export function PianoMediaCarousel({ images, title }: PianoMediaCarouselProps) {
+export function PianoMediaCarousel({ images, title, stockImageIndex = -1 }: PianoMediaCarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, dragFree: false }, [
     Autoplay({ delay: 5000, stopOnInteraction: true }),
   ])
@@ -73,6 +74,11 @@ export function PianoMediaCarousel({ images, title }: PianoMediaCarouselProps) {
                         'linear-gradient(to right, rgba(0,0,0,0.18) 0%, transparent 18%, transparent 82%, rgba(0,0,0,0.18) 100%)',
                     }}
                   />
+                  {i === stockImageIndex && (
+                    <div className="absolute top-4 left-4 bg-piano-black/70 px-3 py-1.5 font-display text-[10px] tracking-[0.35em] uppercase text-piano-silver/70 pointer-events-none">
+                      Reference image
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
