@@ -1,20 +1,5 @@
 'use client'
 
-/**
- * PianoBrowser
- * ─────────────────────────────────────────────────────────────
- * Filterable piano inventory.
- *
- * Layout:
- * - Compact sticky bar ("Browse Instruments") locks under the main
- *   site header (h-20 + 30px gold border = 110px) so it's always
- *   visible when scrolling through the grid.
- * - All filter controls live in a slide-in sidebar that opens when
- *   the user clicks the "Filters" button in the sticky bar.
- * - The grid fills the rest of the page on warm cream.
- * ─────────────────────────────────────────────────────────────
- */
-
 import { useState, useMemo, useEffect, useLayoutEffect } from 'react'
 import { PianoCard } from './PianoCard'
 import type { Piano } from '@/types/piano'
@@ -32,8 +17,6 @@ import {
   filterPianos,
 } from '@/lib/pianoFilters'
 
-// Fallback header height used on SSR and before measurement fires
-// Actual header is h-[72px] (not scrolled) or h-[60px] (scrolled), no border
 const HEADER_H_DEFAULT = 72
 
 const C = {
@@ -41,11 +24,12 @@ const C = {
   goldFaint:  'hsla(40, 72%, 52%, 0.14)',
   goldBorder: 'hsla(40, 72%, 52%, 0.2)',
   charcoal:   'hsl(25, 5%, 12%)',
-  surface:    'hsl(25, 5%, 16%)',
   divider:    'rgba(255,255,255,0.06)',
   cream:      'hsl(36, 22%, 96%)',
   muted:      'rgba(255,255,255,0.35)',
   faint:      'rgba(255,255,255,0.15)',
+  creamLine:  'hsl(36 18% 88%)',
+  creamMuted: 'hsl(25 4% 55%)',
 }
 
 interface PianoBrowserProps {
@@ -53,33 +37,21 @@ interface PianoBrowserProps {
 }
 
 export function PianoBrowser({ pianos }: PianoBrowserProps) {
-  // Dynamically measure the actual header height so the sticky bar
-  // always snaps flush against it, regardless of browser rendering.
   const [headerH, setHeaderH] = useState(HEADER_H_DEFAULT)
 
   useLayoutEffect(() => {
     let rafId: number | null = null
-
     const measure = () => {
       const header = document.querySelector('header')
       if (header) setHeaderH(header.getBoundingClientRect().height)
     }
-
     const onScroll = () => {
-      // RAF-throttled so we don't thrash layout on every scroll tick
       if (rafId) return
-      rafId = requestAnimationFrame(() => {
-        measure()
-        rafId = null
-      })
+      rafId = requestAnimationFrame(() => { measure(); rafId = null })
     }
-
     measure()
-    // Re-measure on resize (mobile menu, viewport change)
     window.addEventListener('resize', measure)
-    // Re-measure on scroll — header shrinks from 72px → 60px after 40px scroll
     window.addEventListener('scroll', onScroll, { passive: true })
-
     return () => {
       window.removeEventListener('resize', measure)
       window.removeEventListener('scroll', onScroll)
@@ -93,86 +65,85 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
   const [priceFilter,     setPriceFilter]     = useState<PriceFilter>('all')
   const [sizeFilter,      setSizeFilter]      = useState<SizeFilter>('all')
   const [finishFilter,    setFinishFilter]    = useState<FinishFilter>('all')
+  const [query,           setQuery]           = useState('')
 
-  // Lock body scroll while sidebar is open
   useEffect(() => {
-    if (sidebarOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
+    document.body.style.overflow = sidebarOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [sidebarOpen])
 
-  // Close on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setSidebarOpen(false) }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [])
 
-  const filtered = useMemo(() =>
-    filterPianos(pianos, {
+  const filtered = useMemo(
+    () => filterPianos(pianos, {
+      query,
       brand: brandFilter, condition: conditionFilter,
       price: priceFilter, size: sizeFilter, finish: finishFilter,
     }),
-    [pianos, brandFilter, conditionFilter, priceFilter, sizeFilter, finishFilter],
+    [pianos, query, brandFilter, conditionFilter, priceFilter, sizeFilter, finishFilter],
   )
 
   const hasFilters =
+    query.length > 0 ||
     brandFilter !== 'all' || conditionFilter !== 'all' ||
     priceFilter !== 'all' || sizeFilter !== 'all' || finishFilter !== 'all'
 
-  const activeFilterCount = [brandFilter, conditionFilter, priceFilter, sizeFilter, finishFilter]
+  // Only count sidebar filters (not inline brand tab or search) in the badge
+  const sidebarFilterCount = [conditionFilter, priceFilter, sizeFilter, finishFilter]
     .filter(v => v !== 'all').length
 
   const clearAll = () => {
     setBrandFilter('all'); setConditionFilter('all')
     setPriceFilter('all'); setSizeFilter('all'); setFinishFilter('all')
+    setQuery('')
   }
+
+  const featuredPianos = filtered.filter(p => p.isFeatured)
+  const regularPianos  = filtered.filter(p => !p.isFeatured)
 
   return (
     <>
-      {/* ════════════════════════════════════════
-          STICKY BAR — locks below the main header
-      ════════════════════════════════════════ */}
+      {/* ═══════════════════════════════════════════════════════════
+          STICKY BAR — two rows, locks below the main header
+      ═══════════════════════════════════════════════════════════ */}
       <div
         className="sticky z-30 w-full"
         style={{ top: `${headerH}px`, backgroundColor: C.charcoal }}
       >
+        {/* ── Row 1: label + active chips + count + filters button ── */}
         <div
           className="max-w-7xl mx-auto flex items-center justify-between"
-          style={{ padding: '1.5rem 2.5rem' }}
+          style={{ padding: '1.2rem 2.5rem' }}
         >
-          {/* Left: section label */}
-          <div className="flex items-center gap-6">
-            <div>
+          {/* Left: section label + active chips */}
+          <div className="flex items-center gap-5 min-w-0">
+            <div className="flex-shrink-0">
               <p
                 className="font-display uppercase leading-none"
-                style={{ fontSize: '9px', letterSpacing: '0.45em', color: C.gold, marginBottom: '0.4rem' }}
+                style={{ fontSize: '8.5px', letterSpacing: '0.45em', color: C.gold, marginBottom: '0.35rem' }}
               >
                 Complete Inventory
               </p>
               <h2
                 className="font-cormorant font-light leading-none text-white"
-                style={{
-                  fontSize:   'clamp(2rem, 3.5vw, 2.8rem)',
-                  textShadow: '0 2px 12px rgba(0,0,0,0.55), 0 1px 3px rgba(0,0,0,0.4)',
-                }}
+                style={{ fontSize: 'clamp(1.7rem, 3vw, 2.4rem)' }}
               >
                 Browse Instruments
               </h2>
             </div>
 
-            {/* Active filter chips (inline, compact) */}
-            {hasFilters && (
-              <div className="hidden md:flex items-center gap-1.5 flex-wrap">
+            {/* Active filter chips — sidebar filters only */}
+            {(sidebarFilterCount > 0 || query) && (
+              <div className="hidden md:flex items-center gap-1.5 flex-wrap min-w-0">
                 {[
-                  { val: brandFilter,     opts: BRAND_TABS,      clear: () => setBrandFilter('all')     },
-                  { val: conditionFilter, opts: CONDITION_OPTS,   clear: () => setConditionFilter('all') },
-                  { val: priceFilter,     opts: PRICE_OPTS,       clear: () => setPriceFilter('all')     },
-                  { val: sizeFilter,      opts: SIZE_OPTS,        clear: () => setSizeFilter('all')      },
-                  { val: finishFilter,    opts: FINISH_OPTS,      clear: () => setFinishFilter('all')    },
+                  { val: conditionFilter, opts: CONDITION_OPTS, clear: () => setConditionFilter('all') },
+                  { val: priceFilter,     opts: PRICE_OPTS,     clear: () => setPriceFilter('all')     },
+                  { val: sizeFilter,      opts: SIZE_OPTS,      clear: () => setSizeFilter('all')      },
+                  { val: finishFilter,    opts: FINISH_OPTS,    clear: () => setFinishFilter('all')    },
                 ].filter(({ val }) => val !== 'all').map(({ val, opts, clear }) => {
                   const label = opts.find((o: { key: string }) => o.key === val)?.label ?? val
                   return (
@@ -181,33 +152,54 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
                       onClick={clear}
                       className="inline-flex items-center gap-1 transition-opacity duration-150 hover:opacity-70"
                       style={{
-                        padding:       '0.28rem 0.65rem',
+                        padding:       '0.26rem 0.6rem',
                         border:        `1px solid ${C.goldBorder}`,
                         color:         C.gold,
-                        fontSize:      '9px',
+                        fontSize:      '8.5px',
                         letterSpacing: '0.3em',
                         fontFamily:    'var(--font-display, sans-serif)',
                         textTransform: 'uppercase',
                       }}
                     >
                       {label}
-                      <span style={{ opacity: 0.55, fontSize: '10px' }}>×</span>
+                      <span style={{ opacity: 0.5, fontSize: '10px' }}>×</span>
                     </button>
                   )
                 })}
-                <button
-                  onClick={clearAll}
-                  className="font-display uppercase transition-opacity hover:opacity-60"
-                  style={{ fontSize: '9px', letterSpacing: '0.3em', color: C.muted, marginLeft: '0.25rem' }}
-                >
-                  Clear all
-                </button>
+                {query && (
+                  <button
+                    onClick={() => setQuery('')}
+                    className="inline-flex items-center gap-1 transition-opacity duration-150 hover:opacity-70"
+                    style={{
+                      padding:       '0.26rem 0.6rem',
+                      border:        `1px solid ${C.goldBorder}`,
+                      color:         C.gold,
+                      fontSize:      '8.5px',
+                      letterSpacing: '0.3em',
+                      fontFamily:    'var(--font-display, sans-serif)',
+                      textTransform: 'uppercase',
+                      maxWidth:      '120px',
+                    }}
+                  >
+                    <span className="truncate">"{query}"</span>
+                    <span style={{ opacity: 0.5, fontSize: '10px', flexShrink: 0 }}>×</span>
+                  </button>
+                )}
+                {hasFilters && (
+                  <button
+                    onClick={clearAll}
+                    className="font-display uppercase transition-opacity hover:opacity-60 flex-shrink-0"
+                    style={{ fontSize: '8.5px', letterSpacing: '0.3em', color: C.muted }}
+                  >
+                    Clear all
+                  </button>
+                )}
               </div>
             )}
           </div>
 
           {/* Right: result count + filter toggle */}
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-5 flex-shrink-0">
             <p
               className="font-display uppercase tabular-nums hidden sm:block"
               style={{ fontSize: '11px', letterSpacing: '0.28em', color: C.muted }}
@@ -216,37 +208,28 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
               {' '}/ {pianos.length}
             </p>
 
-            {/* Filter button */}
             <button
               onClick={() => setSidebarOpen(true)}
               className="group flex items-center gap-2.5 transition-all duration-200"
               style={{
-                padding:         '0.65rem 1.2rem',
-                border:          `1px solid ${activeFilterCount > 0 ? C.gold : C.goldBorder}`,
-                backgroundColor: activeFilterCount > 0 ? C.goldFaint : 'transparent',
+                padding:         '0.58rem 1.1rem',
+                border:          `1px solid ${sidebarFilterCount > 0 ? C.gold : C.goldBorder}`,
+                backgroundColor: sidebarFilterCount > 0 ? C.goldFaint : 'transparent',
               }}
             >
-              {/* Sliders icon */}
               <svg width="13" height="10" viewBox="0 0 13 10" fill="none">
-                <line x1="0" y1="2"  x2="13" y2="2"  stroke={activeFilterCount > 0 ? C.gold : C.muted} strokeWidth="1.1" />
-                <line x1="0" y1="8"  x2="13" y2="8"  stroke={activeFilterCount > 0 ? C.gold : C.muted} strokeWidth="1.1" />
-                <circle cx="4"  cy="2" r="1.8" fill={C.charcoal} stroke={activeFilterCount > 0 ? C.gold : C.muted} strokeWidth="1.1" />
-                <circle cx="9"  cy="8" r="1.8" fill={C.charcoal} stroke={activeFilterCount > 0 ? C.gold : C.muted} strokeWidth="1.1" />
+                <line x1="0" y1="2"  x2="13" y2="2"  stroke={sidebarFilterCount > 0 ? C.gold : C.muted} strokeWidth="1.1" />
+                <line x1="0" y1="8"  x2="13" y2="8"  stroke={sidebarFilterCount > 0 ? C.gold : C.muted} strokeWidth="1.1" />
+                <circle cx="4"  cy="2" r="1.8" fill={C.charcoal} stroke={sidebarFilterCount > 0 ? C.gold : C.muted} strokeWidth="1.1" />
+                <circle cx="9"  cy="8" r="1.8" fill={C.charcoal} stroke={sidebarFilterCount > 0 ? C.gold : C.muted} strokeWidth="1.1" />
               </svg>
-
               <span
                 className="font-display uppercase"
-                style={{
-                  fontSize:      '11px',
-                  letterSpacing: '0.38em',
-                  color:         activeFilterCount > 0 ? C.gold : C.muted,
-                }}
+                style={{ fontSize: '11px', letterSpacing: '0.38em', color: sidebarFilterCount > 0 ? C.gold : C.muted }}
               >
                 Filters
               </span>
-
-              {/* Active count badge */}
-              {activeFilterCount > 0 && (
+              {sidebarFilterCount > 0 && (
                 <span
                   className="font-display tabular-nums flex items-center justify-center"
                   style={{
@@ -260,54 +243,127 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
                     lineHeight:      1,
                   }}
                 >
-                  {activeFilterCount}
+                  {sidebarFilterCount}
                 </span>
               )}
             </button>
           </div>
         </div>
+
+        {/* ── Row 2: Brand tabs + search ── */}
+        <div style={{ borderTop: `1px solid ${C.divider}` }}>
+          <div
+            className="max-w-7xl mx-auto flex items-center justify-between"
+            style={{ padding: '0 2.5rem' }}
+          >
+            {/* Brand tabs — scrollable on mobile */}
+            <div
+              className="flex items-center overflow-x-auto"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
+            >
+              {BRAND_TABS.map(({ key, label }) => {
+                const active = brandFilter === key
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setBrandFilter(key)}
+                    className="font-display uppercase flex-shrink-0 transition-all duration-150"
+                    style={{
+                      padding:       '0.85rem 1rem',
+                      fontSize:      '8.5px',
+                      letterSpacing: '0.38em',
+                      color:         active ? C.gold : C.muted,
+                      borderBottom:  active ? `2px solid ${C.gold}` : '2px solid transparent',
+                      marginBottom:  '-1px',
+                      whiteSpace:    'nowrap',
+                    }}
+                  >
+                    {label}
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Search input */}
+            <div
+              className="hidden sm:flex items-center gap-2 flex-shrink-0"
+              style={{ paddingLeft: '2rem' }}
+            >
+              <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+                <circle cx="5" cy="5" r="4" stroke="rgba(255,255,255,0.28)" strokeWidth="1.2" />
+                <line x1="8.2" y1="8.2" x2="11" y2="11" stroke="rgba(255,255,255,0.28)" strokeWidth="1.2" strokeLinecap="round" />
+              </svg>
+              <input
+                type="text"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                placeholder="Search instruments..."
+                className="font-display bg-transparent outline-none uppercase"
+                style={{
+                  fontSize:    '8.5px',
+                  letterSpacing: '0.28em',
+                  color:       'rgba(255,255,255,0.65)',
+                  width:       '155px',
+                  borderBottom: '1px solid rgba(255,255,255,0.12)',
+                  padding:     '0.4rem 0',
+                }}
+              />
+              {query && (
+                <button
+                  onClick={() => setQuery('')}
+                  style={{ color: C.muted, fontSize: '14px', lineHeight: 1 }}
+                >
+                  ×
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* ════════════════════════════════════════
-          CARD GRID
-      ════════════════════════════════════════ */}
+      {/* ═══════════════════════════════════════════════════════════
+          CARD GRID — cream section
+      ═══════════════════════════════════════════════════════════ */}
       <div style={{ backgroundColor: C.cream }}>
-        <div className="max-w-7xl mx-auto" style={{ padding: '3.5rem 2.5rem 5rem' }}>
+        <div className="max-w-7xl mx-auto" style={{ padding: '3.5rem 2.5rem 6rem' }}>
           {filtered.length === 0 ? (
-            <div className="py-24 text-center">
-              <p
-                className="font-cormorant font-light text-piano-stone"
-                style={{ fontSize: 'clamp(1.8rem, 3vw, 2.6rem)', marginBottom: '1rem' }}
-              >
-                No instruments match your filters.
-              </p>
-              <p
-                className="font-display uppercase text-piano-silver/60"
-                style={{ fontSize: '10px', letterSpacing: '0.35em', marginBottom: '2rem' }}
-              >
-                Try adjusting your selection
-              </p>
-              <button
-                onClick={clearAll}
-                className="font-display uppercase transition-colors duration-200 hover:text-piano-black"
-                style={{ fontSize: '10px', letterSpacing: '0.4em', color: C.gold }}
-              >
-                Clear all filters →
-              </button>
-            </div>
+            <EmptyState onClear={clearAll} hasFilters={hasFilters} />
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-              {filtered.map(piano => (
-                <PianoCard key={piano.id} piano={piano} />
-              ))}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '3.5rem' }}>
+
+              {/* Featured instruments — full-width horizontal cards */}
+              {featuredPianos.length > 0 && (
+                <section>
+                  <SectionDivider label="Featured Instruments" />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                    {featuredPianos.map(piano => (
+                      <PianoCard key={piano.id} piano={piano} variant="featured" />
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {/* Regular inventory — responsive grid */}
+              {regularPianos.length > 0 && (
+                <section>
+                  {featuredPianos.length > 0 && (
+                    <SectionDivider label="All Instruments" muted />
+                  )}
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-6">
+                    {regularPianos.map(piano => (
+                      <PianoCard key={piano.id} piano={piano} />
+                    ))}
+                  </div>
+                </section>
+              )}
             </div>
           )}
         </div>
       </div>
 
-      {/* ════════════════════════════════════════
+      {/* ═══════════════════════════════════════════════════════════
           BACKDROP
-      ════════════════════════════════════════ */}
+      ═══════════════════════════════════════════════════════════ */}
       <div
         className="fixed inset-0 z-40"
         style={{
@@ -321,9 +377,9 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
         aria-hidden="true"
       />
 
-      {/* ════════════════════════════════════════
+      {/* ═══════════════════════════════════════════════════════════
           FILTER SIDEBAR
-      ════════════════════════════════════════ */}
+      ═══════════════════════════════════════════════════════════ */}
       <aside
         className="fixed right-0 top-0 bottom-0 z-50 flex flex-col overflow-hidden"
         style={{
@@ -335,29 +391,19 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
         }}
         aria-label="Filter instruments"
       >
-        {/* ── Sidebar header ── */}
+        {/* Header */}
         <div
           className="flex items-center justify-between flex-shrink-0"
-          style={{
-            padding:      '1.75rem 2rem',
-            borderBottom: `1px solid ${C.divider}`,
-          }}
+          style={{ padding: '1.75rem 2rem', borderBottom: `1px solid ${C.divider}` }}
         >
           <div>
-            <p
-              className="font-display uppercase"
-              style={{ fontSize: '8px', letterSpacing: '0.45em', color: C.gold, marginBottom: '0.3rem' }}
-            >
+            <p className="font-display uppercase" style={{ fontSize: '8px', letterSpacing: '0.45em', color: C.gold, marginBottom: '0.3rem' }}>
               Refine Results
             </p>
-            <h3
-              className="font-cormorant font-light text-white leading-none"
-              style={{ fontSize: '1.6rem' }}
-            >
+            <h3 className="font-cormorant font-light text-white leading-none" style={{ fontSize: '1.6rem' }}>
               Filters
             </h3>
           </div>
-
           <div className="flex items-center gap-4">
             {hasFilters && (
               <button
@@ -372,33 +418,51 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
               onClick={() => setSidebarOpen(false)}
               aria-label="Close filters"
               className="flex items-center justify-center transition-opacity hover:opacity-60"
-              style={{
-                width:  '2rem',
-                height: '2rem',
-                border: `1px solid ${C.divider}`,
-                color:  C.muted,
-                fontSize: '1.1rem',
-                lineHeight: 1,
-              }}
+              style={{ width: '2rem', height: '2rem', border: `1px solid ${C.divider}`, color: C.muted, fontSize: '1.1rem', lineHeight: 1 }}
             >
               ×
             </button>
           </div>
         </div>
 
-        {/* ── Scrollable filter body ── */}
-        <div className="flex-1 overflow-y-auto" style={{ padding: '0 2rem 2rem' }}>
+        {/* Search inside sidebar */}
+        <div style={{ padding: '1.1rem 2rem', borderBottom: `1px solid ${C.divider}` }}>
+          <div className="flex items-center gap-2.5">
+            <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
+              <circle cx="5" cy="5" r="4" stroke="rgba(255,255,255,0.28)" strokeWidth="1.2" />
+              <line x1="8.2" y1="8.2" x2="11" y2="11" stroke="rgba(255,255,255,0.28)" strokeWidth="1.2" strokeLinecap="round" />
+            </svg>
+            <input
+              type="text"
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder="Search by model, year, finish..."
+              className="font-display uppercase bg-transparent outline-none flex-1"
+              style={{
+                fontSize:      '8.5px',
+                letterSpacing: '0.28em',
+                color:         'rgba(255,255,255,0.65)',
+                borderBottom:  '1px solid rgba(255,255,255,0.12)',
+                padding:       '0.38rem 0',
+              }}
+            />
+            {query && (
+              <button onClick={() => setQuery('')} style={{ color: C.muted, fontSize: '14px', lineHeight: 1 }}>×</button>
+            )}
+          </div>
+        </div>
 
-          {/* Result preview */}
+        {/* Scrollable filter body */}
+        <div className="flex-1 overflow-y-auto" style={{ padding: '0 2rem 2rem' }}>
           <p
             className="font-display uppercase"
-            style={{ fontSize: '9px', letterSpacing: '0.35em', color: C.muted, padding: '1.2rem 0 1.5rem', borderBottom: `1px solid ${C.divider}` }}
+            style={{ fontSize: '9px', letterSpacing: '0.35em', color: C.muted, padding: '1.1rem 0 1.4rem', borderBottom: `1px solid ${C.divider}` }}
           >
             Showing <span style={{ color: C.gold }}>{filtered.length}</span> of {pianos.length} instruments
           </p>
 
           {/* Brand */}
-          <SidebarFilterSection label="Brand" subtitle="Filter by maker">
+          <SidebarSection label="Brand" subtitle="Filter by maker">
             <div className="flex flex-col gap-1.5 pt-1">
               {BRAND_TABS.map(({ key, label, sub }) => {
                 const active = brandFilter === key
@@ -429,57 +493,32 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
                         </span>
                       )}
                     </div>
-                    {active && (
-                      <span style={{ color: C.gold, fontSize: '0.85rem' }}>✓</span>
-                    )}
+                    {active && <span style={{ color: C.gold, fontSize: '0.85rem' }}>✓</span>}
                   </button>
                 )
               })}
             </div>
-          </SidebarFilterSection>
+          </SidebarSection>
 
-          {/* Condition */}
-          <SidebarFilterSection label="Condition">
-            <PillGroup
-              options={CONDITION_OPTS}
-              active={conditionFilter}
-              onChange={v => setConditionFilter(v as ConditionFilter)}
-            />
-          </SidebarFilterSection>
+          <SidebarSection label="Condition">
+            <PillGroup options={CONDITION_OPTS} active={conditionFilter} onChange={v => setConditionFilter(v as ConditionFilter)} />
+          </SidebarSection>
 
-          {/* Price */}
-          <SidebarFilterSection label="Price">
-            <PillGroup
-              options={PRICE_OPTS}
-              active={priceFilter}
-              onChange={v => setPriceFilter(v as PriceFilter)}
-            />
-          </SidebarFilterSection>
+          <SidebarSection label="Price">
+            <PillGroup options={PRICE_OPTS} active={priceFilter} onChange={v => setPriceFilter(v as PriceFilter)} />
+          </SidebarSection>
 
-          {/* Size */}
-          <SidebarFilterSection label="Size">
-            <PillGroup
-              options={SIZE_OPTS}
-              active={sizeFilter}
-              onChange={v => setSizeFilter(v as SizeFilter)}
-            />
-          </SidebarFilterSection>
+          <SidebarSection label="Size">
+            <PillGroup options={SIZE_OPTS} active={sizeFilter} onChange={v => setSizeFilter(v as SizeFilter)} />
+          </SidebarSection>
 
-          {/* Finish */}
-          <SidebarFilterSection label="Finish">
-            <PillGroup
-              options={FINISH_OPTS}
-              active={finishFilter}
-              onChange={v => setFinishFilter(v as FinishFilter)}
-            />
-          </SidebarFilterSection>
+          <SidebarSection label="Finish">
+            <PillGroup options={FINISH_OPTS} active={finishFilter} onChange={v => setFinishFilter(v as FinishFilter)} />
+          </SidebarSection>
         </div>
 
-        {/* ── Sidebar footer ── */}
-        <div
-          className="flex-shrink-0"
-          style={{ padding: '1.25rem 2rem', borderTop: `1px solid ${C.divider}` }}
-        >
+        {/* Footer CTA */}
+        <div className="flex-shrink-0" style={{ padding: '1.25rem 2rem', borderTop: `1px solid ${C.divider}` }}>
           <button
             onClick={() => setSidebarOpen(false)}
             className="w-full font-display uppercase transition-all duration-200"
@@ -499,8 +538,77 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
   )
 }
 
-// ── SidebarFilterSection ──────────────────────────────────────
-function SidebarFilterSection({
+// ── EmptyState ───────────────────────────────────────────────────────────────
+
+function EmptyState({ onClear, hasFilters }: { onClear: () => void; hasFilters: boolean }) {
+  return (
+    <div className="py-28 flex flex-col items-center text-center">
+      {/* Decorative piano keys mark */}
+      <div className="flex gap-px mb-8" aria-hidden="true">
+        {[1,1,0,1,1,1,0].map((isWhite, i) => (
+          <div
+            key={i}
+            style={{
+              width:           isWhite ? '20px' : '14px',
+              height:          isWhite ? '56px' : '36px',
+              backgroundColor: isWhite ? 'hsl(36 18% 86%)' : 'hsl(25 5% 30%)',
+              borderRadius:    '0 0 2px 2px',
+              marginTop:       isWhite ? 0 : 0,
+              zIndex:          isWhite ? 1 : 2,
+              position:        'relative' as const,
+            }}
+          />
+        ))}
+      </div>
+
+      <p
+        className="font-cormorant font-light text-piano-stone"
+        style={{ fontSize: 'clamp(1.7rem, 2.8vw, 2.4rem)', marginBottom: '0.75rem' }}
+      >
+        No instruments match your filters.
+      </p>
+      <p
+        className="font-display uppercase"
+        style={{ fontSize: '9px', letterSpacing: '0.4em', color: 'hsl(25 4% 62%)', marginBottom: '2.5rem' }}
+      >
+        Try adjusting your selection
+      </p>
+      {hasFilters && (
+        <button
+          onClick={onClear}
+          className="font-display uppercase transition-colors duration-200 hover:text-piano-black"
+          style={{ fontSize: '9px', letterSpacing: '0.45em', color: 'hsl(40 72% 52%)' }}
+        >
+          Clear all filters →
+        </button>
+      )}
+    </div>
+  )
+}
+
+// ── SectionDivider ───────────────────────────────────────────────────────────
+
+function SectionDivider({ label, muted }: { label: string; muted?: boolean }) {
+  return (
+    <div className="flex items-center gap-4" style={{ marginBottom: '1.75rem' }}>
+      <p
+        className="font-display uppercase flex-shrink-0"
+        style={{
+          fontSize:      '8px',
+          letterSpacing: '0.5em',
+          color:         muted ? C.creamMuted : 'hsl(40 72% 52%)',
+        }}
+      >
+        {label}
+      </p>
+      <div style={{ flex: 1, height: '1px', backgroundColor: C.creamLine }} />
+    </div>
+  )
+}
+
+// ── SidebarSection ───────────────────────────────────────────────────────────
+
+function SidebarSection({
   label,
   subtitle,
   children,
@@ -530,14 +638,15 @@ function SidebarFilterSection({
   )
 }
 
-// ── PillGroup — horizontal wrapping option buttons ────────────
+// ── PillGroup ────────────────────────────────────────────────────────────────
+
 function PillGroup({
   options,
   active,
   onChange,
 }: {
-  options: { key: string; label: string }[]
-  active:  string
+  options:  { key: string; label: string }[]
+  active:   string
   onChange: (key: string) => void
 }) {
   return (

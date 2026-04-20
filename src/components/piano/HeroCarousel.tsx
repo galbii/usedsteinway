@@ -222,9 +222,9 @@ export function HeroCarousel({ pianos }: HeroCarouselProps) {
                       : undefined,
                 }}
               >
-                {p.imageUrls[0] && (
+                {(p.stockImageUrl || p.imageUrls[0]) && (
                   <Image
-                    src={p.imageUrls[0]}
+                    src={p.stockImageUrl || p.imageUrls[0]!}
                     alt={p.title}
                     fill
                     className="object-cover"

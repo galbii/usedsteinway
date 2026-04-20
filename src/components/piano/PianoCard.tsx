@@ -5,52 +5,79 @@ import type { Piano } from '@/types/piano'
 
 interface PianoCardProps {
   piano: Piano
+  variant?: 'default' | 'featured'
   className?: string
 }
 
-export function PianoCard({ piano, className }: PianoCardProps) {
+export function PianoCard({ piano, variant = 'default', className }: PianoCardProps) {
+  // stockImageUrl is the primary source (brand reference photo); fall back to actual media
+  const primaryImage = piano.stockImageUrl || piano.imageUrls[0]
+
+  if (variant === 'featured') {
+    return <FeaturedCard piano={piano} primaryImage={primaryImage} className={className} />
+  }
+  return <DefaultCard piano={piano} primaryImage={primaryImage} className={className} />
+}
+
+// ── Default (catalog grid) card ──────────────────────────────────────────────
+
+function DefaultCard({
+  piano,
+  primaryImage,
+  className,
+}: {
+  piano: Piano
+  primaryImage: string | undefined
+  className?: string
+}) {
   return (
     <>
       <style>{`
-        .piano-card {
-          box-shadow: 0 1px 3px hsl(350 62% 26% / 0.06), 0 4px 16px hsl(350 62% 26% / 0.04);
-          transition: box-shadow 0.4s ease, transform 0.4s cubic-bezier(0.2, 0, 0, 1);
+        .pcard {
+          box-shadow: 0 1px 4px hsla(25, 6%, 9%, 0.05), 0 2px 12px hsla(25, 6%, 9%, 0.04);
+          transition: box-shadow 0.45s ease, transform 0.45s cubic-bezier(0.2, 0, 0, 1);
         }
-        .piano-card:hover {
-          box-shadow: 0 10px 48px hsl(350 62% 26% / 0.14), 0 2px 10px hsl(350 62% 26% / 0.07);
+        .pcard:hover {
+          box-shadow: 0 8px 48px hsla(25, 6%, 9%, 0.13), 0 2px 10px hsla(25, 6%, 9%, 0.07);
           transform: translateY(-4px);
         }
-        .piano-card-img {
-          transition: transform 0.7s cubic-bezier(0.2, 0, 0, 1);
+        .pcard-img { transition: transform 0.85s cubic-bezier(0.2, 0, 0, 1); }
+        .pcard:hover .pcard-img { transform: scale(1.045); }
+
+        .pcard-brand-bar {
+          display: inline-block;
+          width: 0;
+          height: 1px;
+          background: hsl(40 72% 52%);
+          vertical-align: middle;
+          margin-right: 0;
+          transition: width 0.32s ease, margin-right 0.32s ease;
         }
-        .piano-card:hover .piano-card-img {
-          transform: scale(1.045);
+        .pcard:hover .pcard-brand-bar { width: 20px; margin-right: 8px; }
+
+        .pcard-arrow {
+          transition: transform 0.25s ease, color 0.25s ease;
+          display: inline-block;
         }
-        .piano-card-arrow {
-          transition: color 0.25s ease, transform 0.25s ease;
-        }
-        .piano-card:hover .piano-card-arrow {
+        .pcard:hover .pcard-arrow {
+          transform: translateX(4px);
           color: hsl(40 72% 52%);
-          transform: translateX(3px);
         }
       `}</style>
 
       <Link
         href={`/pianos/${piano.slug}`}
-        className={cn('piano-card group block bg-white overflow-hidden', className)}
+        className={cn('pcard block bg-white overflow-hidden', className)}
       >
-        {/* ── Image ─────────────────────────────────────────── */}
-        <div
-          className="relative overflow-hidden bg-piano-black"
-          style={{ aspectRatio: '16 / 10' }}
-        >
-          {piano.imageUrls[0] ? (
+        {/* Image */}
+        <div className="relative overflow-hidden bg-piano-black" style={{ aspectRatio: '3 / 2' }}>
+          {primaryImage ? (
             <Image
-              src={piano.imageUrls[0]}
+              src={primaryImage}
               alt={piano.title}
               fill
-              className="piano-card-img object-cover"
-              sizes="(max-width: 768px) 100vw, 50vw"
+              className="pcard-img object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
             />
           ) : (
             <div
@@ -59,59 +86,61 @@ export function PianoCard({ piano, className }: PianoCardProps) {
             >
               <p
                 className="font-display uppercase"
-                style={{ fontSize: '9px', letterSpacing: '0.4em', color: 'rgba(255,255,255,0.18)' }}
+                style={{ fontSize: '8px', letterSpacing: '0.4em', color: 'rgba(255,255,255,0.18)' }}
               >
                 Photography forthcoming
               </p>
             </div>
           )}
 
-          {/* Bottom fade */}
           <div
             className="absolute inset-0 pointer-events-none"
-            style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.3) 0%, transparent 45%)' }}
+            style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.32) 0%, transparent 45%)' }}
           />
 
-          {/* Year — top right */}
+          {/* Year */}
           {piano.year > 0 && (
-            <div className="absolute top-5 right-5">
+            <div className="absolute top-4 right-4">
               <span
                 className="font-display tabular-nums"
-                style={{ fontSize: '10px', letterSpacing: '0.25em', color: 'rgba(255,255,255,0.5)' }}
+                style={{ fontSize: '10px', letterSpacing: '0.28em', color: 'rgba(255,255,255,0.55)' }}
               >
                 {piano.year}
               </span>
             </div>
           )}
 
-          {/* Featured — top left (takes priority over condition) */}
-          {piano.isFeatured ? (
-            <div className="absolute top-5 left-5">
+          {/* Featured ribbon — top-left corner */}
+          {piano.isFeatured && (
+            <div className="absolute top-0 left-0">
               <span
                 className="font-display uppercase block"
                 style={{
-                  fontSize:        '8px',
-                  letterSpacing:   '0.4em',
-                  padding:         '0.35rem 0.7rem',
+                  fontSize:        '7px',
+                  letterSpacing:   '0.5em',
+                  padding:         '0.3rem 0.85rem',
                   backgroundColor: 'hsl(40 72% 52%)',
                   color:           'hsl(25 6% 9%)',
+                  fontWeight:      600,
                 }}
               >
                 Featured
               </span>
             </div>
-          ) : (
-            /* Condition — bottom left */
-            <div className="absolute bottom-5 left-5">
+          )}
+
+          {/* Condition badge — bottom-left, only if not featured */}
+          {!piano.isFeatured && piano.condition && (
+            <div className="absolute bottom-4 left-4">
               <span
                 className="font-display uppercase block"
                 style={{
-                  fontSize:        '8px',
-                  letterSpacing:   '0.38em',
-                  padding:         '0.32rem 0.65rem',
-                  backgroundColor: 'rgba(255,255,255,0.88)',
-                  color:           'hsl(25 5% 30%)',
-                  backdropFilter:  'blur(6px)',
+                  fontSize:        '7px',
+                  letterSpacing:   '0.4em',
+                  padding:         '0.28rem 0.65rem',
+                  backgroundColor: 'rgba(255,255,255,0.84)',
+                  backdropFilter:  'blur(8px)',
+                  color:           'hsl(25 5% 28%)',
                 }}
               >
                 {piano.condition}
@@ -120,30 +149,31 @@ export function PianoCard({ piano, className }: PianoCardProps) {
           )}
         </div>
 
-        {/* ── Content ───────────────────────────────────────── */}
-        <div style={{ padding: 'clamp(1.8rem, 2.8vw, 2.5rem) clamp(1.8rem, 2.8vw, 2.5rem) clamp(1.6rem, 2.2vw, 2.1rem)' }}>
+        {/* Content */}
+        <div style={{ padding: 'clamp(1.4rem, 2.2vw, 1.9rem) clamp(1.4rem, 2.2vw, 1.9rem) clamp(1.2rem, 1.8vw, 1.6rem)' }}>
 
-          {/* Brand */}
+          {/* Brand with animated leading bar */}
           <p
             className="font-display uppercase"
             style={{
-              fontSize:      '10px',
-              letterSpacing: '0.48em',
+              fontSize:      '8.5px',
+              letterSpacing: '0.5em',
               color:         'hsl(40 72% 52%)',
-              marginBottom:  '0.75rem',
+              marginBottom:  '0.6rem',
             }}
           >
+            <span className="pcard-brand-bar" />
             {piano.brand}
           </p>
 
-          {/* Model — primary headline */}
+          {/* Model */}
           <h3
             className="font-cormorant font-light text-piano-black"
             style={{
-              fontSize:     'clamp(1.7rem, 2.2vw, 2.2rem)',
-              lineHeight:   1.15,
+              fontSize:      'clamp(1.45rem, 1.9vw, 1.9rem)',
+              lineHeight:    1.12,
               letterSpacing: '-0.01em',
-              marginBottom: piano.finish ? '0.6rem' : 'clamp(1.3rem, 2vw, 1.7rem)',
+              marginBottom:  piano.finish ? '0.45rem' : 'clamp(1rem, 1.6vw, 1.4rem)',
             }}
           >
             {piano.model || piano.title}
@@ -154,40 +184,224 @@ export function PianoCard({ piano, className }: PianoCardProps) {
             <p
               className="font-display uppercase"
               style={{
-                fontSize:      '11px',
-                letterSpacing: '0.22em',
+                fontSize:      '10px',
+                letterSpacing: '0.2em',
                 color:         'hsl(25 4% 52%)',
-                marginBottom:  'clamp(1.3rem, 2vw, 1.7rem)',
+                marginBottom:  'clamp(1rem, 1.6vw, 1.4rem)',
               }}
             >
               {piano.finish}
             </p>
           )}
 
-          {/* Footer: size · price · arrow */}
+          {/* Footer */}
           <div
             className="flex items-center justify-between"
-            style={{ paddingTop: 'clamp(1rem, 1.5vw, 1.3rem)', borderTop: '1px solid hsl(36 18% 91%)' }}
+            style={{ paddingTop: 'clamp(0.8rem, 1.2vw, 1rem)', borderTop: '1px solid hsl(36 18% 90%)' }}
           >
             <p
               className="font-display uppercase"
-              style={{ fontSize: '11px', letterSpacing: '0.22em', color: 'hsl(25 4% 55%)' }}
+              style={{ fontSize: '10px', letterSpacing: '0.2em', color: 'hsl(25 4% 58%)' }}
             >
               {piano.size || '—'}
             </p>
-
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2">
               <span
                 className="font-cormorant font-light text-piano-black"
-                style={{ fontSize: 'clamp(1.45rem, 2vw, 1.9rem)', lineHeight: 1 }}
+                style={{ fontSize: 'clamp(1.25rem, 1.7vw, 1.65rem)', lineHeight: 1 }}
               >
                 {piano.priceDisplay}
               </span>
               <span
-                className="piano-card-arrow font-display"
-                style={{ fontSize: '0.8rem', color: 'hsl(25 4% 74%)' }}
+                className="pcard-arrow font-display"
+                style={{ fontSize: '0.78rem', color: 'hsl(25 4% 72%)' }}
               >
                 →
+              </span>
+            </div>
+          </div>
+        </div>
+      </Link>
+    </>
+  )
+}
+
+// ── Featured (full-width horizontal) card ────────────────────────────────────
+
+function FeaturedCard({
+  piano,
+  primaryImage,
+  className,
+}: {
+  piano: Piano
+  primaryImage: string | undefined
+  className?: string
+}) {
+  return (
+    <>
+      <style>{`
+        .pcard-feat {
+          box-shadow: 0 2px 10px hsla(25, 6%, 9%, 0.07);
+          transition: box-shadow 0.5s ease;
+        }
+        .pcard-feat:hover {
+          box-shadow: 0 16px 72px hsla(25, 6%, 9%, 0.14);
+        }
+        .pcard-feat-img { transition: transform 1s cubic-bezier(0.2, 0, 0, 1); }
+        .pcard-feat:hover .pcard-feat-img { transform: scale(1.03); }
+        .pcard-feat-cta {
+          transition: transform 0.3s ease, color 0.3s ease;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+        }
+        .pcard-feat:hover .pcard-feat-cta {
+          transform: translateX(5px);
+          color: hsl(40 72% 52%);
+        }
+      `}</style>
+
+      <Link
+        href={`/pianos/${piano.slug}`}
+        className={cn('pcard-feat block bg-white overflow-hidden', className)}
+      >
+        <div className="flex flex-col md:flex-row">
+          {/* Image — left 54% */}
+          <div
+            className="relative overflow-hidden bg-piano-black md:w-[54%] flex-shrink-0"
+            style={{ aspectRatio: '16 / 10', minHeight: '260px' }}
+          >
+            {primaryImage ? (
+              <Image
+                src={primaryImage}
+                alt={piano.title}
+                fill
+                className="pcard-feat-img object-cover"
+                sizes="(max-width: 768px) 100vw, 54vw"
+                priority
+              />
+            ) : (
+              <div className="absolute inset-0" style={{ background: 'hsl(25 6% 11%)' }} />
+            )}
+
+            {/* Right-side gradient to blend into content panel */}
+            <div
+              className="absolute inset-0 pointer-events-none hidden md:block"
+              style={{ background: 'linear-gradient(to right, transparent 65%, rgba(255,255,255,0.08) 100%)' }}
+            />
+
+            {/* Year */}
+            {piano.year > 0 && (
+              <div className="absolute top-5 right-5">
+                <span
+                  className="font-display tabular-nums"
+                  style={{ fontSize: '11px', letterSpacing: '0.3em', color: 'rgba(255,255,255,0.55)' }}
+                >
+                  {piano.year}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Content — right 46% */}
+          <div
+            className="flex flex-col justify-between md:w-[46%]"
+            style={{ padding: 'clamp(2rem, 3vw, 3rem) clamp(2rem, 3.5vw, 3.5rem)' }}
+          >
+            <div>
+              {/* Featured eyebrow */}
+              <p
+                className="font-display uppercase"
+                style={{
+                  fontSize:      '7.5px',
+                  letterSpacing: '0.55em',
+                  color:         'hsl(40 72% 52%)',
+                  marginBottom:  '1.4rem',
+                }}
+              >
+                ◆ Featured Instrument
+              </p>
+
+              {/* Brand */}
+              <p
+                className="font-display uppercase"
+                style={{
+                  fontSize:      '9px',
+                  letterSpacing: '0.48em',
+                  color:         'hsl(40 72% 52%)',
+                  marginBottom:  '0.5rem',
+                }}
+              >
+                {piano.brand}
+              </p>
+
+              {/* Model */}
+              <h3
+                className="font-cormorant font-light text-piano-black"
+                style={{
+                  fontSize:      'clamp(1.9rem, 2.8vw, 2.8rem)',
+                  lineHeight:    1.08,
+                  letterSpacing: '-0.01em',
+                  marginBottom:  '1.1rem',
+                }}
+              >
+                {piano.model || piano.title}
+              </h3>
+
+              {/* Spec row: condition · finish · size */}
+              <div
+                className="flex items-center flex-wrap gap-x-3 gap-y-1"
+                style={{ marginBottom: '1.4rem' }}
+              >
+                {[piano.condition, piano.finish, piano.size]
+                  .filter(Boolean)
+                  .map((val, i, arr) => (
+                    <span key={val} className="flex items-center gap-3">
+                      <span
+                        className="font-display uppercase"
+                        style={{ fontSize: '9px', letterSpacing: '0.3em', color: 'hsl(25 4% 52%)' }}
+                      >
+                        {val}
+                      </span>
+                      {i < arr.length - 1 && (
+                        <span style={{ color: 'hsl(36 18% 85%)', fontSize: '11px' }}>·</span>
+                      )}
+                    </span>
+                  ))}
+              </div>
+
+              {/* Description excerpt */}
+              {piano.description && (
+                <p
+                  className="line-clamp-3"
+                  style={{
+                    fontSize:     '0.875rem',
+                    lineHeight:   1.7,
+                    color:        'hsl(25 4% 42%)',
+                    marginBottom: '1.75rem',
+                  }}
+                >
+                  {piano.description}
+                </p>
+              )}
+            </div>
+
+            {/* Price + CTA */}
+            <div
+              className="flex items-center justify-between"
+              style={{ paddingTop: '1.5rem', borderTop: '1px solid hsl(36 18% 90%)' }}
+            >
+              <span
+                className="font-cormorant font-light text-piano-black"
+                style={{ fontSize: 'clamp(1.55rem, 2.2vw, 2.1rem)', lineHeight: 1 }}
+              >
+                {piano.priceDisplay}
+              </span>
+              <span
+                className="pcard-feat-cta font-display uppercase text-piano-stone"
+                style={{ fontSize: '9px', letterSpacing: '0.4em' }}
+              >
+                View Details →
               </span>
             </div>
           </div>

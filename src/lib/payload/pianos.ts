@@ -70,6 +70,7 @@ export function adaptPayloadPiano(doc: PayloadPiano): Piano {
     isAvailable: doc.isAvailable ?? false,
     isFeatured: doc.isFeatured ?? false,
     imageUrls,
+    stockImageUrl: doc.stockImageUrl ?? undefined,
     videoUrl: doc.videoUrl ?? undefined,
     description: descriptionPlainText,
     richTextDescription: doc.description ?? undefined,
