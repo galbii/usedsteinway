@@ -29,7 +29,7 @@ import { useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { getFeaturedPianos } from '@/lib/piano-data'
-import { HeroCarousel } from '@/components/piano/HeroCarousel'
+import { FeaturedCarousel } from './FeaturedCarousel'
 import { ShowroomGallerySection } from './ShowroomGallerySection'
 import { PianoLogo } from '@/components/layout'
 import { LocationTabs } from '@/components/piano/LocationTabs'
@@ -292,9 +292,9 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
       </div>
 
       {/* ═══════════════════════════════════════════════
-          FEATURED INSTRUMENTS — cinematic hero carousel
+          FEATURED INSTRUMENTS — full-viewport hero
       ═══════════════════════════════════════════════ */}
-      <HeroCarousel pianos={featured} />
+      <FeaturedCarousel pianos={featured} />
 
       {/* ═══════════════════════════════════════════════
           SHOWROOM GALLERY — Bento grid preview
@@ -408,42 +408,70 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
       </section>
 
       {/* ═══════════════════════════════════════════════
+          OUR PIANOS — Bold editorial header
+      ═══════════════════════════════════════════════ */}
+      <section style={{ backgroundColor: C.darkBg }}>
+        <div className="max-w-7xl mx-auto px-8 pt-24 pb-0">
+
+          {/* Eyebrow */}
+          <div className="sr flex items-center gap-5 mb-14">
+            <div className="h-px w-12 shrink-0" style={{ backgroundColor: C.accent }} />
+            <span
+              className="font-display text-[10px] tracking-[0.55em] uppercase"
+              style={{ color: C.accent }}
+            >
+              The Collection
+            </span>
+            <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(245,235,220,0.07)' }} />
+          </div>
+
+          {/* Massive heading + right column */}
+          <div
+            className="sr flex flex-col xl:flex-row xl:items-end justify-between gap-10 pb-20"
+            style={{ borderBottom: `1px solid ${C.borderDark}` }}
+          >
+            <h2
+              className="font-cormorant font-light leading-[0.88] shrink-0"
+              style={{ fontSize: 'clamp(5.5rem, 13vw, 14rem)', color: C.ivory, letterSpacing: '-0.015em' }}
+            >
+              Our Pianos
+            </h2>
+
+            <div className="xl:text-right space-y-5 shrink-0 pb-2">
+              <div>
+                <span
+                  className="font-cormorant font-light block leading-none"
+                  style={{ fontSize: 'clamp(2.8rem, 4.5vw, 5rem)', color: C.accent }}
+                >
+                  200+
+                </span>
+                <span
+                  className="font-display text-[9px] tracking-[0.4em] uppercase"
+                  style={{ color: 'rgba(245,235,220,0.28)' }}
+                >
+                  Instruments In Stock
+                </span>
+              </div>
+              <p
+                className="text-base leading-relaxed xl:max-w-[28ch] xl:ml-auto"
+                style={{ color: 'rgba(245,235,220,0.46)' }}
+              >
+                From the world&apos;s finest makers — selected individually, not by catalogue.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
           OUR PIANOS — Three full-width category rows
-          Stacked horizontal panels, each with distinct
-          visual identity and richer editorial copy.
       ═══════════════════════════════════════════════ */}
       <section style={{ backgroundColor: C.bg }}>
 
-        {/* Section header */}
-        <div className="px-8 pt-36 pb-20 max-w-7xl mx-auto">
-          <div className="sr flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <span
-                className="font-display text-[10px] tracking-[0.48em] uppercase block mb-5"
-                style={{ color: C.accent }}
-              >
-                The Collection
-              </span>
-              <h2
-                className="font-cormorant font-light leading-[1.02]"
-                style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)', color: C.text }}
-              >
-                Our Pianos
-              </h2>
-            </div>
-            <p
-              className="text-lg leading-relaxed max-w-[32ch]"
-              style={{ color: C.muted }}
-            >
-              We carry over two hundred instruments from the world's finest makers — selected
-              individually, not by catalogue.
-            </p>
-          </div>
-        </div>
-
         {/* ── ROW 1: Steinway & Sons ─────────────────── */}
         <Link
-          href="/pianos/steinway"
+          href="/steinway"
           className="sr sr-d1 group block transition-colors duration-300 hover:bg-[hsl(36,22%,93%)]"
           style={{ borderTop: `1px solid ${C.border}` }}
         >
@@ -481,7 +509,7 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
 
         {/* ── ROW 2: Handcrafted European ───────────── */}
         <Link
-          href="/pianos/european"
+          href="/european-pianos"
           className="sr sr-d2 group block transition-colors duration-300"
           style={{ backgroundColor: C.darkBg, borderTop: `1px solid ${C.borderDark}` }}
         >
@@ -519,7 +547,7 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
 
         {/* ── ROW 3: Shigeru Kawai ──────────────────── */}
         <Link
-          href="/pianos/shigeru-kawai"
+          href="/shigeru"
           className="sr sr-d3 group block transition-colors duration-300 hover:bg-[hsl(36,22%,93%)]"
           style={{ borderTop: `1px solid ${C.border}` }}
         >

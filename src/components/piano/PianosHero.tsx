@@ -74,18 +74,25 @@ export function PianosHero({ pianos }: PianosHeroProps) {
       <div className="absolute inset-0 bg-gradient-to-r from-piano-black/30 via-transparent to-piano-black/30 pointer-events-none" />
 
       {/* ── Centered content ───────────────────────────────────── */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 pointer-events-none select-none">
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 pointer-events-none select-none">
         <PianoLogo theme="dark" size="xl" noLink />
 
-        <div className="flex items-center gap-4 mt-2">
-          <div className="h-px w-12 bg-piano-gold/40" />
-          <p className="font-display text-[9px] tracking-[0.65em] uppercase text-piano-cream/50">
-            Complete Inventory
-          </p>
-          <div className="h-px w-12 bg-piano-gold/40" />
-        </div>
+        <h1
+          className="font-cormorant font-light text-white text-center"
+          style={{
+            fontSize: 'clamp(3.2rem, 6.5vw, 6.5rem)',
+            lineHeight: 1,
+            textShadow: '0 4px 32px rgba(0,0,0,0.55), 0 1px 8px rgba(0,0,0,0.4)',
+            letterSpacing: '0.04em',
+          }}
+        >
+          Our Piano Collection
+        </h1>
 
-        <p className="font-cormorant font-light text-piano-cream/35 text-base tracking-widest">
+        <p
+          className="font-display text-piano-cream/50 tracking-[0.5em] uppercase"
+          style={{ fontSize: '10px', textShadow: '0 2px 12px rgba(0,0,0,0.5)' }}
+        >
           {pianos.length}&nbsp;{pianos.length === 1 ? 'instrument' : 'instruments'}
         </p>
       </div>

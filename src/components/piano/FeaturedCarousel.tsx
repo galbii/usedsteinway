@@ -205,291 +205,293 @@ export function FeaturedCarousel({ pianos }: FeaturedCarouselProps) {
         }
       `}</style>
 
-      {/* Single self-contained card — no orphaned nav below */}
+      {/* Full-bleed hero card */}
       <div
         className="relative overflow-hidden"
         style={{
-          boxShadow:
-            '0 16px 72px hsl(350 62% 26% / 0.16),' +
-            '0 4px 16px hsl(350 62% 26% / 0.08)',
-          backgroundColor: '#fff',
+          height: '100vh',
+          minHeight: '680px',
+          backgroundColor: C.darkBg,
         }}
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
+        {/* ── Full-bleed image with Ken Burns ── */}
+        <div
+          key={`kb-${activeIndex}`}
+          className="absolute inset-0"
+          style={{
+            animation: isTransitioning || prefersReducedMotion
+              ? undefined
+              : `kb-zoom ${DURATION + TRANS}ms linear forwards`,
+          }}
+        >
+          {(piano.stockImageUrl || piano.imageUrls[0]) && (
+            <Image
+              src={piano.stockImageUrl || piano.imageUrls[0]!}
+              alt={piano.title}
+              fill
+              className="object-cover"
+              sizes="100vw"
+              priority={activeIndex === 0}
+            />
+          )}
+        </div>
 
-          {/* Animated gold top border */}
+        {/* ── Gradient overlays ── */}
+        <div
+          className="absolute inset-0 z-10 pointer-events-none"
+          style={{
+            background:
+              'linear-gradient(to right, rgba(0,0,0,0.08) 0%, transparent 45%, rgba(0,0,0,0.72) 100%),' +
+              'linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 50%)',
+          }}
+        />
+
+        {/* ── Gold curtain transition ── */}
+        {isTransitioning && (
           <div
+            key={`curtain-${transitionKey}`}
+            className="absolute inset-0 z-20 pointer-events-none"
             style={{
-              height: '3px',
               backgroundColor: C.accent,
-              transformOrigin: direction === 'next' ? 'left' : 'right',
-              ...lineReveal(0.08),
+              animation: `curtain-sweep-${direction} ${TRANS}ms cubic-bezier(0.4, 0, 0.2, 1) forwards`,
             }}
           />
+        )}
 
-          <div className="flex flex-col lg:flex-row lg:min-h-[600px]">
+        {/* ── Gold top border ── */}
+        <div
+          className="absolute top-0 left-0 right-0 z-30"
+          style={{
+            height: '3px',
+            backgroundColor: C.accent,
+            transformOrigin: direction === 'next' ? 'left' : 'right',
+            ...lineReveal(0.08),
+          }}
+        />
 
-            {/* ══════════════════════════════════════
-                IMAGE PANEL
-            ══════════════════════════════════════ */}
-            <div
-              className="relative lg:w-[57%] aspect-[4/3] lg:aspect-auto flex-shrink-0 overflow-hidden"
-              style={{ backgroundColor: C.darkBg }}
+        {/* ── Featured badge ── */}
+        {piano.isFeatured && (
+          <div className="absolute top-8 left-8 z-30">
+            <span
+              className="font-display text-[9px] tracking-[0.4em] uppercase px-3.5 py-2 block"
+              style={{ backgroundColor: C.accent, color: C.darkBg }}
             >
-              {/* Ken Burns: idle image slowly zooms */}
-              <div
-                key={`kb-${activeIndex}`}
-                className="absolute inset-0"
-                style={{
-                  animation: isTransitioning || prefersReducedMotion
-                    ? undefined
-                    : `kb-zoom ${DURATION + TRANS}ms linear forwards`,
-                }}
-              >
-                {piano.imageUrls[0] && (
-                  <Image
-                    src={piano.imageUrls[0]}
-                    alt={piano.title}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 57vw"
-                    priority={activeIndex === 0}
-                  />
-                )}
-              </div>
+              Featured
+            </span>
+          </div>
+        )}
 
-              {/* Gradient vignette */}
-              <div
-                className="absolute inset-0 z-10 pointer-events-none"
-                style={{
-                  background:
-                    'linear-gradient(to top,  rgba(0,0,0,0.50) 0%,  rgba(0,0,0,0.12) 40%,  transparent 65%),' +
-                    'linear-gradient(to right, rgba(0,0,0,0.10) 0%, transparent 30%)',
-                }}
-              />
+        {/* ── Slide counter (bottom-left) ── */}
+        <div className="absolute bottom-8 left-8 z-30">
+          <span
+            className="font-display text-[10px] tracking-[0.3em] tabular-nums"
+            style={{ color: 'rgba(255,255,255,0.38)' }}
+          >
+            {String(activeIndex + 1).padStart(2, '0')}
+            <span style={{ opacity: 0.5 }}> / </span>
+            {String(pianos.length).padStart(2, '0')}
+          </span>
+        </div>
 
-              {/* ── Gold curtain ── */}
-              {isTransitioning && (
-                <div
-                  key={`curtain-${transitionKey}`}
-                  className="absolute inset-0 z-20 pointer-events-none"
-                  style={{
-                    backgroundColor: C.accent,
-                    animation: `curtain-sweep-${direction} ${TRANS}ms cubic-bezier(0.4, 0, 0.2, 1) forwards`,
-                  }}
-                />
-              )}
+        {/* ── Details panel — right side overlay ── */}
+        <div
+          className="absolute top-0 right-0 bottom-0 z-30 flex flex-col justify-between"
+          style={{
+            width: 'clamp(380px, 42%, 600px)',
+            padding: 'clamp(3rem, 5vw, 6rem)',
+          }}
+        >
+          <div>
+            {/* Overline */}
+            <p
+              className="font-display tracking-[0.48em] uppercase mb-6"
+              style={{ fontSize: '12px', color: C.accent, ...reveal(0) }}
+            >
+              {piano.brand}{piano.year ? ` · ${piano.year}` : ''}
+            </p>
 
-              {/* Featured badge */}
-              {piano.isFeatured && (
-                <div className="absolute top-6 left-6 z-30">
-                  <span
-                    className="font-display text-[9px] tracking-[0.4em] uppercase px-3.5 py-2 block"
-                    style={{ backgroundColor: C.accent, color: C.darkBg }}
-                  >
-                    Featured
-                  </span>
-                </div>
-              )}
+            {/* Model name */}
+            <h3
+              className="font-cormorant font-light leading-[1.0] text-white"
+              style={{
+                fontSize: 'clamp(3.8rem, 5.5vw, 7rem)',
+                marginBottom: '1rem',
+                textShadow: '0 2px 32px rgba(0,0,0,0.45)',
+                ...reveal(0.06),
+              }}
+            >
+              {piano.model}
+            </h3>
 
-              {/* Slide counter */}
-              <div className="absolute bottom-6 right-6 z-30">
+            {/* Finish · size · condition */}
+            <p
+              className="leading-relaxed mb-10"
+              style={{ fontSize: '15px', color: 'rgba(255,255,255,0.55)', ...reveal(0.12) }}
+            >
+              {piano.finish}{piano.size ? ` · ${piano.size}` : ''}
+              {piano.condition && (
                 <span
-                  className="font-display text-[10px] tracking-[0.3em] tabular-nums"
-                  style={{ color: 'rgba(255,255,255,0.42)' }}
+                  className="inline-flex items-center gap-1.5 ml-3"
+                  style={{ color: C.accent }}
                 >
-                  {String(activeIndex + 1).padStart(2, '0')}
-                  <span style={{ opacity: 0.5 }}> / </span>
-                  {String(pianos.length).padStart(2, '0')}
+                  <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ backgroundColor: C.accent }} />
+                  {piano.condition}
                 </span>
-              </div>
+              )}
+            </p>
 
-              {/* Mobile tap zones */}
-              <button
-                onClick={goPrev}
-                aria-label="Previous instrument"
-                className="absolute left-0 top-0 bottom-0 w-2/5 z-40 lg:hidden"
-              />
-              <button
-                onClick={goNext}
-                aria-label="Next instrument"
-                className="absolute right-0 top-0 bottom-0 w-2/5 z-40 lg:hidden"
-              />
-            </div>
-
-            {/* ══════════════════════════════════════
-                DETAILS PANEL — staggered reveal
-            ══════════════════════════════════════ */}
+            {/* Divider */}
             <div
-              className="flex flex-col justify-between flex-1"
-              style={{ padding: 'clamp(2.2rem, 4.5vw, 5.5rem)' }}
+              style={{
+                height: '1px',
+                backgroundColor: 'rgba(255,255,255,0.15)',
+                transformOrigin: 'left',
+                marginBottom: '2.2rem',
+                ...lineReveal(0.18),
+              }}
+            />
+
+            {/* Description */}
+            <p
+              className="leading-[1.9] max-w-[34ch]"
+              style={{ fontSize: '14px', color: 'rgba(255,255,255,0.5)', ...reveal(0.22) }}
+            >
+              {piano.description
+                ? piano.description.slice(0, 200) + (piano.description.length > 200 ? '…' : '')
+                : 'A hand-selected instrument, personally evaluated by Roger — a Registered Piano Technician with thirty years of experience.'}
+            </p>
+          </div>
+
+          {/* Footer: price + CTAs + dots */}
+          <div style={{ ...reveal(0.28) }}>
+            {/* Price row */}
+            <div
+              className="pt-6 mb-5 flex items-end justify-between"
+              style={{ borderTop: '1px solid rgba(255,255,255,0.15)' }}
             >
               <div>
-                {/* Overline */}
                 <p
-                  className="font-display text-[10px] tracking-[0.48em] uppercase mb-5"
-                  style={{ color: C.accent, ...reveal(0) }}
+                  className="font-display tracking-[0.3em] uppercase mb-1.5"
+                  style={{ fontSize: '9px', color: 'rgba(255,255,255,0.38)' }}
                 >
-                  {piano.brand} · {piano.year}
+                  Asking price
                 </p>
-
-                {/* Model name */}
-                <h3
-                  className="font-cormorant font-light leading-[1.03]"
-                  style={{
-                    fontSize: 'clamp(2.8rem, 4.5vw, 5.4rem)',
-                    color: C.text,
-                    marginBottom: '0.5rem',
-                    ...reveal(0.06),
-                  }}
+                <span
+                  className="font-cormorant font-light text-white"
+                  style={{ fontSize: 'clamp(2rem, 2.8vw, 3rem)', lineHeight: 1 }}
                 >
-                  {piano.model}
-                </h3>
-
-                {/* Finish · size · condition */}
-                <p
-                  className="text-sm leading-relaxed mb-8"
-                  style={{ color: C.muted, ...reveal(0.12) }}
-                >
-                  {piano.finish} · {piano.size}
-                  <span
-                    className="inline-flex items-center gap-1.5 ml-3"
-                    style={{ color: C.accent }}
-                  >
-                    <span
-                      className="w-1 h-1 rounded-full inline-block"
-                      style={{ backgroundColor: C.accent }}
-                    />
-                    {piano.condition}
-                  </span>
-                </p>
-
-                {/* Horizontal rule — extends like a line being drawn */}
-                <div
-                  style={{
-                    height: '1px',
-                    backgroundColor: C.border,
-                    transformOrigin: 'left',
-                    marginBottom: '2rem',
-                    ...lineReveal(0.18),
-                  }}
-                />
-
-                {/* Description */}
-                <p
-                  className="text-sm leading-[1.85] max-w-[36ch]"
-                  style={{ color: C.muted, ...reveal(0.22) }}
-                >
-                  {piano.description
-                    ? piano.description.slice(0, 200) +
-                      (piano.description.length > 200 ? '…' : '')
-                    : 'A hand-selected instrument, personally evaluated by Roger — a Registered Piano Technician with thirty years of experience.'}
-                </p>
+                  {piano.priceDisplay}
+                </span>
               </div>
+            </div>
 
-              {/* Footer row 1: price + view link */}
-              <div
-                className="mt-12 pt-7 flex items-end justify-between"
-                style={{ borderTop: `1px solid ${C.border}`, ...reveal(0.30) }}
+            {/* CTA buttons */}
+            <div className="flex gap-2 mb-6">
+              <Link
+                href={`/pianos/${piano.slug}`}
+                className="group inline-flex items-center gap-3"
+                style={{
+                  backgroundColor: 'hsl(25, 6%, 9%)',
+                  color: '#fff',
+                  padding: '0.75rem 1.25rem',
+                  transition: 'background-color 200ms ease',
+                  flex: 1,
+                  justifyContent: 'space-between',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.backgroundColor = 'hsl(25,6%,18%)')}
+                onMouseLeave={e => (e.currentTarget.style.backgroundColor = 'hsl(25,6%,9%)')}
               >
-                <div>
-                  <p
-                    className="font-display text-[9px] tracking-[0.3em] uppercase mb-2"
-                    style={{ color: C.muted }}
-                  >
-                    Asking price
-                  </p>
-                  <span
-                    className="font-cormorant font-light"
-                    style={{ fontSize: 'clamp(1.8rem, 2.6vw, 2.6rem)', color: C.text, lineHeight: 1 }}
-                  >
-                    {piano.priceDisplay}
-                  </span>
-                </div>
-
-                <Link href={`/pianos/${piano.slug}`} className="group inline-flex items-center gap-3.5" tabIndex={0}>
-                  <span
-                    className="font-display text-[10px] tracking-[0.35em] uppercase transition-opacity duration-200 group-hover:opacity-50"
-                    style={{ color: C.muted }}
-                  >
-                    View instrument
-                  </span>
-                  <span
-                    className="inline-flex items-center justify-center w-9 h-9 transition-all duration-300 group-hover:border-[hsl(40,72%,52%)] group-hover:bg-[hsl(40,72%,52%)]"
-                    style={{ border: `1px solid ${C.border}` }}
-                  >
-                    <svg width="11" height="11" viewBox="0 0 11 11" fill="none"
-                      className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:[&_path]:stroke-white">
-                      <path d="M2.5 5.5h6M6 3l2.5 2.5L6 8" stroke={C.text}
-                        strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </span>
-                </Link>
-              </div>
-
-              {/* Footer row 2: progress segments + arrows */}
-              <div
-                className="mt-5 pt-5 flex items-center justify-between"
-                style={{ borderTop: `1px solid ${C.border}`, ...reveal(0.36) }}
+                <span className="font-display tracking-[0.36em] uppercase" style={{ fontSize: '9px' }}>View Instrument</span>
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" className="transition-transform duration-300 group-hover:translate-x-0.5 shrink-0">
+                  <path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+              <Link
+                href="/pianos"
+                className="group inline-flex items-center gap-3"
+                style={{
+                  backgroundColor: C.accent,
+                  color: C.darkBg,
+                  padding: '0.75rem 1.25rem',
+                  transition: 'opacity 200ms ease',
+                  flex: 1,
+                  justifyContent: 'space-between',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.85')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
               >
-                <div className="flex items-center gap-2.5">
-                  {pianos.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => navigate(i, i > activeIndex ? 'next' : 'prev')}
-                      aria-label={`Go to slide ${i + 1}`}
-                      className="relative overflow-hidden hover:opacity-75 transition-opacity duration-150"
-                      style={{ width: '32px', height: '1px', backgroundColor: C.border }}
-                    >
-                      {i === activeIndex && (
-                        <span style={{
-                          position: 'absolute', inset: 0,
-                          transform: `scaleX(${progress / 100})`,
-                          transformOrigin: 'left',
-                          backgroundColor: C.accent,
-                          transition: 'transform 80ms linear',
-                        }} />
-                      )}
-                      {i < activeIndex && (
-                        <span className="absolute inset-0" style={{ backgroundColor: C.accentFaint }} />
-                      )}
-                    </button>
-                  ))}
-                </div>
+                <span className="font-display tracking-[0.36em] uppercase" style={{ fontSize: '9px' }}>Browse All Pianos</span>
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" className="transition-transform duration-300 group-hover:translate-x-0.5 shrink-0">
+                  <path d="M3 7h8M8 4l3 3-3 3" stroke={C.darkBg} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            </div>
 
-                <div className="flex items-center gap-1.5">
-                  <button
-                    onClick={goPrev}
-                    aria-label="Previous"
-                    className="group flex items-center justify-center w-8 h-8 transition-all duration-300 hover:border-[hsl(40,72%,52%)] hover:bg-[hsl(40,72%,52%)]"
-                    style={{ border: `1px solid ${C.border}` }}
-                  >
-                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none"
-                      className="transition-transform duration-300 group-hover:-translate-x-0.5 group-hover:[&_path]:stroke-white">
-                      <path d="M8 6H4M5.5 3.5L3 6l2.5 2.5" stroke={C.muted}
-                        strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={goNext}
-                    aria-label="Next"
-                    className="group flex items-center justify-center w-8 h-8 transition-all duration-300 hover:border-[hsl(40,72%,52%)] hover:bg-[hsl(40,72%,52%)]"
-                    style={{ border: `1px solid ${C.border}` }}
-                  >
-                    <svg width="11" height="11" viewBox="0 0 12 12" fill="none"
-                      className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:[&_path]:stroke-white">
-                      <path d="M4 6h4M6.5 3.5L9 6l-2.5 2.5" stroke={C.muted}
-                        strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
+            {/* Progress dots */}
+            <div className="flex items-center gap-2">
+              {pianos.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => navigate(i, i > activeIndex ? 'next' : 'prev')}
+                  aria-label={`Go to slide ${i + 1}`}
+                  className="relative overflow-hidden hover:opacity-75 transition-opacity duration-150"
+                  style={{ width: i === activeIndex ? '28px' : '6px', height: '6px', borderRadius: '3px', backgroundColor: i === activeIndex ? C.accent : 'rgba(255,255,255,0.25)', transition: 'width 300ms ease, background-color 300ms ease' }}
+                >
+                  {i === activeIndex && (
+                    <span style={{
+                      position: 'absolute', inset: 0, borderRadius: '3px',
+                      transform: `scaleX(${progress / 100})`,
+                      transformOrigin: 'left',
+                      backgroundColor: 'rgba(255,255,255,0.4)',
+                      transition: 'transform 80ms linear',
+                    }} />
+                  )}
+                </button>
+              ))}
             </div>
           </div>
         </div>
+
+        {/* ── Large side nav arrows ── */}
+        <button
+          onClick={goPrev}
+          aria-label="Previous instrument"
+          className="absolute left-6 top-1/2 -translate-y-1/2 z-40 flex items-center justify-center transition-all duration-300 group"
+          style={{
+            width: '56px', height: '56px',
+            backgroundColor: 'rgba(0,0,0,0.35)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            backdropFilter: 'blur(8px)',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.backgroundColor = C.accent; e.currentTarget.style.borderColor = C.accent }}
+          onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.35)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)' }}
+        >
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M11 4L6 9l5 5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+        <button
+          onClick={goNext}
+          aria-label="Next instrument"
+          className="absolute right-6 top-1/2 -translate-y-1/2 z-40 flex items-center justify-center transition-all duration-300 group"
+          style={{
+            width: '56px', height: '56px',
+            backgroundColor: 'rgba(0,0,0,0.35)',
+            border: '1px solid rgba(255,255,255,0.2)',
+            backdropFilter: 'blur(8px)',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.backgroundColor = C.accent; e.currentTarget.style.borderColor = C.accent }}
+          onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.35)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)' }}
+        >
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M7 4l5 5-5 5" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+      </div>
     </>
   )
 }
