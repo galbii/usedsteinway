@@ -78,7 +78,7 @@ const STYLES = `
   }
   .usw-pm-search {
     flex: 1;
-    max-width: 200px;
+    max-width: 320px;
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 3px;
@@ -87,9 +87,10 @@ const STYLES = `
     font-size: 13px;
     letter-spacing: 0.04em;
     outline: none;
-    padding: 5px 12px;
+    padding: 7px 14px;
     transition: border-color 0.15s;
     min-width: 0;
+    height: 36px;
   }
   .usw-pm-search::placeholder {
     color: hsl(25, 4%, 40%);
@@ -179,6 +180,78 @@ const STYLES = `
   .usw-pm-add-btn:hover {
     background: rgba(184, 134, 57, 0.22);
     border-color: rgba(184, 134, 57, 0.65);
+  }
+
+  /* ── Entrance animations ─────────────────────────────────── */
+  @keyframes usw-pm-backdrop-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes usw-pm-panel-in {
+    from { opacity: 0; transform: scale(0.96) translateY(18px); }
+    to   { opacity: 1; transform: scale(1)    translateY(0); }
+  }
+  @keyframes usw-pm-card-in {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .usw-pm-backdrop {
+    animation: usw-pm-backdrop-in 0.22s ease both;
+  }
+  .usw-pm-panel {
+    animation: usw-pm-panel-in 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+    transform-origin: center center;
+  }
+
+  /* ── Button micro-interactions ───────────────────────────── */
+  .usw-pm-close-btn {
+    transition: color 0.15s, background 0.15s, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .usw-pm-close-btn:hover {
+    transform: rotate(90deg);
+  }
+  .usw-pm-close-btn:active {
+    transform: rotate(90deg) scale(0.85);
+  }
+  .usw-pm-filter-btn {
+    transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s ease;
+  }
+  .usw-pm-filter-btn:active {
+    transform: scale(0.92);
+  }
+  .usw-pm-star-btn {
+    transition: color 0.18s, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .usw-pm-star-btn:hover {
+    transform: scale(1.28);
+  }
+  .usw-pm-star-btn:active {
+    transform: scale(0.78);
+  }
+  .usw-pm-avail-btn {
+    transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s ease;
+  }
+  .usw-pm-avail-btn:active {
+    transform: scale(0.94);
+  }
+  .usw-pm-add-btn {
+    transition: background 0.15s, border-color 0.15s, transform 0.12s ease;
+  }
+  .usw-pm-add-btn:active {
+    transform: scale(0.96);
+  }
+  .usw-pm-edit-link {
+    transition: color 0.15s, transform 0.18s ease;
+    display: inline-block;
+  }
+  .usw-pm-edit-link:hover {
+    transform: translateX(3px);
+  }
+  .usw-pm-card {
+    transition: background 0.18s, box-shadow 0.22s ease;
+  }
+  .usw-pm-card:hover {
+    box-shadow: 0 0 0 1px rgba(184, 134, 57, 0.18) inset;
   }
 `
 
@@ -420,31 +493,30 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
     <>
       {/* Overlay */}
       <div
+        className="usw-pm-backdrop"
         onClick={onClose}
         style={{
           position: 'fixed',
           inset: 0,
           zIndex: 9999,
-          background: 'rgba(9, 8, 7, 0.82)',
+          background: 'rgba(9, 8, 7, 0.85)',
         }}
       />
 
       {/* Panel */}
       <div
+        className="usw-pm-panel"
         onClick={(e) => e.stopPropagation()}
         style={{
           position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
+          inset: '20px',
           zIndex: 10000,
-          width: 'min(900px, 96vw)',
-          maxHeight: '92vh',
           display: 'flex',
           flexDirection: 'column',
           background: COLORS.charcoal,
           border: `1px solid ${COLORS.goldBorder}`,
-          borderRadius: '4px',
+          borderRadius: '6px',
+          overflow: 'hidden',
         }}
       >
         {/* Header */}
@@ -454,7 +526,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'flex-start',
-            padding: '28px 32px 20px',
+            padding: '32px 40px 24px',
             borderBottom: `1px solid rgba(184, 134, 57, 0.1)`,
           }}
         >
@@ -462,7 +534,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
             <h2
               style={{
                 fontFamily: 'inherit',
-                fontSize: '17px',
+                fontSize: '20px',
                 fontWeight: 600,
                 color: COLORS.cream,
                 margin: '0 0 4px',
@@ -492,7 +564,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
         <div
           style={{
             flexShrink: 0,
-            padding: '14px 32px',
+            padding: '16px 40px',
             display: 'flex',
             gap: '12px',
             alignItems: 'center',
@@ -546,8 +618,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)',
-                gridAutoRows: '1fr',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
                 gap: '1px',
                 background: 'rgba(255,255,255,0.05)',
               }}
@@ -575,13 +646,12 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)',
-                gridAutoRows: '1fr',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
                 gap: '1px',
                 background: 'rgba(255,255,255,0.05)',
               }}
             >
-              {sorted.map((piano) => {
+              {sorted.map((piano, pianoIdx) => {
                 const brandName = isBrandObject(piano.brand) ? (piano.brand.name ?? null) : null
                 const meta = [
                   brandName,
@@ -592,12 +662,16 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
                   .join(' · ')
 
                 return (
-                  <div key={piano.id} className="usw-pm-card">
+                  <div
+                    key={piano.id}
+                    className="usw-pm-card"
+                    style={{ animation: `usw-pm-card-in 0.4s ${(0.06 + Math.min(pianoIdx, 7) * 0.05).toFixed(2)}s cubic-bezier(0.16, 1, 0.3, 1) both` }}
+                  >
                     {/* First image — only rendered when present, bleeds to card edges */}
                     {getFirstImageUrl(piano) && (
                       <div
                         style={{
-                          height: '130px',
+                          height: '170px',
                           marginTop: '-22px',
                           marginLeft: '-24px',
                           marginRight: '-24px',
@@ -744,7 +818,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            padding: '20px 32px',
+            padding: '24px 40px',
             borderTop: `1px solid rgba(184, 134, 57, 0.1)`,
           }}
         >

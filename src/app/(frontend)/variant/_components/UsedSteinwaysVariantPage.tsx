@@ -25,17 +25,18 @@
  *   Testimonial → tighter attribution block
  * ─────────────────────────────────────────────────────────────
  */
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Media as MediaComponent } from '@/components/Media'
 import { getFeaturedPianos } from '@/lib/piano-data'
 import { FeaturedCarousel } from './FeaturedCarousel'
 import { ShowroomGallerySection } from './ShowroomGallerySection'
-import { PianoLogo } from '@/components/layout'
 import { LocationTabs } from '@/components/piano/LocationTabs'
 import { NewsCarousel } from '@/components/posts/NewsCarousel'
 import type { Piano } from '@/types/piano'
 import type { PostCard } from '@/lib/payload/posts'
+import type { BrandRow } from '@/lib/payload/brands'
 import type { Media } from '@/payload-types'
 
 type Location = {
@@ -54,6 +55,7 @@ type Props = {
   featured?: Piano[]
   recentPosts?: PostCard[]
   galleryImages?: Media[]
+  brands?: BrandRow[]
 }
 
 function useScrollReveal() {
@@ -79,6 +81,7 @@ const C = {
   bg:          'hsl(36, 22%, 96%)',
   darkBg:      'hsl(350, 62%, 26%)',
   darkCard:    'hsl(350, 56%, 32%)',
+  charcoal:    'hsl(25, 5%, 12%)',
   accent:      'hsl(40, 72%, 52%)',
   accentLight: 'hsl(40, 65%, 88%)',
   accentMid:   'hsl(40, 58%, 68%)',
@@ -91,106 +94,131 @@ const C = {
   ivory:       'hsl(36, 22%, 96%)',
 }
 
-export function UsedSteinwaysVariantPage({ locations = [], phone, featured: featuredProp, recentPosts = [], galleryImages = [] }: Props) {
+const HERO_INTERVAL = 3500
+const HERO_FADE_MS  = 1000
+
+export function UsedSteinwaysVariantPage({ locations = [], phone, featured: featuredProp, recentPosts = [], galleryImages = [], brands = [] }: Props) {
   useScrollReveal()
   const featured = featuredProp ?? getFeaturedPianos()
+
+  // Hero image cycling — double-buffer crossfade
+  const [heroSlot, setHeroSlot] = useState<{ a: number; b: number; front: 'a' | 'b' }>({
+    a: 0,
+    b: Math.min(1, galleryImages.length - 1),
+    front: 'a',
+  })
+
+  useEffect(() => {
+    if (galleryImages.length <= 1) return
+    const timer = setInterval(() => {
+      setHeroSlot((prev) => {
+        const currentIdx = prev.front === 'a' ? prev.a : prev.b
+        const nextIdx    = (currentIdx + 1) % galleryImages.length
+        return prev.front === 'a'
+          ? { a: prev.a, b: nextIdx, front: 'b' }
+          : { a: nextIdx, b: prev.b, front: 'a' }
+      })
+    }, HERO_INTERVAL)
+    return () => clearInterval(timer)
+  }, [galleryImages.length])
 
   return (
     <div style={{ backgroundColor: C.bg }}>
 
       {/* ═══════════════════════════════════════════════
-          HERO — Cinematic dark continuation
-          Deep burgundy gradient flows from the header
-          into the hero. Photo reveals on the right.
-          PianoLogo uses dark theme (gold wordmark)
-          to match the header exactly.
+          HERO — Two-column editorial, white base
+          Left: monogram badge, large italic wordmark,
+                tagline, CTAs, stats
+          Right: Roger's portrait with corner marks
+                 and caption overlay
       ═══════════════════════════════════════════════ */}
-      <section className="relative min-h-screen flex items-center overflow-hidden">
+      <section
+        className="relative overflow-hidden"
+        style={{ backgroundColor: C.ivory, minHeight: '100svh' }}
+      >
 
-        {/* Photo — full bleed */}
-        <div className="absolute inset-0">
-          <Image
-            src="/Roger-at-work-2-for-web.jpg"
-            alt="Roger evaluating a piano in the showroom"
-            fill
-            priority
-            className="object-cover object-[65%_center]"
-            sizes="100vw"
-          />
-        </div>
-
-        {/* Desktop: burgundy gradient left → transparent right
-            Mirrors the header's hsl(350, 62–68%, 14–26%) palette */}
+        {/* Warm radial glow — softens the ivory toward the left */}
         <div
-          className="absolute inset-0 hidden lg:block"
+          className="absolute inset-0 pointer-events-none"
           style={{
-            background: `linear-gradient(
-              to right,
-              hsl(350, 65%, 12%) 0%,
-              hsl(350, 63%, 14%) 28%,
-              hsla(350, 62%, 16%, 0.90) 48%,
-              hsla(350, 62%, 16%, 0.42) 68%,
-              hsla(350, 62%, 14%, 0.06) 100%
-            )`,
+            background: `radial-gradient(ellipse 80% 80% at 20% 50%, hsl(36, 42%, 90%) 0%, transparent 60%)`,
           }}
         />
 
-        {/* Desktop: subtle top vignette for nav legibility */}
-        <div
-          className="absolute inset-0 hidden lg:block"
-          style={{
-            background: `linear-gradient(to bottom, rgba(28, 5, 8, 0.38) 0%, transparent 36%)`,
-          }}
-        />
+        <div className="relative z-10 lg:grid lg:grid-cols-[58%_42%] min-h-[100svh]">
 
-        {/* Mobile: top-down dark overlay */}
-        <div
-          className="absolute inset-0 lg:hidden"
-          style={{
-            background: `linear-gradient(
-              to bottom,
-              hsl(350, 65%, 12%) 0%,
-              hsl(350, 65%, 12%) 48%,
-              hsla(350, 62%, 14%, 0.70) 72%,
-              transparent 100%
-            )`,
-          }}
-        />
+          {/* ── LEFT COLUMN — Brand identity ── */}
+          <div
+            className="flex flex-col justify-center min-w-0 overflow-hidden px-10 md:px-16 xl:px-24 py-28 lg:py-20"
+            style={{ borderRight: `1px solid hsla(40, 72%, 52%, 0.16)` }}
+          >
 
-        {/* Content */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-8 md:px-14 xl:px-20 py-28 lg:py-0">
-          <div className="max-w-[540px] lg:max-w-[480px]">
-
-            {/* Overline */}
+            {/* Overline — slides in from left */}
             <div
-              className="flex items-center gap-4 mb-12 animate-fade-up"
-              style={{ animationDelay: '0.05s', opacity: 0 }}
+              className="flex items-center gap-5 mb-14"
+              style={{ animation: 'reveal-left 0.9s cubic-bezier(0.16,1,0.3,1) 0.05s both' }}
             >
-              <div className="h-px w-10" style={{ backgroundColor: C.accent }} />
-              <span
-                className="font-display text-[10px] tracking-[0.5em] uppercase"
-                style={{ color: 'rgba(245, 235, 220, 0.38)' }}
-              >
-                New Hampshire · Est. 1993
+              <div
+                className="h-px shrink-0"
+                style={{
+                  width: '2.5rem',
+                  backgroundColor: C.accent,
+                  animation: 'scale-x-in 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s both',
+                  transformOrigin: 'left',
+                }}
+              />
+              <span className="font-display text-[11px] tracking-[0.55em] uppercase" style={{ color: C.muted }}>
+                Est. 1993 · Massachusetts
               </span>
             </div>
 
-            {/* Wordmark — gold, matching the header */}
+            {/* Monogram + wordmark */}
             <div
-              className="mb-12 animate-fade-up"
-              style={{ animationDelay: '0.14s', opacity: 0 }}
+              className="mb-8"
+              style={{ animation: 'section-reveal 1s cubic-bezier(0.16,1,0.3,1) 0.12s both' }}
             >
-              <PianoLogo size="xl" theme="dark" noLink />
+              <div className="mb-8 flex justify-center">
+                <Image
+                  src="/UsedSteinway.png"
+                  alt="UsedSteinways monogram"
+                  width={110}
+                  height={110}
+                  priority
+                  style={{ animation: 'float-badge 6s ease-in-out 1.2s infinite' }}
+                />
+              </div>
+
+              <h1
+                className="leading-[0.90]"
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: 'clamp(4rem, 7.8vw, 8.5rem)',
+                  fontWeight: 300,
+                  fontStyle: 'italic',
+                  color: C.text,
+                  letterSpacing: '-0.015em',
+                  animation: 'reveal-left 1s cubic-bezier(0.16,1,0.3,1) 0.22s both',
+                }}
+              >
+                UsedSteinways
+              </h1>
             </div>
+
+            {/* Gold sub-label */}
+            <p
+              className="font-display text-[11px] tracking-[0.50em] uppercase mb-12"
+              style={{ color: C.accent, animation: 'fade-up 0.8s ease-out 0.36s both' }}
+            >
+              Rare Instruments · Expert Hands
+            </p>
 
             {/* Tagline */}
             <p
-              className="text-lg leading-[1.75] mb-14 animate-fade-up"
+              className="text-xl leading-[1.75] mb-14"
               style={{
-                animationDelay: '0.24s',
-                opacity: 0,
-                color: 'rgba(245, 235, 220, 0.50)',
-                maxWidth: '30ch',
+                color: C.muted,
+                maxWidth: '34ch',
+                animation: 'reveal-up 0.9s cubic-bezier(0.16,1,0.3,1) 0.46s both',
               }}
             >
               Every instrument personally evaluated by Roger —
@@ -199,54 +227,72 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
 
             {/* CTAs */}
             <div
-              className="flex items-center gap-8 animate-fade-up"
-              style={{ animationDelay: '0.32s', opacity: 0 }}
+              className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-16"
+              style={{ animation: 'fade-up 0.8s ease-out 0.58s both' }}
             >
+              {/* Primary — fill sweeps to gold on hover */}
               <Link
                 href="/pianos"
-                className="inline-flex items-center justify-center px-10 py-4 font-display text-[11px] tracking-[0.35em] uppercase transition-opacity duration-200 hover:opacity-80"
-                style={{ backgroundColor: C.accent, color: 'hsl(350, 62%, 14%)' }}
+                className="group relative inline-flex items-center justify-center gap-3 overflow-hidden font-display text-[11px] tracking-[0.38em] uppercase transition-transform duration-200 hover:scale-[1.02] active:scale-[0.99]"
+                style={{
+                  backgroundColor: C.darkBg,
+                  color: C.ivory,
+                  padding: '1.1rem 2.8rem',
+                  boxShadow: `0 4px 24px hsla(350,62%,14%,0.20)`,
+                }}
               >
-                Browse Collection
+                <span
+                  className="absolute inset-0 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out"
+                  style={{ backgroundColor: C.accent }}
+                  aria-hidden
+                />
+                <span className="relative z-10 transition-colors duration-300 group-hover:text-[hsl(350,62%,14%)]">
+                  Browse Collection
+                </span>
+                <span className="relative z-10 transition-all duration-300 group-hover:translate-x-1 group-hover:text-[hsl(350,62%,14%)]">→</span>
               </Link>
+
+              {/* Secondary — outlined, fills dark on hover */}
               <Link
                 href="/contact"
-                className="group font-display text-[11px] tracking-[0.35em] uppercase inline-flex items-center gap-2.5 transition-opacity duration-200 hover:opacity-50"
-                style={{ color: 'rgba(245, 235, 220, 0.48)' }}
+                className="group inline-flex items-center justify-center gap-3 font-display text-[11px] tracking-[0.38em] uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] hover:text-[hsl(36,22%,96%)]"
+                style={{
+                  border: `1.5px solid ${C.text}`,
+                  color: C.text,
+                  padding: '1.05rem 2.2rem',
+                }}
               >
                 Talk to Roger
-                <span className="group-hover:translate-x-0.5 transition-transform inline-block">→</span>
+                <span className="group-hover:translate-x-1 transition-transform duration-200 inline-block">→</span>
               </Link>
             </div>
 
-            {/* Stats */}
+            {/* Stats — staggered counter-up */}
             <div
-              className="flex items-start mt-16 pt-10 animate-fade-up"
-              style={{ animationDelay: '0.42s', opacity: 0, borderTop: `1px solid rgba(200, 160, 75, 0.15)` }}
+              className="flex items-start pt-10"
+              style={{ borderTop: `1px solid ${C.border}`, maxWidth: '32rem' }}
             >
               {[
-                { n: '30+', l: 'Years' },
-                { n: '25',  l: 'Instruments' },
-                { n: '10',  l: 'Brands' },
-              ].map(({ n, l }, i) => (
-                <div key={l} className="flex items-stretch">
+                { n: '30+', l: 'Years',       delay: '0.68s' },
+                { n: '25',  l: 'Instruments', delay: '0.80s' },
+                { n: '10',  l: 'Brands',      delay: '0.92s' },
+              ].map(({ n, l, delay }, i) => (
+                <div
+                  key={l}
+                  className="flex items-stretch"
+                  style={{ animation: `counter-up 0.7s cubic-bezier(0.16,1,0.3,1) ${delay} both` }}
+                >
                   {i > 0 && (
-                    <div
-                      className="w-px mx-10 self-stretch"
-                      style={{ backgroundColor: 'rgba(200, 160, 75, 0.14)' }}
-                    />
+                    <div className="w-px mx-8 self-stretch" style={{ backgroundColor: C.border }} />
                   )}
                   <div>
                     <p
                       className="font-cormorant font-light leading-none"
-                      style={{ fontSize: 'clamp(2.4rem, 3.2vw, 3.6rem)', color: C.ivory }}
+                      style={{ fontSize: 'clamp(2.8rem, 3.5vw, 4rem)', color: C.text }}
                     >
                       {n}
                     </p>
-                    <p
-                      className="font-display text-[9px] tracking-[0.42em] uppercase mt-2"
-                      style={{ color: 'rgba(245, 235, 220, 0.30)' }}
-                    >
+                    <p className="font-display text-[10px] tracking-[0.42em] uppercase mt-2" style={{ color: C.muted }}>
                       {l}
                     </p>
                   </div>
@@ -255,7 +301,208 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
             </div>
 
           </div>
+
+          {/* ── RIGHT COLUMN — Gallery cycling images ── */}
+          <div
+            className="relative hidden lg:block overflow-hidden"
+            style={{ animation: 'reveal-right 1s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}
+          >
+
+            {galleryImages.length > 0 ? (
+              <>
+                {/* Slot A */}
+                {galleryImages[heroSlot.a] && (
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      opacity: heroSlot.front === 'a' ? 1 : 0,
+                      transition: `opacity ${HERO_FADE_MS}ms ease-in-out`,
+                      animation: heroSlot.front === 'a' ? 'kenburns 18s ease-in-out infinite alternate' : undefined,
+                    }}
+                  >
+                    <MediaComponent
+                      resource={galleryImages[heroSlot.a]}
+                      fill
+                      imgClassName="object-cover object-center"
+                      priority
+                    />
+                  </div>
+                )}
+                {/* Slot B */}
+                {galleryImages[heroSlot.b] && (
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      opacity: heroSlot.front === 'b' ? 1 : 0,
+                      transition: `opacity ${HERO_FADE_MS}ms ease-in-out`,
+                    }}
+                  >
+                    <MediaComponent
+                      resource={galleryImages[heroSlot.b]}
+                      fill
+                      imgClassName="object-cover object-center"
+                    />
+                  </div>
+                )}
+              </>
+            ) : (
+              <Image
+                src="/Roger-at-work-2-for-web.jpg"
+                alt="Roger evaluating a piano in the showroom"
+                fill
+                priority
+                className="object-cover object-[65%_center]"
+                sizes="42vw"
+              />
+            )}
+
+            {/* Corner marks — top left */}
+            <div className="absolute top-8 left-8 z-20 pointer-events-none">
+              <div className="w-7 h-px" style={{ backgroundColor: C.accent }} />
+              <div className="w-px h-7" style={{ backgroundColor: C.accent }} />
+            </div>
+
+            {/* Corner marks — top right */}
+            <div className="absolute top-8 right-8 z-20 pointer-events-none flex flex-col items-end">
+              <div className="w-7 h-px" style={{ backgroundColor: C.accent }} />
+              <div className="w-px h-7" style={{ backgroundColor: C.accent }} />
+            </div>
+
+            {/* Corner marks — bottom left */}
+            <div className="absolute bottom-8 left-8 z-20 pointer-events-none flex flex-col justify-end">
+              <div className="w-px h-7" style={{ backgroundColor: C.accent }} />
+              <div className="w-7 h-px" style={{ backgroundColor: C.accent }} />
+            </div>
+
+            {/* Corner marks — bottom right */}
+            <div className="absolute bottom-8 right-8 z-20 pointer-events-none flex flex-col items-end justify-end">
+              <div className="w-px h-7" style={{ backgroundColor: C.accent }} />
+              <div className="w-7 h-px" style={{ backgroundColor: C.accent }} />
+            </div>
+
+            {/* Centered caption overlay */}
+            {(() => {
+              const activeIdx = heroSlot.front === 'a' ? heroSlot.a : heroSlot.b
+              const activeImg = galleryImages.length > 0 ? galleryImages[activeIdx] : null
+              const caption   = activeImg?.caption ?? activeImg?.alt ?? null
+              if (!caption) return null
+              return (
+                <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-10 pointer-events-none"
+                  style={{ background: `linear-gradient(to bottom, rgba(10,2,3,0.18) 0%, rgba(10,2,3,0.52) 50%, rgba(10,2,3,0.22) 100%)` }}
+                >
+                  {/* Accent line above */}
+                  <div
+                    key={`line-${activeIdx}`}
+                    className="animate-fade-up mb-5"
+                    style={{ animationDuration: '0.6s', animationDelay: '0.05s' }}
+                  >
+                    <div className="h-px w-10 mx-auto" style={{ backgroundColor: `hsla(40, 72%, 52%, 0.70)` }} />
+                  </div>
+
+                  {/* Caption text */}
+                  <p
+                    key={`caption-${activeIdx}`}
+                    className="animate-fade-up"
+                    style={{
+                      fontFamily: "'Cormorant Garamond', serif",
+                      fontSize: 'clamp(1.6rem, 2.8vw, 2.6rem)',
+                      fontWeight: 300,
+                      fontStyle: 'italic',
+                      color: 'rgba(245, 235, 215, 0.96)',
+                      lineHeight: 1.25,
+                      maxWidth: '22ch',
+                      animationDuration: '0.7s',
+                      animationDelay: '0.12s',
+                    }}
+                  >
+                    {caption}
+                  </p>
+
+                  {/* Accent line below */}
+                  <div
+                    key={`line2-${activeIdx}`}
+                    className="animate-fade-up mt-5"
+                    style={{ animationDuration: '0.6s', animationDelay: '0.22s' }}
+                  >
+                    <div className="h-px w-10 mx-auto" style={{ backgroundColor: `hsla(40, 72%, 52%, 0.70)` }} />
+                  </div>
+                </div>
+              )
+            })()}
+
+          </div>
+
         </div>
+
+        {/* Mobile — full-bleed photo strip */}
+        <div className="relative lg:hidden w-full overflow-hidden" style={{ height: '60vw', minHeight: '280px', maxHeight: '480px' }}>
+          {galleryImages.length > 0 ? (
+            <>
+              {galleryImages[heroSlot.a] && (
+                <div
+                  className="absolute inset-0"
+                  style={{ opacity: heroSlot.front === 'a' ? 1 : 0, transition: `opacity ${HERO_FADE_MS}ms ease-in-out` }}
+                >
+                  <MediaComponent resource={galleryImages[heroSlot.a]} fill imgClassName="object-cover object-center" priority />
+                </div>
+              )}
+              {galleryImages[heroSlot.b] && (
+                <div
+                  className="absolute inset-0"
+                  style={{ opacity: heroSlot.front === 'b' ? 1 : 0, transition: `opacity ${HERO_FADE_MS}ms ease-in-out` }}
+                >
+                  <MediaComponent resource={galleryImages[heroSlot.b]} fill imgClassName="object-cover object-center" />
+                </div>
+              )}
+              {/* Centered caption */}
+              {(() => {
+                const activeIdx = heroSlot.front === 'a' ? heroSlot.a : heroSlot.b
+                const activeImg = galleryImages[activeIdx]
+                const caption   = activeImg?.caption ?? activeImg?.alt ?? null
+                if (!caption) return null
+                return (
+                  <div
+                    className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-8 pointer-events-none"
+                    style={{ background: `linear-gradient(to bottom, rgba(10,2,3,0.12) 0%, rgba(10,2,3,0.48) 50%, rgba(10,2,3,0.14) 100%)` }}
+                  >
+                    <div key={`mline-${activeIdx}`} className="animate-fade-up mb-4" style={{ animationDuration: '0.6s', animationDelay: '0.05s' }}>
+                      <div className="h-px w-8 mx-auto" style={{ backgroundColor: `hsla(40, 72%, 52%, 0.70)` }} />
+                    </div>
+                    <p
+                      key={`mcaption-${activeIdx}`}
+                      className="animate-fade-up"
+                      style={{
+                        fontFamily: "'Cormorant Garamond', serif",
+                        fontSize: 'clamp(1.3rem, 5vw, 2rem)',
+                        fontWeight: 300,
+                        fontStyle: 'italic',
+                        color: 'rgba(245, 235, 215, 0.96)',
+                        lineHeight: 1.25,
+                        maxWidth: '20ch',
+                        animationDuration: '0.7s',
+                        animationDelay: '0.12s',
+                      }}
+                    >
+                      {caption}
+                    </p>
+                    <div key={`mline2-${activeIdx}`} className="animate-fade-up mt-4" style={{ animationDuration: '0.6s', animationDelay: '0.22s' }}>
+                      <div className="h-px w-8 mx-auto" style={{ backgroundColor: `hsla(40, 72%, 52%, 0.70)` }} />
+                    </div>
+                  </div>
+                )
+              })()}
+            </>
+          ) : (
+            <Image
+              src="/Roger-at-work-2-for-web.jpg"
+              alt="Roger evaluating a piano in the showroom"
+              fill
+              className="object-cover object-center"
+              sizes="100vw"
+            />
+          )}
+        </div>
+
       </section>
 
       {/* ═══════════════════════════════════════════════
@@ -263,7 +510,7 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
           Increased opacity from 0.28 → 0.42 for legibility
       ═══════════════════════════════════════════════ */}
       <div
-        className="h-16 flex items-center overflow-hidden sr-fade"
+        className="h-16 flex items-center overflow-hidden"
         style={{
           backgroundColor: C.darkBg,
           borderTop:    `1px solid ${C.borderDark}`,
@@ -292,6 +539,215 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
       </div>
 
       {/* ═══════════════════════════════════════════════
+          NEWS — Full-bleed editorial hero carousel
+      ═══════════════════════════════════════════════ */}
+      <NewsCarousel posts={recentPosts} />
+
+      {/* ═══════════════════════════════════════════════
+          OUR PIANOS — Bold editorial header
+      ═══════════════════════════════════════════════ */}
+      <section style={{ backgroundColor: C.charcoal }}>
+        <div className="max-w-7xl mx-auto px-8 pt-24 pb-0">
+
+          {/* Eyebrow */}
+          <div className="sr flex items-center gap-5 mb-14">
+            <div className="h-px w-12 shrink-0" style={{ backgroundColor: C.accent }} />
+            <span
+              className="font-display text-[10px] tracking-[0.55em] uppercase"
+              style={{ color: C.accent }}
+            >
+              The Collection
+            </span>
+            <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(255,255,255,0.08)' }} />
+          </div>
+
+          {/* Massive heading + right column */}
+          <div
+            className="sr flex flex-col xl:flex-row xl:items-end justify-between gap-10 pb-20"
+            style={{ borderBottom: `1px solid rgba(255,255,255,0.08)` }}
+          >
+            <h2
+              className="font-cormorant font-light leading-[0.88] shrink-0"
+              style={{ fontSize: 'clamp(5.5rem, 13vw, 14rem)', color: C.ivory, letterSpacing: '-0.015em' }}
+            >
+              Our Pianos
+            </h2>
+
+            <div className="xl:text-right space-y-5 shrink-0 pb-2">
+              <div>
+                <span
+                  className="font-cormorant font-light block leading-none"
+                  style={{ fontSize: 'clamp(2.8rem, 4.5vw, 5rem)', color: C.accent }}
+                >
+                  200+
+                </span>
+                <span
+                  className="font-display text-[9px] tracking-[0.4em] uppercase"
+                  style={{ color: 'rgba(245,235,220,0.28)' }}
+                >
+                  Instruments In Stock
+                </span>
+              </div>
+              <p
+                className="text-base leading-relaxed xl:max-w-[28ch] xl:ml-auto"
+                style={{ color: 'rgba(245,235,220,0.46)' }}
+              >
+                From the world&apos;s finest makers — selected individually, not by catalogue.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════
+          OUR PIANOS — Three fixed category rows
+      ═══════════════════════════════════════════════ */}
+      <section>
+        {(() => {
+          const steinway   = brands.find((b) => b.category === 'steinway')
+          const european   = brands.filter((b) => b.category === 'european')
+          const shigeru    = brands.find((b) => b.category === 'shigeru-kawai')
+
+          const steinwayModels  = steinway?.models.slice(0, 5) ?? []
+          const shigeruModels   = shigeru?.models.slice(0, 5) ?? []
+
+          const steinwayEyebrow = [steinway?.country, steinway?.founded ? `Est. ${steinway.founded}` : null].filter(Boolean).join(' · ')
+          const shigeruEyebrow  = [shigeru?.country,  shigeru?.founded  ? `Est. ${shigeru.founded}`  : null].filter(Boolean).join(' · ')
+
+          const tagStyle = (dark: boolean) => dark
+            ? { border: `1px solid rgba(245,235,220,0.16)`, color: 'rgba(245,235,220,0.44)' }
+            : { backgroundColor: C.accentDim, color: 'hsl(40, 55%, 36%)' }
+
+          const btnStyle = (dark: boolean) => dark
+            ? { border: `1px solid ${C.borderDark}`, color: C.accent, backgroundColor: 'transparent' }
+            : { backgroundColor: C.text, color: C.ivory }
+
+          const rowCls = (i: number) => `sr sr-d${i + 1} group block transition-colors duration-300`
+
+          return (
+            <>
+              {/* ── ROW 1: Steinway & Sons ── */}
+              <Link
+                href="/pianos?category=steinway"
+                className={rowCls(0)}
+                style={{ backgroundColor: C.bg, borderTop: `1px solid ${C.border}` }}
+              >
+                <div className="h-[3px] w-0 group-hover:w-full transition-all duration-500 ease-out" style={{ backgroundColor: C.accent }} />
+                <div className="max-w-7xl mx-auto px-8 py-20">
+                  <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12">
+                    <div className="min-w-0">
+                      {steinwayEyebrow && (
+                        <p className="font-display text-[11px] tracking-[0.45em] uppercase mb-6" style={{ color: C.muted }}>
+                          {steinwayEyebrow}
+                        </p>
+                      )}
+                      <h3 className="font-cormorant font-light leading-[0.92]" style={{ fontSize: 'clamp(4.5rem, 9vw, 11rem)', color: C.text }}>
+                        Steinway &amp; Sons
+                      </h3>
+                      {steinway?.tagline && (
+                        <p className="mt-6 text-lg leading-relaxed max-w-[38ch]" style={{ color: C.muted }}>{steinway.tagline}</p>
+                      )}
+                      {steinwayModels.length > 0 && (
+                        <div className="flex gap-3 flex-wrap mt-8">
+                          {steinwayModels.map((m) => (
+                            <span key={m.slug} className="font-display text-[9px] tracking-[0.20em] uppercase px-4 py-2" style={tagStyle(false)}>{m.name}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div className="shrink-0 pb-1">
+                      <div className="inline-flex items-center gap-3 px-10 py-5 font-display text-[11px] tracking-[0.38em] uppercase transition-all duration-300 group-hover:gap-5" style={btnStyle(false)}>
+                        Browse Collection
+                        <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+
+              {/* ── ROW 2: Handcrafted European ── */}
+              <Link
+                href="/pianos?category=european"
+                className={rowCls(1)}
+                style={{ backgroundColor: C.darkBg, borderTop: `1px solid ${C.borderDark}` }}
+              >
+                <div className="h-[3px] w-0 group-hover:w-full transition-all duration-500 ease-out" style={{ backgroundColor: C.accent }} />
+                <div className="max-w-7xl mx-auto px-8 py-20">
+                  <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12">
+                    <div className="min-w-0">
+                      <p className="font-display text-[11px] tracking-[0.45em] uppercase mb-6" style={{ color: 'rgba(245,235,220,0.32)' }}>
+                        Vienna · Berlin · Leipzig · Hradec Králové
+                      </p>
+                      <h3 className="font-cormorant font-light leading-[0.92]" style={{ fontSize: 'clamp(4.5rem, 9vw, 11rem)', color: C.ivory }}>
+                        Handcrafted European
+                      </h3>
+                      <p className="mt-6 text-lg leading-relaxed max-w-[38ch]" style={{ color: 'rgba(245,235,220,0.48)' }}>
+                        The finest European ateliers — each instrument a life&apos;s work.
+                      </p>
+                      {european.length > 0 && (
+                        <div className="flex gap-3 flex-wrap mt-8">
+                          {european.map((b) => (
+                            <span key={b.id} className="font-display text-[9px] tracking-[0.20em] uppercase px-4 py-2" style={tagStyle(true)}>{b.name}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div className="shrink-0 pb-1">
+                      <div className="inline-flex items-center gap-3 px-10 py-5 font-display text-[11px] tracking-[0.38em] uppercase transition-all duration-300 group-hover:gap-5" style={btnStyle(true)}>
+                        Browse Collection
+                        <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+
+              {/* ── ROW 3: Shigeru Kawai ── */}
+              <Link
+                href="/pianos?category=shigeru-kawai"
+                className={rowCls(2)}
+                style={{ backgroundColor: C.bg, borderTop: `1px solid ${C.border}` }}
+              >
+                <div className="h-[3px] w-0 group-hover:w-full transition-all duration-500 ease-out" style={{ backgroundColor: C.accent }} />
+                <div className="max-w-7xl mx-auto px-8 py-20">
+                  <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12">
+                    <div className="min-w-0">
+                      {shigeruEyebrow && (
+                        <p className="font-display text-[11px] tracking-[0.45em] uppercase mb-6" style={{ color: C.muted }}>
+                          {shigeruEyebrow}
+                        </p>
+                      )}
+                      <h3 className="font-cormorant font-light leading-[0.92]" style={{ fontSize: 'clamp(4.5rem, 9vw, 11rem)', color: C.text }}>
+                        Shigeru Kawai
+                      </h3>
+                      {shigeru?.tagline && (
+                        <p className="mt-6 text-lg leading-relaxed max-w-[38ch]" style={{ color: C.muted }}>{shigeru.tagline}</p>
+                      )}
+                      {shigeruModels.length > 0 && (
+                        <div className="flex gap-3 flex-wrap mt-8">
+                          {shigeruModels.map((m) => (
+                            <span key={m.slug} className="font-display text-[9px] tracking-[0.20em] uppercase px-4 py-2" style={tagStyle(false)}>{m.name}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div className="shrink-0 pb-1">
+                      <div className="inline-flex items-center gap-3 px-10 py-5 font-display text-[11px] tracking-[0.38em] uppercase transition-all duration-300 group-hover:gap-5" style={btnStyle(false)}>
+                        Browse Collection
+                        <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </>
+          )
+        })()}
+        <div style={{ borderTop: `1px solid ${C.border}` }} />
+      </section>
+
+      {/* ═══════════════════════════════════════════════
           FEATURED INSTRUMENTS — full-viewport hero
       ═══════════════════════════════════════════════ */}
       <FeaturedCarousel pianos={featured} />
@@ -300,43 +756,6 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
           SHOWROOM GALLERY — Bento grid preview
       ═══════════════════════════════════════════════ */}
       <ShowroomGallerySection images={galleryImages} />
-
-      {/* ═══════════════════════════════════════════════
-          NEWS — Latest articles from the showroom
-      ═══════════════════════════════════════════════ */}
-      <section className="py-36 px-8" style={{ backgroundColor: C.bg }}>
-        <div className="max-w-7xl mx-auto">
-
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
-            <div className="sr">
-              <span
-                className="font-display text-[10px] tracking-[0.48em] uppercase block mb-5"
-                style={{ color: C.accent }}
-              >
-                From the Showroom
-              </span>
-              <h2
-                className="font-cormorant font-light leading-[1.05]"
-                style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)', color: C.text }}
-              >
-                News &amp; Insights
-              </h2>
-            </div>
-            <Link
-              href="/posts"
-              className="sr sr-d1 group flex items-center gap-2 font-display text-[10px] tracking-[0.32em] uppercase transition-opacity hover:opacity-50"
-              style={{ color: C.muted }}
-            >
-              All articles
-              <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
-            </Link>
-          </div>
-
-          <div className="sr sr-d2">
-            <NewsCarousel posts={recentPosts} />
-          </div>
-        </div>
-      </section>
 
       {/* ═══════════════════════════════════════════════
           PHILOSOPHY
@@ -406,188 +825,6 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
 
         </div>
       </section>
-
-      {/* ═══════════════════════════════════════════════
-          OUR PIANOS — Bold editorial header
-      ═══════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: C.darkBg }}>
-        <div className="max-w-7xl mx-auto px-8 pt-24 pb-0">
-
-          {/* Eyebrow */}
-          <div className="sr flex items-center gap-5 mb-14">
-            <div className="h-px w-12 shrink-0" style={{ backgroundColor: C.accent }} />
-            <span
-              className="font-display text-[10px] tracking-[0.55em] uppercase"
-              style={{ color: C.accent }}
-            >
-              The Collection
-            </span>
-            <div className="flex-1 h-px" style={{ backgroundColor: 'rgba(245,235,220,0.07)' }} />
-          </div>
-
-          {/* Massive heading + right column */}
-          <div
-            className="sr flex flex-col xl:flex-row xl:items-end justify-between gap-10 pb-20"
-            style={{ borderBottom: `1px solid ${C.borderDark}` }}
-          >
-            <h2
-              className="font-cormorant font-light leading-[0.88] shrink-0"
-              style={{ fontSize: 'clamp(5.5rem, 13vw, 14rem)', color: C.ivory, letterSpacing: '-0.015em' }}
-            >
-              Our Pianos
-            </h2>
-
-            <div className="xl:text-right space-y-5 shrink-0 pb-2">
-              <div>
-                <span
-                  className="font-cormorant font-light block leading-none"
-                  style={{ fontSize: 'clamp(2.8rem, 4.5vw, 5rem)', color: C.accent }}
-                >
-                  200+
-                </span>
-                <span
-                  className="font-display text-[9px] tracking-[0.4em] uppercase"
-                  style={{ color: 'rgba(245,235,220,0.28)' }}
-                >
-                  Instruments In Stock
-                </span>
-              </div>
-              <p
-                className="text-base leading-relaxed xl:max-w-[28ch] xl:ml-auto"
-                style={{ color: 'rgba(245,235,220,0.46)' }}
-              >
-                From the world&apos;s finest makers — selected individually, not by catalogue.
-              </p>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════════
-          OUR PIANOS — Three full-width category rows
-      ═══════════════════════════════════════════════ */}
-      <section style={{ backgroundColor: C.bg }}>
-
-        {/* ── ROW 1: Steinway & Sons ─────────────────── */}
-        <Link
-          href="/steinway"
-          className="sr sr-d1 group block transition-colors duration-300 hover:bg-[hsl(36,22%,93%)]"
-          style={{ borderTop: `1px solid ${C.border}` }}
-        >
-          <div className="h-[2px] w-0 group-hover:w-full transition-all duration-500 ease-out" style={{ backgroundColor: C.accent }} />
-          <div className="max-w-7xl mx-auto px-8 py-14">
-            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
-              <div>
-                <p className="font-display text-[9px] tracking-[0.42em] uppercase mb-5" style={{ color: C.muted }}>
-                  Hamburg &amp; New York · Est. 1853
-                </p>
-                <h3
-                  className="font-cormorant font-light leading-[0.95]"
-                  style={{ fontSize: 'clamp(4rem, 8vw, 9rem)', color: C.text }}
-                >
-                  Steinway &amp; Sons
-                </h3>
-              </div>
-              <div className="flex items-end gap-8 shrink-0">
-                <div className="flex gap-2 flex-wrap justify-end">
-                  {['Model S', 'Model M', 'Model B', 'Model D'].map((m) => (
-                    <span key={m} className="font-display text-[8px] tracking-[0.22em] uppercase px-2.5 py-1.5"
-                      style={{ backgroundColor: C.accentDim, color: 'hsl(40, 55%, 38%)' }}>
-                      {m}
-                    </span>
-                  ))}
-                </div>
-                <span className="font-display text-[9px] tracking-[0.35em] uppercase transition-all duration-200 opacity-0 group-hover:opacity-100 shrink-0"
-                  style={{ color: C.accent }}>
-                  Browse →
-                </span>
-              </div>
-            </div>
-          </div>
-        </Link>
-
-        {/* ── ROW 2: Handcrafted European ───────────── */}
-        <Link
-          href="/european-pianos"
-          className="sr sr-d2 group block transition-colors duration-300"
-          style={{ backgroundColor: C.darkBg, borderTop: `1px solid ${C.borderDark}` }}
-        >
-          <div className="h-[2px] w-0 group-hover:w-full transition-all duration-500 ease-out" style={{ backgroundColor: C.accent }} />
-          <div className="max-w-7xl mx-auto px-8 py-14">
-            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
-              <div>
-                <p className="font-display text-[9px] tracking-[0.42em] uppercase mb-5" style={{ color: 'rgba(245,235,220,0.28)' }}>
-                  Vienna · Berlin · Leipzig · Hradec Králové
-                </p>
-                <h3
-                  className="font-cormorant font-light leading-[0.95]"
-                  style={{ fontSize: 'clamp(4rem, 8vw, 9rem)', color: C.ivory }}
-                >
-                  Handcrafted European
-                </h3>
-              </div>
-              <div className="flex items-end gap-8 shrink-0">
-                <div className="flex gap-2 flex-wrap justify-end">
-                  {['Bösendorfer', 'C. Bechstein', 'Blüthner', 'Petrof'].map((b) => (
-                    <span key={b} className="font-display text-[8px] tracking-[0.15em] uppercase px-2.5 py-1.5"
-                      style={{ border: `1px solid rgba(245,235,220,0.14)`, color: 'rgba(245,235,220,0.40)' }}>
-                      {b}
-                    </span>
-                  ))}
-                </div>
-                <span className="font-display text-[9px] tracking-[0.35em] uppercase transition-all duration-200 opacity-0 group-hover:opacity-100 shrink-0"
-                  style={{ color: C.accent }}>
-                  Browse →
-                </span>
-              </div>
-            </div>
-          </div>
-        </Link>
-
-        {/* ── ROW 3: Shigeru Kawai ──────────────────── */}
-        <Link
-          href="/shigeru"
-          className="sr sr-d3 group block transition-colors duration-300 hover:bg-[hsl(36,22%,93%)]"
-          style={{ borderTop: `1px solid ${C.border}` }}
-        >
-          <div className="h-[2px] w-0 group-hover:w-full transition-all duration-500 ease-out" style={{ backgroundColor: C.accent }} />
-          <div className="max-w-7xl mx-auto px-8 py-14">
-            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
-              <div>
-                <p className="font-display text-[9px] tracking-[0.42em] uppercase mb-5" style={{ color: C.muted }}>
-                  Hamamatsu, Japan · Est. 1927
-                </p>
-                <h3
-                  className="font-cormorant font-light leading-[0.95]"
-                  style={{ fontSize: 'clamp(4rem, 8vw, 9rem)', color: C.text }}
-                >
-                  Shigeru Kawai
-                </h3>
-              </div>
-              <div className="flex items-end gap-8 shrink-0">
-                <div className="flex gap-2 flex-wrap justify-end">
-                  {['SK-2', 'SK-3', 'SK-5', 'SK-6', 'SK-7'].map((m) => (
-                    <span key={m} className="font-display text-[8px] tracking-[0.22em] uppercase px-2.5 py-1.5"
-                      style={{ backgroundColor: C.accentDim, color: 'hsl(40, 55%, 38%)' }}>
-                      {m}
-                    </span>
-                  ))}
-                </div>
-                <span className="font-display text-[9px] tracking-[0.35em] uppercase transition-all duration-200 opacity-0 group-hover:opacity-100 shrink-0"
-                  style={{ color: C.accent }}>
-                  Browse →
-                </span>
-              </div>
-            </div>
-          </div>
-        </Link>
-
-        {/* Bottom border */}
-        <div style={{ borderTop: `1px solid ${C.border}` }} />
-
-      </section>
-
 
       {/* ═══════════════════════════════════════════════
           LOCATIONS

@@ -154,6 +154,18 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
+  @keyframes kenburns {
+    from { transform: scale(1)    translateX(0)    translateY(0); }
+    to   { transform: scale(1.08) translateX(-1%) translateY(-1%); }
+  }
+
+  @keyframes float-badge {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-6px); }
+  }
+
+  --animate-kenburns: kenburns 18s ease-in-out infinite alternate;
+  --animate-float-badge: float-badge 6s ease-in-out infinite;
   --animate-section-reveal: section-reveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-reveal-left: reveal-left 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-reveal-right: reveal-right 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;

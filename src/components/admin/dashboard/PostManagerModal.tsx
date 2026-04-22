@@ -38,7 +38,7 @@ const STYLES = `
   .usw-psm-row {
     display: flex;
     align-items: center;
-    padding: 14px 32px 14px 32px;
+    padding: 18px 40px;
     border-bottom: 1px solid rgba(255,255,255,0.05);
     transition: background 0.12s;
     cursor: default;
@@ -107,13 +107,14 @@ const STYLES = `
     background: ${COLORS.black};
     border: 1px solid ${COLORS.goldBorder};
     border-radius: 3px;
-    padding: 5px 12px;
-    font-size: 12px;
+    padding: 7px 14px;
+    font-size: 13px;
     color: ${COLORS.cream};
     font-family: inherit;
     outline: none;
     flex: 1;
-    max-width: 180px;
+    max-width: 320px;
+    height: 36px;
     transition: border-color 0.15s;
   }
   .usw-psm-search::placeholder {
@@ -160,6 +161,79 @@ const STYLES = `
   .usw-psm-scroll::-webkit-scrollbar-thumb {
     background: ${COLORS.goldBorder};
     border-radius: 3px;
+  }
+  .usw-psm-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: ${COLORS.goldBorder} transparent;
+  }
+
+  /* ── Entrance animations ─────────────────────────────────── */
+  @keyframes usw-psm-backdrop-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes usw-psm-panel-in {
+    from { opacity: 0; transform: scale(0.96) translateY(18px); }
+    to   { opacity: 1; transform: scale(1)    translateY(0); }
+  }
+  @keyframes usw-psm-row-in {
+    from { opacity: 0; transform: translateX(-14px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .usw-psm-backdrop {
+    animation: usw-psm-backdrop-in 0.22s ease both;
+  }
+  .usw-psm-panel {
+    animation: usw-psm-panel-in 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+    transform-origin: center center;
+  }
+
+  /* ── Button micro-interactions ───────────────────────────── */
+  .usw-psm-close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: ${COLORS.silver};
+    font-size: 20px;
+    line-height: 1;
+    padding: 2px 6px;
+    font-family: inherit;
+    transition: color 0.15s, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .usw-psm-close-btn:hover {
+    color: ${COLORS.cream};
+    transform: rotate(90deg);
+  }
+  .usw-psm-close-btn:active {
+    transform: rotate(90deg) scale(0.85);
+  }
+  .usw-psm-filter-btn {
+    transition: color 0.15s, border-color 0.15s, background 0.15s, transform 0.1s ease;
+  }
+  .usw-psm-filter-btn:active {
+    transform: scale(0.92);
+  }
+  .usw-psm-type-btn {
+    transition: color 0.15s, border-color 0.15s, background 0.15s, transform 0.1s ease;
+  }
+  .usw-psm-type-btn:active {
+    transform: scale(0.92);
+  }
+  .usw-psm-new-btn {
+    transition: background 0.15s, border-color 0.15s, transform 0.12s ease;
+  }
+  .usw-psm-new-btn:active {
+    transform: scale(0.96);
+  }
+  .usw-psm-edit-link {
+    transition: color 0.15s, transform 0.18s ease;
+    display: inline-block;
+  }
+  .usw-psm-edit-link:hover {
+    transform: translateX(3px);
+  }
+  .usw-psm-row {
+    transition: background 0.12s;
   }
 `
 
@@ -286,6 +360,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
 
   return (
     <div
+      className="usw-psm-backdrop"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose()
       }}
@@ -293,23 +368,21 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
         position: 'fixed',
         inset: 0,
         zIndex: 9999,
-        background: 'rgba(9, 8, 7, 0.82)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        background: 'rgba(9, 8, 7, 0.85)',
       }}
     >
       {/* Panel */}
       <div
+        className="usw-psm-panel"
         style={{
-          position: 'relative',
-          width: 'min(860px, 96vw)',
-          maxHeight: '92vh',
+          position: 'absolute',
+          inset: '20px',
           display: 'flex',
           flexDirection: 'column',
           background: COLORS.charcoal,
           border: `1px solid ${COLORS.goldBorder}`,
-          borderRadius: 4,
+          borderRadius: 6,
+          overflow: 'hidden',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -320,7 +393,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
             display: 'flex',
             alignItems: 'flex-start',
             justifyContent: 'space-between',
-            padding: '28px 32px 20px',
+            padding: '32px 40px 24px',
             borderBottom: `1px solid ${COLORS.goldBorder}`,
           }}
         >
@@ -328,7 +401,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
             <div
               style={{
                 fontFamily: 'inherit',
-                fontSize: 17,
+                fontSize: 20,
                 fontWeight: 600,
                 color: COLORS.cream,
                 lineHeight: 1.2,
@@ -359,24 +432,10 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
           </div>
           <button
             type="button"
+            className="usw-psm-close-btn"
             onClick={onClose}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              color: COLORS.silver,
-              fontSize: 20,
-              lineHeight: 1,
-              padding: '2px 4px',
-              marginTop: -2,
-              fontFamily: 'inherit',
-              transition: 'color 0.15s',
-            }}
+            style={{ marginTop: -2 }}
             aria-label="Close"
-            onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.color = COLORS.cream)}
-            onMouseLeave={(e) =>
-              ((e.currentTarget as HTMLButtonElement).style.color = COLORS.silver)
-            }
           >
             ×
           </button>
@@ -386,7 +445,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
         <div
           style={{
             flexShrink: 0,
-            padding: '12px 32px 14px',
+            padding: '14px 40px 16px',
             display: 'flex',
             alignItems: 'center',
             gap: 10,
@@ -472,10 +531,10 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
                   {/* Date column skeleton */}
                   <div
                     style={{
-                      width: 72,
+                      width: 80,
                       flexShrink: 0,
                       textAlign: 'right',
-                      paddingRight: 16,
+                      paddingRight: 20,
                       borderRight: '1px solid rgba(255,255,255,0.06)',
                       display: 'flex',
                       flexDirection: 'column',
@@ -490,7 +549,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
                   <div
                     style={{
                       flex: 1,
-                      padding: '0 20px 0 16px',
+                      padding: '0 24px 0 20px',
                       display: 'flex',
                       flexDirection: 'column',
                       gap: 7,
@@ -540,7 +599,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
 
           {!loading &&
             !error &&
-            sorted.map((post) => {
+            sorted.map((post, postIdx) => {
               const isPublished = post._status === 'published'
 
               // Date breakdown
@@ -554,20 +613,24 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
                 .filter((t): t is string => Boolean(t))
 
               return (
-                <div key={post.id} className="usw-psm-row" style={{ gap: 0 }}>
+                <div
+                  key={post.id}
+                  className="usw-psm-row"
+                  style={{ gap: 0, animation: `usw-psm-row-in 0.35s ${(0.05 + Math.min(postIdx, 8) * 0.04).toFixed(2)}s cubic-bezier(0.16, 1, 0.3, 1) both` }}
+                >
                   {/* Date column */}
                   <div
                     style={{
-                      width: 72,
+                      width: 80,
                       flexShrink: 0,
                       textAlign: 'right',
-                      paddingRight: 16,
+                      paddingRight: 20,
                       borderRight: '1px solid rgba(255,255,255,0.06)',
                     }}
                   >
                     <div
                       style={{
-                        fontSize: 13,
+                        fontSize: 14,
                         fontFamily: 'inherit',
                         fontWeight: 600,
                         color: COLORS.gold,
@@ -580,10 +643,10 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
                     </div>
                     <div
                       style={{
-                        fontSize: 13,
+                        fontSize: 14,
                         color: COLORS.silver,
                         letterSpacing: '0.06em',
-                        marginTop: 2,
+                        marginTop: 3,
                       }}
                     >
                       {day}
@@ -594,7 +657,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
                   <div
                     style={{
                       flex: 1,
-                      padding: '0 20px 0 16px',
+                      padding: '0 24px 0 20px',
                       minWidth: 0,
                     }}
                   >
@@ -630,7 +693,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
                       <span
                         style={{
                           fontFamily: 'inherit',
-                          fontSize: 14,
+                          fontSize: 15,
                           color: COLORS.cream,
                           fontWeight: 500,
                           lineHeight: 1.2,
@@ -715,7 +778,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
         <div
           style={{
             flexShrink: 0,
-            padding: '16px 32px',
+            padding: '22px 40px',
             borderTop: `1px solid ${COLORS.goldBorder}`,
             display: 'flex',
             alignItems: 'center',

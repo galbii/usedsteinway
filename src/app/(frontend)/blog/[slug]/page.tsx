@@ -29,11 +29,11 @@ type Args = {
   params: Promise<{ slug?: string }>
 }
 
-export default async function Post({ params: paramsPromise }: Args) {
+export default async function BlogPost({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
   const { slug = '' } = await paramsPromise
   const decodedSlug = decodeURIComponent(slug)
-  const url = '/posts/' + decodedSlug
+  const url = '/blog/' + decodedSlug
   const post = await queryPostBySlug({ slug: decodedSlug })
 
   if (!post) return <PayloadRedirects url={url} />
@@ -52,7 +52,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug = '' } = await paramsPromise
   const decodedSlug = decodeURIComponent(slug)
   const post = await queryPostBySlug({ slug: decodedSlug })
-  return generateMeta({ doc: post, url: `/posts/${decodedSlug}` })
+  return generateMeta({ doc: post, url: `/blog/${decodedSlug}` })
 }
 
 const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {

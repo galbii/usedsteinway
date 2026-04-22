@@ -15,6 +15,7 @@ const links = [
   { label: 'Gallery', href: '/gallery', description: 'Visual archive of our pianos' },
   { label: 'Testimonials', href: '/testimonials', description: 'Stories from our clients' },
   { label: 'About', href: '/about', description: 'Our story and expertise' },
+  { label: 'Contact', href: '/contact', description: 'Get in touch with us' },
 ]
 
 export function ResourcesDropdown({ scrolled, onMouseEnter, onMouseLeave }: ResourcesDropdownProps) {

@@ -1,9 +1,12 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import type { SiteSetting } from '@/payload-types'
 import { ContactForm } from './_components/ContactForm'
 import { LocationTabs } from '@/components/piano/LocationTabs'
+import { PianosHero } from '@/components/piano/PianosHero'
+import { queryGalleryImages } from '@/lib/payload/media'
 
 export const metadata: Metadata = {
   title: 'Contact Roger | UsedSteinways.com',
@@ -17,7 +20,10 @@ interface ContactPageProps {
 
 export default async function ContactPage({ searchParams }: ContactPageProps) {
   const { piano: defaultPiano } = await searchParams
-  const siteSettings = (await getCachedGlobal('site-settings', 0)()) as SiteSetting
+  const [siteSettings, galleryImages] = await Promise.all([
+    getCachedGlobal('site-settings', 0)() as Promise<SiteSetting>,
+    queryGalleryImages(16),
+  ])
   const { phone, email, hoursOfOperation } = siteSettings?.contactInfo ?? {}
   const locations = siteSettings?.locations ?? []
 
@@ -30,39 +36,71 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
   return (
     <main className="min-h-screen bg-piano-cream">
 
-      {/* ── Hero — dark strip ─────────────────────────────────────── */}
-      <section className="bg-piano-black relative pt-28 pb-20 px-8">
-        <div className="max-w-7xl mx-auto">
+      {/* ── Hero — cycling gallery background ────────────────────── */}
+      <div className="relative overflow-hidden" style={{ height: 'clamp(520px, 85vh, 900px)' }}>
+        {/* Cycling gallery images — UI suppressed */}
+        <div className="absolute inset-0">
+          <PianosHero pianos={[]} galleryImages={galleryImages} backgroundOnly />
+        </div>
 
-          <p className="font-display text-sm tracking-[0.6em] uppercase text-piano-gold/60 mb-10">
-            UsedSteinways.com — Private Consultations Welcome
-          </p>
+        {/* Dark gradient overlay */}
+        <div
+          className="absolute inset-0 z-10 pointer-events-none"
+          style={{ background: 'linear-gradient(to right, rgba(4,1,1,0.82) 0%, rgba(4,1,1,0.55) 55%, rgba(4,1,1,0.18) 100%)' }}
+        />
 
-          <h1
-            className="font-light text-piano-cream leading-[0.88] tracking-tight"
-            style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: 'clamp(5rem, 13vw, 14rem)',
-            }}
-          >
-            Contact
-            <br />
-            <span className="italic text-piano-gold/90">Roger</span>
-          </h1>
+        {/* Two-column overlay: left = text, right = monogram */}
+        <div className="absolute inset-0 z-20 flex items-end lg:grid lg:grid-cols-2">
 
-          <div className="flex items-center gap-6 mt-12 mb-10">
-            <div className="flex-1 h-px bg-piano-gold/25" />
-            <span className="font-display text-sm tracking-[0.5em] uppercase text-piano-gold/40 shrink-0">
-              Every Conversation Starts With Listening
-            </span>
-            <div className="w-12 h-px bg-piano-gold/25 shrink-0" />
+          {/* Left — contact heading */}
+          <div className="flex items-end px-10 md:px-16 xl:px-24 pb-16 md:pb-20">
+            <div>
+              <p
+                className="font-display text-[10px] tracking-[0.6em] uppercase mb-8"
+                style={{ color: 'hsla(40,72%,52%,0.70)' }}
+              >
+                UsedSteinways.com — Private Consultations Welcome
+              </p>
+              <h1
+                className="font-light leading-[0.88] tracking-tight mb-8"
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: 'clamp(5rem, 13vw, 14rem)',
+                  color: 'hsl(36, 22%, 96%)',
+                }}
+              >
+                Contact
+                <br />
+                <span style={{ fontStyle: 'italic', color: 'hsl(40, 72%, 62%)' }}>Roger</span>
+              </h1>
+              <div className="flex items-center gap-6 mb-8">
+                <div className="w-10 h-px shrink-0" style={{ backgroundColor: 'hsla(40,72%,52%,0.40)' }} />
+                <span
+                  className="font-display text-[10px] tracking-[0.50em] uppercase"
+                  style={{ color: 'rgba(245,235,215,0.40)' }}
+                >
+                  Every Conversation Starts With Listening
+                </span>
+              </div>
+              <p className="text-xl max-w-lg leading-relaxed font-light" style={{ color: 'rgba(245,235,215,0.55)' }}>
+                Whether buying, selling, or simply curious — we&apos;re here.
+              </p>
+            </div>
           </div>
 
-          <p className="text-piano-silver/60 text-xl max-w-lg leading-relaxed font-light">
-            Whether buying, selling, or simply curious — we&apos;re here.
-          </p>
+          {/* Right — monogram */}
+          <div className="hidden lg:flex items-center justify-center pb-16">
+            <Image
+              src="/UsedSteinway.png"
+              alt="UsedSteinways monogram"
+              width={280}
+              height={280}
+              style={{ mixBlendMode: 'screen', opacity: 0.75 }}
+            />
+          </div>
+
         </div>
-      </section>
+      </div>
 
       {/* ── Form + Sidebar ───────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-8 py-20">
@@ -71,7 +109,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           {/* Form Panel */}
           <div className="bg-piano-warm-white px-12 py-14">
             <div className="flex items-center gap-5 mb-12">
-              <p className="font-display text-sm tracking-[0.5em] uppercase text-piano-black shrink-0">
+              <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold shrink-0">
                 Send a Message
               </p>
               <div className="flex-1 h-px bg-piano-linen" />
@@ -80,7 +118,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           </div>
 
           {/* Sidebar — dark panel */}
-          <div className="lg:sticky lg:top-8 bg-piano-black divide-y divide-piano-charcoal">
+          <div className="lg:sticky lg:top-8 bg-piano-burgundy divide-y divide-piano-gold/10">
 
             {/* Showroom Details */}
             <div className="px-10 py-10">

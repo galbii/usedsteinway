@@ -11,7 +11,7 @@ This guide focuses on project-specific patterns, critical security rules, and or
 ### Commands
 ```bash
 bun run dev                  # Start development server
-bun run build                # Production build + type generation (REQUIRED before code complete)
+bun run build                # Production build — do NOT run this to validate code
 bun run lint                 # ESLint + TypeScript checks
 bun run generate:types       # Generate Payload types after schema changes
 bun run generate:importmap   # Regenerate import map after component changes
@@ -22,7 +22,7 @@ bun run generate:importmap   # Regenerate import map after component changes
 - ✅ **ALWAYS** use field utilities from `@/lib/payload/fields/media` for upload fields
 - ✅ **ALWAYS** set `overrideAccess: false` when passing `user` to Local API
 - ✅ **ALWAYS** pass `req` in hooks for transaction safety
-- ✅ **ALWAYS** run `bun run build` before code is complete
+- ✅ **ALWAYS** use `bunx tsc --noEmit` to type-check — never `bun run build`
 - ✅ **ALWAYS** use `<Media resource={...} />` from `@/components/Media` to render media fields
 - ❌ **NEVER** duplicate UI components in page folders
 - ❌ **NEVER** use raw `type: 'upload'` fields (use field utilities)
@@ -38,7 +38,7 @@ bun run generate:importmap   # Regenerate import map after component changes
 3. **Security-Critical** - Local API bypasses access control by default unless `overrideAccess: false`
 4. **Transaction Safety** - Always pass `req` to nested operations in hooks
 5. **Media Manager** - Use field utilities, never raw upload fields
-6. **Code Validation** - Always run `bun run build` before considering code complete
+6. **Code Validation** - Use `bunx tsc --noEmit` to type-check. Never run `bun run build` — it disrupts the workflow
 7. **Type Generation** - Run `generate:types` after schema changes
 8. **Import Map** - Run `generate:importmap` after adding/modifying admin components
 
@@ -283,10 +283,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 ```
 
-### 7. Run the build
+### 7. Type-check
 
 ```bash
-bun run build   # mandatory — catches type errors and Payload schema issues
+bunx tsc --noEmit   # catches type errors — do NOT use bun run build
 ```
 
 ### Page Build Checklist
@@ -299,7 +299,7 @@ bun run build   # mandatory — catches type errors and Payload schema issues
 - [ ] Colors via CSS variables, not hardcoded hex/rgb
 - [ ] `cn()` from `@/utilities/ui` for conditional classes
 - [ ] `generateMeta` / `generateMetadata` for SEO
-- [ ] `bun run build` passes before marking done
+- [ ] `bunx tsc --noEmit` passes (no TypeScript errors)
 
 ---
 
@@ -1147,8 +1147,8 @@ NEXT_PUBLIC_S3_PUBLIC_URL=https://pub-your-bucket.r2.dev
 # 1. Lint TypeScript
 bun run lint
 
-# 2. Build with type checking (MANDATORY)
-bun run build
+# 2. Type-check (use this — never bun run build)
+bunx tsc --noEmit
 
 # 3. Generate types after schema changes
 bun run generate:types

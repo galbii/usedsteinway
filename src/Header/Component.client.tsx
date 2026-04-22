@@ -68,7 +68,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
           'transition-[background-color,box-shadow] duration-300 ease-out',
         )}
         style={{
-          backgroundColor: scrolled ? 'hsl(350, 68%, 19%)' : 'hsl(350, 62%, 26%)',
+          backgroundColor: 'hsl(350, 62%, 26%)',
           boxShadow: scrolled
             ? '0 1px 0 0 rgba(200,160,75,0.1), 0 12px 40px -8px rgba(0,0,0,0.6)'
             : 'none',
@@ -107,9 +107,9 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
             {/* Vertical rule */}
             <div className="hidden lg:block w-px h-[18px] bg-piano-cream/10" />
 
-            {/* Contact CTA */}
+            {/* Visit CTA */}
             <Link
-              href="/contact"
+              href="/visit"
               className={cn(
                 'hidden lg:inline-flex items-center',
                 'px-[18px] py-[7px] transition-all duration-300',
@@ -118,7 +118,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
                 'text-piano-cream/70 hover:text-piano-cream',
               )}
             >
-              Contact
+              Visit
             </Link>
 
             {/* Mobile hamburger */}
@@ -224,7 +224,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
             </div>
           ))}
 
-          {/* Contact in sidebar */}
+          {/* Visit in sidebar */}
           <div
             style={{
               borderBottom: '1px solid rgba(200, 160, 75, 0.07)',
@@ -234,14 +234,14 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
             }}
           >
             <Link
-              href="/contact"
+              href="/visit"
               className={cn(
                 'flex items-center justify-between w-full py-[14px]',
                 'font-display font-medium text-[11px] tracking-[0.22em] uppercase',
                 'text-piano-gold/65 hover:text-piano-gold transition-colors duration-150',
               )}
             >
-              Contact
+              Visit
             </Link>
           </div>
         </nav>

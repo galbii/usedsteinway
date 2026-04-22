@@ -19,7 +19,8 @@ export async function generateStaticParams() {
     limit: 1000,
     overrideAccess: false,
     pagination: false,
-    select: { slug: true },
+    select: { slug: true, isGuide: true },
+    where: { isGuide: { equals: true } },
   })
 
   return posts.docs.map(({ slug }) => ({ slug }))
@@ -29,12 +30,12 @@ type Args = {
   params: Promise<{ slug?: string }>
 }
 
-export default async function Post({ params: paramsPromise }: Args) {
+export default async function GuidePage({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
   const { slug = '' } = await paramsPromise
   const decodedSlug = decodeURIComponent(slug)
-  const url = '/posts/' + decodedSlug
-  const post = await queryPostBySlug({ slug: decodedSlug })
+  const url = '/guide/' + decodedSlug
+  const post = await queryGuideBySlug({ slug: decodedSlug })
 
   if (!post) return <PayloadRedirects url={url} />
 
@@ -51,11 +52,11 @@ export default async function Post({ params: paramsPromise }: Args) {
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug = '' } = await paramsPromise
   const decodedSlug = decodeURIComponent(slug)
-  const post = await queryPostBySlug({ slug: decodedSlug })
-  return generateMeta({ doc: post, url: `/posts/${decodedSlug}` })
+  const post = await queryGuideBySlug({ slug: decodedSlug })
+  return generateMeta({ doc: post, url: `/guide/${decodedSlug}` })
 }
 
-const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
+const queryGuideBySlug = cache(async ({ slug }: { slug: string }) => {
   const { isEnabled: draft } = await draftMode()
   const payload = await getPayload({ config: configPromise })
 
@@ -66,7 +67,12 @@ const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
     overrideAccess: draft,
     pagination: false,
     depth: 2,
-    where: { slug: { equals: slug } },
+    where: {
+      and: [
+        { slug: { equals: slug } },
+        { isGuide: { equals: true } },
+      ],
+    },
   })
 
   return result.docs?.[0] ?? null

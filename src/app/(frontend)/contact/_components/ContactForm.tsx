@@ -38,10 +38,7 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...form,
-          inquiryType,
-        }),
+        body: JSON.stringify({ ...form, inquiryType }),
       })
 
       if (!res.ok) {
@@ -60,7 +57,6 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
   if (submitted) {
     return (
       <div className="py-24 flex flex-col items-center text-center">
-        {/* Piano key motif */}
         <div className="flex gap-px mb-12">
           {[true, false, true, false, true, true, false, true, false, true, false, true, true, false, true].map((isWhite, i) => (
             <div
@@ -91,7 +87,7 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
 
         <Link
           href="/pianos"
-          className="inline-block border border-piano-black text-piano-black px-12 py-4 font-display text-xs tracking-[0.4em] uppercase hover:bg-piano-black hover:text-piano-cream transition-all duration-300"
+          className="inline-block border border-piano-burgundy text-piano-burgundy px-12 py-4 font-display text-xs tracking-[0.4em] uppercase hover:bg-piano-burgundy hover:text-piano-cream transition-all duration-300"
         >
           Browse the Collection
         </Link>
@@ -102,9 +98,9 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-12">
 
-      {/* Piano context banner — shown when arriving from a piano detail page */}
+      {/* Piano context banner */}
       {defaultPiano && (
-        <div className="flex items-start gap-4 border border-piano-linen bg-piano-linen/30 px-5 py-4">
+        <div className="flex items-start gap-4 border border-piano-linen bg-piano-linen/40 px-5 py-4">
           <div className="w-0.5 self-stretch bg-piano-gold/50 shrink-0" />
           <div>
             <p className="font-display text-[10px] tracking-[0.45em] uppercase text-piano-stone/60 mb-1">
@@ -117,10 +113,10 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
 
       {/* Inquiry Type Tabs */}
       <div>
-        <p className="font-display text-sm tracking-[0.5em] uppercase text-piano-black mb-6">
+        <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-6">
           Nature of Enquiry
         </p>
-        <div className="flex bg-piano-black">
+        <div className="flex bg-piano-burgundy">
           {inquiryTypes.map((type) => (
             <button
               key={type.id}
@@ -130,7 +126,7 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
                 'flex-1 pb-5 pt-5 font-display text-sm font-bold tracking-[0.25em] uppercase transition-all duration-200 relative text-center',
                 inquiryType === type.id
                   ? 'text-piano-gold'
-                  : 'text-piano-stone hover:text-piano-cream',
+                  : 'text-piano-cream/50 hover:text-piano-cream',
               )}
             >
               {type.label}
@@ -140,7 +136,7 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
             </button>
           ))}
         </div>
-        <p className="text-piano-black text-sm mt-5 leading-relaxed">
+        <p className="text-piano-stone text-sm mt-5 leading-relaxed">
           {inquiryTypes.find((t) => t.id === inquiryType)?.description}
         </p>
       </div>
@@ -148,7 +144,7 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
       {/* Name + Email */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
         <div className="group">
-          <label className="block font-display text-sm font-bold tracking-[0.4em] uppercase text-piano-black mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+          <label className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
             Full Name <span className="text-piano-gold">*</span>
           </label>
           <input
@@ -156,12 +152,12 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
             required
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
-            className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-3 focus:outline-none focus:border-piano-gold transition-colors duration-200 placeholder:text-piano-stone/50"
+            className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-3 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 placeholder:text-piano-stone/40"
             placeholder="Your name"
           />
         </div>
         <div className="group">
-          <label className="block font-display text-sm font-bold tracking-[0.4em] uppercase text-piano-black mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+          <label className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
             Email Address <span className="text-piano-gold">*</span>
           </label>
           <input
@@ -169,7 +165,7 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
             required
             value={form.email}
             onChange={(e) => setForm({ ...form, email: e.target.value })}
-            className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-3 focus:outline-none focus:border-piano-gold transition-colors duration-200 placeholder:text-piano-stone/50"
+            className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-3 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 placeholder:text-piano-stone/40"
             placeholder="you@email.com"
           />
         </div>
@@ -178,27 +174,27 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
       {/* Phone + Conditional budget */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
         <div className="group">
-          <label className="block font-display text-sm font-bold tracking-[0.4em] uppercase text-piano-black mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+          <label className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
             Phone Number
           </label>
           <input
             type="tel"
             value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
-            className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-3 focus:outline-none focus:border-piano-gold transition-colors duration-200 placeholder:text-piano-stone/50"
+            className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-3 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 placeholder:text-piano-stone/40"
             placeholder="(508) 555-0000"
           />
         </div>
 
         {inquiryType === 'buy' && (
           <div className="group">
-            <label className="block font-display text-sm font-bold tracking-[0.4em] uppercase text-piano-black mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+            <label className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
               Budget Range
             </label>
             <select
               value={form.budget}
               onChange={(e) => setForm({ ...form, budget: e.target.value })}
-              className="w-full bg-piano-warm-white border-b-2 border-piano-linen text-piano-black text-lg py-3 focus:outline-none focus:border-piano-gold transition-colors duration-200 appearance-none cursor-pointer"
+              className="w-full bg-piano-warm-white border-b-2 border-piano-linen text-piano-black text-lg py-3 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 appearance-none cursor-pointer"
             >
               <option value="">Select range...</option>
               <option value="under-30k">Under $30,000</option>
@@ -215,13 +211,13 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
       {/* Timeline (buy only) */}
       {inquiryType === 'buy' && (
         <div className="group">
-          <label className="block font-display text-sm font-bold tracking-[0.4em] uppercase text-piano-black mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+          <label className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
             Purchase Timeline
           </label>
           <select
             value={form.timeline}
             onChange={(e) => setForm({ ...form, timeline: e.target.value })}
-            className="w-full bg-piano-warm-white border-b-2 border-piano-linen text-piano-black text-lg py-3 focus:outline-none focus:border-piano-gold transition-colors duration-200 appearance-none cursor-pointer"
+            className="w-full bg-piano-warm-white border-b-2 border-piano-linen text-piano-black text-lg py-3 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 appearance-none cursor-pointer"
           >
             <option value="">Select timeline...</option>
             <option value="asap">As soon as possible</option>
@@ -234,7 +230,7 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
 
       {/* Message */}
       <div className="group">
-        <label className="block font-display text-sm font-bold tracking-[0.4em] uppercase text-piano-black mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+        <label className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
           Message <span className="text-piano-gold">*</span>
         </label>
         <textarea
@@ -242,7 +238,7 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
           rows={6}
           value={form.message}
           onChange={(e) => setForm({ ...form, message: e.target.value })}
-          className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-3 focus:outline-none focus:border-piano-gold transition-colors duration-200 placeholder:text-piano-stone/50 resize-none"
+          className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-3 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 placeholder:text-piano-stone/40 resize-none"
           placeholder={
             inquiryType === 'buy'
               ? "Tell us what you're looking for — brand preferences, room size, musical style, specific models you've been considering..."
@@ -255,7 +251,7 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
 
       {/* Error message */}
       {error && (
-        <p className="font-display text-xs tracking-[0.2em] uppercase text-red-600 border border-red-200 bg-red-50 px-5 py-4">
+        <p className="font-display text-[10px] tracking-[0.2em] uppercase text-piano-stone border border-piano-linen bg-piano-linen/50 px-5 py-4">
           {error}
         </p>
       )}
@@ -268,8 +264,8 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
             type="submit"
             disabled={loading}
             className={cn(
-              'bg-piano-black text-piano-cream px-14 py-5 font-display text-xs tracking-[0.45em] uppercase transition-all duration-300 whitespace-nowrap',
-              loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-piano-charcoal',
+              'bg-piano-burgundy text-piano-cream px-14 py-5 font-display text-xs tracking-[0.45em] uppercase transition-all duration-300 whitespace-nowrap',
+              loading ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-85',
             )}
           >
             {loading ? 'Sending...' : 'Send Message'}

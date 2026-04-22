@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
-import { PianosHero } from '@/components/piano/PianosHero'
 import { PianoBrowser } from '@/components/piano/PianoBrowser'
 import { InquiryCTA } from '@/components/piano/InquiryCTA'
+import { PianoHeroCarousel } from '@/components/piano/PianoHeroCarousel'
 import { queryAvailablePianos, queryFeaturedPianos } from '@/lib/payload/pianos'
 
 export const metadata: Metadata = {
@@ -18,11 +18,13 @@ export default async function PianosPage() {
 
   return (
     <main className="min-h-screen">
-      {/* Full-bleed piano hero (mirrors GalleryHero) */}
-      <PianosHero pianos={allPianos} />
+      {/* Featured pianos hero carousel */}
+      <PianoHeroCarousel pianos={featured} />
 
       {/* Filterable inventory browser */}
-      <PianoBrowser pianos={allPianos} />
+      <div id="inventory">
+        <PianoBrowser pianos={allPianos} />
+      </div>
 
       <InquiryCTA variant="dark" />
     </main>

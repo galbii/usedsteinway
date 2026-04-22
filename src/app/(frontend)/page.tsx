@@ -6,17 +6,19 @@ import { UsedSteinwaysVariantPage } from './variant/_components/UsedSteinwaysVar
 import { queryFeaturedPianos } from '@/lib/payload/pianos'
 import { queryRecentPosts } from '@/lib/payload/posts'
 import { queryGalleryImages } from '@/lib/payload/media'
+import { queryBrands } from '@/lib/payload/brands'
 
 export default async function HomePage() {
-  const [siteSettings, featured, recentPosts, galleryImages] = await Promise.all([
+  const [siteSettings, featured, recentPosts, galleryImages, brands] = await Promise.all([
     getCachedGlobal('site-settings', 0)() as Promise<SiteSetting>,
     queryFeaturedPianos(),
     queryRecentPosts(6),
-    queryGalleryImages(6),
+    queryGalleryImages(18),
+    queryBrands(),
   ])
   const locations = siteSettings?.locations ?? []
   const phone = siteSettings?.contactInfo?.phone ?? '508-545-0766'
-  return <UsedSteinwaysVariantPage locations={locations} phone={phone} featured={featured} recentPosts={recentPosts} galleryImages={galleryImages} />
+  return <UsedSteinwaysVariantPage locations={locations} phone={phone} featured={featured} recentPosts={recentPosts} galleryImages={galleryImages} brands={brands} />
 }
 
 export const metadata: Metadata = {

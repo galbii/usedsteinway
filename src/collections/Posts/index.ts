@@ -85,14 +85,9 @@ export const Posts: CollectionConfig<'posts'> = {
               name: 'layout',
               type: 'blocks',
               label: 'Page Layout',
-              // Every new post starts with an Expert Insight block pre-loaded.
               defaultValue: [
                 {
-                  blockType: 'expert',
-                  quote: '',
-                  expertName: 'Roger',
-                  expertRole: 'Registered Piano Technician · 30 Years',
-                  style: 'pullquote',
+                  blockType: 'content',
                 },
               ],
               blocks: [

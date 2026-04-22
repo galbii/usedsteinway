@@ -105,7 +105,7 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
         {/* Name + Email row */}
         <div className="grid sm:grid-cols-2 gap-10">
           <div className="group">
-            <label className="block font-display text-sm font-bold tracking-[0.45em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+            <label className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
               Full Name <span className="text-piano-gold">*</span>
             </label>
             <input
@@ -118,7 +118,7 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
             />
           </div>
           <div className="group">
-            <label className="block font-display text-sm font-bold tracking-[0.45em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+            <label className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
               Email <span className="text-piano-gold">*</span>
             </label>
             <input

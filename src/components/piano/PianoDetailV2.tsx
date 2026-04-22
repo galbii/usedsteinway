@@ -269,6 +269,24 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
         <PianoMediaCarousel images={allImages} title={piano.title} stockImageIndex={stockImageIndex} />
       )}
 
+      {/* ── Inquiry Form ── */}
+      <section id="inquiry" className="bg-piano-burgundy border-t border-piano-gold/10 py-24 px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-14">
+            <p className="font-display text-[11px] tracking-[0.55em] uppercase text-piano-gold mb-4">
+              Make an Inquiry
+            </p>
+            <h2
+              className="font-cormorant font-light text-piano-cream"
+              style={{ fontSize: 'clamp(2.6rem, 5vw, 4.5rem)' }}
+            >
+              Ask Roger About This Piano
+            </h2>
+          </div>
+          <PianoInquiryForm pianoTitle={piano.title} pianoSlug={piano.slug} />
+        </div>
+      </section>
+
       {/* ── Locations ── */}
       {locations.length > 0 && (
         <section className="py-20 px-8 bg-piano-cream">
@@ -286,24 +304,6 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
           </div>
         </section>
       )}
-
-      {/* ── Inquiry Form ── */}
-      <section id="inquiry" className="bg-piano-black border-t border-piano-gold/10 py-24 px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="mb-14">
-            <p className="font-display text-[11px] tracking-[0.55em] uppercase text-piano-gold mb-4">
-              Make an Inquiry
-            </p>
-            <h2
-              className="font-cormorant font-light text-piano-cream"
-              style={{ fontSize: 'clamp(2.6rem, 5vw, 4.5rem)' }}
-            >
-              Ask Roger About This Piano
-            </h2>
-          </div>
-          <PianoInquiryForm pianoTitle={piano.title} pianoSlug={piano.slug} />
-        </div>
-      </section>
 
       <InquiryCTA pianoTitle={piano.title} variant="dark" />
     </main>

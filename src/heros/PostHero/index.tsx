@@ -7,13 +7,11 @@ import type { Post } from '@/payload-types'
 import { Media } from '@/components/Media'
 import { formatAuthors } from '@/utilities/formatAuthors'
 
-const C = {
-  accent:     'hsl(40, 72%, 52%)',
-  text:       'hsl(350, 12%, 11%)',
-  muted:      'hsl(350, 5%, 46%)',
-  border:     'hsl(36, 18%, 89%)',
-  borderThin: 'hsl(36, 15%, 92%)',
-}
+const gold       = 'hsl(40, 72%, 52%)'
+const black      = '#111'
+const charcoal   = '#444'
+const muted      = '#777'
+const borderLine = 'hsl(36, 20%, 88%)'
 
 export const PostHero: React.FC<{ post: Post }> = ({ post }) => {
   const { categories, heroImage, populatedAuthors, publishedAt, title, meta } = post
@@ -32,28 +30,37 @@ export const PostHero: React.FC<{ post: Post }> = ({ post }) => {
   const excerpt = meta?.description ?? null
 
   return (
-    <div style={{ backgroundColor: '#fff' }}>
+    <div style={{ borderBottom: `1px solid ${borderLine}` }}>
 
-      {/* ── Text block ─────────────────────────────────────────── */}
-      <div
-        className="mx-auto px-8"
-        style={{ maxWidth: '900px', paddingTop: '5rem', paddingBottom: '3.5rem' }}
-      >
+      {/* ── Title + meta ───────────────────────────────────────── */}
+      <div style={{ padding: '3.5rem 4rem 3rem' }}>
+
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-3 mb-10">
+        <nav style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '2.5rem' }}>
           <Link
             href="/posts"
-            className="font-display text-[9px] tracking-[0.42em] uppercase transition-opacity hover:opacity-50"
-            style={{ color: C.muted }}
+            style={{
+              fontFamily: '"Syne", sans-serif',
+              fontSize: '10px',
+              letterSpacing: '0.35em',
+              textTransform: 'uppercase',
+              color: muted,
+              textDecoration: 'none',
+            }}
           >
             News &amp; Insights
           </Link>
           {firstCategory && (
             <>
-              <span style={{ color: C.border, fontSize: '10px' }}>—</span>
+              <span style={{ color: borderLine }}>—</span>
               <span
-                className="font-display text-[9px] tracking-[0.42em] uppercase"
-                style={{ color: C.accent }}
+                style={{
+                  fontFamily: '"Syne", sans-serif',
+                  fontSize: '10px',
+                  letterSpacing: '0.35em',
+                  textTransform: 'uppercase',
+                  color: gold,
+                }}
               >
                 {firstCategory}
               </span>
@@ -61,26 +68,20 @@ export const PostHero: React.FC<{ post: Post }> = ({ post }) => {
           )}
         </nav>
 
-        {/* Gold hairline + category marker */}
-        <div className="flex items-center gap-5 mb-8">
-          <div style={{ height: '1px', width: '2.5rem', backgroundColor: C.accent, flexShrink: 0 }} />
-          {firstCategory && (
-            <span
-              className="font-display text-[9px] tracking-[0.45em] uppercase"
-              style={{ color: C.accent }}
-            >
-              {firstCategory}
-            </span>
-          )}
-        </div>
+        {/* Gold rule */}
+        <div style={{ width: '2.5rem', height: '2px', backgroundColor: gold, marginBottom: '2rem' }} />
 
         {/* Title */}
         <h1
-          className="font-cormorant font-light leading-[1.04]"
           style={{
-            fontSize: 'clamp(3rem, 6.5vw, 7rem)',
-            color: C.text,
+            fontFamily: '"Cormorant Garamond", Georgia, serif',
+            fontWeight: 400,
+            fontSize: 'clamp(2.5rem, 4.5vw, 5rem)',
+            lineHeight: 1.08,
+            color: black,
             letterSpacing: '-0.01em',
+            marginBottom: excerpt ? '1.5rem' : '0',
+            maxWidth: '20ch',
           }}
         >
           {title}
@@ -89,8 +90,15 @@ export const PostHero: React.FC<{ post: Post }> = ({ post }) => {
         {/* Excerpt */}
         {excerpt && (
           <p
-            className="text-lg leading-[1.85] mt-7"
-            style={{ color: C.muted, maxWidth: '52ch', fontWeight: 300 }}
+            style={{
+              fontFamily: '"Cormorant Garamond", Georgia, serif',
+              fontSize: '1.3rem',
+              lineHeight: 1.7,
+              color: charcoal,
+              fontWeight: 300,
+              maxWidth: '48ch',
+              marginBottom: 0,
+            }}
           >
             {excerpt}
           </p>
@@ -98,18 +106,38 @@ export const PostHero: React.FC<{ post: Post }> = ({ post }) => {
 
         {/* Meta row */}
         <div
-          className="flex flex-wrap items-center gap-x-10 gap-y-3 mt-10 pt-8"
-          style={{ borderTop: `1px solid ${C.borderThin}` }}
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            gap: '2rem 3rem',
+            marginTop: '2rem',
+            paddingTop: '1.75rem',
+            borderTop: `1px solid ${borderLine}`,
+          }}
         >
           {hasAuthors && (
             <div>
               <p
-                className="font-display text-[9px] tracking-[0.38em] uppercase mb-1.5"
-                style={{ color: 'hsl(36, 15%, 72%)' }}
+                style={{
+                  fontFamily: '"Syne", sans-serif',
+                  fontSize: '9px',
+                  letterSpacing: '0.35em',
+                  textTransform: 'uppercase',
+                  color: muted,
+                  marginBottom: '5px',
+                }}
               >
                 Author
               </p>
-              <p className="font-cormorant text-lg font-light" style={{ color: C.text }}>
+              <p
+                style={{
+                  fontFamily: '"Cormorant Garamond", Georgia, serif',
+                  fontSize: '1.1rem',
+                  color: black,
+                  fontWeight: 400,
+                }}
+              >
                 {formatAuthors(populatedAuthors)}
               </p>
             </div>
@@ -118,35 +146,49 @@ export const PostHero: React.FC<{ post: Post }> = ({ post }) => {
           {publishedAt && (
             <div>
               <p
-                className="font-display text-[9px] tracking-[0.38em] uppercase mb-1.5"
-                style={{ color: 'hsl(36, 15%, 72%)' }}
+                style={{
+                  fontFamily: '"Syne", sans-serif',
+                  fontSize: '9px',
+                  letterSpacing: '0.35em',
+                  textTransform: 'uppercase',
+                  color: muted,
+                  marginBottom: '5px',
+                }}
               >
                 Published
               </p>
               <time
                 dateTime={publishedAt}
-                className="font-cormorant text-lg font-light"
-                style={{ color: C.text }}
+                style={{
+                  fontFamily: '"Cormorant Garamond", Georgia, serif',
+                  fontSize: '1.1rem',
+                  color: black,
+                  fontWeight: 400,
+                }}
               >
                 {formatDateTime(publishedAt)}
               </time>
             </div>
           )}
 
-          {/* All categories */}
+          {/* Category pills */}
           {categories && categories.length > 0 && (
-            <div className="ml-auto">
-              <div className="flex flex-wrap gap-2">
+            <div style={{ marginLeft: 'auto' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {categories.map((cat, i) => {
                   if (typeof cat !== 'object' || cat === null) return null
                   const c = cat as { title?: string | null }
                   return (
                     <span
                       key={i}
-                      className="font-display text-[8px] tracking-[0.3em] uppercase px-3 py-1.5"
                       style={{
-                        backgroundColor: 'hsla(40, 72%, 52%, 0.10)',
-                        color: 'hsl(40, 55%, 38%)',
+                        fontFamily: '"Syne", sans-serif',
+                        fontSize: '9px',
+                        letterSpacing: '0.25em',
+                        textTransform: 'uppercase',
+                        padding: '5px 12px',
+                        backgroundColor: 'hsla(40, 72%, 52%, 0.12)',
+                        color: 'hsl(40, 55%, 36%)',
                       }}
                     >
                       {c.title}
@@ -159,30 +201,12 @@ export const PostHero: React.FC<{ post: Post }> = ({ post }) => {
         </div>
       </div>
 
-      {/* ── Hero image — cinematic strip ───────────────────────── */}
+      {/* ── Hero image ─────────────────────────────────────────── */}
       {heroImage && typeof heroImage !== 'string' && (
-        <div className="mx-auto px-8 pb-16" style={{ maxWidth: '1200px' }}>
-          <div
-            className="relative overflow-hidden"
-            style={{
-              aspectRatio: '16 / 6.5',
-              boxShadow: '0 2px 40px hsl(350 12% 11% / 0.08)',
-            }}
-          >
-            <Media fill priority imgClassName="object-cover" resource={heroImage} />
-            {/* Subtle inner shadow at bottom */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background: 'linear-gradient(to top, rgba(0,0,0,0.08) 0%, transparent 30%)',
-              }}
-            />
-          </div>
+        <div style={{ position: 'relative', aspectRatio: '16 / 7', overflow: 'hidden' }}>
+          <Media fill priority imgClassName="object-cover" resource={heroImage} />
         </div>
       )}
-
-      {/* Full-width divider before content */}
-      <div style={{ height: '1px', backgroundColor: C.borderThin }} />
     </div>
   )
 }
