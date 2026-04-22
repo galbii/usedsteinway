@@ -36,6 +36,10 @@ const nextConfig = {
         hostname: 'images.unsplash.com',
         protocol: 'https',
       },
+      {
+        hostname: 'demo.orcaclub.pro',
+        protocol: 'https',
+      },
       // Stock / manufacturer reference images used as stockImageUrl fallbacks
       { hostname: 'eu.steinway.com',             protocol: 'https' },
       { hostname: 'www.steinway.com',            protocol: 'https' },
