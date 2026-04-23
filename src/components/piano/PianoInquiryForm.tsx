@@ -6,13 +6,16 @@ import { cn } from '@/utilities/ui'
 interface PianoInquiryFormProps {
   pianoTitle: string
   pianoSlug: string
+  phone?: string | null
 }
 
-export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInquiryFormProps) {
+export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, phone }: PianoInquiryFormProps) {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
+
+  const telHref = phone ? `tel:+1${phone.replace(/\D/g, '')}` : undefined
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -38,6 +41,7 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
       }
 
       setSubmitted(true)
+      setForm({ name: '', email: '', phone: '', message: '' })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
     } finally {
@@ -105,10 +109,14 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
         {/* Name + Email row */}
         <div className="grid sm:grid-cols-2 gap-10">
           <div className="group">
-            <label className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+            <label
+              htmlFor="inquiry-name"
+              className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200"
+            >
               Full Name <span className="text-piano-gold">*</span>
             </label>
             <input
+              id="inquiry-name"
               type="text"
               required
               value={form.name}
@@ -118,10 +126,14 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
             />
           </div>
           <div className="group">
-            <label className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+            <label
+              htmlFor="inquiry-email"
+              className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200"
+            >
               Email <span className="text-piano-gold">*</span>
             </label>
             <input
+              id="inquiry-email"
               type="email"
               required
               value={form.email}
@@ -134,13 +146,17 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
 
         {/* Phone */}
         <div className="group">
-          <label className="block font-display text-sm font-bold tracking-[0.45em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+          <label
+            htmlFor="inquiry-phone"
+            className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200"
+          >
             Phone{' '}
             <span className="text-piano-cream/30 normal-case font-sans text-base tracking-normal ml-1">
               optional
             </span>
           </label>
           <input
+            id="inquiry-phone"
             type="tel"
             value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
@@ -151,10 +167,14 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
 
         {/* Message */}
         <div className="group">
-          <label className="block font-display text-sm font-bold tracking-[0.45em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+          <label
+            htmlFor="inquiry-message"
+            className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200"
+          >
             Message <span className="text-piano-gold">*</span>
           </label>
           <textarea
+            id="inquiry-message"
             required
             rows={5}
             value={form.message}
@@ -166,7 +186,7 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
 
         {/* Error */}
         {error && (
-          <p className="font-display text-sm tracking-[0.25em] uppercase text-red-400 border border-red-400/25 bg-red-400/5 px-5 py-4">
+          <p className="font-display text-sm tracking-[0.25em] uppercase text-piano-gold/80 border border-piano-gold/20 bg-piano-gold/5 px-5 py-4">
             {error}
           </p>
         )}
@@ -216,21 +236,23 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug }: PianoInq
         </div>
 
         {/* Phone */}
-        <div>
-          <p className="font-display text-sm tracking-[0.5em] uppercase text-piano-silver mb-3">
-            Call Directly
-          </p>
-          <a
-            href="tel:+15085450766"
-            className="font-cormorant font-light text-piano-cream hover:text-piano-gold transition-colors duration-200"
-            style={{ fontSize: 'clamp(2rem, 3vw, 2.8rem)' }}
-          >
-            (508) 545-0766
-          </a>
-          <p className="text-piano-silver/70 text-sm font-display tracking-[0.35em] uppercase mt-2">
-            Mon–Sat, 10am–6pm EST
-          </p>
-        </div>
+        {(phone ?? telHref) && (
+          <div>
+            <p className="font-display text-sm tracking-[0.5em] uppercase text-piano-silver mb-3">
+              Call Directly
+            </p>
+            <a
+              href={telHref ?? '#'}
+              className="font-cormorant font-light text-piano-cream hover:text-piano-gold transition-colors duration-200"
+              style={{ fontSize: 'clamp(2rem, 3vw, 2.8rem)' }}
+            >
+              {phone}
+            </a>
+            <p className="text-piano-silver/70 text-sm font-display tracking-[0.35em] uppercase mt-2">
+              Mon–Sat, 10am–6pm EST
+            </p>
+          </div>
+        )}
 
         {/* Reassurance */}
         <p className="text-piano-silver/70 text-base leading-relaxed border-t border-piano-gold/10 pt-8">

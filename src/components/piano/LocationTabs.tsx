@@ -41,18 +41,20 @@ export function LocationTabs({ locations, phone }: Props) {
   return (
     <div className="border border-piano-linen overflow-hidden">
       {/* Tab row */}
-      <div className="flex">
+      <div className="flex" role="tablist">
         {locations.map((loc, i) => (
           <button
             key={loc.id ?? i}
+            role="tab"
+            aria-selected={activeIndex === i}
+            aria-controls={`location-panel-${i}`}
             onClick={() => setActiveIndex(i)}
             className={cn(
               'relative flex-1 px-10 py-6 font-display text-sm tracking-[0.3em] uppercase transition-all duration-200 focus:outline-none border-b-2',
               activeIndex === i
-                ? 'text-white border-piano-burgundy'
+                ? 'bg-piano-burgundy text-piano-cream border-piano-burgundy'
                 : 'text-piano-stone/60 hover:text-piano-stone bg-piano-linen/40 border-transparent hover:bg-piano-linen',
             )}
-            style={activeIndex === i ? { backgroundColor: 'hsl(350, 62%, 26%)' } : undefined}
           >
             {activeIndex === i && (
               <span className="absolute left-5 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-piano-gold" />
@@ -63,7 +65,11 @@ export function LocationTabs({ locations, phone }: Props) {
       </div>
 
       {/* Map + Info panel */}
-      <div className="grid lg:grid-cols-[1fr_400px]">
+      <div
+        id={`location-panel-${activeIndex}`}
+        role="tabpanel"
+        className="grid lg:grid-cols-[1fr_420px]"
+      >
         {/* Map */}
         <div className="relative overflow-hidden" style={{ minHeight: '480px' }}>
           <iframe
@@ -75,31 +81,32 @@ export function LocationTabs({ locations, phone }: Props) {
             allowFullScreen
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            title={`Map — ${active.name} showroom`}
+            title={`Google Map for ${active.name} showroom location`}
           />
         </div>
 
         {/* Location info */}
-        <div className="flex flex-col justify-between gap-10 p-12" style={{ backgroundColor: 'hsl(350, 62%, 26%)' }}>
+        <div className="flex flex-col justify-between gap-10 p-12 bg-piano-burgundy">
           <div className="space-y-8">
             {/* Location name */}
             <div>
               <p className="font-display text-xs tracking-[0.45em] uppercase text-piano-gold mb-3">
                 Selected Location
               </p>
-              <p className="font-cormorant font-light text-white leading-tight" style={{ fontSize: 'clamp(2rem, 3vw, 2.8rem)' }}>
+              <p
+                className="font-cormorant font-light text-piano-cream leading-tight"
+                style={{ fontSize: 'clamp(2rem, 3vw, 2.8rem)' }}
+              >
                 {active.name}
               </p>
             </div>
 
             {/* Address */}
-            <div className="border-t border-white/10 pt-7 space-y-2">
-              <p className="font-display text-xs tracking-[0.35em] uppercase text-white/40 mb-3">
+            <div className="border-t border-piano-cream/10 pt-7 space-y-2">
+              <p className="font-display text-xs tracking-[0.35em] uppercase text-piano-cream/40 mb-3">
                 Address
               </p>
-              <p className="text-piano-cream text-lg leading-relaxed">
-                {active.streetAddress}
-              </p>
+              <p className="text-piano-cream text-lg leading-relaxed">{active.streetAddress}</p>
               <p className="text-piano-cream text-lg leading-relaxed">
                 {active.city}, {active.state} {active.zip}
               </p>
@@ -107,8 +114,8 @@ export function LocationTabs({ locations, phone }: Props) {
 
             {/* Phone */}
             {phone && telHref && (
-              <div className="border-t border-white/10 pt-7">
-                <p className="font-display text-xs tracking-[0.35em] uppercase text-white/40 mb-3">
+              <div className="border-t border-piano-cream/10 pt-7">
+                <p className="font-display text-xs tracking-[0.35em] uppercase text-piano-cream/40 mb-3">
                   Phone
                 </p>
                 <a
@@ -125,7 +132,7 @@ export function LocationTabs({ locations, phone }: Props) {
             href={directionsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 bg-piano-gold text-piano-black px-8 py-5 font-display text-sm tracking-[0.3em] uppercase hover:bg-piano-gold/90 transition-colors font-semibold"
+            className="inline-flex items-center justify-center gap-2 bg-piano-gold text-piano-black px-8 py-5 font-display text-sm tracking-[0.3em] uppercase hover:bg-piano-gold/90 transition-colors"
           >
             Get Directions →
           </a>

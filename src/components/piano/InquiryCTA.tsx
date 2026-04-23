@@ -56,7 +56,7 @@ export function InquiryCTA({ brand, pianoTitle, variant = 'dark', className }: I
               isDark ? 'bg-piano-cream text-piano-burgundy' : 'bg-piano-black text-piano-cream',
             )}
           >
-            Contact Roger
+            Get in Touch
           </Link>
           <Link
             href="/visit"

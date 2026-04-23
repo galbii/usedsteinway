@@ -447,7 +447,7 @@ export function UsedSteinwaysHomePage() {
               href="/contact"
               className="inline-flex items-center justify-center bg-piano-black text-piano-cream px-12 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-charcoal transition-colors duration-200"
             >
-              Contact Roger
+              Get in Touch
             </Link>
             <Link
               href="/pianos"

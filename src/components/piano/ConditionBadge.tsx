@@ -16,8 +16,8 @@ const variants: Record<Condition, string> = {
   // Legacy hardcoded values (keep for backwards compat)
   Excellent: 'bg-piano-cream border border-piano-gold/50 text-piano-black',
   'Very Good': 'bg-piano-cream border border-piano-stone/40 text-piano-black',
-  Good: 'bg-piano-warm-white border border-piano-stone/30 text-piano-stone',
-  Fair: 'bg-piano-warm-white border border-piano-stone/20 text-piano-stone',
+  Good: 'bg-piano-cream border border-piano-stone/30 text-piano-stone',
+  Fair: 'bg-piano-cream border border-piano-stone/20 text-piano-stone',
 }
 
 const labels: Record<Condition, string> = {

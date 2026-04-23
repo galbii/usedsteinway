@@ -13,7 +13,7 @@ interface PianoMediaCarouselProps {
 
 export function PianoMediaCarousel({ images, title, stockImageIndex = -1 }: PianoMediaCarouselProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, dragFree: false }, [
-    Autoplay({ delay: 5000, stopOnInteraction: true }),
+    Autoplay({ delay: 6000, stopOnInteraction: true }),
   ])
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([])
@@ -41,98 +41,120 @@ export function PianoMediaCarousel({ images, title, stockImageIndex = -1 }: Pian
   if (!images.length) return null
 
   return (
-    <section className="bg-piano-black py-20 px-8">
-      <div className="max-w-7xl mx-auto">
-        {/* Section label */}
-        <p className="font-display text-[11px] tracking-[0.55em] uppercase text-piano-gold mb-10">
-          Gallery
-        </p>
+    <section
+      className="relative bg-piano-black overflow-hidden"
+      style={{ height: '100vh', minHeight: '600px' }}
+      aria-label="Piano photo gallery"
+    >
+      {/* Embla — full height */}
+      <div className="overflow-hidden h-full" ref={emblaRef}>
+        <div className="flex touch-pan-y h-full">
+          {images.map((url, i) => (
+            <div key={i} className="relative shrink-0 w-full h-full">
+              <Image
+                src={url}
+                alt={`${title} — photo ${i + 1}`}
+                fill
+                className="object-cover"
+                sizes="100vw"
+                priority={i === 0}
+              />
+              {/* Edge vignette */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background:
+                    'linear-gradient(to right, rgba(0,0,0,0.15) 0%, transparent 18%, transparent 82%, rgba(0,0,0,0.15) 100%)',
+                }}
+                aria-hidden="true"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
 
-        <div className="relative group">
-          {/* Embla viewport */}
-          <div className="overflow-hidden" ref={emblaRef}>
-            <div className="flex touch-pan-y">
-              {images.map((url, i) => (
-                <div
+      {/* Gallery label — top left, glass pill */}
+      <div
+        className="absolute top-6 left-7 z-20 flex items-center gap-3 bg-white/15 backdrop-blur-xl border border-white/20 px-4 py-2"
+        aria-hidden="true"
+      >
+        <div className="h-px w-5 bg-piano-burgundy/80" />
+        <p className="font-display text-[10px] tracking-[0.5em] uppercase text-white/75">Gallery</p>
+      </div>
+
+      {/* Reference image badge — top right */}
+      {selectedIndex === stockImageIndex && stockImageIndex !== -1 && (
+        <div className="absolute top-6 right-7 z-20 bg-white/15 backdrop-blur-xl border border-white/20 px-3 py-2 font-display text-[9px] tracking-[0.35em] uppercase text-white/65">
+          Reference image
+        </div>
+      )}
+
+      {/* Bottom gradient */}
+      <div
+        className="absolute inset-x-0 bottom-0 h-32 z-10 pointer-events-none"
+        style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 100%)' }}
+        aria-hidden="true"
+      />
+
+      {/* Control bar — light glass */}
+      {images.length > 1 && (
+        <div className="absolute inset-x-0 bottom-0 z-20 flex items-center justify-between px-7 pb-7 pt-4">
+
+          {/* Left: counter */}
+          <span
+            className="bg-white/15 backdrop-blur-xl border border-white/20 px-4 py-2 text-white/70 font-display text-[10px] tracking-[0.45em]"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {selectedIndex + 1} / {images.length}
+          </span>
+
+          {/* Right: dots + arrows */}
+          <div className="flex items-center gap-5">
+
+            {/* Dot indicators */}
+            <div className="flex items-center gap-2.5" role="tablist" aria-label="Image navigation">
+              {scrollSnaps.map((_, i) => (
+                <button
                   key={i}
-                  className="relative shrink-0 w-full"
-                  style={{ aspectRatio: '16/9' }}
-                >
-                  <Image
-                    src={url}
-                    alt={`${title} — photo ${i + 1}`}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1280px) 100vw, 1280px"
-                    priority={i === 0}
-                  />
-                  {/* subtle dark vignette on edges */}
-                  <div
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                      background:
-                        'linear-gradient(to right, rgba(0,0,0,0.18) 0%, transparent 18%, transparent 82%, rgba(0,0,0,0.18) 100%)',
-                    }}
-                  />
-                  {i === stockImageIndex && (
-                    <div className="absolute top-4 left-4 bg-piano-black/70 px-3 py-1.5 font-display text-[10px] tracking-[0.35em] uppercase text-piano-silver/70 pointer-events-none">
-                      Reference image
-                    </div>
+                  role="tab"
+                  aria-selected={i === selectedIndex}
+                  onClick={() => scrollTo(i)}
+                  aria-label={`Go to image ${i + 1}`}
+                  className={cn(
+                    'transition-all duration-300',
+                    i === selectedIndex
+                      ? 'w-6 h-px bg-white'
+                      : 'w-2 h-px bg-white/35 hover:bg-white/65',
                   )}
-                </div>
+                />
               ))}
             </div>
-          </div>
 
-          {/* Prev / Next — appear on hover */}
-          {images.length > 1 && (
-            <>
+            {/* Prev / Next */}
+            <div className="flex items-center gap-1.5">
               <button
                 onClick={scrollPrev}
                 aria-label="Previous image"
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 flex items-center justify-center border border-piano-cream/20 text-piano-cream/60 bg-piano-black/40 backdrop-blur-sm transition-all duration-200 opacity-0 group-hover:opacity-100 hover:border-piano-gold/60 hover:text-piano-gold"
+                className="w-10 h-10 flex items-center justify-center bg-white/15 backdrop-blur-xl border border-white/20 text-white/70 hover:bg-white/25 hover:text-white transition-all duration-200"
               >
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <polyline points="11 4 6 9 11 14" />
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                  <polyline points="9 3 4 7.5 9 12" />
                 </svg>
               </button>
               <button
                 onClick={scrollNext}
                 aria-label="Next image"
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-11 h-11 flex items-center justify-center border border-piano-cream/20 text-piano-cream/60 bg-piano-black/40 backdrop-blur-sm transition-all duration-200 opacity-0 group-hover:opacity-100 hover:border-piano-gold/60 hover:text-piano-gold"
+                className="w-10 h-10 flex items-center justify-center bg-white/15 backdrop-blur-xl border border-white/20 text-white/70 hover:bg-white/25 hover:text-white transition-all duration-200"
               >
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <polyline points="7 4 12 9 7 14" />
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                  <polyline points="6 3 11 7.5 6 12" />
                 </svg>
               </button>
-            </>
-          )}
-
-          {/* Counter — top right */}
-          <div className="absolute top-4 right-4 z-10 bg-piano-black/60 backdrop-blur-sm px-3 py-1.5 font-display text-[10px] tracking-[0.45em] text-piano-cream/60">
-            {selectedIndex + 1} / {images.length}
+            </div>
           </div>
         </div>
-
-        {/* Dot navigation */}
-        {scrollSnaps.length > 1 && (
-          <div className="flex items-center justify-center gap-2.5 mt-6">
-            {scrollSnaps.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => scrollTo(i)}
-                aria-label={`Go to image ${i + 1}`}
-                className={cn(
-                  'transition-all duration-300',
-                  i === selectedIndex
-                    ? 'w-6 h-px bg-piano-gold'
-                    : 'w-2 h-px bg-piano-cream/25 hover:bg-piano-cream/50',
-                )}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      )}
     </section>
   )
 }

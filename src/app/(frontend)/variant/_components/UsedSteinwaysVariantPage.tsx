@@ -887,7 +887,7 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
               className="inline-flex items-center justify-center px-12 py-4 font-display text-[11px] tracking-[0.3em] uppercase transition-opacity duration-200 hover:opacity-80"
               style={{ backgroundColor: C.text, color: C.bg }}
             >
-              Contact Roger
+              Get in Touch
             </Link>
             <Link
               href="/pianos"

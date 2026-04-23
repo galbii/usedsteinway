@@ -9,7 +9,7 @@ import { PianosHero } from '@/components/piano/PianosHero'
 import { queryGalleryImages } from '@/lib/payload/media'
 
 export const metadata: Metadata = {
-  title: 'Contact Roger | UsedSteinways.com',
+  title: 'Get in Touch | UsedSteinways.com',
   description: 'Get in touch with Roger about buying, selling, or visiting the showroom.',
 }
 

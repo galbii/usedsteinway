@@ -417,7 +417,7 @@ export function SearchPageClient({ pianos, initialQuery }: SearchPageClientProps
                   className="font-display uppercase transition-colors duration-200"
                   style={{ fontSize: '10px', letterSpacing: '0.4em', color: C.stone }}
                 >
-                  Contact Roger →
+                  Get in Touch →
                 </Link>
               </div>
             </div>

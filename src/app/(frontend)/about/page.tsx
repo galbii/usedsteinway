@@ -321,7 +321,7 @@ export default function AboutPage() {
               href="/contact"
               className="inline-block border border-piano-gold text-piano-gold px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-gold/10 transition-colors"
             >
-              Contact Roger
+              Get in Touch
             </Link>
           </div>
         </div>

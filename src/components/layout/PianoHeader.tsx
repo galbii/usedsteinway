@@ -218,7 +218,7 @@ export function PianoHeader() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="block mt-5 text-center border border-piano-black text-piano-black py-3.5 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-black hover:text-piano-cream transition-colors"
               >
-                Contact Roger →
+                Get in Touch →
               </Link>
             </div>
           </div>
