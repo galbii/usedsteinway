@@ -315,7 +315,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
         if (!cancelled) {
           setPosts(data.docs ?? [])
         }
-      } catch (err) {
+      } catch (_err) {
         if (!cancelled) {
           setError('Failed to load posts.')
         }

@@ -108,7 +108,7 @@ export function PianoGalleryHero({ pianos }: Props) {
   const handleTouchEnd = (e: React.TouchEvent) => {
     const dx = touchStartX - e.changedTouches[0]!.clientX
     const dy = Math.abs(touchStartY - e.changedTouches[0]!.clientY)
-    if (Math.abs(dx) > 48 && dy < 80) dx > 0 ? goNext() : goPrev()
+    if (Math.abs(dx) > 48 && dy < 80) { if (dx > 0) goNext(); else goPrev() }
   }
 
   if (!pianos.length) return null

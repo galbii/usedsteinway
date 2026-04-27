@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import Link from 'next/link'
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -302,7 +303,7 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
             </p>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <a
+            <Link
               href="/admin"
               onClick={onClose}
               style={{
@@ -315,7 +316,7 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
               }}
             >
               Full dashboard →
-            </a>
+            </Link>
             <button type="button" className="usw-dm-close-btn" onClick={onClose}>
               ✕
             </button>
@@ -363,7 +364,7 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
                 }}
               >
                 {stats.map((stat) => (
-                  <a key={stat.label} href={stat.href} className="usw-dm-stat-card" onClick={onClose}>
+                  <Link key={stat.label} href={stat.href} className="usw-dm-stat-card" onClick={onClose}>
                     <div
                       style={{
                         fontSize: 'clamp(26px, 2.5vw, 36px)',
@@ -391,7 +392,7 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
                     >
                       {stat.label}
                     </div>
-                  </a>
+                  </Link>
                 ))}
               </div>
 
@@ -440,7 +441,7 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
               ) : (
                 <div>
                   {pianos.map((piano) => (
-                    <a
+                    <Link
                       key={piano.id}
                       href={`/admin/collections/pianos/${piano.id}`}
                       className="usw-dm-piano-row"
@@ -479,13 +480,13 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
                           {piano.isAvailable ? 'Avail.' : 'Sold'}
                         </span>
                       </div>
-                    </a>
+                    </Link>
                   ))}
                 </div>
               )}
 
               {/* View all link */}
-              <a
+              <Link
                 href="/admin/collections/pianos"
                 onClick={onClose}
                 style={{
@@ -500,7 +501,7 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
                 }}
               >
                 View all pianos →
-              </a>
+              </Link>
             </div>
 
             {/* Right column — quick actions */}
@@ -519,29 +520,29 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
               </p>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
-                <a href="/admin/collections/pianos/create" className="usw-dm-action-primary" onClick={onClose}>
+                <Link href="/admin/collections/pianos/create" className="usw-dm-action-primary" onClick={onClose}>
                   + Add Piano
-                </a>
-                <a href="/admin/collections/posts/create" className="usw-dm-action-primary" onClick={onClose}>
+                </Link>
+                <Link href="/admin/collections/posts/create" className="usw-dm-action-primary" onClick={onClose}>
                   + New Post
-                </a>
+                </Link>
               </div>
 
               <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)', margin: '0 0 16px' }} />
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                <a href="/admin/collections/brands/create" className="usw-dm-action-secondary" onClick={onClose}>
+                <Link href="/admin/collections/brands/create" className="usw-dm-action-secondary" onClick={onClose}>
                   Add Brand
-                </a>
-                <a href="/admin/collections/testimonials/create" className="usw-dm-action-secondary" onClick={onClose}>
+                </Link>
+                <Link href="/admin/collections/testimonials/create" className="usw-dm-action-secondary" onClick={onClose}>
                   New Testimonial
-                </a>
-                <a href="/admin/collections/media" className="usw-dm-action-secondary" onClick={onClose}>
+                </Link>
+                <Link href="/admin/collections/media" className="usw-dm-action-secondary" onClick={onClose}>
                   Media Library
-                </a>
-                <a href="/admin/globals/site-settings" className="usw-dm-action-secondary" onClick={onClose}>
+                </Link>
+                <Link href="/admin/globals/site-settings" className="usw-dm-action-secondary" onClick={onClose}>
                   Site Settings
-                </a>
+                </Link>
                 <a href="/" target="_blank" rel="noopener noreferrer" className="usw-dm-action-secondary">
                   View Live Site ↗
                 </a>
@@ -564,7 +565,7 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
           <span style={{ fontSize: '12px', color: COLORS.silver, letterSpacing: '0.08em' }}>
             Used Steinways
           </span>
-          <a
+          <Link
             href="/admin"
             onClick={onClose}
             style={{
@@ -577,7 +578,7 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
             }}
           >
             Open Dashboard
-          </a>
+          </Link>
         </div>
       </div>
     </>

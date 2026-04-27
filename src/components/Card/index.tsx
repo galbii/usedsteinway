@@ -1,7 +1,7 @@
 'use client'
 import useClickableCard from '@/hooks/useClickableCard'
 import Link from 'next/link'
-import React, { Fragment } from 'react'
+import React from 'react'
 
 import type { Post } from '@/payload-types'
 

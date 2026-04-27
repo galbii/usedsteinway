@@ -21,7 +21,7 @@ function formatDate(iso: string | null): string {
   })
 }
 
-function PostCard({ post, tab }: { post: PostCard; tab: Tab }) {
+function PostCard({ post }: { post: PostCard; tab?: Tab }) {
   const href = post.isGuide ? `/guide/${post.slug}` : `/posts/${post.slug}`
   const ctaLabel = post.isGuide ? 'Read Guide' : 'Read Article'
 
