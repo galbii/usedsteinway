@@ -69,9 +69,9 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
                   color: 'hsl(36, 22%, 96%)',
                 }}
               >
-                Contact
+                Get in
                 <br />
-                <span style={{ fontStyle: 'italic', color: 'hsl(40, 72%, 62%)' }}>Roger</span>
+                <span style={{ fontStyle: 'italic', color: 'hsl(40, 72%, 62%)' }}>Touch</span>
               </h1>
               <div className="flex items-center gap-6 mb-8">
                 <div className="w-10 h-px shrink-0" style={{ backgroundColor: 'hsla(40,72%,52%,0.40)' }} />

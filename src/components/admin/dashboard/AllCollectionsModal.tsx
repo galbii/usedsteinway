@@ -27,8 +27,8 @@ const STYLES = `
   }
   .usw-acm-panel {
     position: fixed;
-    top: 50%;
-    left: 50%;
+    top: 50vh;
+    left: 50vw;
     transform: translate(-50%, -50%);
     width: min(960px, 96vw);
     max-height: 92vh;

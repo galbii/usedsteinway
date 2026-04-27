@@ -295,20 +295,30 @@ export function NewsCarousel({ posts }: Props) {
             {/* ── ARTICLE CONTENT ── */}
             <div className="relative z-10 flex-1 flex flex-col justify-center">
 
-              {/* Counter + category */}
-              <div className="flex items-center gap-4 mb-8" style={{ ...reveal(0.06) }}>
-                <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.25rem', fontStyle: 'italic', color: C.accent }}>
-                  {String(activeIndex + 1).padStart(2, '0')}
-                </span>
-                <div className="h-px w-5 shrink-0" style={{ backgroundColor: C.borderLight }} />
-                <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '1.25rem', fontStyle: 'italic', color: C.muted }}>
-                  {String(posts.length).padStart(2, '0')}
-                </span>
+              {/* Slide indicators + category */}
+              <div className="flex items-center gap-2 mb-8" style={{ ...reveal(0.06) }}>
+                {posts.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => !isTransitioning && i !== activeIndex && navigate(i, i > activeIndex ? 'next' : 'prev')}
+                    aria-label={`Article ${i + 1}`}
+                    style={{
+                      height: '2px',
+                      width: i === activeIndex ? '2rem' : '0.75rem',
+                      backgroundColor: i === activeIndex ? C.accent : C.borderLight,
+                      border: 'none',
+                      padding: 0,
+                      cursor: i === activeIndex ? 'default' : 'pointer',
+                      flexShrink: 0,
+                      transition: 'width 400ms cubic-bezier(0.4,0,0.2,1), background-color 300ms ease',
+                    }}
+                  />
+                ))}
                 {post.category && (
                   <>
-                    <div className="h-px flex-1" style={{ backgroundColor: C.borderLight }} />
+                    <div style={{ flex: 1 }} />
                     <span
-                      className="font-display text-[11px] tracking-[0.42em] uppercase px-3 py-1.5"
+                      className="font-display text-[9px] tracking-[0.42em] uppercase px-3 py-1.5"
                       style={{ border: `1px solid ${C.accentBorder}`, color: C.accent }}
                     >
                       {post.category}
@@ -433,13 +443,6 @@ export function NewsCarousel({ posts }: Props) {
                   }}
                 />
               </div>
-
-              {/* Slide counter */}
-              <span style={{ fontFamily: 'var(--font-display)', fontSize: '12px', letterSpacing: '0.32em', color: C.muted, marginRight: '1.25rem' }}>
-                {String(activeIndex + 1).padStart(2, '0')}
-                <span style={{ opacity: 0.4 }}> / </span>
-                {String(posts.length).padStart(2, '0')}
-              </span>
 
               {/* Arrow buttons */}
               <div className="flex items-center gap-1.5">

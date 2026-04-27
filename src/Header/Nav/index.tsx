@@ -7,6 +7,7 @@ import type { Header as HeaderType, Brand } from '@/payload-types'
 import { CMSLink } from '@/components/Link'
 import { ModelsDropdown } from './ModelsDropdown'
 import { ResourcesDropdown } from './ResourcesDropdown'
+import { BrandsDropdown } from './BrandsDropdown'
 
 type BrandModel = NonNullable<Brand['models']>[number]
 
@@ -30,7 +31,7 @@ function resolveNavHref(link: NonNullable<HeaderType['navItems']>[number]['link'
   return link?.url ?? ''
 }
 
-type ActiveDropdown = 'models' | 'resources' | null
+type ActiveDropdown = 'models' | 'resources' | 'brands' | null
 
 export const HeaderNav: React.FC<HeaderNavProps> = ({ data, models = [], scrolled = false }) => {
   const allItems = data?.navItems || []
@@ -60,13 +61,16 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ data, models = [], scrolle
 
         const isSteinwayLink = href === '/pianos/steinway' || href.startsWith('/pianos/steinway')
         const isResourcesLink = label === 'resources'
+        const isPianosLink = href === '/pianos'
 
         const hasModelsDropdown = isSteinwayLink && models.length > 0
         const hasResourcesDropdown = isResourcesLink
+        const hasBrandsDropdown = isPianosLink
 
         const isActive =
           (hasModelsDropdown && activeDropdown === 'models') ||
-          (hasResourcesDropdown && activeDropdown === 'resources')
+          (hasResourcesDropdown && activeDropdown === 'resources') ||
+          (hasBrandsDropdown && activeDropdown === 'brands')
 
         return (
           <span
@@ -78,10 +82,12 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ data, models = [], scrolle
                 ? () => openDropdown('models')
                 : hasResourcesDropdown
                   ? () => openDropdown('resources')
-                  : undefined
+                  : hasBrandsDropdown
+                    ? () => openDropdown('brands')
+                    : undefined
             }
             onMouseLeave={
-              hasModelsDropdown || hasResourcesDropdown ? scheduleClose : undefined
+              hasModelsDropdown || hasResourcesDropdown || hasBrandsDropdown ? scheduleClose : undefined
             }
           >
             <CMSLink
@@ -90,7 +96,7 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ data, models = [], scrolle
               className="font-display font-medium text-[13px] tracking-[0.2em] uppercase text-piano-cream/72 group-hover:text-piano-cream transition-colors duration-300"
             />
             {/* Indicator dot for items with a dropdown */}
-            {(hasModelsDropdown || hasResourcesDropdown) && (
+            {(hasModelsDropdown || hasResourcesDropdown || hasBrandsDropdown) && (
               <span
                 className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-[3px] h-[3px] rounded-full transition-opacity duration-200"
                 style={{
@@ -117,6 +123,14 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ data, models = [], scrolle
         <ResourcesDropdown
           scrolled={scrolled}
           onMouseEnter={() => openDropdown('resources')}
+          onMouseLeave={scheduleClose}
+        />
+      )}
+
+      {activeDropdown === 'brands' && (
+        <BrandsDropdown
+          scrolled={scrolled}
+          onMouseEnter={() => openDropdown('brands')}
           onMouseLeave={scheduleClose}
         />
       )}

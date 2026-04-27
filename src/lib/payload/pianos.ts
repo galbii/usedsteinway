@@ -149,6 +149,52 @@ export const queryFeaturedPianos = cache(async (): Promise<Piano[]> => {
   return result.docs.map(adaptPayloadPiano)
 })
 
+export const queryPianosByCategory = cache(async (category: string): Promise<Piano[]> => {
+  const payload = await getPayload({ config: configPromise })
+
+  const result = await payload.find({
+    collection: 'pianos',
+    draft: false,
+    limit: 200,
+    overrideAccess: false,
+    pagination: false,
+    depth: 1,
+    where: {
+      and: [
+        { 'brand.category': { equals: category } },
+        { isAvailable: { equals: true } },
+        { _status: { equals: 'published' } },
+      ],
+    },
+    sort: '-publishedAt',
+  })
+
+  return result.docs.map(adaptPayloadPiano)
+})
+
+export const queryPianosByBrand = cache(async (brandSlug: string): Promise<Piano[]> => {
+  const payload = await getPayload({ config: configPromise })
+
+  const result = await payload.find({
+    collection: 'pianos',
+    draft: false,
+    limit: 200,
+    overrideAccess: false,
+    pagination: false,
+    depth: 1,
+    where: {
+      and: [
+        { 'brand.slug': { equals: brandSlug } },
+        { isAvailable: { equals: true } },
+        { _status: { equals: 'published' } },
+      ],
+    },
+    sort: '-publishedAt',
+  })
+
+  return result.docs.map(adaptPayloadPiano)
+})
+
 export const querySearchPianos = cache(async (query: string): Promise<Piano[]> => {
   const payload = await getPayload({ config: configPromise })
 

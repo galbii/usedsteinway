@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import Image from 'next/image'
-import { GUIDES } from '@/lib/piano-data'
-import { InquiryCTA } from '@/components/piano/InquiryCTA'
+import { queryGuidePosts, queryAllPosts } from '@/lib/payload/posts'
+import { getCachedGlobal } from '@/utilities/getGlobals'
+import type { SiteSetting } from '@/payload-types'
+import { LocationTabs } from '@/components/piano/LocationTabs'
+import { GuidesPageClient } from './_components/GuidesPageClient'
 
 export const metadata: Metadata = {
   title: 'Piano Buying Guides | UsedSteinways.com',
@@ -10,10 +12,20 @@ export const metadata: Metadata = {
     'Expert guides on buying pre-owned Steinway and premium pianos. Pricing guides, model comparisons, restoration insights, and what to look for.',
 }
 
-export default function GuidesPage() {
+export default async function GuidesPage() {
+  const [guides, allPosts, siteSettings] = await Promise.all([
+    queryGuidePosts(),
+    queryAllPosts(),
+    getCachedGlobal('site-settings', 0)() as Promise<SiteSetting>,
+  ])
+
+  const locations = siteSettings?.locations ?? []
+  const phone = siteSettings?.contactInfo?.phone ?? '508-545-0766'
+
   return (
     <main className="min-h-screen bg-piano-cream">
-      {/* Hero */}
+
+      {/* ── Hero ──────────────────────────────────────────────── */}
       <section className="bg-piano-burgundy py-28 px-8">
         <div className="max-w-3xl mx-auto">
           <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-5">
@@ -23,7 +35,7 @@ export default function GuidesPage() {
             className="font-cormorant font-light text-white mb-6 leading-none"
             style={{ fontSize: 'clamp(3.6rem, 7vw, 8.5rem)' }}
           >
-            Piano Buying Guides
+            Guides & News
           </h1>
           <p className="text-piano-cream/70 text-lg max-w-2xl leading-relaxed">
             Three decades of expertise distilled into practical guides. From pricing to restoration,
@@ -32,59 +44,182 @@ export default function GuidesPage() {
         </div>
       </section>
 
-      {/* Guides Grid */}
-      <section className="py-28 px-8">
+      {/* ── Tab grid ──────────────────────────────────────────── */}
+      <GuidesPageClient guides={guides} allPosts={allPosts} />
+
+      {/* ── Locations ─────────────────────────────────────────── */}
+      {locations.length > 0 && (
+        <section className="px-8 py-24" style={{ backgroundColor: 'hsl(36, 22%, 96%)' }}>
+          <div className="max-w-7xl mx-auto">
+            <div className="flex items-center gap-5 mb-14">
+              <div className="h-px w-10 shrink-0" style={{ backgroundColor: 'hsl(40, 72%, 52%)' }} />
+              <span
+                className="font-display text-[10px] tracking-[0.5em] uppercase shrink-0"
+                style={{ color: 'hsl(350, 5%, 46%)' }}
+              >
+                Our Locations
+              </span>
+              <div className="flex-1 h-px" style={{ backgroundColor: 'hsl(36, 18%, 89%)' }} />
+            </div>
+            <LocationTabs locations={locations} phone={phone} />
+          </div>
+        </section>
+      )}
+
+      {/* ── Dual CTA ──────────────────────────────────────────── */}
+      <section
+        className="px-8 py-0"
+        style={{ backgroundColor: 'hsl(36, 22%, 96%)' }}
+      >
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {GUIDES.map((guide) => (
-              <Link
-                key={guide.slug}
-                href={`/guides/${guide.slug}`}
-                className="group block bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1"
+
+          {/* Thin rule */}
+          <div
+            className="h-px w-full mb-0"
+            style={{ backgroundColor: 'hsl(36, 18%, 87%)' }}
+          />
+
+          <div className="grid grid-cols-1 lg:grid-cols-2">
+
+            {/* ── Left: Browse Collection ──────────────────────── */}
+            <Link
+              href="/steinway"
+              className="group relative flex flex-col justify-between overflow-hidden px-14 py-20"
+              style={{ backgroundColor: 'hsl(350, 62%, 26%)' }}
+            >
+              {/* Subtle background texture: large faint numeral */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute right-8 bottom-4 leading-none select-none font-cormorant font-light"
                 style={{
-                  border: '1px solid hsl(36 18% 89%)',
-                  boxShadow: '0 2px 20px hsl(350 62% 26% / 0.10)',
+                  fontSize: 'clamp(10rem, 18vw, 18rem)',
+                  color: 'hsla(40, 72%, 52%, 0.06)',
+                  lineHeight: 1,
                 }}
               >
-                {guide.imageUrl && (
-                  <div className="relative aspect-[16/9] overflow-hidden bg-piano-warm-white">
-                    <Image
-                      src={guide.imageUrl}
-                      alt={guide.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                    <div className="absolute inset-0 bg-piano-black/20 group-hover:bg-piano-black/10 transition-colors" />
-                  </div>
+                I
+              </span>
+
+              <div className="relative z-10">
+                <p
+                  className="font-display text-[10px] tracking-[0.5em] uppercase mb-8"
+                  style={{ color: 'hsl(40, 72%, 52%)' }}
+                >
+                  Our Collection
+                </p>
+                <h2
+                  className="font-cormorant font-light text-white leading-[1.0] mb-6"
+                  style={{ fontSize: 'clamp(2.8rem, 4vw, 5rem)' }}
+                >
+                  Browse Every<br />Available Piano
+                </h2>
+                <p
+                  className="text-base leading-relaxed max-w-sm"
+                  style={{ color: 'hsla(36, 22%, 96%, 0.55)' }}
+                >
+                  Each instrument personally selected and inspected. Steinway, Bösendorfer,
+                  Bechstein — curated for discerning buyers.
+                </p>
+              </div>
+
+              <div className="relative z-10 mt-14 flex items-center gap-4">
+                <span
+                  className="inline-flex items-center justify-center px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase transition-all duration-300 group-hover:gap-6"
+                  style={{ backgroundColor: 'hsl(40, 72%, 52%)', color: 'hsl(350, 62%, 26%)' }}
+                >
+                  View All Pianos
+                  <span className="ml-3 transition-transform duration-300 group-hover:translate-x-2">→</span>
+                </span>
+              </div>
+            </Link>
+
+            {/* ── Right: Speak With Roger ───────────────────────── */}
+            <Link
+              href="/contact"
+              className="group relative flex flex-col justify-between overflow-hidden px-14 py-20"
+              style={{ backgroundColor: 'hsl(36, 22%, 93%)' }}
+            >
+              {/* Subtle background texture: large faint II */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute right-8 bottom-4 leading-none select-none font-cormorant font-light"
+                style={{
+                  fontSize: 'clamp(10rem, 18vw, 18rem)',
+                  color: 'hsla(350, 62%, 26%, 0.05)',
+                  lineHeight: 1,
+                }}
+              >
+                II
+              </span>
+
+              {/* Thin vertical gold rule on left edge (only on lg+) */}
+              <div
+                className="absolute top-0 left-0 bottom-0 w-[2px] hidden lg:block"
+                style={{ backgroundColor: 'hsl(36, 18%, 84%)' }}
+              />
+
+              <div className="relative z-10">
+                <p
+                  className="font-display text-[10px] tracking-[0.5em] uppercase mb-8"
+                  style={{ color: 'hsl(350, 5%, 46%)' }}
+                >
+                  Personal Service
+                </p>
+                <h2
+                  className="font-cormorant font-light leading-[1.0] mb-6"
+                  style={{
+                    fontSize: 'clamp(2.8rem, 4vw, 5rem)',
+                    color: 'hsl(350, 12%, 11%)',
+                  }}
+                >
+                  Get in<br />Touch
+                </h2>
+                <p
+                  className="text-base leading-relaxed max-w-sm"
+                  style={{ color: 'hsl(350, 5%, 46%)' }}
+                >
+                  Three decades of expertise, no sales pressure. Tell us what you need —
+                  or come hear the pianos yourself.
+                </p>
+              </div>
+
+              <div className="relative z-10 mt-14 flex items-center gap-6">
+                <span
+                  className="inline-flex items-center justify-center px-10 py-4 border font-display text-[11px] tracking-[0.3em] uppercase transition-all duration-300"
+                  style={{
+                    borderColor: 'hsl(350, 62%, 26%)',
+                    color: 'hsl(350, 62%, 26%)',
+                    backgroundColor: 'transparent',
+                  }}
+                >
+                  Get in Touch
+                  <span className="ml-3 transition-transform duration-300 group-hover:translate-x-2">→</span>
+                </span>
+
+                {phone && (
+                  <span
+                    className="font-display text-[10px] tracking-[0.25em] transition-colors"
+                    style={{ color: 'hsl(40, 72%, 52%)' }}
+                  >
+                    {phone}
+                  </span>
                 )}
-                <div className="p-7">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="font-display text-[11px] tracking-[0.3em] uppercase text-piano-gold">
-                      {guide.category}
-                    </span>
-                    <span className="text-piano-stone/70 text-xs">{guide.readTime}</span>
-                  </div>
-                  <h2 className="font-cormorant font-light text-piano-black text-3xl mb-3 leading-snug group-hover:text-piano-gold transition-colors">
-                    {guide.title}
-                  </h2>
-                  <p className="text-piano-stone text-base leading-relaxed line-clamp-3">
-                    {guide.description}
-                  </p>
-                  <div className="mt-5 flex items-center gap-2 text-piano-gold/60 group-hover:text-piano-gold transition-colors">
-                    <span className="font-display text-[11px] tracking-[0.3em] uppercase">
-                      Read Guide
-                    </span>
-                    <span className="group-hover:translate-x-1 transition-transform">→</span>
-                  </div>
-                </div>
-              </Link>
-            ))}
+              </div>
+            </Link>
+
           </div>
+
+          {/* Bottom rule */}
+          <div
+            className="h-px w-full"
+            style={{ backgroundColor: 'hsl(36, 18%, 87%)' }}
+          />
         </div>
       </section>
 
-      <InquiryCTA variant="dark" />
+      {/* Breathing room at very bottom */}
+      <div className="h-16" style={{ backgroundColor: 'hsl(36, 22%, 96%)' }} />
+
     </main>
   )
 }

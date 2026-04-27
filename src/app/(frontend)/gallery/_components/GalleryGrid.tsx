@@ -20,6 +20,10 @@ interface Props {
   images: MediaType[]
 }
 
+function stripTrailingCounter(text: string): string {
+  return text.replace(/\s+\d+$/, '')
+}
+
 export function GalleryGrid({ images }: Props) {
   const [query, setQuery]       = useState('')
   const [activeTag, setActiveTag] = useState<string | null>(null)
@@ -219,7 +223,7 @@ export function GalleryGrid({ images }: Props) {
                           className="font-cormorant font-light text-piano-cream leading-snug"
                           style={{ fontSize: 'clamp(0.95rem, 1.5vw, 1.15rem)' }}
                         >
-                          {image.caption ?? image.alt}
+                          {stripTrailingCounter(image.caption ?? image.alt ?? '')}
                         </p>
                       )}
                       {displayTags.length > 0 && (

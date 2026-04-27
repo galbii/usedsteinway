@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 
 const GOLD = 'hsl(40, 72%, 52%)'
 const CREAM = 'hsl(36, 18%, 97%)'
+const DARK = 'hsl(25, 6%, 9%)'
 const MUTED = 'hsl(25, 5%, 46%)'
 
 const STYLES = `
@@ -133,6 +134,7 @@ function PianoKeyboard({ mounted }: { mounted: boolean }) {
 
 export default function LoginBranding() {
   const [mounted, setMounted] = useState(false)
+  const [isDark, setIsDark] = useState(false)
 
   useEffect(() => {
     if (!document.getElementById('usw-login-styles')) {
@@ -141,6 +143,8 @@ export default function LoginBranding() {
       style.textContent = STYLES
       document.head.appendChild(style)
     }
+    const theme = document.documentElement.getAttribute('data-theme')
+    setIsDark(theme === 'dark')
     setMounted(true)
   }, [])
 
@@ -196,7 +200,8 @@ export default function LoginBranding() {
           fontWeight: 300,
           fontStyle: 'italic',
           lineHeight: 1.0,
-          color: CREAM,
+          color: isDark ? CREAM : DARK,
+          background: 'none',
           margin: '0 0 14px',
           letterSpacing: '-0.02em',
           animation: anim('0.56s'),
@@ -213,7 +218,7 @@ export default function LoginBranding() {
           fontSize: '14px',
           fontWeight: 400,
           fontStyle: 'italic',
-          color: MUTED,
+          color: isDark ? MUTED : 'hsl(25, 5%, 35%)',
           margin: '0 0 40px',
           letterSpacing: '0.03em',
           animation: anim('0.62s'),

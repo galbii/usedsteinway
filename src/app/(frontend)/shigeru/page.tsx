@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
 import { BrandPageV2 } from '@/components/piano/BrandPageV2'
-import { getBrand, getPianosByBrand } from '@/lib/piano-data'
+import { getBrand } from '@/lib/piano-data'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import { queryPianosByBrand } from '@/lib/payload/pianos'
 import type { PianoModel } from '@/types/piano'
 import type { Brand } from '@/payload-types'
 
@@ -62,7 +63,9 @@ async function getModelsFromCMS(): Promise<PianoModel[] | null> {
 export default async function ShigeruPage() {
   const brand = getBrand('shigeru-kawai')
   if (!brand) notFound()
-  const pianos = getPianosByBrand('shigeru-kawai')
-  const cmsModels = await getModelsFromCMS()
+  const [pianos, cmsModels] = await Promise.all([
+    queryPianosByBrand('shigeru-kawai'),
+    getModelsFromCMS(),
+  ])
   return <BrandPageV2 brand={brand} pianos={pianos} models={cmsModels ?? undefined} />
 }

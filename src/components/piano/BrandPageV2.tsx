@@ -16,13 +16,17 @@ interface BrandPageV2Props {
   brand: Brand
   pianos: Piano[]
   models?: PianoModel[]
+  modelUrlBase?: string
+  hideHero?: boolean
 }
 
-export function BrandPageV2({ brand, pianos, models }: BrandPageV2Props) {
+export function BrandPageV2({ brand, pianos, models, modelUrlBase, hideHero = false }: BrandPageV2Props) {
+  const modelBase = modelUrlBase ?? `/pianos/${brand.slug}`
   return (
     <main className="min-h-screen bg-piano-cream">
 
       {/* ── Hero ── */}
+      {!hideHero && (
       <section className="relative h-[75vh] min-h-[520px] max-h-[800px] overflow-hidden bg-piano-burgundy">
         <Image
           src={brand.heroImageUrl}
@@ -65,6 +69,7 @@ export function BrandPageV2({ brand, pianos, models }: BrandPageV2Props) {
           </div>
         </div>
       </section>
+      )}
 
       {/* ── Current Inventory ── */}
       <section className="py-36 px-8" style={{ backgroundColor: C.bg }}>
@@ -175,7 +180,7 @@ export function BrandPageV2({ brand, pianos, models }: BrandPageV2Props) {
               {models.map((model) => (
                 <Link
                   key={model.slug}
-                  href={`/pianos/${brand.slug}/${model.slug}`}
+                  href={`${modelBase}/${model.slug}`}
                   className="group p-8 bg-piano-cream hover:bg-piano-warm-white transition-colors duration-200"
                 >
                   <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold block mb-3">

@@ -11,6 +11,8 @@ export type PostCard = {
   imageUrl: string | null
   publishedAt: string | null
   category: string | null
+  isGuide: boolean
+  isNews: boolean
 }
 
 function getMediaUrl(media: string | Media | null | undefined): string | null {
@@ -34,8 +36,51 @@ function adaptPost(doc: Post): PostCard {
     imageUrl: getMediaUrl(doc.heroImage as string | Media | null | undefined),
     publishedAt: doc.publishedAt ?? null,
     category: getCategoryLabel(doc.categories as (string | Category)[] | null | undefined),
+    isGuide: doc.isGuide ?? false,
+    isNews: doc.isNews ?? false,
   }
 }
+
+export const queryGuidePosts = cache(async (limit = 100): Promise<PostCard[]> => {
+  const payload = await getPayload({ config: configPromise })
+
+  const result = await payload.find({
+    collection: 'posts',
+    draft: false,
+    limit,
+    overrideAccess: false,
+    pagination: false,
+    depth: 1,
+    where: {
+      and: [
+        { _status: { equals: 'published' } },
+        { isGuide: { equals: true } },
+      ],
+    },
+    sort: '-publishedAt',
+  })
+
+  return result.docs.map(adaptPost)
+})
+
+export const queryAllPosts = cache(async (limit = 100): Promise<PostCard[]> => {
+  const payload = await getPayload({ config: configPromise })
+
+  const result = await payload.find({
+    collection: 'posts',
+    draft: false,
+    limit,
+    overrideAccess: false,
+    pagination: false,
+    depth: 1,
+    where: {
+      _status: { equals: 'published' },
+    },
+    sort: '-publishedAt',
+  })
+
+  return result.docs.map(adaptPost)
+})
 
 export const queryRecentPosts = cache(async (limit = 6): Promise<PostCard[]> => {
   const payload = await getPayload({ config: configPromise })

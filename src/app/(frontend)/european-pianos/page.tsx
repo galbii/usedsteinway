@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { BRANDS } from '@/lib/piano-data'
 import { InquiryCTA } from '@/components/piano/InquiryCTA'
+import { FeaturedCarousel } from '@/components/piano/FeaturedCarousel'
+import { queryPianosByCategory } from '@/lib/payload/pianos'
 
 export const metadata: Metadata = {
   title: 'Handcrafted European Pianos For Sale | UsedSteinways.com',
@@ -37,7 +39,8 @@ const BRAND_HREF: Record<string, string> = {
   brodmann:    '/pianos/brodmann',
 }
 
-export default function EuropeanPianosPage() {
+export default async function EuropeanPianosPage() {
+  const pianos = await queryPianosByCategory('european')
   return (
     <main className="min-h-screen" style={{ backgroundColor: C.bg }}>
 
@@ -80,6 +83,35 @@ export default function EuropeanPianosPage() {
           </div>
         </div>
       </section>
+
+      {/* ── Current Inventory ────────────────────────── */}
+      {pianos.length > 0 && (
+        <section className="py-20 px-8" style={{ backgroundColor: C.bg }}>
+          <div className="max-w-7xl mx-auto mb-12">
+            <span
+              className="font-display text-[11px] tracking-[0.45em] uppercase block mb-5"
+              style={{ color: C.accent }}
+            >
+              Available Now
+            </span>
+            <div className="flex items-end justify-between gap-4">
+              <h2
+                className="font-cormorant font-light leading-tight"
+                style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)', color: C.text }}
+              >
+                European Collection
+              </h2>
+              <p
+                className="font-display text-[11px] tracking-[0.3em] uppercase pb-2"
+                style={{ color: C.muted }}
+              >
+                {pianos.length} instrument{pianos.length !== 1 ? 's' : ''}
+              </p>
+            </div>
+          </div>
+          <FeaturedCarousel pianos={pianos} />
+        </section>
+      )}
 
       {/* ── Brand Rows ───────────────────────────────── */}
       <section style={{ backgroundColor: C.bg }}>

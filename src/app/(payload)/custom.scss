@@ -253,6 +253,12 @@ select {
   }
 }
 
+// Prevent Payload from injecting colored backgrounds on login headings
+.template-minimal h1 {
+  background: none !important;
+  background-color: transparent !important;
+}
+
 // Spacing between form fields
 .template-minimal .field-type {
   margin-bottom: 20px !important;

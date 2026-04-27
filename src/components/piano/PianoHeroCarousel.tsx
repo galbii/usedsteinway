@@ -19,9 +19,21 @@ const TRANS_HALF = TRANS / 2
 
 interface PianoHeroCarouselProps {
   pianos: Piano[]
+  eyebrow?: string
+  headingLine1?: string
+  headingLine2?: string
+  showLogo?: boolean
+  minimal?: boolean
 }
 
-export function PianoHeroCarousel({ pianos }: PianoHeroCarouselProps) {
+export function PianoHeroCarousel({
+  pianos,
+  eyebrow = 'The Collection',
+  headingLine1 = 'Featured',
+  headingLine2 = 'Pianos',
+  showLogo = false,
+  minimal = false,
+}: PianoHeroCarouselProps) {
   const prefersReducedMotion =
     typeof window !== 'undefined'
       ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -186,11 +198,21 @@ export function PianoHeroCarousel({ pianos }: PianoHeroCarouselProps) {
           className="absolute top-0 left-0 z-30"
           style={{ padding: 'clamp(5rem, 8vh, 7rem) clamp(2.5rem, 5vw, 5rem) 0' }}
         >
+          {showLogo && (
+            <Image
+              src="/UsedSteinway.png"
+              alt="UsedSteinways"
+              width={72}
+              height={72}
+              priority
+              style={{ marginBottom: '1.5rem' }}
+            />
+          )}
           <p
             className="font-display"
             style={{ fontSize: '10px', letterSpacing: '0.55em', textTransform: 'uppercase', color: C.ivoryFaded, marginBottom: '1.5rem' }}
           >
-            The Collection
+            {eyebrow}
           </p>
           <h1
             style={{
@@ -202,14 +224,14 @@ export function PianoHeroCarousel({ pianos }: PianoHeroCarouselProps) {
               letterSpacing: '-0.025em',
             }}
           >
-            Featured
+            {headingLine1}
             <br />
-            <span style={{ fontStyle: 'italic', color: C.accent }}>Pianos</span>
+            <span style={{ fontStyle: 'italic', color: C.accent }}>{headingLine2}</span>
           </h1>
         </div>
 
         {/* Bottom bar — slim strip */}
-        <div
+        {!minimal && <div
           className="absolute bottom-0 left-0 right-0 z-30"
           style={{
             borderTop: `1px solid ${C.goldBorder}`,
@@ -280,7 +302,7 @@ export function PianoHeroCarousel({ pianos }: PianoHeroCarouselProps) {
               View Piano
             </Link>
           </div>
-        </div>
+        </div>}
 
       </div>
     </>

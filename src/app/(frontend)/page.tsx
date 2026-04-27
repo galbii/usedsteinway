@@ -23,18 +23,35 @@ export default async function HomePage() {
 
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
-  title: 'UsedSteinways.com — Pre-Owned Steinway & Fine Pianos | New Hampshire',
+  title: 'Portal to Rare and Quality Steinways | UsedSteinways',
   description:
-    "A curated collection of pre-owned Steinway, Bösendorfer, Bechstein and world-class pianos. Every instrument personally selected by Roger. New England's most discerning piano collection.",
+    "Your portal to rare and quality pre-owned Steinway pianos. A curated collection of Steinway, Bösendorfer, Bechstein and world-class instruments — every piano personally selected and inspected by Roger. New England's most trusted source for fine used pianos.",
+  keywords: [
+    'used Steinway pianos',
+    'rare Steinway for sale',
+    'pre-owned Steinway',
+    'quality used pianos',
+    'Steinway grand piano',
+    'Bösendorfer',
+    'Bechstein',
+    'fine used pianos New Hampshire',
+    'UsedSteinways',
+  ],
   openGraph: {
-    title: 'UsedSteinways.com',
-    description: 'Every piano personally selected. Every detail inspected.',
+    title: 'Portal to Rare and Quality Steinways | UsedSteinways',
+    description:
+      'Your portal to rare and quality pre-owned Steinway pianos. Every instrument personally selected and inspected by Roger.',
     siteName: 'UsedSteinways.com',
     type: 'website',
+    url: getServerSideURL(),
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'UsedSteinways.com',
-    description: 'Pre-owned Steinway & fine pianos. Personally selected.',
+    title: 'Portal to Rare and Quality Steinways | UsedSteinways',
+    description:
+      "Rare and quality pre-owned Steinway pianos — personally selected and inspected. New England's most trusted source for fine used pianos.",
+  },
+  alternates: {
+    canonical: getServerSideURL(),
   },
 }

@@ -233,11 +233,11 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
               {/* Primary — fill sweeps to gold on hover */}
               <Link
                 href="/pianos"
-                className="group relative inline-flex items-center justify-center gap-3 overflow-hidden font-display text-[11px] tracking-[0.38em] uppercase transition-transform duration-200 hover:scale-[1.02] active:scale-[0.99]"
+                className="group relative inline-flex items-center justify-center overflow-hidden font-display text-[13px] tracking-[0.38em] uppercase transition-transform duration-200 hover:scale-[1.02] active:scale-[0.99]"
                 style={{
                   backgroundColor: C.darkBg,
                   color: C.ivory,
-                  padding: '1.1rem 2.8rem',
+                  padding: '1.25rem 3.2rem',
                   boxShadow: `0 4px 24px hsla(350,62%,14%,0.20)`,
                 }}
               >
@@ -249,21 +249,19 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
                 <span className="relative z-10 transition-colors duration-300 group-hover:text-[hsl(350,62%,14%)]">
                   Browse Collection
                 </span>
-                <span className="relative z-10 transition-all duration-300 group-hover:translate-x-1 group-hover:text-[hsl(350,62%,14%)]">→</span>
               </Link>
 
               {/* Secondary — outlined, fills dark on hover */}
               <Link
                 href="/contact"
-                className="group inline-flex items-center justify-center gap-3 font-display text-[11px] tracking-[0.38em] uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] hover:text-[hsl(36,22%,96%)]"
+                className="group inline-flex items-center justify-center font-display text-[13px] tracking-[0.38em] uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.99] hover:text-[hsl(36,22%,96%)]"
                 style={{
                   border: `1.5px solid ${C.text}`,
                   color: C.text,
-                  padding: '1.05rem 2.2rem',
+                  padding: '1.2rem 2.8rem',
                 }}
               >
-                Talk to Roger
-                <span className="group-hover:translate-x-1 transition-transform duration-200 inline-block">→</span>
+                Get in Touch
               </Link>
             </div>
 
@@ -629,7 +627,7 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
             <>
               {/* ── ROW 1: Steinway & Sons ── */}
               <Link
-                href="/pianos?category=steinway"
+                href="/steinway"
                 className={rowCls(0)}
                 style={{ backgroundColor: C.bg, borderTop: `1px solid ${C.border}` }}
               >
@@ -668,7 +666,7 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
 
               {/* ── ROW 2: Handcrafted European ── */}
               <Link
-                href="/pianos?category=european"
+                href="/european-pianos"
                 className={rowCls(1)}
                 style={{ backgroundColor: C.darkBg, borderTop: `1px solid ${C.borderDark}` }}
               >
@@ -705,7 +703,7 @@ export function UsedSteinwaysVariantPage({ locations = [], phone, featured: feat
 
               {/* ── ROW 3: Shigeru Kawai ── */}
               <Link
-                href="/pianos?category=shigeru-kawai"
+                href="/shigeru"
                 className={rowCls(2)}
                 style={{ backgroundColor: C.bg, borderTop: `1px solid ${C.border}` }}
               >
