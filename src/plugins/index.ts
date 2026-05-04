@@ -24,6 +24,7 @@ const generateTitle: GenerateTitle<Post | Page | Testimonial> = ({ doc }) => {
   return doc?.title ? `${doc.title} | UsedSteinways.com` : 'UsedSteinways.com'
 }
 
+
 const generateURL: GenerateURL<Post | Page | Testimonial> = ({ doc, collectionSlug }) => {
   const siteURL = getServerSideURL()
   const prefix = (collectionSlug && collectionPrefixMap[collectionSlug as string]) ?? ''

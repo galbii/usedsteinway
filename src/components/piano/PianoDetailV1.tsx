@@ -2,12 +2,17 @@ import Link from 'next/link'
 import Image from 'next/image'
 import type { Piano } from '@/types/piano'
 import { ConditionBadge } from './ConditionBadge'
+import { getCachedGlobal } from '@/utilities/getGlobals'
+import type { SiteSetting } from '@/payload-types'
 
 interface PianoDetailV1Props {
   piano: Piano
 }
 
-export function PianoDetailV1({ piano }: PianoDetailV1Props) {
+export async function PianoDetailV1({ piano }: PianoDetailV1Props) {
+  const siteSettings = await getCachedGlobal('site-settings', 0)() as SiteSetting
+  const rawPhone = siteSettings?.contactInfo?.phone ?? '508-545-0766'
+  const telHref = `tel:+1${rawPhone.replace(/\D/g, '')}`
   return (
     <main className="min-h-screen bg-white">
       {/* Breadcrumb */}
@@ -94,10 +99,10 @@ export function PianoDetailV1({ piano }: PianoDetailV1Props) {
                 Request More Details
               </Link>
               <a
-                href="tel:+16035550123"
+                href={telHref}
                 className="w-full text-center border border-gray-300 text-gray-700 py-3 font-display text-sm tracking-widest uppercase hover:border-gray-900 transition-colors"
               >
-                Call (603) 555-0123
+                Call {rawPhone}
               </a>
             </div>
           </div>

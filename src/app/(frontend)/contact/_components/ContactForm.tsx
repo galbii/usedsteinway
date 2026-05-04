@@ -82,7 +82,7 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
         </div>
 
         <p className="text-piano-stone text-base leading-relaxed max-w-sm mb-12 font-light">
-          Roger reviews every message personally and will respond within one business day. A confirmation has been sent to your email.
+          We&apos;ll be in touch soon. A confirmation has been sent to your email.
         </p>
 
         <Link
@@ -113,7 +113,7 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
 
       {/* Inquiry Type Tabs */}
       <div>
-        <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-6">
+        <p className="font-display text-sm tracking-[0.45em] uppercase text-piano-gold mb-6">
           Nature of Enquiry
         </p>
         <div className="flex bg-piano-burgundy">
@@ -144,7 +144,7 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
       {/* Name + Email */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
         <div className="group">
-          <label className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+          <label className="block font-display text-xs tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
             Full Name <span className="text-piano-gold">*</span>
           </label>
           <input
@@ -157,7 +157,7 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
           />
         </div>
         <div className="group">
-          <label className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+          <label className="block font-display text-xs tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
             Email Address <span className="text-piano-gold">*</span>
           </label>
           <input
@@ -174,7 +174,7 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
       {/* Phone + Conditional budget */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
         <div className="group">
-          <label className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+          <label className="block font-display text-xs tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
             Phone Number
           </label>
           <input
@@ -188,7 +188,7 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
 
         {inquiryType === 'buy' && (
           <div className="group">
-            <label className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+            <label className="block font-display text-xs tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
               Budget Range
             </label>
             <select
@@ -211,7 +211,7 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
       {/* Timeline (buy only) */}
       {inquiryType === 'buy' && (
         <div className="group">
-          <label className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+          <label className="block font-display text-xs tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
             Purchase Timeline
           </label>
           <select
@@ -230,7 +230,7 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
 
       {/* Message */}
       <div className="group">
-        <label className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+        <label className="block font-display text-xs tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
           Message <span className="text-piano-gold">*</span>
         </label>
         <textarea
@@ -270,9 +270,6 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
           >
             {loading ? 'Sending...' : 'Send Message'}
           </button>
-          <p className="text-piano-stone text-sm leading-relaxed">
-            Roger responds personally to every message,<br className="hidden sm:block" /> typically within one business day.
-          </p>
         </div>
       </div>
     </form>

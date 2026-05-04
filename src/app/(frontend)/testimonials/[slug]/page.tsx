@@ -48,7 +48,7 @@ export default async function TestimonialPage({ params: paramsPromise }: Args) {
   const hasImage = featuredImage && typeof featuredImage === 'object'
 
   return (
-    <article>
+    <article data-theme="light">
       <PageClient />
       <PayloadRedirects disableNotFound url={url} />
       {draft && <LivePreviewListener />}

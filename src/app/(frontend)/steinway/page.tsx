@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { BrandPageV2 } from '@/components/piano/BrandPageV2'
 import { PianoHeroCarousel } from '@/components/piano/PianoHeroCarousel'
+import { SteinwayModelsGrid } from './_components/SteinwayModelsGrid'
+import { SteinwayPianosGrid } from './_components/SteinwayPianosGrid'
 import { getBrand, STEINWAY_MODELS } from '@/lib/piano-data'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
@@ -83,23 +85,25 @@ export default async function SteinwayPage() {
   ])
   const models = cmsModels ?? STEINWAY_MODELS
   const featured = pianos.filter((p) => p.isFeatured)
+  const carouselPianos = featured.length > 0 ? featured : pianos.slice(0, 6)
 
   return (
     <>
       <PianoHeroCarousel
-        pianos={featured}
+        pianos={carouselPianos}
         eyebrow="Steinway & Sons"
         headingLine1="Our Used"
         headingLine2="Steinways"
         showLogo
         minimal
       />
+      <SteinwayPianosGrid pianos={pianos} />
+      <SteinwayModelsGrid models={models} />
       <BrandPageV2
         brand={brand}
         pianos={pianos}
-        models={models}
-        modelUrlBase="/steinway"
         hideHero
+        hideInventory
       />
     </>
   )

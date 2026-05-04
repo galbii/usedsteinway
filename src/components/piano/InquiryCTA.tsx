@@ -1,6 +1,8 @@
 /* eslint-disable react/no-unescaped-entities */
 import Link from 'next/link'
 import { cn } from '@/utilities/ui'
+import { getCachedGlobal } from '@/utilities/getGlobals'
+import type { SiteSetting } from '@/payload-types'
 
 interface InquiryCTAProps {
   brand?: string
@@ -9,7 +11,11 @@ interface InquiryCTAProps {
   className?: string
 }
 
-export function InquiryCTA({ brand, pianoTitle, variant = 'dark', className }: InquiryCTAProps) {
+export async function InquiryCTA({ brand, pianoTitle, variant = 'dark', className }: InquiryCTAProps) {
+  const siteSettings = await getCachedGlobal('site-settings', 0)() as SiteSetting
+  const rawPhone = siteSettings?.contactInfo?.phone ?? '508-545-0766'
+  const telHref = `tel:+1${rawPhone.replace(/\D/g, '')}`
+
   const isDark = variant === 'dark'
   const subject = pianoTitle
     ? `Inquiry: ${pianoTitle}`
@@ -73,13 +79,13 @@ export function InquiryCTA({ brand, pianoTitle, variant = 'dark', className }: I
         <p className={cn('mt-10 text-base font-display tracking-wide', isDark ? 'text-piano-stone' : 'text-piano-stone')}>
           Or call us directly:{' '}
           <a
-            href="tel:+16035550123"
+            href={telHref}
             className={cn(
               'transition-colors hover:underline',
               isDark ? 'text-piano-gold' : 'text-piano-black hover:text-piano-gold',
             )}
           >
-            (603) 555-0123
+            {rawPhone}
           </a>
         </p>
       </div>

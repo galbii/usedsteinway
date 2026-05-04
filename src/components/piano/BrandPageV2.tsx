@@ -18,9 +18,11 @@ interface BrandPageV2Props {
   models?: PianoModel[]
   modelUrlBase?: string
   hideHero?: boolean
+  hideInventory?: boolean
+  modelsLinkable?: boolean
 }
 
-export function BrandPageV2({ brand, pianos, models, modelUrlBase, hideHero = false }: BrandPageV2Props) {
+export function BrandPageV2({ brand, pianos, models, modelUrlBase, hideHero = false, hideInventory = false, modelsLinkable = true }: BrandPageV2Props) {
   const modelBase = modelUrlBase ?? `/pianos/${brand.slug}`
   return (
     <main className="min-h-screen bg-piano-cream">
@@ -72,7 +74,7 @@ export function BrandPageV2({ brand, pianos, models, modelUrlBase, hideHero = fa
       )}
 
       {/* ── Current Inventory ── */}
-      <section className="py-36 px-8" style={{ backgroundColor: C.bg }}>
+      {!hideInventory && <section className="py-36 px-8" style={{ backgroundColor: C.bg }}>
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
             <div>
@@ -126,7 +128,7 @@ export function BrandPageV2({ brand, pianos, models, modelUrlBase, hideHero = fa
             </div>
           )}
         </div>
-      </section>
+      </section>}
 
       <div className="border-t border-piano-linen" />
 
@@ -177,30 +179,43 @@ export function BrandPageV2({ brand, pianos, models, modelUrlBase, hideHero = fa
               {brand.name} Models
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-piano-linen border border-piano-linen">
-              {models.map((model) => (
-                <Link
-                  key={model.slug}
-                  href={`${modelBase}/${model.slug}`}
-                  className="group p-8 bg-piano-cream hover:bg-piano-warm-white transition-colors duration-200"
-                >
-                  <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold block mb-3">
-                    {model.type}
-                  </span>
-                  <h3 className="font-cormorant text-3xl font-light text-piano-black mb-2 group-hover:text-piano-charcoal transition-colors">
-                    {model.name}
-                  </h3>
-                  <p className="text-piano-stone text-sm mb-5">
-                    {model.size}
-                  </p>
-                  <p className="text-piano-stone text-base leading-relaxed line-clamp-2 mb-5">
-                    {model.description}
-                  </p>
-                  <span className="font-display text-[10px] tracking-[0.3em] uppercase text-piano-stone group-hover:text-piano-black transition-colors inline-flex items-center gap-1.5">
-                    View Model
-                    <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
-                  </span>
-                </Link>
-              ))}
+              {models.map((model) => {
+                const inner = (
+                  <>
+                    <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold block mb-3">
+                      {model.type}
+                    </span>
+                    <h3 className="font-cormorant text-3xl font-light text-piano-black mb-2 group-hover:text-piano-charcoal transition-colors">
+                      {model.name}
+                    </h3>
+                    <p className="text-piano-stone text-sm mb-5">
+                      {model.size}
+                    </p>
+                    <p className="text-piano-stone text-base leading-relaxed line-clamp-2 mb-5">
+                      {model.description}
+                    </p>
+                    {modelsLinkable && (
+                      <span className="font-display text-[10px] tracking-[0.3em] uppercase text-piano-stone group-hover:text-piano-black transition-colors inline-flex items-center gap-1.5">
+                        View Model
+                        <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
+                      </span>
+                    )}
+                  </>
+                )
+                return modelsLinkable ? (
+                  <Link
+                    key={model.slug}
+                    href={`${modelBase}/${model.slug}`}
+                    className="group p-8 bg-piano-cream hover:bg-piano-warm-white transition-colors duration-200"
+                  >
+                    {inner}
+                  </Link>
+                ) : (
+                  <div key={model.slug} className="p-8 bg-piano-cream">
+                    {inner}
+                  </div>
+                )
+              })}
             </div>
           </div>
         </section>

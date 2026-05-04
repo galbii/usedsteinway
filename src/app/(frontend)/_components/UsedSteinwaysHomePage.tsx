@@ -784,11 +784,11 @@ export function UsedSteinwaysHomePage({ locations = [], phone, featured: feature
           >
             or call{' '}
             <a
-              href="tel:+16035550123"
+              href={`tel:+1${(phone ?? '508-545-0766').replace(/\D/g, '')}`}
               className="transition-opacity hover:opacity-70"
               style={{ color: C.text }}
             >
-              (603) 555-0123
+              {phone ?? '508-545-0766'}
             </a>
           </p>
         </div>

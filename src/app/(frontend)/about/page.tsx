@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { AboutPageContent } from './_components/AboutPageContent'
+import { InquiryCTA } from '@/components/piano/InquiryCTA'
 
 export const metadata: Metadata = {
   title: "About Roger's Piano | New England's Rebuilt Steinway Destination",
@@ -8,5 +9,10 @@ export const metadata: Metadata = {
 }
 
 export default function AboutPage() {
-  return <AboutPageContent />
+  return (
+    <>
+      <AboutPageContent />
+      <InquiryCTA variant="light" />
+    </>
+  )
 }

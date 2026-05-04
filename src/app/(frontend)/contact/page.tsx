@@ -49,10 +49,10 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           style={{ background: 'linear-gradient(to right, rgba(4,1,1,0.82) 0%, rgba(4,1,1,0.55) 55%, rgba(4,1,1,0.18) 100%)' }}
         />
 
-        {/* Two-column overlay: left = text, right = monogram */}
-        <div className="absolute inset-0 z-20 flex items-end lg:grid lg:grid-cols-2">
+        {/* Overlay: full-width text + watermark logo */}
+        <div className="absolute inset-0 z-20 flex items-end">
 
-          {/* Left — contact heading */}
+          {/* Contact heading */}
           <div className="flex items-end px-10 md:px-16 xl:px-24 pb-16 md:pb-20">
             <div>
               <p
@@ -83,19 +83,20 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
                 </span>
               </div>
               <p className="text-xl max-w-lg leading-relaxed font-light" style={{ color: 'rgba(245,235,215,0.55)' }}>
-                Whether buying, selling, or simply curious — we&apos;re here.
+                Whether buying, selling, or needing piano matching consultation — we&apos;re here.
               </p>
             </div>
           </div>
 
-          {/* Right — monogram */}
-          <div className="hidden lg:flex items-center justify-center pb-16">
+          {/* Monogram — watermark anchored bottom-right */}
+          <div className="absolute bottom-8 right-10 hidden lg:block">
             <Image
               src="/UsedSteinway.png"
-              alt="UsedSteinways monogram"
-              width={280}
-              height={280}
-              style={{ mixBlendMode: 'screen', opacity: 0.75 }}
+              alt=""
+              aria-hidden="true"
+              width={160}
+              height={160}
+              style={{ mixBlendMode: 'screen', opacity: 0.35 }}
             />
           </div>
 
@@ -109,7 +110,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
           {/* Form Panel */}
           <div className="bg-piano-warm-white px-12 py-14">
             <div className="flex items-center gap-5 mb-12">
-              <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold shrink-0">
+              <p className="font-display text-sm tracking-[0.45em] uppercase text-piano-gold shrink-0">
                 Send a Message
               </p>
               <div className="flex-1 h-px bg-piano-linen" />
@@ -123,14 +124,14 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
             {/* Showroom Details */}
             <div className="px-10 py-10">
               <div className="flex items-center gap-3 mb-8">
-                <p className="font-display text-sm tracking-[0.5em] uppercase text-piano-gold/60 shrink-0">
+                <p className="font-display text-base tracking-[0.5em] uppercase text-white shrink-0">
                   Showroom
                 </p>
-                <div className="flex-1 h-px bg-piano-gold/15" />
+                <div className="flex-1 h-px bg-piano-gold/30" />
               </div>
               <div className="space-y-7">
                 <div>
-                  <p className="font-display text-xs tracking-[0.4em] uppercase text-piano-silver/30 mb-2">
+                  <p className="font-display text-xs tracking-[0.4em] uppercase text-white/70 mb-2">
                     Phone
                   </p>
                   <a
@@ -141,21 +142,21 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
                   </a>
                 </div>
                 <div>
-                  <p className="font-display text-[10px] tracking-[0.4em] uppercase text-piano-silver/30 mb-2">
+                  <p className="font-display text-xs tracking-[0.4em] uppercase text-white/70 mb-2">
                     Email
                   </p>
                   <a
                     href={`mailto:${displayEmail}`}
-                    className="text-piano-cream/70 text-base hover:text-piano-cream transition-colors duration-200 font-light"
+                    className="text-piano-cream text-base hover:text-piano-gold transition-colors duration-200 font-light"
                   >
                     {displayEmail}
                   </a>
                 </div>
                 <div>
-                  <p className="font-display text-[10px] tracking-[0.4em] uppercase text-piano-silver/30 mb-2">
+                  <p className="font-display text-xs tracking-[0.4em] uppercase text-white/70 mb-2">
                     Hours
                   </p>
-                  <p className="text-piano-silver/55 text-base leading-relaxed font-light">
+                  <p className="text-piano-cream/80 text-base leading-relaxed font-light">
                     {displayHours}
                   </p>
                 </div>

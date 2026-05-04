@@ -23,15 +23,15 @@ export function PianoCardFeatured({ piano, className }: PianoCardFeaturedProps) 
       }}
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-piano-burgundy">
-        {piano.imageUrls[0] && (
-          <Image
-            src={piano.imageUrls[0]}
-            alt={piano.title}
-            fill
-            className="object-cover opacity-90 group-hover:opacity-100 group-hover:scale-[1.04] transition-all duration-700"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-        )}
+        <Image
+          src={piano.imageUrls[0] ?? '/UsedSteinway.png'}
+          alt={piano.title}
+          fill
+          className={piano.imageUrls[0]
+            ? 'object-cover opacity-90 group-hover:opacity-100 group-hover:scale-[1.04] transition-all duration-700'
+            : 'object-contain p-10 opacity-20'}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-piano-black/50 via-transparent to-transparent" />
         {piano.isFeatured && (
           <div className="absolute top-4 left-4">

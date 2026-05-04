@@ -71,27 +71,13 @@ function DefaultCard({
       >
         {/* Image */}
         <div className="relative overflow-hidden bg-piano-black" style={{ aspectRatio: '3 / 2' }}>
-          {primaryImage ? (
-            <Image
-              src={primaryImage}
-              alt={piano.title}
-              fill
-              className="pcard-img object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-            />
-          ) : (
-            <div
-              className="absolute inset-0 flex items-end"
-              style={{ padding: '1.5rem', background: 'hsl(25 6% 11%)' }}
-            >
-              <p
-                className="font-display uppercase"
-                style={{ fontSize: '8px', letterSpacing: '0.4em', color: 'rgba(255,255,255,0.18)' }}
-              >
-                Photography forthcoming
-              </p>
-            </div>
-          )}
+          <Image
+            src={primaryImage ?? '/UsedSteinway.png'}
+            alt={piano.title}
+            fill
+            className={primaryImage ? 'pcard-img object-cover' : 'object-contain p-8 opacity-20'}
+            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+          />
 
           <div
             className="absolute inset-0 pointer-events-none"
@@ -275,18 +261,14 @@ function FeaturedCard({
             className="relative overflow-hidden bg-piano-black md:w-[54%] flex-shrink-0"
             style={{ aspectRatio: '16 / 10', minHeight: '260px' }}
           >
-            {primaryImage ? (
-              <Image
-                src={primaryImage}
-                alt={piano.title}
-                fill
-                className="pcard-feat-img object-cover"
-                sizes="(max-width: 768px) 100vw, 54vw"
-                priority
-              />
-            ) : (
-              <div className="absolute inset-0" style={{ background: 'hsl(25 6% 11%)' }} />
-            )}
+            <Image
+              src={primaryImage ?? '/UsedSteinway.png'}
+              alt={piano.title}
+              fill
+              className={primaryImage ? 'pcard-feat-img object-cover' : 'object-contain p-12 opacity-20'}
+              sizes="(max-width: 768px) 100vw, 54vw"
+              priority
+            />
 
             {/* Right-side gradient to blend into content panel */}
             <div

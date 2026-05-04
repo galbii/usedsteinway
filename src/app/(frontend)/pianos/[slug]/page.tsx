@@ -4,6 +4,7 @@ import { draftMode } from 'next/headers'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { PianoDetailV2 } from '@/components/piano/PianoDetailV2'
+import { InquiryCTA } from '@/components/piano/InquiryCTA'
 import { BrandPageV2 } from '@/components/piano/BrandPageV2'
 import { PianoHeroCarousel } from '@/components/piano/PianoHeroCarousel'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
@@ -227,6 +228,7 @@ export default async function PianoOrBrandPage({ params }: Props) {
           models={models.length > 0 ? models : undefined}
           modelUrlBase={`/pianos/${brand.slug}`}
           hideHero
+          modelsLinkable={false}
         />
       </>
     )
@@ -261,6 +263,7 @@ export default async function PianoOrBrandPage({ params }: Props) {
       />
       {draft && <LivePreviewListener />}
       <PianoDetailV2 piano={piano} locations={locations} phone={phone} />
+      <InquiryCTA pianoTitle={piano.title} variant="dark" />
     </>
   )
 }

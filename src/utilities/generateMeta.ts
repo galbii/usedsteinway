@@ -5,16 +5,14 @@ import type { Media, Page, Post, Testimonial, Config } from '../payload-types'
 import { mergeOpenGraph } from './mergeOpenGraph'
 import { getServerSideURL } from './getURL'
 
-const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
-  const serverUrl = getServerSideURL()
+const SITE_NAME = 'UsedSteinways.com'
+const FALLBACK_OG_IMAGE = '/website-template-OG.webp'
 
-  let url = serverUrl + '/website-template-OG.webp'
-
-  if (image && typeof image === 'object' && 'url' in image) {
-    url = serverUrl + image.url
+const resolveImageURL = (image?: Media | Config['db']['defaultIDType'] | null): string | null => {
+  if (image && typeof image === 'object' && 'url' in image && image.url) {
+    return getServerSideURL() + image.url
   }
-
-  return url
+  return null
 }
 
 export const generateMeta = async (args: {
@@ -23,23 +21,26 @@ export const generateMeta = async (args: {
 }): Promise<Metadata> => {
   const { doc, url } = args
 
-  const ogImage = getImageURL(doc?.meta?.image)
-
+  // Title: prefer explicit meta title → doc title → site name
   const title = doc?.meta?.title
-    ? doc?.meta?.title + ' | UsedSteinways.com'
-    : 'UsedSteinways.com'
+    ? `${doc.meta.title} | ${SITE_NAME}`
+    : doc?.title
+      ? `${doc.title} | ${SITE_NAME}`
+      : SITE_NAME
+
+  const description = doc?.meta?.description || undefined
+
+  // OG image: prefer meta image → heroImage (Posts) → generic fallback
+  const ogImage =
+    resolveImageURL(doc?.meta?.image) ??
+    (doc && 'heroImage' in doc ? resolveImageURL(doc.heroImage as Media | string | null) : null) ??
+    getServerSideURL() + FALLBACK_OG_IMAGE
 
   return {
-    description: doc?.meta?.description,
+    description,
     openGraph: mergeOpenGraph({
-      description: doc?.meta?.description || '',
-      images: ogImage
-        ? [
-            {
-              url: ogImage,
-            },
-          ]
-        : undefined,
+      description: description || '',
+      images: [{ url: ogImage }],
       title,
       url: url ?? (Array.isArray(doc?.slug) ? doc?.slug.join('/') : '/'),
     }),

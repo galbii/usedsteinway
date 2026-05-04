@@ -4,7 +4,6 @@ import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import type { Piano } from '@/types/piano'
 import { ConditionBadge } from './ConditionBadge'
-import { InquiryCTA } from './InquiryCTA'
 import { PianoInquiryForm } from './PianoInquiryForm'
 import { PianoMediaCarousel } from './PianoMediaCarousel'
 import { LocationTabs } from './LocationTabs'
@@ -460,7 +459,6 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
         </section>
       )}
 
-      <InquiryCTA pianoTitle={piano.title} variant="dark" />
     </main>
   )
 }

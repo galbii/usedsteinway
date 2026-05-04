@@ -4,7 +4,6 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { InquiryCTA } from '@/components/piano/InquiryCTA'
 
 function useScrollReveal() {
   useEffect(() => {
@@ -463,7 +462,6 @@ export function AboutPageContent() {
         </div>
       </section>
 
-      <InquiryCTA variant="light" />
     </main>
   )
 }

@@ -2,6 +2,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { InquiryCTA } from '@/components/piano/InquiryCTA'
+import { getCachedGlobal } from '@/utilities/getGlobals'
+import type { SiteSetting } from '@/payload-types'
 
 export const metadata: Metadata = {
   title: 'Sell Your Piano | UsedSteinways.com',
@@ -86,7 +88,10 @@ const faqs = [
   },
 ]
 
-export default function SellYourPianoPage() {
+export default async function SellYourPianoPage() {
+  const siteSettings = await getCachedGlobal('site-settings', 0)() as SiteSetting
+  const rawPhone = siteSettings?.contactInfo?.phone ?? '508-545-0766'
+  const telHref = `tel:+1${rawPhone.replace(/\D/g, '')}`
   return (
     <main className="min-h-screen bg-piano-cream">
       {/* Hero */}
@@ -371,10 +376,10 @@ export default function SellYourPianoPage() {
               Submit Your Piano
             </Link>
             <a
-              href="tel:+16035550123"
+              href={telHref}
               className="inline-block border border-piano-gold text-piano-gold px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-gold/10 transition-colors"
             >
-              Call (603) 555-0123
+              Call {rawPhone}
             </a>
           </div>
           <p className="text-piano-silver/40 text-xs mt-6">
