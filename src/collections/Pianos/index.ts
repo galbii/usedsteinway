@@ -37,6 +37,8 @@ export const Pianos: CollectionConfig<'pianos'> = {
     brand: true,
     condition: true,
     price: true,
+    priceOnCall: true,
+    location: true,
     meta: {
       image: true,
       description: true,
@@ -87,7 +89,6 @@ export const Pianos: CollectionConfig<'pianos'> = {
                   name: 'brand',
                   type: 'relationship',
                   relationTo: 'brands',
-                  required: true,
                   admin: { width: '50%' },
                 },
                 {
@@ -169,20 +170,27 @@ export const Pianos: CollectionConfig<'pianos'> = {
                       label: 'Width',
                       admin: {
                         description: 'e.g. "58"',
-                        width: '33%',
+                        width: '25%',
                       },
                     },
                     {
                       name: 'stringLength',
                       type: 'text',
                       label: 'String Length',
-                      admin: { width: '33%' },
+                      admin: { width: '25%' },
                     },
                     {
                       name: 'keys',
                       type: 'number',
                       label: 'Keys',
                       defaultValue: 88,
+                      admin: { width: '16%' },
+                    },
+                    {
+                      name: 'pedals',
+                      type: 'number',
+                      label: 'Pedals',
+                      defaultValue: 3,
                       admin: { width: '16%' },
                     },
                   ],
@@ -198,10 +206,10 @@ export const Pianos: CollectionConfig<'pianos'> = {
                   name: 'price',
                   type: 'number',
                   label: 'Asking Price (USD)',
-                  required: true,
                   admin: {
-                    description: 'e.g. 89500',
+                    description: 'e.g. 89500. Leave blank if "Price on Call" is checked.',
                     width: '50%',
+                    condition: (data) => !data.priceOnCall,
                   },
                 },
                 {
@@ -227,9 +235,12 @@ export const Pianos: CollectionConfig<'pianos'> = {
                   required: true,
                   options: [
                     { label: 'New', value: 'new' },
-                    { label: 'Used', value: 'used' },
+                    { label: 'Pre-Owned', value: 'used' },
                     { label: 'Reconditioned', value: 'reconditioned' },
                     { label: 'Rebuilt', value: 'rebuilt' },
+                    { label: 'Rebuilt — Partial', value: 'rebuilt-partial' },
+                    { label: 'Work in Progress', value: 'work-in-progress' },
+                    { label: 'Display Model', value: 'display' },
                   ],
                   admin: { width: '50%' },
                 },
@@ -260,6 +271,14 @@ export const Pianos: CollectionConfig<'pianos'> = {
               }),
               admin: {
                 description: 'Full listing description. Include provenance and history here.',
+              },
+            },
+            {
+              name: 'provenance',
+              type: 'textarea',
+              label: 'Provenance',
+              admin: {
+                description: 'Optional. Notable history — previous owners, institutions, performances.',
               },
             },
             {
@@ -350,6 +369,20 @@ export const Pianos: CollectionConfig<'pianos'> = {
 
     // Sidebar fields
     {
+      name: 'location',
+      type: 'select',
+      label: 'Showroom Location',
+      admin: {
+        position: 'sidebar',
+        description: 'Which showroom this piano is physically located at.',
+      },
+      options: [
+        { label: 'Natick', value: 'Natick' },
+        { label: 'Burlington', value: 'Burlington' },
+        { label: 'Incoming', value: 'Incoming' },
+      ],
+    },
+    {
       name: 'isAvailable',
       type: 'checkbox',
       label: 'Available for Sale',
@@ -367,6 +400,16 @@ export const Pianos: CollectionConfig<'pianos'> = {
       admin: {
         position: 'sidebar',
         description: 'Featured pianos appear prominently on the homepage.',
+      },
+    },
+    {
+      name: 'priceOnCall',
+      type: 'checkbox',
+      label: 'Price on Call',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Check if price should display as "Call for Pricing" instead of a number.',
       },
     },
     {

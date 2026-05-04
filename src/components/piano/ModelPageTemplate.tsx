@@ -8,9 +8,18 @@ import { InquiryCTA } from './InquiryCTA'
 interface ModelPageTemplateProps {
   model: PianoModel
   currentInventory: Piano[]
+  brandHref?: string
+  brandLabel?: string
+  modelUrlBase?: string
 }
 
-export function ModelPageTemplate({ model, currentInventory }: ModelPageTemplateProps) {
+export function ModelPageTemplate({
+  model,
+  currentInventory,
+  brandHref = '/steinway',
+  brandLabel = 'Steinway',
+  modelUrlBase = '/steinway',
+}: ModelPageTemplateProps) {
   return (
     <main className="min-h-screen bg-piano-cream">
       {/* Hero */}
@@ -23,7 +32,7 @@ export function ModelPageTemplate({ model, currentInventory }: ModelPageTemplate
           <nav className="flex items-center gap-2 text-piano-cream/60 font-display text-[11px] tracking-[0.45em] uppercase mb-8">
             <Link href="/pianos" className="hover:text-piano-gold transition-colors">All Pianos</Link>
             <span>·</span>
-            <Link href="/pianos/steinway" className="hover:text-piano-gold transition-colors">Steinway</Link>
+            <Link href={brandHref} className="hover:text-piano-gold transition-colors">{brandLabel}</Link>
             <span>·</span>
             <span className="text-piano-cream">{model.name}</span>
           </nav>
@@ -137,7 +146,7 @@ export function ModelPageTemplate({ model, currentInventory }: ModelPageTemplate
             {model.adjacentModels.map((m) => (
               <Link
                 key={m.slug}
-                href={`/pianos/steinway/${m.slug}`}
+                href={`${modelUrlBase}/${m.slug}`}
                 className="border border-piano-linen px-6 py-2.5 text-piano-black text-[11px] font-display tracking-[0.3em] uppercase hover:border-piano-gold hover:text-piano-gold transition-colors"
               >
                 {m.name}

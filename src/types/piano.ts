@@ -10,11 +10,14 @@ export interface Piano {
   serialNumber?: string
   price: number | null
   priceDisplay: string
+  priceOnCall?: boolean
   /** Optional: original new retail price — shown on detail page for value contrast */
   retailPrice?: number
-  condition: 'new' | 'used' | 'reconditioned' | 'rebuilt' | 'Excellent' | 'Very Good' | 'Good' | 'Fair'
+  condition: 'new' | 'used' | 'reconditioned' | 'rebuilt' | 'rebuilt-partial' | 'work-in-progress' | 'display' | 'Excellent' | 'Very Good' | 'Good' | 'Fair'
   finish: string
   size: string
+  /** Showroom location — 'Natick', 'Burlington', 'Incoming', or undefined */
+  location?: string | null
   isAvailable: boolean
   isFeatured: boolean
   imageUrls: string[]

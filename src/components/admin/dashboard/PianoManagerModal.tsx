@@ -269,7 +269,8 @@ function getFirstImageUrl(piano: Piano): string | null {
   return (first as Media).url ?? null
 }
 
-function formatPrice(price: number): string {
+function formatPrice(price: number | null | undefined): string {
+  if (!price) return 'Call'
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',

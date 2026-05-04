@@ -67,7 +67,7 @@ function DefaultCard({
 
       <Link
         href={`/pianos/${piano.slug}`}
-        className={cn('pcard block bg-white overflow-hidden', className)}
+        className={cn('pcard flex flex-col bg-white overflow-hidden h-full', className)}
       >
         {/* Image */}
         <div className="relative overflow-hidden bg-piano-black" style={{ aspectRatio: '3 / 2' }}>
@@ -150,8 +150,10 @@ function DefaultCard({
         </div>
 
         {/* Content */}
-        <div style={{ padding: 'clamp(1.8rem, 2.8vw, 2.5rem) clamp(1.8rem, 2.8vw, 2.5rem) clamp(1.5rem, 2.2vw, 2rem)' }}>
-
+        <div
+          className="flex flex-col flex-1"
+          style={{ padding: 'clamp(1.6rem, 2.4vw, 2.2rem) clamp(1.6rem, 2.4vw, 2.2rem) clamp(1.4rem, 2vw, 1.8rem)' }}
+        >
           {/* Brand with animated leading bar */}
           <p
             className="font-display uppercase"
@@ -159,7 +161,7 @@ function DefaultCard({
               fontSize:      '11px',
               letterSpacing: '0.5em',
               color:         'hsl(40 72% 52%)',
-              marginBottom:  '0.75rem',
+              marginBottom:  '0.6rem',
             }}
           >
             <span className="pcard-brand-bar" />
@@ -170,51 +172,53 @@ function DefaultCard({
           <h3
             className="font-cormorant font-light text-piano-black"
             style={{
-              fontSize:      'clamp(1.8rem, 2.4vw, 2.4rem)',
+              fontSize:      'clamp(1.7rem, 2.2vw, 2.2rem)',
               lineHeight:    1.12,
               letterSpacing: '-0.01em',
-              marginBottom:  piano.finish ? '0.55rem' : 'clamp(1.2rem, 2vw, 1.8rem)',
+              marginBottom:  '0.45rem',
             }}
           >
             {piano.model || piano.title}
           </h3>
 
           {/* Finish */}
-          {piano.finish && (
-            <p
-              className="font-display uppercase"
-              style={{
-                fontSize:      '12px',
-                letterSpacing: '0.2em',
-                color:         'hsl(25 4% 52%)',
-                marginBottom:  'clamp(1.2rem, 2vw, 1.8rem)',
-              }}
-            >
-              {piano.finish}
-            </p>
-          )}
+          <p
+            className="font-display uppercase"
+            style={{
+              fontSize:      '11px',
+              letterSpacing: '0.18em',
+              color:         'hsl(25 4% 56%)',
+              minHeight:     '1.4em',
+            }}
+          >
+            {piano.finish || ''}
+          </p>
 
-          {/* Footer */}
+          {/* Footer — pushed to bottom */}
           <div
-            className="flex items-center justify-between"
-            style={{ paddingTop: 'clamp(1rem, 1.5vw, 1.3rem)', borderTop: '1px solid hsl(36 18% 90%)' }}
+            className="mt-auto flex items-end justify-between gap-3"
+            style={{ paddingTop: 'clamp(0.9rem, 1.4vw, 1.2rem)', borderTop: '1px solid hsl(36 18% 90%)', marginTop: 'clamp(1rem, 1.8vw, 1.6rem)' }}
           >
             <p
-              className="font-display uppercase"
-              style={{ fontSize: '12px', letterSpacing: '0.2em', color: 'hsl(25 4% 58%)' }}
+              className="font-display uppercase leading-none"
+              style={{ fontSize: '11px', letterSpacing: '0.18em', color: 'hsl(25 4% 58%)', flexShrink: 0 }}
             >
               {piano.size || '—'}
             </p>
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-baseline gap-2 min-w-0">
               <span
                 className="font-cormorant font-light text-piano-black"
-                style={{ fontSize: 'clamp(1.55rem, 2.1vw, 2.1rem)', lineHeight: 1 }}
+                style={{
+                  fontSize:    'clamp(1.3rem, 1.7vw, 1.8rem)',
+                  lineHeight:  1,
+                  whiteSpace:  'nowrap',
+                }}
               >
                 {piano.priceDisplay}
               </span>
               <span
-                className="pcard-arrow font-display"
-                style={{ fontSize: '1rem', color: 'hsl(25 4% 72%)' }}
+                className="pcard-arrow font-display flex-shrink-0"
+                style={{ fontSize: '0.9rem', color: 'hsl(25 4% 72%)' }}
               >
                 →
               </span>

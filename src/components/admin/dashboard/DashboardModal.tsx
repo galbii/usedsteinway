@@ -26,8 +26,8 @@ const STYLES = `
     to   { opacity: 1; }
   }
   @keyframes usw-dm-panel-in {
-    from { opacity: 0; transform: scale(0.97) translateY(12px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.97) translateY(12px); }
+    to   { opacity: 1; transform: translate(-50%, -50%) scale(1) translateY(0); }
   }
   @keyframes usw-dm-shimmer {
     0%   { opacity: 0.35; }

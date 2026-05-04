@@ -7,6 +7,22 @@ function isMediaObject(val: unknown): val is Media {
   return typeof val === 'object' && val !== null && 'url' in (val as object)
 }
 
+export const queryHeroImages = cache(async (limit = 18): Promise<Media[]> => {
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const { docs } = await payload.find({
+      collection: 'media',
+      overrideAccess: false,
+      limit,
+      pagination: false,
+      where: { tags: { contains: 'piano' } },
+    })
+    return docs.filter(isMediaObject)
+  } catch {
+    return []
+  }
+})
+
 export const queryGalleryImages = cache(async (limit = 6): Promise<Media[]> => {
   try {
     const payload = await getPayload({ config: configPromise })

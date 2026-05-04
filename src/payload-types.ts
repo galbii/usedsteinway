@@ -1026,7 +1026,7 @@ export interface Piano {
    * e.g. "2015 Steinway Model B — Satin Ebony"
    */
   title: string;
-  brand: string | Brand;
+  brand?: (string | null) | Brand;
   /**
    * e.g. "Model B"
    */
@@ -1055,16 +1055,17 @@ export interface Piano {
     width?: string | null;
     stringLength?: string | null;
     keys?: number | null;
+    pedals?: number | null;
   };
   /**
-   * e.g. 89500
+   * e.g. 89500. Leave blank if "Price on Call" is checked.
    */
-  price: number;
+  price?: number | null;
   /**
    * Optional. Original price when new — shows value contrast to buyers.
    */
   retailPrice?: number | null;
-  condition: 'new' | 'used' | 'reconditioned' | 'rebuilt';
+  condition: 'new' | 'used' | 'reconditioned' | 'rebuilt' | 'rebuilt-partial' | 'work-in-progress' | 'display';
   /**
    * Detailed notes on the piano's current condition.
    */
@@ -1087,6 +1088,10 @@ export interface Piano {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Optional. Notable history — previous owners, institutions, performances.
+   */
+  provenance?: string | null;
   /**
    * Optional. Notes on any restoration or rebuilding work performed.
    */
@@ -1126,6 +1131,10 @@ export interface Piano {
     description?: string | null;
   };
   /**
+   * Which showroom this piano is physically located at.
+   */
+  location?: ('Natick' | 'Burlington' | 'Incoming') | null;
+  /**
    * Uncheck when the piano has been sold.
    */
   isAvailable?: boolean | null;
@@ -1133,6 +1142,10 @@ export interface Piano {
    * Featured pianos appear prominently on the homepage.
    */
   isFeatured?: boolean | null;
+  /**
+   * Check if price should display as "Call for Pricing" instead of a number.
+   */
+  priceOnCall?: boolean | null;
   publishedAt?: string | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -1883,12 +1896,14 @@ export interface PianosSelect<T extends boolean = true> {
         width?: T;
         stringLength?: T;
         keys?: T;
+        pedals?: T;
       };
   price?: T;
   retailPrice?: T;
   condition?: T;
   conditionReport?: T;
   description?: T;
+  provenance?: T;
   restorationHistory?: T;
   tags?:
     | T
@@ -1911,8 +1926,10 @@ export interface PianosSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  location?: T;
   isAvailable?: T;
   isFeatured?: T;
+  priceOnCall?: T;
   publishedAt?: T;
   generateSlug?: T;
   slug?: T;

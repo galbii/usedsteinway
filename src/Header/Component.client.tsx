@@ -10,19 +10,38 @@ import type { Header } from '@/payload-types'
 import { CMSLink } from '@/components/Link'
 import { PianoLogo } from '@/components/layout/PianoLogo'
 import { HeaderNav } from './Nav'
+import { MobileModelsSection } from './Nav/MobileModelsSection'
+import { MobileBrandsSection } from './Nav/MobileBrandsSection'
+import { MobileResourcesSection } from './Nav/MobileResourcesSection'
 import { cn } from '@/utilities/ui'
 import type { Brand } from '@/payload-types'
 
 type BrandModel = NonNullable<Brand['models']>[number]
+type ActiveDropdown = 'models' | 'resources' | 'brands' | null
 
 interface HeaderClientProps {
   data: Header
   models?: BrandModel[]
 }
 
+function resolveNavHref(link: NonNullable<Header['navItems']>[number]['link']): string {
+  if (
+    link?.type === 'reference' &&
+    typeof link.reference?.value === 'object' &&
+    link.reference.value !== null &&
+    'slug' in link.reference.value &&
+    link.reference.value.slug
+  ) {
+    const prefix = link.reference.relationTo !== 'pages' ? `/${link.reference.relationTo}` : ''
+    return `${prefix}/${link.reference.value.slug}`
+  }
+  return link?.url ?? ''
+}
+
 export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] }) => {
   const [theme, setTheme] = useState<string | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [expandedSection, setExpandedSection] = useState<ActiveDropdown>(null)
   const [scrolled, setScrolled] = useState(false)
   const { headerTheme, setHeaderTheme } = useHeaderTheme()
   const pathname = usePathname()
@@ -55,6 +74,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
 
   useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? 'hidden' : ''
+    if (!mobileMenuOpen) setExpandedSection(null)
     return () => { document.body.style.overflow = '' }
   }, [mobileMenuOpen])
 
@@ -202,27 +222,86 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
 
         {/* Nav links — staggered reveal */}
         <nav className="flex-1 flex flex-col px-7 pt-6 pb-4 overflow-y-auto">
-          {navItems.map(({ link }, i) => (
-            <div
-              key={i}
-              style={{
-                borderBottom: '1px solid rgba(200, 160, 75, 0.07)',
-                opacity: mobileMenuOpen ? 1 : 0,
-                transform: mobileMenuOpen ? 'translateX(0)' : 'translateX(14px)',
-                transition: `opacity 0.4s ease ${i * 65 + 120}ms, transform 0.4s cubic-bezier(0.16,1,0.3,1) ${i * 65 + 120}ms`,
-              }}
-            >
-              <CMSLink
-                {...link}
-                appearance="link"
-                className={cn(
-                  'flex items-center justify-between w-full py-[14px]',
-                  'font-display font-medium text-[13px] tracking-[0.18em] uppercase',
-                  'text-piano-cream/60 hover:text-piano-cream transition-colors duration-150',
+          {navItems.map(({ link }, i) => {
+            const href = resolveNavHref(link)
+            const label = link?.label?.toLowerCase() ?? ''
+
+            const isSteinwayLink = href === '/pianos/steinway' || href.startsWith('/pianos/steinway')
+            const isResourcesLink = label === 'resources'
+            const isPianosLink = href === '/pianos'
+
+            const dropdownKey: ActiveDropdown =
+              isSteinwayLink && models.length > 0 ? 'models'
+              : isPianosLink ? 'brands'
+              : isResourcesLink ? 'resources'
+              : null
+
+            const isExpanded = expandedSection === dropdownKey && dropdownKey !== null
+
+            return (
+              <div
+                key={i}
+                style={{
+                  borderBottom: '1px solid rgba(200, 160, 75, 0.07)',
+                  opacity: mobileMenuOpen ? 1 : 0,
+                  transform: mobileMenuOpen ? 'translateX(0)' : 'translateX(14px)',
+                  transition: `opacity 0.4s ease ${i * 65 + 120}ms, transform 0.4s cubic-bezier(0.16,1,0.3,1) ${i * 65 + 120}ms`,
+                }}
+              >
+                {dropdownKey !== null ? (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <Link
+                        href={href}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={cn(
+                          'flex items-center py-[14px]',
+                          'font-display font-medium text-[13px] tracking-[0.18em] uppercase',
+                          'text-piano-cream/60 hover:text-piano-cream transition-colors duration-150',
+                        )}
+                      >
+                        {link.label}
+                      </Link>
+                      <button
+                        onClick={() => setExpandedSection(isExpanded ? null : dropdownKey)}
+                        className="p-2 -mr-2 text-piano-cream/30 hover:text-piano-cream/60 transition-colors duration-150"
+                        aria-label={isExpanded ? `Collapse ${link.label}` : `Expand ${link.label}`}
+                        aria-expanded={isExpanded}
+                      >
+                        <svg
+                          className={cn('w-3.5 h-3.5 transition-transform duration-300', isExpanded && 'rotate-90')}
+                          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    <div
+                      className="overflow-hidden transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)]"
+                      style={{ maxHeight: isExpanded ? '600px' : '0' }}
+                    >
+                      <div className="pb-3">
+                        {dropdownKey === 'models' && <MobileModelsSection models={models} />}
+                        {dropdownKey === 'brands' && <MobileBrandsSection />}
+                        {dropdownKey === 'resources' && <MobileResourcesSection />}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <CMSLink
+                    {...link}
+                    appearance="link"
+                    className={cn(
+                      'flex items-center justify-between w-full py-[14px]',
+                      'font-display font-medium text-[13px] tracking-[0.18em] uppercase',
+                      'text-piano-cream/60 hover:text-piano-cream transition-colors duration-150',
+                    )}
+                  />
                 )}
-              />
-            </div>
-          ))}
+              </div>
+            )
+          })}
 
           {/* Visit in sidebar */}
           <div

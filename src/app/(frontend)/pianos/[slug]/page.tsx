@@ -4,8 +4,11 @@ import { draftMode } from 'next/headers'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { PianoDetailV2 } from '@/components/piano/PianoDetailV2'
+import { BrandPageV2 } from '@/components/piano/BrandPageV2'
+import { PianoHeroCarousel } from '@/components/piano/PianoHeroCarousel'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
-import { queryPianoBySlug } from '@/lib/payload/pianos'
+import { queryPianoBySlug, queryPianosByBrand } from '@/lib/payload/pianos'
+import { queryBrandBySlug, adaptPayloadBrandToDomain, adaptPayloadBrandModels } from '@/lib/payload/brands'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { getServerSideURL } from '@/utilities/getURL'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
@@ -16,7 +19,7 @@ interface Props {
   params: Promise<{ slug: string }>
 }
 
-// ── JSON-LD Structured Data ──────────────────────────────────────────────────
+// ── JSON-LD for individual pianos ────────────────────────────────────────────
 
 function buildProductSchema(piano: Piano, baseUrl: string) {
   const conditionMap: Record<string, string> = {
@@ -59,7 +62,7 @@ function buildProductSchema(piano: Piano, baseUrl: string) {
   }
 }
 
-function buildBreadcrumbSchema(piano: Piano, baseUrl: string) {
+function buildPianoBreadcrumbSchema(piano: Piano, baseUrl: string) {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -82,31 +85,76 @@ function buildBreadcrumbSchema(piano: Piano, baseUrl: string) {
   }
 }
 
+// Brands that have their own dedicated top-level routes — skip dynamic brand page for these
+const DEDICATED_BRAND_ROUTES = new Set(['steinway', 'shigeru-kawai'])
+
 // ── Static Params ────────────────────────────────────────────────────────────
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
-  const pianos = await payload.find({
-    collection: 'pianos',
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: { slug: true },
-  })
-  return pianos.docs.map(({ slug }) => ({ slug }))
+  const [pianos, brands] = await Promise.all([
+    payload.find({
+      collection: 'pianos',
+      draft: false,
+      limit: 1000,
+      overrideAccess: false,
+      pagination: false,
+      select: { slug: true },
+    }),
+    payload.find({
+      collection: 'brands',
+      limit: 100,
+      overrideAccess: false,
+      pagination: false,
+      select: { slug: true },
+    }),
+  ])
+  return [
+    ...pianos.docs.map(({ slug }) => ({ slug })),
+    ...brands.docs
+      .filter(({ slug }) => !DEDICATED_BRAND_ROUTES.has(slug))
+      .map(({ slug }) => ({ slug })),
+  ]
 }
 
 // ── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const piano = await queryPianoBySlug(decodeURIComponent(slug))
+  const decoded = decodeURIComponent(slug)
+  const baseUrl = getServerSideURL()
+
+  // Try brand first — skip brands that have dedicated top-level routes
+  const brandDoc = !DEDICATED_BRAND_ROUTES.has(decoded) ? await queryBrandBySlug(decoded) : null
+  if (brandDoc) {
+    const brand = adaptPayloadBrandToDomain(brandDoc)
+    const canonicalUrl = `${baseUrl}/pianos/${brand.slug}`
+    const title = `${brand.name} Pianos For Sale | UsedSteinways.com`
+    const description =
+      brand.description ||
+      `Pre-owned ${brand.name} grand pianos — personally inspected and selected by Roger, RPT.`
+    return {
+      metadataBase: new URL(baseUrl),
+      title,
+      description,
+      alternates: { canonical: canonicalUrl },
+      openGraph: mergeOpenGraph({
+        title,
+        description,
+        url: canonicalUrl,
+        ...(brand.heroImageUrl
+          ? { images: [{ url: brand.heroImageUrl, width: 1200, height: 630, alt: brand.name }] }
+          : {}),
+      }),
+      robots: { index: true, follow: true },
+    }
+  }
+
+  // Fall back to piano
+  const piano = await queryPianoBySlug(decoded)
   if (!piano) return { title: 'Piano Not Found | UsedSteinways.com' }
 
-  const baseUrl = getServerSideURL()
   const canonicalUrl = `${baseUrl}/pianos/${piano.slug}`
-
   const conditionLabel =
     piano.condition === 'new'
       ? 'New'
@@ -149,16 +197,53 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 
-export default async function PianoDetailPage({ params }: Props) {
+export default async function PianoOrBrandPage({ params }: Props) {
   const { isEnabled: draft } = await draftMode()
   const { slug } = await params
-  const piano = await queryPianoBySlug(decodeURIComponent(slug))
+  const decoded = decodeURIComponent(slug)
 
+  // ── Brand page ──────────────────────────────────────────────────────────────
+  const brandDoc = !DEDICATED_BRAND_ROUTES.has(decoded) ? await queryBrandBySlug(decoded) : null
+  if (brandDoc) {
+    const [brand, pianos] = await Promise.all([
+      Promise.resolve(adaptPayloadBrandToDomain(brandDoc)),
+      queryPianosByBrand(decoded),
+    ])
+    const models = adaptPayloadBrandModels(brandDoc)
+    const featured = pianos.filter((p) => p.isFeatured)
+
+    return (
+      <>
+        <PianoHeroCarousel
+          pianos={featured.length > 0 ? featured : pianos.slice(0, 5)}
+          eyebrow={brand.name}
+          headingLine1="Our Used"
+          headingLine2={brand.name}
+          minimal
+        />
+        <BrandPageV2
+          brand={brand}
+          pianos={pianos}
+          models={models.length > 0 ? models : undefined}
+          modelUrlBase={`/pianos/${brand.slug}`}
+          hideHero
+        />
+      </>
+    )
+  }
+
+  // ── Piano detail page ────────────────────────────────────────────────────────
+  const piano = await queryPianoBySlug(decoded)
   if (!piano) notFound()
 
   const siteSettings = (await getCachedGlobal('site-settings', 0)()) as SiteSetting
-  const locations = siteSettings?.locations ?? []
+  const allLocations = siteSettings?.locations ?? []
   const phone = siteSettings?.contactInfo?.phone ?? undefined
+
+  const locations =
+    piano.location && piano.location !== 'Incoming'
+      ? allLocations.filter((loc) => loc.name === piano.location)
+      : allLocations
 
   const baseUrl = getServerSideURL()
 
@@ -171,7 +256,7 @@ export default async function PianoDetailPage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(buildBreadcrumbSchema(piano, baseUrl)),
+          __html: JSON.stringify(buildPianoBreadcrumbSchema(piano, baseUrl)),
         }}
       />
       {draft && <LivePreviewListener />}

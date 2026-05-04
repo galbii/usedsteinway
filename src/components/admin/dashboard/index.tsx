@@ -3,7 +3,6 @@ import { getPayload } from 'payload'
 import { Greeting } from './Greeting'
 import { StatsRow, type StatItem } from './StatsRow'
 import { RecentPianos } from './RecentPianos'
-import { QuickActions } from './QuickActions'
 import { QuickLinks } from './QuickLinks'
 
 const COLORS = {
@@ -60,18 +59,8 @@ export default async function Dashboard() {
           <StatsRow stats={stats} />
         </div>
 
-        {/* Main content — two column */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 280px',
-            gap: '24px',
-            alignItems: 'start',
-          }}
-        >
-          <RecentPianos pianos={recentPianos.docs} />
-          <QuickActions />
-        </div>
+        {/* Main content */}
+        <RecentPianos pianos={recentPianos.docs} />
       </div>
     </div>
   )

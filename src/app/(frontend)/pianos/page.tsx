@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
-import { PianoBrowser } from '@/components/piano/PianoBrowser'
 import { InquiryCTA } from '@/components/piano/InquiryCTA'
 import { PianoHeroCarousel } from '@/components/piano/PianoHeroCarousel'
 import { queryAvailablePianos, queryFeaturedPianos } from '@/lib/payload/pianos'
+import { PianosPageClient } from './_components/PianosPageClient'
 
 export const metadata: Metadata = {
   title: 'Piano Inventory | UsedSteinways.com',
@@ -18,14 +18,8 @@ export default async function PianosPage() {
 
   return (
     <main className="min-h-screen">
-      {/* Featured pianos hero carousel */}
       <PianoHeroCarousel pianos={featured} />
-
-      {/* Filterable inventory browser */}
-      <div id="inventory">
-        <PianoBrowser pianos={allPianos} />
-      </div>
-
+      <PianosPageClient pianos={allPianos} />
       <InquiryCTA variant="dark" />
     </main>
   )

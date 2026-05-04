@@ -34,9 +34,10 @@ const C = {
 
 interface PianoBrowserProps {
   pianos: Piano[]
+  initialBrandFilter?: BrandFilter
 }
 
-export function PianoBrowser({ pianos }: PianoBrowserProps) {
+export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) {
   const [headerH, setHeaderH] = useState(HEADER_H_DEFAULT)
 
   useLayoutEffect(() => {
@@ -60,7 +61,11 @@ export function PianoBrowser({ pianos }: PianoBrowserProps) {
   }, [])
 
   const [sidebarOpen,     setSidebarOpen]     = useState(false)
-  const [brandFilter,     setBrandFilter]     = useState<BrandFilter>('all')
+  const [brandFilter,     setBrandFilter]     = useState<BrandFilter>(initialBrandFilter ?? 'all')
+
+  useEffect(() => {
+    if (initialBrandFilter !== undefined) setBrandFilter(initialBrandFilter)
+  }, [initialBrandFilter])
   const [conditionFilter, setConditionFilter] = useState<ConditionFilter>('all')
   const [priceFilter,     setPriceFilter]     = useState<PriceFilter>('all')
   const [sizeFilter,      setSizeFilter]      = useState<SizeFilter>('all')

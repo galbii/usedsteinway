@@ -8,7 +8,9 @@ import { lexicalToPlainText } from '@/utilities/lexicalToPlainText'
 
 // ─── Adapter ─────────────────────────────────────────────────────────────────
 
-function formatPrice(price: number): string {
+function formatPrice(price: number | null | undefined, priceOnCall?: boolean | null): string {
+  if (priceOnCall) return 'Call for Pricing'
+  if (!price) return 'Contact for Price'
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -36,6 +38,7 @@ function buildSpecs(doc: PayloadPiano): Record<string, string> {
   if (s?.width) specs['Width'] = s.width
   if (s?.stringLength) specs['String Length'] = s.stringLength
   if (s?.keys) specs['Keys'] = String(s.keys)
+  if (s?.pedals) specs['Pedals'] = String(s.pedals)
   if (doc.finish) specs['Finish'] = doc.finish
   if (doc.year) specs['Year'] = String(doc.year)
   if (doc.serialNumber) specs['Serial'] = doc.serialNumber
@@ -61,12 +64,14 @@ export function adaptPayloadPiano(doc: PayloadPiano): Piano {
     model: doc.model ?? '',
     year: doc.year ?? 0,
     serialNumber: doc.serialNumber ?? undefined,
-    price: doc.price,
-    priceDisplay: formatPrice(doc.price),
+    price: doc.price ?? null,
+    priceDisplay: formatPrice(doc.price, doc.priceOnCall),
+    priceOnCall: doc.priceOnCall ?? false,
     retailPrice: doc.retailPrice ?? undefined,
     condition: doc.condition as Piano['condition'],
     finish: doc.finish ?? '',
     size: doc.specifications?.size ?? '',
+    location: doc.location ?? null,
     isAvailable: doc.isAvailable ?? false,
     isFeatured: doc.isFeatured ?? false,
     imageUrls,
@@ -74,6 +79,7 @@ export function adaptPayloadPiano(doc: PayloadPiano): Piano {
     videoUrl: doc.videoUrl ?? undefined,
     description: descriptionPlainText,
     richTextDescription: doc.description ?? undefined,
+    provenance: doc.provenance ?? undefined,
     restorationHistory: doc.restorationHistory ?? undefined,
     conditionReport: doc.conditionReport ?? undefined,
     specs: buildSpecs(doc),
@@ -81,7 +87,37 @@ export function adaptPayloadPiano(doc: PayloadPiano): Piano {
   }
 }
 
+// ─── Brand priority sort ──────────────────────────────────────────────────────
+
+const BRAND_PRIORITY: Record<string, number> = {
+  'steinway': 0,
+  'shigeru-kawai': 1,
+}
+
+function brandPriority(brandSlug: string): number {
+  return BRAND_PRIORITY[brandSlug] ?? 2
+}
+
+function sortByBrandPriority(pianos: Piano[]): Piano[] {
+  return [...pianos].sort((a, b) => brandPriority(a.brandSlug) - brandPriority(b.brandSlug))
+}
+
 // ─── Queries ──────────────────────────────────────────────────────────────────
+
+export const queryAvailablePianosCount = cache(async (): Promise<number> => {
+  const payload = await getPayload({ config: configPromise })
+  const result = await payload.count({
+    collection: 'pianos',
+    overrideAccess: false,
+    where: {
+      and: [
+        { isAvailable: { equals: true } },
+        { _status: { equals: 'published' } },
+      ],
+    },
+  })
+  return result.totalDocs
+})
 
 export const queryPianoBySlug = cache(async (slug: string): Promise<Piano | null> => {
   const { isEnabled: draft } = await draftMode()
@@ -123,7 +159,7 @@ export const queryAvailablePianos = cache(async (): Promise<Piano[]> => {
     sort: '-publishedAt',
   })
 
-  return result.docs.map(adaptPayloadPiano)
+  return sortByBrandPriority(result.docs.map(adaptPayloadPiano))
 })
 
 export const queryFeaturedPianos = cache(async (): Promise<Piano[]> => {
@@ -194,6 +230,32 @@ export const queryPianosByBrand = cache(async (brandSlug: string): Promise<Piano
 
   return result.docs.map(adaptPayloadPiano)
 })
+
+export const queryPianosByBrandAndModel = cache(
+  async (brandSlug: string, modelValue: string): Promise<Piano[]> => {
+    const payload = await getPayload({ config: configPromise })
+
+    const result = await payload.find({
+      collection: 'pianos',
+      draft: false,
+      limit: 200,
+      overrideAccess: false,
+      pagination: false,
+      depth: 1,
+      where: {
+        and: [
+          { 'brand.slug': { equals: brandSlug } },
+          { model: { equals: modelValue } },
+          { isAvailable: { equals: true } },
+          { _status: { equals: 'published' } },
+        ],
+      },
+      sort: '-publishedAt',
+    })
+
+    return result.docs.map(adaptPayloadPiano)
+  },
+)
 
 export const querySearchPianos = cache(async (query: string): Promise<Piano[]> => {
   const payload = await getPayload({ config: configPromise })
