@@ -1,10 +1,13 @@
 import React from 'react'
 import RichText from '@/components/RichText'
+import { normalizeRichTextContent } from '@/utilities/normalizeRichTextContent'
 
 import type { ContentBlock as ContentBlockProps } from '@/payload-types'
 
 export const ContentBlock: React.FC<ContentBlockProps> = ({ richText }) => {
   if (!richText) return null
+
+  const normalizedContent = normalizeRichTextContent(richText)
 
   return (
     /*
@@ -31,7 +34,7 @@ export const ContentBlock: React.FC<ContentBlockProps> = ({ richText }) => {
         color: '#111',
       }}
     >
-      <RichText data={richText} enableGutter={false} enableProse={false} />
+      <RichText data={normalizedContent!} enableGutter={false} enableProse={false} />
     </div>
   )
 }

@@ -1,12 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import {
-  FixedToolbarFeature,
-  HeadingFeature,
-  HorizontalRuleFeature,
-  InlineToolbarFeature,
-  lexicalEditor,
-} from '@payloadcms/richtext-lexical'
+import { contentLexical } from '@/fields/contentLexical'
 
 import {
   MetaDescriptionField,
@@ -46,7 +40,7 @@ export const Pianos: CollectionConfig<'pianos'> = {
   },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'brand', 'condition', 'price', 'isAvailable', 'updatedAt'],
+    defaultColumns: ['title', 'brand', 'condition', 'price', 'priority', 'isAvailable', 'updatedAt'],
     description: 'Individual piano listings available for sale.',
     components: {
       beforeList: ['@/collections/Pianos/SeedButton#SeedButton'],
@@ -260,17 +254,9 @@ export const Pianos: CollectionConfig<'pianos'> = {
               name: 'description',
               type: 'richText',
               label: 'Description',
-              editor: lexicalEditor({
-                features: ({ rootFeatures }) => [
-                  ...rootFeatures,
-                  HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4'] }),
-                  FixedToolbarFeature(),
-                  InlineToolbarFeature(),
-                  HorizontalRuleFeature(),
-                ],
-              }),
+              editor: contentLexical,
               admin: {
-                description: 'Full listing description. Include provenance and history here.',
+                description: 'Main listing description shown on the piano detail page. Paste from any source — formatting (bold, italic) is preserved and line-wrap breaks are automatically cleaned up. Provenance and restoration notes have their own fields below.',
               },
             },
             {
@@ -400,6 +386,16 @@ export const Pianos: CollectionConfig<'pianos'> = {
       admin: {
         position: 'sidebar',
         description: 'Featured pianos appear prominently on the homepage.',
+      },
+    },
+    {
+      name: 'priority',
+      type: 'number',
+      label: 'Display Priority',
+      defaultValue: 20,
+      admin: {
+        position: 'sidebar',
+        description: 'Controls grid order. Lower number = appears first. Default is 20 — use 1–19 to promote, 21+ to demote.',
       },
     },
     {

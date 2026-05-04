@@ -3,6 +3,7 @@ import React, { Fragment } from 'react'
 import type { Page, Post } from '@/payload-types'
 
 import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
+import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { ExpertBlock } from '@/blocks/Expert/Component'
@@ -15,6 +16,7 @@ import { MediaBlock } from '@/blocks/MediaBlock/Component'
 // then add an entry here.
 const blockComponents = {
   archive:    ArchiveBlock,
+  banner:     BannerBlock,
   content:    ContentBlock,
   cta:        CallToActionBlock,
   expert:     ExpertBlock,

@@ -8,8 +8,8 @@ import { PianoInquiryForm } from './PianoInquiryForm'
 import { PianoMediaCarousel } from './PianoMediaCarousel'
 import { LocationTabs } from './LocationTabs'
 import { cn } from '@/utilities/ui'
-import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import dynamic from 'next/dynamic'
+import { normalizeRichTextContent } from '@/utilities/normalizeRichTextContent'
 
 const RichText = dynamic(() => import('@/components/RichText'), { ssr: true })
 
@@ -322,13 +322,25 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
 
               {/* Description */}
               {piano.richTextDescription ? (
-                <div className="text-piano-stone text-xl leading-relaxed [&_p]:mb-5 [&_h2]:font-cormorant [&_h2]:font-light [&_h2]:text-piano-black [&_h2]:text-4xl [&_h2]:mb-4 [&_h3]:font-display [&_h3]:text-piano-burgundy [&_h3]:tracking-widest [&_h3]:uppercase [&_h3]:text-xs [&_h3]:mb-3 sr sr-d2">
-                  <RichText
-                    data={piano.richTextDescription as DefaultTypedEditorState}
-                    enableGutter={false}
-                    enableProse={false}
-                  />
-                </div>
+                <RichText
+                  data={normalizeRichTextContent(piano.richTextDescription)!}
+                  enableGutter={false}
+                  enableProse={false}
+                  className={[
+                    'text-piano-stone text-xl leading-relaxed sr sr-d2',
+                    // Paragraph spacing — empty paragraphs are suppressed at the
+                    // converter level so [&_p:empty]:hidden is not needed here
+                    '[&_p]:mb-6 [&_p:last-child]:mb-0',
+                    // Headings
+                    '[&_h2]:font-cormorant [&_h2]:font-light [&_h2]:text-piano-black [&_h2]:text-4xl [&_h2]:mt-10 [&_h2]:mb-4',
+                    '[&_h3]:font-display [&_h3]:text-piano-burgundy [&_h3]:tracking-widest [&_h3]:uppercase [&_h3]:text-xs [&_h3]:mt-8 [&_h3]:mb-3',
+                    // Blockquote
+                    '[&_blockquote]:border-l-2 [&_blockquote]:border-piano-burgundy/40 [&_blockquote]:pl-6 [&_blockquote]:italic [&_blockquote]:text-piano-stone/80 [&_blockquote]:my-8',
+                    // Lists
+                    '[&_ul]:list-disc [&_ul]:pl-6 [&_ul]:space-y-2 [&_ul]:mb-6',
+                    '[&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:space-y-2 [&_ol]:mb-6',
+                  ].join(' ')}
+                />
               ) : piano.description ? (
                 <p className="text-piano-stone text-xl leading-relaxed sr sr-d2">
                   {piano.description}
@@ -431,7 +443,7 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
               className="font-cormorant font-light text-piano-cream sr sr-d1"
               style={{ fontSize: 'clamp(3.5rem, 5.5vw, 6rem)' }}
             >
-              Ask Roger About This Piano
+              Ask Us About This Piano
             </h2>
           </div>
           <PianoInquiryForm pianoTitle={piano.title} pianoSlug={piano.slug} phone={phone} />

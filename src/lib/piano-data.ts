@@ -21,6 +21,7 @@ export const PIANOS: Piano[] = [
     size: '6\'10" (211 cm)',
     isAvailable: true,
     isFeatured: true,
+    priority: 20,
     imageUrls: [
       'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=1200&q=80',
       'https://images.unsplash.com/photo-1552422535-c45813c61732?w=1200&q=80',
@@ -63,6 +64,7 @@ export const PIANOS: Piano[] = [
     size: '8\'11¾" (274 cm)',
     isAvailable: true,
     isFeatured: true,
+    priority: 20,
     imageUrls: [
       'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=1200&q=80',
       'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=1200&q=80',
@@ -100,6 +102,7 @@ export const PIANOS: Piano[] = [
     size: '7\'4" (225 cm)',
     isAvailable: true,
     isFeatured: true,
+    priority: 20,
     imageUrls: [
       'https://images.unsplash.com/photo-1525201548942-d8732f6617a0?w=1200&q=80',
       'https://images.unsplash.com/photo-1552422535-c45813c61732?w=1200&q=80',
@@ -133,6 +136,7 @@ export const PIANOS: Piano[] = [
     size: '5\'7" (170 cm)',
     isAvailable: true,
     isFeatured: false,
+    priority: 20,
     imageUrls: [
       'https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=1200&q=80',
       'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=1200&q=80',
@@ -164,6 +168,7 @@ export const PIANOS: Piano[] = [
     size: '7\'6" (228 cm)',
     isAvailable: true,
     isFeatured: false,
+    priority: 20,
     imageUrls: [
       'https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=1200&q=80',
     ],
@@ -190,6 +195,7 @@ export const PIANOS: Piano[] = [
     size: '6\'7" (200 cm)',
     isAvailable: true,
     isFeatured: true,
+    priority: 20,
     imageUrls: [
       'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=1200&q=80',
     ],
@@ -219,6 +225,7 @@ export const PIANOS: Piano[] = [
     size: '5\'1" (155 cm)',
     isAvailable: true,
     isFeatured: false,
+    priority: 20,
     imageUrls: [
       'https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=1200&q=80',
     ],
@@ -245,6 +252,7 @@ export const PIANOS: Piano[] = [
     size: '6\'3" (190 cm)',
     isAvailable: true,
     isFeatured: false,
+    priority: 20,
     imageUrls: [
       'https://images.unsplash.com/photo-1525201548942-d8732f6617a0?w=1200&q=80',
     ],

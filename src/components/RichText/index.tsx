@@ -38,6 +38,22 @@ const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
 const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) => ({
   ...defaultConverters,
   ...LinkJSXConverter({ internalDocToHref }),
+  // Lexical serializes blank editor lines as paragraph nodes whose only child
+  // is a single linebreak node (or no children at all). The default converter
+  // renders these as <p><br /></p> which CSS :empty never matches — so the
+  // common [&_p:empty]:hidden trick silently does nothing and every blank line
+  // in the editor becomes a full-height gap in the output. Return null here so
+  // empty paragraphs are simply omitted from the rendered tree.
+  paragraph: (args) => {
+    const { node } = args
+    const isBlank =
+      node.children.length === 0 ||
+      (node.children.length === 1 && (node.children[0] as { type: string })?.type === 'linebreak')
+    if (isBlank) return null
+    return typeof defaultConverters.paragraph === 'function'
+      ? defaultConverters.paragraph(args)
+      : null
+  },
   blocks: {
     banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
     mediaBlock: ({ node }) => (

@@ -20,12 +20,13 @@ export interface Piano {
   location?: string | null
   isAvailable: boolean
   isFeatured: boolean
+  priority: number
   imageUrls: string[]
   stockImageUrl?: string
   videoUrl?: string
   description: string
   /** Lexical rich text state from CMS — rendered by RichText component on detail page */
-  richTextDescription?: unknown
+  richTextDescription?: import('@payloadcms/richtext-lexical').DefaultTypedEditorState
   provenance?: string
   restorationHistory?: string
   conditionReport?: string

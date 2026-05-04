@@ -1071,7 +1071,7 @@ export interface Piano {
    */
   conditionReport?: string | null;
   /**
-   * Full listing description. Include provenance and history here.
+   * Main listing description shown on the piano detail page. Paste from any source — formatting (bold, italic) is preserved and line-wrap breaks are automatically cleaned up. Provenance and restoration notes have their own fields below.
    */
   description?: {
     root: {
@@ -1143,6 +1143,10 @@ export interface Piano {
    */
   isFeatured?: boolean | null;
   /**
+   * Controls grid order. Lower number = appears first. Default is 20 — use 1–19 to promote, 21+ to demote.
+   */
+  priority?: number | null;
+  /**
    * Check if price should display as "Call for Pricing" instead of a number.
    */
   priceOnCall?: boolean | null;
@@ -1201,6 +1205,10 @@ export interface Testimonial {
     image?: (string | null) | Media;
     description?: string | null;
   };
+  /**
+   * Show this testimonial in the featured carousel at the top of the testimonials page.
+   */
+  featured?: boolean | null;
   publishedAt?: string | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -1929,6 +1937,7 @@ export interface PianosSelect<T extends boolean = true> {
   location?: T;
   isAvailable?: T;
   isFeatured?: T;
+  priority?: T;
   priceOnCall?: T;
   publishedAt?: T;
   generateSlug?: T;
@@ -1954,6 +1963,7 @@ export interface TestimonialsSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  featured?: T;
   publishedAt?: T;
   generateSlug?: T;
   slug?: T;

@@ -50,10 +50,11 @@ export function getBrandCategory(brandSlug: string): CategorySlug {
 
 // ── Size / finish bucketing ───────────────────────────────────
 
-function parseSizeFt(size: string): number | null {
-  const m = size.match(/^(\d+)'(\d*)/)
+export function parseSizeFt(size: string): number | null {
+  // Matches: 6'10  6'1  8'11.75  7'4"  — feet + decimal inches
+  const m = size.match(/^(\d+)'(\d+(?:\.\d+)?)/)
   if (!m) return null
-  return parseInt(m[1]!, 10) + (m[2] ? parseInt(m[2], 10) / 12 : 0)
+  return parseInt(m[1]!, 10) + parseFloat(m[2]!) / 12
 }
 
 export function getSizeBucket(size: string): SizeFilter {

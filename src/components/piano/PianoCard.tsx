@@ -133,6 +133,23 @@ function DefaultCard({
               </span>
             </div>
           )}
+
+          {/* Photos Coming Soon — shown when no real photo exists */}
+          {!primaryImage && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="2" y="5" width="20" height="15" rx="2" stroke="rgba(255,255,255,0.28)" strokeWidth="1.4" />
+                <circle cx="12" cy="12.5" r="3.5" stroke="rgba(255,255,255,0.28)" strokeWidth="1.4" />
+                <path d="M8 5l1.5-2h5L16 5" stroke="rgba(255,255,255,0.28)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span
+                className="font-display uppercase"
+                style={{ fontSize: '9px', letterSpacing: '0.42em', color: 'rgba(255,255,255,0.38)' }}
+              >
+                Photos Coming Soon
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Content */}
@@ -161,11 +178,26 @@ function DefaultCard({
               fontSize:      'clamp(1.7rem, 2.2vw, 2.2rem)',
               lineHeight:    1.12,
               letterSpacing: '-0.01em',
-              marginBottom:  '0.45rem',
+              marginBottom:  '0.3rem',
             }}
           >
             {piano.model || piano.title}
           </h3>
+
+          {/* Title */}
+          {piano.model && piano.title !== piano.model && (
+            <p
+              className="font-display line-clamp-1"
+              style={{
+                fontSize:      '11px',
+                letterSpacing: '0.1em',
+                color:         'hsl(25 4% 52%)',
+                marginBottom:  '0.45rem',
+              }}
+            >
+              {piano.title}
+            </p>
+          )}
 
           {/* Finish */}
           <p

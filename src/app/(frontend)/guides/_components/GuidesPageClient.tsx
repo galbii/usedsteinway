@@ -1,11 +1,8 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import type { PostCard } from '@/lib/payload/posts'
-
-type Tab = 'guides' | 'all'
 
 interface Props {
   guides: PostCard[]
@@ -21,7 +18,7 @@ function formatDate(iso: string | null): string {
   })
 }
 
-function PostCard({ post }: { post: PostCard; tab?: Tab }) {
+function PostCard({ post }: { post: PostCard }) {
   const href = post.isGuide ? `/guide/${post.slug}` : `/posts/${post.slug}`
   const ctaLabel = post.isGuide ? 'Read Guide' : 'Read Article'
 
@@ -87,71 +84,30 @@ function PostCard({ post }: { post: PostCard; tab?: Tab }) {
   )
 }
 
-function EmptyState({ tab }: { tab: Tab }) {
+function EmptyState() {
   return (
     <div className="col-span-full py-24 text-center">
       <p className="font-display text-[11px] tracking-[0.4em] uppercase text-piano-stone/50 mb-4">
         Coming Soon
       </p>
       <p className="font-cormorant font-light text-piano-black/40 text-2xl">
-        {tab === 'guides'
-          ? 'Buying guides are being prepared.'
-          : 'Articles are being prepared.'}
+        Articles are being prepared.
       </p>
     </div>
   )
 }
 
-export function GuidesPageClient({ guides, allPosts }: Props) {
-  const [activeTab, setActiveTab] = useState<Tab>('guides')
-  const posts = activeTab === 'guides' ? guides : allPosts
-
+export function GuidesPageClient({ guides: _guides, allPosts }: Props) {
   return (
     <section className="py-20 px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Tab switcher */}
-        <div className="flex items-center gap-0 mb-16 border-b border-piano-cream/60" style={{ borderColor: 'hsl(36 18% 87%)' }}>
-          {([
-            { id: 'guides' as Tab, label: 'Buying Guides', count: guides.length },
-            { id: 'all' as Tab, label: 'All News & Articles', count: allPosts.length },
-          ] as const).map(({ id, label, count }) => (
-            <button
-              key={id}
-              onClick={() => setActiveTab(id)}
-              className="relative pb-4 mr-10 transition-colors duration-200"
-              style={{
-                color: activeTab === id ? 'hsl(350 62% 26%)' : 'hsl(350 5% 44%)',
-              }}
-            >
-              <span className="font-display text-[11px] tracking-[0.3em] uppercase">
-                {label}
-              </span>
-              {count > 0 && (
-                <span
-                  className="ml-2 font-display text-[9px] tracking-[0.2em]"
-                  style={{ color: 'hsl(40 72% 52%)' }}
-                >
-                  {count}
-                </span>
-              )}
-              {/* Active underline */}
-              <span
-                className="absolute bottom-0 left-0 right-0 h-[2px] transition-all duration-200"
-                style={{
-                  backgroundColor: activeTab === id ? 'hsl(40 72% 52%)' : 'transparent',
-                }}
-              />
-            </button>
-          ))}
-        </div>
-
         {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {posts.length === 0 ? (
-            <EmptyState tab={activeTab} />
+          {allPosts.length === 0 ? (
+            <EmptyState />
           ) : (
-            posts.map((post) => (
-              <PostCard key={post.id} post={post} tab={activeTab} />
+            allPosts.map((post) => (
+              <PostCard key={post.id} post={post} />
             ))
           )}
         </div>

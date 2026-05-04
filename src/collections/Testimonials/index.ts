@@ -37,6 +37,7 @@ export const Testimonials: CollectionConfig<'testimonials'> = {
   defaultPopulate: {
     title: true,
     slug: true,
+    featured: true,
     meta: {
       image: true,
       description: true,
@@ -148,6 +149,15 @@ export const Testimonials: CollectionConfig<'testimonials'> = {
           ],
         },
       ],
+    },
+    {
+      name: 'featured',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'Show this testimonial in the featured carousel at the top of the testimonials page.',
+      },
     },
     {
       name: 'publishedAt',

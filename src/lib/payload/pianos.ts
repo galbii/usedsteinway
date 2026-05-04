@@ -4,7 +4,9 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import type { Piano as PayloadPiano, Brand, Media } from '@/payload-types'
 import type { Piano } from '@/types/piano'
+import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import { lexicalToPlainText } from '@/utilities/lexicalToPlainText'
+import { parseSizeFt } from '@/lib/pianoFilters'
 
 // ─── Adapter ─────────────────────────────────────────────────────────────────
 
@@ -74,11 +76,12 @@ export function adaptPayloadPiano(doc: PayloadPiano): Piano {
     location: doc.location ?? null,
     isAvailable: doc.isAvailable ?? false,
     isFeatured: doc.isFeatured ?? false,
+    priority: doc.priority ?? 20,
     imageUrls,
     stockImageUrl: doc.stockImageUrl ?? undefined,
     videoUrl: doc.videoUrl ?? undefined,
     description: descriptionPlainText,
-    richTextDescription: doc.description ?? undefined,
+    richTextDescription: (doc.description ?? undefined) as DefaultTypedEditorState | undefined,
     provenance: doc.provenance ?? undefined,
     restorationHistory: doc.restorationHistory ?? undefined,
     conditionReport: doc.conditionReport ?? undefined,
@@ -87,7 +90,7 @@ export function adaptPayloadPiano(doc: PayloadPiano): Piano {
   }
 }
 
-// ─── Brand priority sort ──────────────────────────────────────────────────────
+// ─── Sort by physical length (ascending), brand priority as tiebreaker ────────
 
 const BRAND_PRIORITY: Record<string, number> = {
   'steinway': 0,
@@ -98,8 +101,23 @@ function brandPriority(brandSlug: string): number {
   return BRAND_PRIORITY[brandSlug] ?? 2
 }
 
-function sortByBrandPriority(pianos: Piano[]): Piano[] {
-  return [...pianos].sort((a, b) => brandPriority(a.brandSlug) - brandPriority(b.brandSlug))
+function sortPianoGrid(pianos: Piano[]): Piano[] {
+  return [...pianos].sort((a, b) => {
+    // 1. Display priority (lower number = first)
+    const pDiff = a.priority - b.priority
+    if (pDiff !== 0) return pDiff
+
+    // 2. Physical length ascending (smaller → larger)
+    const aFt = parseSizeFt(a.size)
+    const bFt = parseSizeFt(b.size)
+    if (aFt === null && bFt === null) return brandPriority(a.brandSlug) - brandPriority(b.brandSlug)
+    if (aFt === null) return 1
+    if (bFt === null) return -1
+    if (aFt !== bFt) return aFt - bFt
+
+    // 3. Brand tiebreaker
+    return brandPriority(a.brandSlug) - brandPriority(b.brandSlug)
+  })
 }
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
@@ -159,7 +177,7 @@ export const queryAvailablePianos = cache(async (): Promise<Piano[]> => {
     sort: '-publishedAt',
   })
 
-  return sortByBrandPriority(result.docs.map(adaptPayloadPiano))
+  return sortPianoGrid(result.docs.map(adaptPayloadPiano))
 })
 
 export const queryFeaturedPianos = cache(async (): Promise<Piano[]> => {

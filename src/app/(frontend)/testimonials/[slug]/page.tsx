@@ -5,7 +5,6 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 import { generateMeta } from '@/utilities/generateMeta'
-import { formatDateTime } from '@/utilities/formatDateTime'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
@@ -44,7 +43,7 @@ export default async function TestimonialPage({ params: paramsPromise }: Args) {
 
   if (!testimonial) return <PayloadRedirects url={url} />
 
-  const { title, customerName, location, featuredImage, content, publishedAt } = testimonial
+  const { title, customerName, location, featuredImage, content } = testimonial
   const hasImage = featuredImage && typeof featuredImage === 'object'
 
   return (
@@ -57,15 +56,12 @@ export default async function TestimonialPage({ params: paramsPromise }: Args) {
       <div className="bg-white pt-[10.4rem]">
         <div className="container pb-12 pt-16">
           <div className="max-w-4xl">
-            <h1 className="mb-6 text-[clamp(2rem,5vw,4.5rem)] font-display font-bold leading-tight text-foreground">
+            <h1 className="mb-6 text-[clamp(2rem,5vw,4.5rem)] font-display font-bold leading-tight text-piano-black">
               {title}
             </h1>
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-base text-muted-foreground">
-              <span className="font-semibold text-foreground text-lg">{customerName}</span>
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-base text-piano-stone">
+              <span className="font-semibold text-piano-black text-lg">{customerName}</span>
               {location && <span>{location}</span>}
-              {publishedAt && (
-                <time dateTime={publishedAt}>{formatDateTime(publishedAt)}</time>
-              )}
             </div>
           </div>
         </div>
@@ -87,7 +83,7 @@ export default async function TestimonialPage({ params: paramsPromise }: Args) {
       {/* Content */}
       <div className="bg-white">
         <div className="container py-16">
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-3xl mx-auto text-piano-black [&_p]:text-piano-black [&_li]:text-piano-black [&_h2]:text-piano-black [&_h3]:text-piano-black [&_h4]:text-piano-black">
             <RichText data={content} enableGutter={false} className="prose-xl md:prose-2xl" />
           </div>
         </div>
