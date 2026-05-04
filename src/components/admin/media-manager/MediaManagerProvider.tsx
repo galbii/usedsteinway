@@ -22,6 +22,7 @@ interface ExtendedState extends MediaManagerState {
   pendingFiles: File[]
   batchReviewFiles: File[]
   modalOptions: import('./types').MediaManagerModalOptions | null
+  selectedMediaItems: MediaItem[] // Ordered list for multi-select mode
 }
 
 const initialState: ExtendedState = {
@@ -43,6 +44,7 @@ const initialState: ExtendedState = {
   pendingFiles: [],
   batchReviewFiles: [],
   modalOptions: null,
+  selectedMediaItems: [],
   // Folder state
   folders: [],
   folderTree: [],
@@ -62,6 +64,7 @@ interface ExtendedContextValue extends MediaManagerContextValue {
   pendingFiles: File[]
   batchReviewFiles: File[]
   modalOptions: import('./types').MediaManagerModalOptions | null
+  selectedMediaItems: MediaItem[]
   setEditingFile: (file: File | null) => void
   setMetadataEditingFile: (file: File | null) => void
   setEditingMedia: (media: MediaItem | null) => void
@@ -73,6 +76,8 @@ interface ExtendedContextValue extends MediaManagerContextValue {
   skipEditing: () => void
   uploadBatchFiles: (files: File[]) => Promise<void>
   clearBatchReview: () => void
+  toggleMediaSelection: (media: MediaItem) => void
+  clearMediaSelection: () => void
 }
 
 const MediaManagerContext = createContext<ExtendedContextValue | null>(null)
@@ -879,6 +884,23 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
     }
   }, [showToast, transformMedia])
 
+  // Multi-select actions
+  const toggleMediaSelection = useCallback((media: MediaItem) => {
+    setState(prev => {
+      const exists = prev.selectedMediaItems.some(m => m.id === media.id)
+      return {
+        ...prev,
+        selectedMediaItems: exists
+          ? prev.selectedMediaItems.filter(m => m.id !== media.id)
+          : [...prev.selectedMediaItems, media],
+      }
+    })
+  }, [])
+
+  const clearMediaSelection = useCallback(() => {
+    setState(prev => ({ ...prev, selectedMediaItems: [] }))
+  }, [])
+
   // Modal controls
   const openModal = useCallback((options?: import('./types').MediaManagerModalOptions) => {
     console.log('[MediaManagerProvider] ========== openModal CALLED ==========')
@@ -888,7 +910,12 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
     setState(prev => {
       console.log('[MediaManagerProvider] setState callback executing')
       console.log('[MediaManagerProvider] Previous isOpen:', prev.isOpen)
-      const newState = { ...prev, isOpen: true, modalOptions: options || null }
+      const newState = {
+        ...prev,
+        isOpen: true,
+        modalOptions: options || null,
+        selectedMediaItems: [], // clear any previous multi-selection
+      }
       console.log('[MediaManagerProvider] New isOpen:', newState.isOpen)
       console.log('[MediaManagerProvider] ========== State Update Complete ==========')
       return newState
@@ -906,6 +933,7 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
       editingMediaId: null,
       pendingFiles: [],
       modalOptions: null,
+      selectedMediaItems: [],
     }))
   }, [])
 
@@ -979,6 +1007,8 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
     skipEditing,
     uploadBatchFiles,
     clearBatchReview,
+    toggleMediaSelection,
+    clearMediaSelection,
     // Folder actions
     fetchFolders,
     createFolder,

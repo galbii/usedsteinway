@@ -12,6 +12,7 @@ import { LinkFeatureClient as LinkFeatureClient_e70f5e05f09f93e00b997edb1ef0c864
 import { PasteNormalizerClientFeature as PasteNormalizerClientFeature_31a237c12515efef1326107d35a21777 } from '@/components/admin/pasteNormalizer/ClientFeature'
 import { HorizontalRuleFeatureClient as HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { UnorderedListFeatureClient as UnorderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { OrderedListFeatureClient as OrderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BlockquoteFeatureClient as BlockquoteFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { OverviewComponent as OverviewComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
@@ -24,6 +25,7 @@ import { MediaSelectorButton as MediaSelectorButton_5915b45382c28678be5ee78e6a78
 import { FolderTableCell as FolderTableCell_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 import { FolderField as FolderField_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 import { SeedButton as SeedButton_bbbefcd69fe3a7cc8d543ddc32add190 } from '@/collections/Brands/SeedButton'
+import { BulkMediaSelectorButton as BulkMediaSelectorButton_38fa26fd48c2a51e2fbeab2b533529d9 } from '../../../components/admin/BulkMediaSelectorButton'
 import { SeedButton as SeedButton_4007fb73756df8a7f4889871c786aa43 } from '@/collections/Pianos/SeedButton'
 import { BlocksFeatureClient as BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { SeedButton as SeedButton_527d224592b6018c4fc431e2b0f20e4c } from '@/collections/Testimonials/SeedButton'
@@ -53,6 +55,7 @@ export const importMap = {
   "@/components/admin/pasteNormalizer/ClientFeature#PasteNormalizerClientFeature": PasteNormalizerClientFeature_31a237c12515efef1326107d35a21777,
   "@payloadcms/richtext-lexical/client#HorizontalRuleFeatureClient": HorizontalRuleFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#UnorderedListFeatureClient": UnorderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "@payloadcms/richtext-lexical/client#StrikethroughFeatureClient": StrikethroughFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#OrderedListFeatureClient": OrderedListFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BlockquoteFeatureClient": BlockquoteFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/plugin-seo/client#OverviewComponent": OverviewComponent_a8a977ebc872c5d5ea7ee689724c0860,
@@ -65,6 +68,7 @@ export const importMap = {
   "@payloadcms/next/rsc#FolderTableCell": FolderTableCell_f9c02e79a4aed9a3924487c0cd4cafb1,
   "@payloadcms/next/rsc#FolderField": FolderField_f9c02e79a4aed9a3924487c0cd4cafb1,
   "@/collections/Brands/SeedButton#SeedButton": SeedButton_bbbefcd69fe3a7cc8d543ddc32add190,
+  "/components/admin/BulkMediaSelectorButton#BulkMediaSelectorButton": BulkMediaSelectorButton_38fa26fd48c2a51e2fbeab2b533529d9,
   "@/collections/Pianos/SeedButton#SeedButton": SeedButton_4007fb73756df8a7f4889871c786aa43,
   "@payloadcms/richtext-lexical/client#BlocksFeatureClient": BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@/collections/Testimonials/SeedButton#SeedButton": SeedButton_527d224592b6018c4fc431e2b0f20e4c,

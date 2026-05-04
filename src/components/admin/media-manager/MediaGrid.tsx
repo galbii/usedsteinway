@@ -79,7 +79,12 @@ export function MediaGrid() {
     fetchMedia,
     folders,
     moveMediaToFolder,
+    modalOptions,
+    selectedMediaItems,
+    toggleMediaSelection,
   } = useMediaManager()
+
+  const isMultiSelectMode = modalOptions?.allowMultiple === true
 
   if (isLoading && media.length === 0) {
     return (
@@ -156,19 +161,30 @@ export function MediaGrid() {
           gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
           gap: '20px'
         }}>
-          {media.map((item) => (
-            <MediaGridItem
-              key={item.id}
-              item={item}
-              isSelected={selectedMedia?.id === item.id}
-              onSelect={() => selectMedia(selectedMedia?.id === item.id ? null : item)}
-              onCopyUrl={() => copyPublicUrl(item.url)}
-              onDelete={() => deleteMedia(item.id)}
-              onEditImage={() => editMediaImage(item)}
-              folders={folders}
-              onMoveToFolder={(folderId) => moveMediaToFolder(item.id, folderId)}
-            />
-          ))}
+          {media.map((item) => {
+            const multiSelectIndex = selectedMediaItems.findIndex(m => m.id === item.id)
+            const isMultiSelected = multiSelectIndex !== -1
+            return (
+              <MediaGridItem
+                key={item.id}
+                item={item}
+                isSelected={isMultiSelectMode ? isMultiSelected : selectedMedia?.id === item.id}
+                selectionOrder={isMultiSelectMode && isMultiSelected ? multiSelectIndex + 1 : undefined}
+                onSelect={() => {
+                  if (isMultiSelectMode) {
+                    toggleMediaSelection(item)
+                  } else {
+                    selectMedia(selectedMedia?.id === item.id ? null : item)
+                  }
+                }}
+                onCopyUrl={() => copyPublicUrl(item.url)}
+                onDelete={() => deleteMedia(item.id)}
+                onEditImage={() => editMediaImage(item)}
+                folders={folders}
+                onMoveToFolder={(folderId) => moveMediaToFolder(item.id, folderId)}
+              />
+            )
+          })}
         </div>
       </div>
 
@@ -277,6 +293,7 @@ export function MediaGrid() {
 interface MediaGridItemProps {
   item: MediaItem
   isSelected: boolean
+  selectionOrder?: number // 1-based order in multi-select
   onSelect: () => void
   onCopyUrl: () => void
   onDelete: () => void
@@ -302,7 +319,7 @@ function resolveMediaUrl(url: string | undefined | null): string {
 /**
  * Individual media item in the grid
  */
-function MediaGridItem({ item, isSelected, onSelect, onCopyUrl, onDelete, onEditImage, folders, onMoveToFolder }: MediaGridItemProps) {
+function MediaGridItem({ item, isSelected, selectionOrder, onSelect, onCopyUrl, onDelete, onEditImage, folders, onMoveToFolder }: MediaGridItemProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [showActions, setShowActions] = useState(false)
   const [showFolderMenu, setShowFolderMenu] = useState(false)
@@ -828,7 +845,7 @@ function MediaGridItem({ item, isSelected, onSelect, onCopyUrl, onDelete, onEdit
             position: 'absolute',
             top: '12px',
             left: '12px',
-            width: '28px',
+            minWidth: '28px',
             height: '28px',
             borderRadius: '50%',
             display: 'flex',
@@ -836,11 +853,18 @@ function MediaGridItem({ item, isSelected, onSelect, onCopyUrl, onDelete, onEdit
             justifyContent: 'center',
             boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
             backgroundColor: colors.primary,
+            padding: selectionOrder !== undefined ? '0 6px' : '0',
           }}
         >
-          <svg style={{ width: '16px', height: '16px', color: colors.white }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-          </svg>
+          {selectionOrder !== undefined ? (
+            <span style={{ fontSize: '13px', fontWeight: 700, color: colors.white, lineHeight: 1 }}>
+              {selectionOrder}
+            </span>
+          ) : (
+            <svg style={{ width: '16px', height: '16px', color: colors.white }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+            </svg>
+          )}
         </div>
       )}
     </div>

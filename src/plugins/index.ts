@@ -11,21 +11,21 @@ import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/
 import { searchFields } from '@/search/fieldOverrides'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
 
-import { Page, Post, Testimonial } from '@/payload-types'
+import { Page, Piano as PayloadPiano, Post, Testimonial } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 
 const collectionPrefixMap: Record<string, string> = {
   posts: '/posts',
   testimonials: '/testimonials',
+  pianos: '/pianos',
   pages: '',
 }
 
-const generateTitle: GenerateTitle<Post | Page | Testimonial> = ({ doc }) => {
+const generateTitle: GenerateTitle<Post | Page | Testimonial | PayloadPiano> = ({ doc }) => {
   return doc?.title ? `${doc.title} | UsedSteinways.com` : 'UsedSteinways.com'
 }
 
-
-const generateURL: GenerateURL<Post | Page | Testimonial> = ({ doc, collectionSlug }) => {
+const generateURL: GenerateURL<Post | Page | Testimonial | PayloadPiano> = ({ doc, collectionSlug }) => {
   const siteURL = getServerSideURL()
   const prefix = (collectionSlug && collectionPrefixMap[collectionSlug as string]) ?? ''
 

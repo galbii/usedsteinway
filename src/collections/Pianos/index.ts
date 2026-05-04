@@ -299,6 +299,15 @@ export const Pianos: CollectionConfig<'pianos'> = {
           label: 'Media',
           fields: [
             {
+              type: 'ui',
+              name: 'bulkImageSelector',
+              admin: {
+                components: {
+                  Field: '/components/admin/BulkMediaSelectorButton#BulkMediaSelectorButton',
+                },
+              },
+            },
+            {
               ...mediaArrayField('images', {
                 minRows: 1,
                 maxRows: 20,

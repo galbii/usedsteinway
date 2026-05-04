@@ -5,6 +5,7 @@ import { useLexicalComposerContext } from '@payloadcms/richtext-lexical/lexical/
 import {
   $getRoot,
   $isParagraphNode,
+  $isTextNode,
   $createTextNode,
 } from '@payloadcms/richtext-lexical/lexical'
 
@@ -44,9 +45,15 @@ export const PasteNormalizerPlugin: PluginComponent = () => {
             // If current paragraph doesn't end with sentence punctuation,
             // it's a split line — merge with the next paragraph
             if (!/[.!?:;"'»\])]$/.test(currentText)) {
-              // Only add a space if the last character isn't already a space
+              // Only add a space if the last character isn't already a space.
+              // Inherit the format of the last text node so we don't break
+              // bold/italic runs at the merge boundary.
               if (!current.getTextContent().endsWith(' ')) {
-                current.append($createTextNode(' '))
+                const lastChild = current.getLastChild()
+                const spaceFormat = $isTextNode(lastChild) ? lastChild.getFormat() : 0
+                const space = $createTextNode(' ')
+                if (spaceFormat) space.setFormat(spaceFormat)
+                current.append(space)
               }
               for (const child of next.getChildren()) {
                 current.append(child)

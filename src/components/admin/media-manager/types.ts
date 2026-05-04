@@ -108,7 +108,8 @@ export interface MediaManagerActions {
 export interface MediaManagerModalOptions {
   mode?: 'browse' | 'select' // Browse mode = general library, Select mode = field selector
   onSelect?: (media: MediaItem) => void // Callback when media is selected in select mode
-  allowMultiple?: boolean // Future: allow multi-select
+  allowMultiple?: boolean // When true, enables multi-select and uses onSelectMultiple
+  onSelectMultiple?: (items: MediaItem[]) => void // Callback when multiple items are confirmed
   filterMimeType?: string // Filter by mime type (e.g., 'image/', 'video/')
 }
 

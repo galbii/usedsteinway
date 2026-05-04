@@ -5,6 +5,7 @@ import {
   HorizontalRuleFeature,
   InlineToolbarFeature,
   OrderedListFeature,
+  StrikethroughFeature,
   UnorderedListFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
@@ -23,6 +24,7 @@ export const contentLexical = lexicalEditor({
     HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4'] }),
     BlockquoteFeature(),
     OrderedListFeature(),
+    StrikethroughFeature(),
     UnorderedListFeature(),
     HorizontalRuleFeature(),
     FixedToolbarFeature(),

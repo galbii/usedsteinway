@@ -87,6 +87,14 @@ export function adaptPayloadPiano(doc: PayloadPiano): Piano {
     conditionReport: doc.conditionReport ?? undefined,
     specs: buildSpecs(doc),
     tags: (doc.tags ?? []).map((t) => t.tag),
+    meta: {
+      title: doc.meta?.title ?? undefined,
+      description: doc.meta?.description ?? undefined,
+      imageUrl:
+        doc.meta?.image && typeof doc.meta.image === 'object'
+          ? (doc.meta.image.url ?? undefined)
+          : undefined,
+    },
   }
 }
 

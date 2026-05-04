@@ -91,6 +91,8 @@ export function MediaManagerModal() {
     modalOptions,
     updateMedia,
     batchReviewFiles,
+    selectedMediaItems,
+    clearMediaSelection,
   } = useMediaManager()
 
   const [isDragging, setIsDragging] = useState(false)
@@ -262,8 +264,17 @@ export function MediaManagerModal() {
     }
   }, [selectedMedia, modalOptions, closeModal])
 
+  // Handle multi-select confirm
+  const handleConfirmMultiple = useCallback(() => {
+    if (selectedMediaItems.length > 0 && modalOptions?.onSelectMultiple) {
+      modalOptions.onSelectMultiple(selectedMediaItems)
+      closeModal()
+    }
+  }, [selectedMediaItems, modalOptions, closeModal])
+
   // Determine if we're in selection mode
   const isSelectionMode = modalOptions?.mode === 'select'
+  const isMultiSelectMode = isSelectionMode && modalOptions?.allowMultiple === true
 
   return (
     <>
@@ -381,12 +392,20 @@ export function MediaManagerModal() {
                             borderRadius: '9999px',
                             fontSize: '12px',
                             fontWeight: 600,
-                            backgroundColor: colors.primary,
+                            backgroundColor: isMultiSelectMode ? colors.success : colors.primary,
                             color: colors.white,
                           }}
                         >
-                          Selection Mode
+                          {isMultiSelectMode ? 'Multi-Select Mode' : 'Selection Mode'}
                         </span>
+                        {isMultiSelectMode && selectedMediaItems.length > 0 && (
+                          <>
+                            <span>•</span>
+                            <span style={{ fontSize: '13px', fontWeight: 600, color: colors.success }}>
+                              {selectedMediaItems.length} selected
+                            </span>
+                          </>
+                        )}
                       </>
                     )}
                   </div>
@@ -707,8 +726,190 @@ export function MediaManagerModal() {
               </div>
             </div>
 
-            {/* Footer - Selected Media */}
-            {selectedMedia && (
+            {/* Footer - Multi-Select Confirmation */}
+            {isMultiSelectMode && (
+              <div
+                style={{
+                  flexShrink: 0,
+                  padding: '20px 32px',
+                  backgroundColor: colors.headerBg,
+                  borderTop: `1px solid ${colors.border}`,
+                  boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '16px',
+                }}
+              >
+                {/* Left: thumbnails + count */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  {/* Thumbnail strip */}
+                  {selectedMediaItems.length > 0 && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      {selectedMediaItems.slice(0, 6).map((item, idx) => (
+                        <div
+                          key={item.id}
+                          style={{
+                            position: 'relative',
+                            width: '48px',
+                            height: '48px',
+                            borderRadius: '8px',
+                            overflow: 'hidden',
+                            border: `2px solid ${colors.success}`,
+                            flexShrink: 0,
+                          }}
+                        >
+                          {item.mimeType?.startsWith('image/') ? (
+                            <Image
+                              unoptimized
+                              src={item.sizes?.thumbnail?.url || item.url || ''}
+                              alt={item.alt}
+                              width={48}
+                              height={48}
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
+                          ) : (
+                            <div style={{
+                              width: '100%',
+                              height: '100%',
+                              backgroundColor: colors.cardBg,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '11px',
+                              color: colors.textMuted,
+                            }}>
+                              {idx + 1}
+                            </div>
+                          )}
+                          <div style={{
+                            position: 'absolute',
+                            top: '2px',
+                            left: '2px',
+                            width: '16px',
+                            height: '16px',
+                            borderRadius: '50%',
+                            backgroundColor: colors.primary,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '10px',
+                            fontWeight: 700,
+                            color: colors.white,
+                            lineHeight: 1,
+                          }}>
+                            {idx + 1}
+                          </div>
+                        </div>
+                      ))}
+                      {selectedMediaItems.length > 6 && (
+                        <div style={{
+                          width: '48px',
+                          height: '48px',
+                          borderRadius: '8px',
+                          border: `2px solid ${colors.borderLight}`,
+                          backgroundColor: colors.cardBg,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '13px',
+                          fontWeight: 600,
+                          color: colors.textSecondary,
+                          flexShrink: 0,
+                        }}>
+                          +{selectedMediaItems.length - 6}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div>
+                    <p style={{ fontSize: '18px', fontWeight: 700, color: colors.textPrimary, margin: 0 }}>
+                      {selectedMediaItems.length === 0
+                        ? 'No images selected'
+                        : `${selectedMediaItems.length} image${selectedMediaItems.length !== 1 ? 's' : ''} selected`}
+                    </p>
+                    <p style={{ fontSize: '13px', color: colors.textSecondary, margin: '2px 0 0' }}>
+                      {selectedMediaItems.length === 0
+                        ? 'Click images to select them'
+                        : 'Images will be added in selection order'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Right: actions */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+                  {selectedMediaItems.length > 0 && (
+                    <button
+                      onClick={clearMediaSelection}
+                      style={{
+                        padding: '10px 20px',
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        borderRadius: '10px',
+                        border: `1px solid ${colors.border}`,
+                        backgroundColor: colors.cardBg,
+                        color: colors.textSecondary,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.borderColor = colors.error
+                        e.currentTarget.style.color = colors.error
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = colors.border
+                        e.currentTarget.style.color = colors.textSecondary
+                      }}
+                    >
+                      Clear
+                    </button>
+                  )}
+                  <button
+                    onClick={handleConfirmMultiple}
+                    disabled={selectedMediaItems.length === 0}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      padding: '14px 28px',
+                      fontSize: '15px',
+                      fontWeight: 700,
+                      borderRadius: '12px',
+                      border: 'none',
+                      background: selectedMediaItems.length === 0
+                        ? colors.textMuted
+                        : `linear-gradient(135deg, ${colors.success} 0%, ${colors.primary} 100%)`,
+                      color: colors.white,
+                      cursor: selectedMediaItems.length === 0 ? 'not-allowed' : 'pointer',
+                      opacity: selectedMediaItems.length === 0 ? 0.5 : 1,
+                      boxShadow: selectedMediaItems.length === 0 ? 'none' : '0 4px 20px rgba(16, 185, 129, 0.4)',
+                      transition: 'all 0.2s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (selectedMediaItems.length > 0) {
+                        e.currentTarget.style.transform = 'translateY(-2px) scale(1.02)'
+                        e.currentTarget.style.boxShadow = '0 8px 30px rgba(16, 185, 129, 0.5)'
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0) scale(1)'
+                      e.currentTarget.style.boxShadow = selectedMediaItems.length === 0 ? 'none' : '0 4px 20px rgba(16, 185, 129, 0.4)'
+                    }}
+                  >
+                    <svg style={{ width: '20px', height: '20px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                    </svg>
+                    {selectedMediaItems.length === 0
+                      ? 'Select images first'
+                      : `Add ${selectedMediaItems.length} to Gallery`}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Footer - Selected Media (single-select mode) */}
+            {!isMultiSelectMode && selectedMedia && (
               <div
                 style={{
                   flexShrink: 0,

@@ -32,6 +32,12 @@ export interface Piano {
   conditionReport?: string
   specs: Record<string, string>
   tags: string[]
+  /** Admin-set SEO overrides from the CMS meta tab */
+  meta?: {
+    title?: string
+    description?: string
+    imageUrl?: string
+  }
 }
 
 export type CategorySlug = 'steinway' | 'european' | 'shigeru-kawai' | 'other'

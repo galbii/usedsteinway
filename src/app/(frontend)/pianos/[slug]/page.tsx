@@ -163,15 +163,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         ? 'Pre-owned'
         : piano.condition.charAt(0).toUpperCase() + piano.condition.slice(1)
 
-  const title = `${piano.brand} ${piano.model} (${piano.year}) | UsedSteinways.com`
-  const description = `${conditionLabel} ${piano.brand} ${piano.model} grand piano — ${piano.finish} finish, ${piano.size}. ${piano.priceDisplay}. Personally evaluated by Roger, a Registered Piano Technician with 30+ years of experience.`
+  // Prefer admin-set SEO values; fall back to auto-generated ones
+  const title =
+    piano.meta?.title ||
+    `${piano.brand} ${piano.model} (${piano.year}) | UsedSteinways.com`
+
+  const description =
+    piano.meta?.description ||
+    `${conditionLabel} ${piano.brand} ${piano.model} grand piano — ${piano.finish} finish, ${piano.size}. ${piano.priceDisplay}. Personally evaluated by Roger, a Registered Piano Technician with 30+ years of experience.`
 
   const firstImage = piano.imageUrls[0]
-  const ogImageUrl = firstImage
-    ? firstImage.startsWith('http')
-      ? firstImage
-      : `${baseUrl}${firstImage}`
-    : `${baseUrl}/website-template-OG.webp`
+  const ogImageUrl =
+    piano.meta?.imageUrl ||
+    (firstImage
+      ? firstImage.startsWith('http')
+        ? firstImage
+        : `${baseUrl}${firstImage}`
+      : `${baseUrl}/website-template-OG.webp`)
 
   return {
     metadataBase: new URL(baseUrl),
