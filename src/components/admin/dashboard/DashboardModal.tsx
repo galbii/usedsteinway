@@ -8,16 +8,17 @@ import Link from 'next/link'
 // ---------------------------------------------------------------------------
 
 const COLORS = {
-  black: 'hsl(25, 6%, 9%)',
-  charcoal: 'hsl(25, 5%, 14%)',
-  charcoalHover: 'hsl(25, 5%, 18%)',
-  gold: 'hsl(40, 72%, 52%)',
-  goldBorder: 'rgba(184, 134, 57, 0.18)',
+  panel: 'hsl(0, 0%, 100%)',
+  surface: 'hsl(36, 12%, 96%)',
+  gold: 'hsl(40, 72%, 34%)',
   goldFaint: 'rgba(184, 134, 57, 0.07)',
-  goldMuted: 'rgba(184, 134, 57, 0.45)',
-  cream: 'hsl(36, 18%, 97%)',
-  silver: 'hsl(25, 4%, 58%)',
-  available: 'hsl(142, 50%, 45%)',
+  goldMuted: 'hsl(40, 65%, 38%)',
+  border: 'rgba(0, 0, 0, 0.12)',
+  divider: 'rgba(0, 0, 0, 0.08)',
+  text: 'hsl(25, 6%, 9%)',
+  body: 'hsl(25, 5%, 18%)',
+  muted: 'hsl(25, 4%, 38%)',
+  available: 'hsl(142, 55%, 26%)',
 }
 
 const STYLES = `
@@ -42,22 +43,23 @@ const STYLES = `
   }
   .usw-dm-skeleton {
     animation: usw-dm-shimmer 1.4s ease-in-out infinite;
-    background: rgba(255,255,255,0.06);
+    background: rgba(0,0,0,0.07);
     border-radius: 3px;
   }
   .usw-dm-stat-card {
     display: block;
     padding: 20px 20px 16px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(184, 134, 57, 0.12);
+    background: ${COLORS.surface};
+    border: 1px solid rgba(0,0,0,0.1);
     border-radius: 3px;
     text-decoration: none;
-    transition: background 0.15s, border-color 0.2s;
+    transition: background 0.15s, border-color 0.2s, box-shadow 0.2s;
     cursor: pointer;
   }
   .usw-dm-stat-card:hover {
     background: ${COLORS.goldFaint};
-    border-color: rgba(184, 134, 57, 0.35);
+    border-color: rgba(184, 134, 57, 0.45);
+    box-shadow: 0 2px 8px rgba(184, 134, 57, 0.08);
   }
   .usw-dm-piano-row {
     display: flex;
@@ -65,54 +67,55 @@ const STYLES = `
     align-items: center;
     padding: 14px 0;
     text-decoration: none;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    transition: opacity 0.15s;
+    border-bottom: 1px solid rgba(0,0,0,0.07);
+    transition: background 0.12s;
   }
   .usw-dm-piano-row:last-child {
     border-bottom: none;
   }
   .usw-dm-piano-row:hover {
-    opacity: 0.75;
+    background: hsl(36, 12%, 97%);
   }
   .usw-dm-action-primary {
     display: block;
-    padding: 11px 14px;
-    background: rgba(184, 134, 57, 0.08);
-    border: 1px solid rgba(184, 134, 57, 0.25);
+    padding: 12px 14px;
+    background: ${COLORS.gold};
+    border: none;
     border-radius: 3px;
     font-size: 13px;
+    font-weight: 600;
     letter-spacing: 0.06em;
-    color: ${COLORS.gold};
+    color: hsl(36, 18%, 97%);
     text-decoration: none;
-    transition: background 0.15s, border-color 0.15s;
+    transition: background 0.15s;
     text-align: center;
     font-family: inherit;
     cursor: pointer;
   }
   .usw-dm-action-primary:hover {
-    background: rgba(184, 134, 57, 0.16);
-    border-color: rgba(184, 134, 57, 0.5);
+    background: hsl(40, 72%, 40%);
   }
   .usw-dm-action-secondary {
     display: block;
     padding: 10px 14px;
     font-size: 13px;
+    font-weight: 500;
     letter-spacing: 0.04em;
-    color: ${COLORS.silver};
+    color: ${COLORS.muted};
     text-decoration: none;
     border-radius: 3px;
     transition: background 0.15s, color 0.15s;
     font-family: inherit;
   }
   .usw-dm-action-secondary:hover {
-    background: rgba(255,255,255,0.05);
-    color: ${COLORS.cream};
+    background: rgba(0,0,0,0.04);
+    color: ${COLORS.text};
   }
   .usw-dm-close-btn {
     background: transparent;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(0,0,0,0.12);
     border-radius: 3px;
-    color: ${COLORS.silver};
+    color: ${COLORS.muted};
     cursor: pointer;
     font-size: 18px;
     line-height: 1;
@@ -121,8 +124,8 @@ const STYLES = `
     font-family: inherit;
   }
   .usw-dm-close-btn:hover {
-    color: ${COLORS.cream};
-    border-color: rgba(255,255,255,0.2);
+    color: ${COLORS.text};
+    border-color: rgba(0,0,0,0.25);
     transform: rotate(90deg);
   }
   .usw-dm-avail-badge {
@@ -268,8 +271,8 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
           zIndex: 10000,
           display: 'flex',
           flexDirection: 'column',
-          background: COLORS.charcoal,
-          border: `1px solid ${COLORS.goldBorder}`,
+          background: COLORS.panel,
+          border: `1px solid ${COLORS.border}`,
           borderRadius: '6px',
           overflow: 'hidden',
         }}
@@ -292,13 +295,13 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
                 fontFamily: 'inherit',
                 fontSize: '17px',
                 fontWeight: 600,
-                color: COLORS.cream,
+                color: COLORS.text,
                 letterSpacing: '0.01em',
               }}
             >
               Dashboard
             </p>
-            <p style={{ margin: '3px 0 0', fontSize: '13px', color: COLORS.silver, letterSpacing: '0.03em' }}>
+            <p style={{ margin: '3px 0 0', fontSize: '13px', color: COLORS.muted, letterSpacing: '0.03em' }}>
               Quick overview
             </p>
           </div>
@@ -341,15 +344,16 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
             }}
           >
             {/* Left column — stats + recent pianos */}
-            <div style={{ padding: '28px 32px', borderRight: '1px solid rgba(255,255,255,0.06)' }}>
+            <div style={{ padding: '28px 32px', borderRight: `1px solid ${COLORS.divider}` }}>
               {/* Stats */}
               <p
                 style={{
                   margin: '0 0 14px',
-                  fontSize: '11px',
-                  letterSpacing: '0.22em',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  letterSpacing: '0.18em',
                   textTransform: 'uppercase',
-                  color: 'rgba(148, 140, 133, 0.5)',
+                  color: COLORS.muted,
                   fontFamily: 'inherit',
                 }}
               >
@@ -368,7 +372,7 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
                     <div
                       style={{
                         fontSize: 'clamp(26px, 2.5vw, 36px)',
-                        fontWeight: 200,
+                        fontWeight: 300,
                         lineHeight: 1,
                         color: COLORS.gold,
                         marginBottom: '8px',
@@ -383,11 +387,11 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
                     </div>
                     <div
                       style={{
-                        fontSize: '11px',
-                        fontWeight: 400,
-                        letterSpacing: '0.2em',
+                        fontSize: '12px',
+                        fontWeight: 700,
+                        letterSpacing: '0.18em',
                         textTransform: 'uppercase',
-                        color: COLORS.silver,
+                        color: COLORS.muted,
                       }}
                     >
                       {stat.label}
@@ -411,7 +415,7 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
                     fontSize: '11px',
                     letterSpacing: '0.22em',
                     textTransform: 'uppercase',
-                    color: 'rgba(148, 140, 133, 0.5)',
+                    color: COLORS.muted,
                     fontFamily: 'inherit',
                   }}
                 >
@@ -435,7 +439,7 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
                   ))}
                 </div>
               ) : pianos.length === 0 ? (
-                <p style={{ color: COLORS.silver, fontSize: '14px', fontStyle: 'italic', margin: 0 }}>
+                <p style={{ color: COLORS.muted, fontSize: '14px', fontStyle: 'italic', margin: 0 }}>
                   No pianos yet.
                 </p>
               ) : (
@@ -453,7 +457,7 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
                             fontFamily: 'inherit',
                             fontSize: '14px',
                             fontWeight: 500,
-                            color: COLORS.cream,
+                            color: COLORS.text,
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
                             whiteSpace: 'nowrap',
@@ -475,7 +479,7 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
                         </span>
                         <span
                           className="usw-dm-avail-badge"
-                          style={{ color: piano.isAvailable ? COLORS.available : COLORS.silver, minWidth: '52px', textAlign: 'right' }}
+                          style={{ color: piano.isAvailable ? COLORS.available : COLORS.muted, minWidth: '52px', textAlign: 'right' }}
                         >
                           {piano.isAvailable ? 'Avail.' : 'Sold'}
                         </span>
@@ -509,10 +513,11 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
               <p
                 style={{
                   margin: '0 0 14px',
-                  fontSize: '11px',
-                  letterSpacing: '0.22em',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  letterSpacing: '0.18em',
                   textTransform: 'uppercase',
-                  color: 'rgba(148, 140, 133, 0.5)',
+                  color: COLORS.muted,
                   fontFamily: 'inherit',
                 }}
               >
@@ -528,7 +533,7 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
                 </Link>
               </div>
 
-              <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)', margin: '0 0 16px' }} />
+              <div style={{ height: '1px', background: 'rgba(0,0,0,0.08)', margin: '0 0 16px' }} />
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                 <Link href="/admin/collections/brands/create" className="usw-dm-action-secondary" onClick={onClose}>
@@ -562,7 +567,7 @@ export function DashboardModal({ open, onClose }: DashboardModalProps) {
             borderTop: '1px solid rgba(184, 134, 57, 0.08)',
           }}
         >
-          <span style={{ fontSize: '12px', color: COLORS.silver, letterSpacing: '0.08em' }}>
+          <span style={{ fontSize: '12px', color: COLORS.muted, letterSpacing: '0.08em' }}>
             Used Steinways
           </span>
           <Link

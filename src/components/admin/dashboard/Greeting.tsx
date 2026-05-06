@@ -4,14 +4,14 @@ import { useAuth } from '@payloadcms/ui'
 import { useEffect, useState } from 'react'
 
 const COLORS = {
-  black: 'hsl(25, 6%, 9%)',
-  charcoal: 'hsl(25, 5%, 14%)',
-  gold: 'hsl(40, 72%, 52%)',
-  goldFaint: 'rgba(184, 134, 57, 0.07)',
-  goldBorder: 'rgba(184, 134, 57, 0.18)',
-  goldMuted: 'rgba(184, 134, 57, 0.45)',
-  cream: 'hsl(36, 18%, 97%)',
-  silver: 'hsl(25, 4%, 58%)',
+  bg: 'hsl(0, 0%, 100%)',
+  gold: 'hsl(40, 72%, 38%)',
+  goldFaint: 'rgba(184, 134, 57, 0.06)',
+  goldBorder: 'rgba(0, 0, 0, 0.14)',
+  goldMuted: 'hsl(40, 65%, 35%)',
+  text: 'hsl(25, 6%, 9%)',
+  body: 'hsl(25, 5%, 20%)',
+  muted: 'hsl(25, 5%, 32%)',
 }
 
 const STYLES = `
@@ -64,7 +64,7 @@ export function Greeting() {
   return (
     <div
       style={{
-        background: `linear-gradient(155deg, hsl(25, 5%, 15%) 0%, hsl(25, 6%, 9%) 65%)`,
+        background: COLORS.bg,
         border: `1px solid ${COLORS.goldBorder}`,
         borderRadius: '4px',
         padding: '64px 64px 56px',
@@ -114,9 +114,9 @@ export function Greeting() {
           <p
             style={{
               fontFamily: 'inherit',
-              fontSize: '11px',
-              fontWeight: 500,
-              letterSpacing: '0.25em',
+              fontSize: '13px',
+              fontWeight: 700,
+              letterSpacing: '0.22em',
               textTransform: 'uppercase',
               color: COLORS.gold,
               margin: '0 0 14px',
@@ -128,9 +128,9 @@ export function Greeting() {
             style={{
               fontFamily: "'Cormorant Garamond', Georgia, serif",
               fontSize: 'clamp(52px, 5vw, 80px)',
-              fontWeight: 300,
+              fontWeight: 400,
               lineHeight: 1.0,
-              color: COLORS.cream,
+              color: COLORS.text,
               margin: 0,
               letterSpacing: '-0.02em',
             }}
@@ -152,11 +152,11 @@ export function Greeting() {
           <p
             style={{
               fontFamily: 'inherit',
-              fontSize: '11px',
-              fontWeight: 400,
-              letterSpacing: '0.14em',
+              fontSize: '13px',
+              fontWeight: 600,
+              letterSpacing: '0.12em',
               textTransform: 'uppercase',
-              color: COLORS.silver,
+              color: COLORS.body,
               margin: '0 0 10px',
             }}
           >
@@ -170,13 +170,13 @@ export function Greeting() {
               gap: '12px',
             }}
           >
-            <div style={{ width: '24px', height: '1px', background: COLORS.gold, opacity: 0.35 }} />
+            <div style={{ width: '24px', height: '1px', background: COLORS.gold, opacity: 0.6 }} />
             <p
               style={{
                 fontFamily: 'inherit',
-                fontSize: '11px',
-                fontWeight: 400,
-                letterSpacing: '0.28em',
+                fontSize: '13px',
+                fontWeight: 600,
+                letterSpacing: '0.22em',
                 textTransform: 'uppercase',
                 color: COLORS.goldMuted,
                 margin: 0,
@@ -195,7 +195,7 @@ export function Greeting() {
           background: `linear-gradient(90deg, ${COLORS.gold} 0%, transparent 70%)`,
           marginTop: '36px',
           transformOrigin: 'left center',
-          opacity: 0.3,
+          opacity: 0.55,
           animation: mounted ? 'usw-rule 0.9s 0.22s cubic-bezier(0.16, 1, 0.3, 1) both' : undefined,
           transform: mounted ? undefined : 'scaleX(0)',
         }}

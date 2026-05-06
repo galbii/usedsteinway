@@ -13,9 +13,8 @@ const C = {
   goldBorder: 'rgba(200, 160, 75, 0.18)',
 }
 
-const DURATION   = 7000
-const TRANS      = 760
-const TRANS_HALF = TRANS / 2
+const DURATION = 9000
+const TRANS    = 1400
 
 interface PianoHeroCarouselProps {
   pianos: Piano[]
@@ -40,9 +39,8 @@ export function PianoHeroCarousel({
       : false
 
   const [activeIndex,     setActiveIndex]     = useState(0)
-  const [transitionKey,   setTransitionKey]   = useState(0)
+  const [prevIndex,       setPrevIndex]       = useState<number | null>(null)
   const [isTransitioning, setIsTransitioning] = useState(false)
-  const [direction,       setDirection]       = useState<'next' | 'prev'>('next')
   const [isPaused,        setIsPaused]        = useState(false)
   const [progress,        setProgress]        = useState(0)
   const [touchStartX,     setTouchStartX]     = useState(0)
@@ -51,19 +49,18 @@ export function PianoHeroCarousel({
   const progressStart = useRef<number>(Date.now())
   const rafRef        = useRef<number | null>(null)
   const timerRef      = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const swapRef       = useRef<ReturnType<typeof setTimeout> | null>(null)
   const doneRef       = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const navigate = useCallback(
-    (toIndex: number, dir: 'next' | 'prev') => {
+    (toIndex: number) => {
       if (isTransitioning || toIndex === activeIndex) return
-      setDirection(dir)
       setIsTransitioning(true)
-      setTransitionKey(k => k + 1)
+      setPrevIndex(activeIndex)
+      setActiveIndex(toIndex)
       setProgress(0)
-      swapRef.current = setTimeout(() => setActiveIndex(toIndex), TRANS_HALF)
       doneRef.current = setTimeout(() => {
         setIsTransitioning(false)
+        setPrevIndex(null)
         progressStart.current = Date.now()
       }, TRANS)
     },
@@ -71,11 +68,11 @@ export function PianoHeroCarousel({
   )
 
   const goNext = useCallback(
-    () => navigate((activeIndex + 1) % pianos.length, 'next'),
+    () => navigate((activeIndex + 1) % pianos.length),
     [activeIndex, pianos.length, navigate],
   )
   const goPrev = useCallback(
-    () => navigate((activeIndex - 1 + pianos.length) % pianos.length, 'prev'),
+    () => navigate((activeIndex - 1 + pianos.length) % pianos.length),
     [activeIndex, pianos.length, navigate],
   )
 
@@ -105,7 +102,7 @@ export function PianoHeroCarousel({
     }
     rafRef.current = requestAnimationFrame(tick)
     timerRef.current = setTimeout(
-      () => navigate((activeIndex + 1) % pianos.length, 'next'),
+      () => navigate((activeIndex + 1) % pianos.length),
       DURATION,
     )
     return () => {
@@ -115,7 +112,7 @@ export function PianoHeroCarousel({
   }, [activeIndex, isPaused, isTransitioning, pianos.length, navigate])
 
   useEffect(() => () => {
-    ;[rafRef, timerRef, swapRef, doneRef].forEach(r => {
+    ;[rafRef, timerRef, doneRef].forEach(r => {
       if (r.current) {
         if (typeof r.current === 'number') cancelAnimationFrame(r.current)
         else clearTimeout(r.current)
@@ -126,31 +123,21 @@ export function PianoHeroCarousel({
   if (!pianos.length) return null
 
   const piano    = pianos[activeIndex]!
-  const imageUrl = piano.stockImageUrl ?? piano.imageUrls[0] ?? null
+  const prevPiano = prevIndex !== null ? pianos[prevIndex] : null
 
-  const fade = (delay: number): React.CSSProperties =>
-    isTransitioning
-      ? { opacity: 0, transition: 'none' }
-      : { opacity: 1, transition: `opacity 0.55s ease ${delay}s` }
+  const textStyle: React.CSSProperties = {
+    opacity:    isTransitioning ? 0.72 : 1,
+    transition: isTransitioning
+      ? `opacity ${TRANS * 0.3}ms ease-in`
+      : `opacity ${TRANS * 0.5}ms ease-out`,
+  }
 
   return (
     <>
       <style>{`
-        @keyframes phc-curtain-next {
-          0%   { transform: translateX(-101%); }
-          42%  { transform: translateX(0%);    }
-          58%  { transform: translateX(0%);    }
-          100% { transform: translateX(101%);  }
-        }
-        @keyframes phc-curtain-prev {
-          0%   { transform: translateX(101%);  }
-          42%  { transform: translateX(0%);    }
-          58%  { transform: translateX(0%);    }
-          100% { transform: translateX(-101%); }
-        }
         @keyframes phc-kb {
           from { transform: scale(1);    }
-          to   { transform: scale(1.05); }
+          to   { transform: scale(1.04); }
         }
       `}</style>
 
@@ -163,40 +150,47 @@ export function PianoHeroCarousel({
         onTouchEnd={handleTouchEnd}
       >
 
-        {/* Background image */}
+        {/* Outgoing image — fades out during crossfade */}
+        {prevPiano && (
+          <div className="absolute inset-0" style={{ zIndex: 1 }}>
+            {(() => {
+              const url = prevPiano.stockImageUrl ?? prevPiano.imageUrls[0] ?? null
+              return url ? (
+                <Image src={url} alt={prevPiano.title} fill className="object-cover" sizes="100vw" />
+              ) : null
+            })()}
+          </div>
+        )}
+
+        {/* Incoming image — fades in, runs Ken Burns */}
         <div
           key={`phc-kb-${activeIndex}`}
           className="absolute inset-0"
           style={{
-            animation: isTransitioning || prefersReducedMotion
-              ? undefined
-              : `phc-kb ${DURATION + TRANS}ms linear forwards`,
+            zIndex: 2,
+            opacity: isTransitioning ? 0 : 1,
+            transition: `opacity ${TRANS}ms ease-in-out`,
+            animation: prefersReducedMotion ? undefined : `phc-kb ${DURATION + TRANS}ms ease-out forwards`,
           }}
         >
-          {imageUrl && (
-            <Image src={imageUrl} alt={piano.title} fill className="object-cover" sizes="100vw" priority={activeIndex === 0} />
-          )}
+          {(() => {
+            const url = piano.stockImageUrl ?? piano.imageUrls[0] ?? null
+            return url ? (
+              <Image src={url} alt={piano.title} fill className="object-cover" sizes="100vw" priority={activeIndex === 0} />
+            ) : null
+          })()}
         </div>
 
-        {/* Subtle overlay — darker at top and bottom, clear in middle */}
+        {/* Overlay — darker at top and bottom, clear in middle */}
         <div
-          className="absolute inset-0 z-10 pointer-events-none"
-          style={{ background: 'linear-gradient(to bottom, rgba(4,1,1,0.55) 0%, rgba(4,1,1,0.10) 35%, rgba(4,1,1,0.10) 65%, rgba(4,1,1,0.72) 100%)' }}
+          className="absolute inset-0 pointer-events-none"
+          style={{ zIndex: 3, background: 'linear-gradient(to bottom, rgba(4,1,1,0.55) 0%, rgba(4,1,1,0.10) 35%, rgba(4,1,1,0.10) 65%, rgba(4,1,1,0.72) 100%)' }}
         />
-
-        {/* Gold curtain */}
-        {isTransitioning && (
-          <div
-            key={`phc-curtain-${transitionKey}`}
-            className="absolute inset-0 z-20 pointer-events-none"
-            style={{ backgroundColor: C.accent, animation: `phc-curtain-${direction} ${TRANS}ms cubic-bezier(0.4,0,0.2,1) forwards` }}
-          />
-        )}
 
         {/* Top-left heading */}
         <div
-          className="absolute top-0 left-0 z-30"
-          style={{ padding: 'clamp(5rem, 8vh, 7rem) clamp(2.5rem, 5vw, 5rem) 0' }}
+          className="absolute top-0 left-0"
+          style={{ zIndex: 4, padding: 'clamp(5rem, 8vh, 7rem) clamp(2.5rem, 5vw, 5rem) 0' }}
         >
           {showLogo && (
             <Image
@@ -230,79 +224,82 @@ export function PianoHeroCarousel({
           </h1>
         </div>
 
-        {/* Bottom bar — slim strip */}
-        {!minimal && <div
-          className="absolute bottom-0 left-0 right-0 z-30"
-          style={{
-            borderTop: `1px solid ${C.goldBorder}`,
-            background: 'rgba(4, 1, 1, 0.50)',
-            backdropFilter: 'blur(10px)',
-            WebkitBackdropFilter: 'blur(10px)',
-            padding: 'clamp(1.6rem, 2.5vh, 2.2rem) clamp(2.5rem, 5vw, 5rem)',
-            height: '240px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            gap: '1.2rem',
-          } as React.CSSProperties}
-        >
-          {/* Row 1 — Title */}
-          <div className="flex items-baseline gap-4 min-w-0" style={fade(0.06)}>
-            <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(2.4rem, 4vw, 5rem)', fontWeight: 300, color: C.ivory, lineHeight: 1, letterSpacing: '-0.01em' }}>
-              {piano.brand} {piano.model}
-            </span>
-            {piano.year && (
-              <span style={{ fontFamily: 'var(--font-display)', fontSize: '12px', letterSpacing: '0.3em', color: C.ivoryFaded, flexShrink: 0 }}>
-                · {piano.year}
+        {/* Bottom bar */}
+        {!minimal && (
+          <div
+            className="absolute bottom-0 left-0 right-0"
+            style={{
+              zIndex: 4,
+              borderTop: `1px solid ${C.goldBorder}`,
+              background: 'rgba(4, 1, 1, 0.50)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(10px)',
+              padding: 'clamp(1.6rem, 2.5vh, 2.2rem) clamp(2.5rem, 5vw, 5rem)',
+              height: '240px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              gap: '1.2rem',
+            } as React.CSSProperties}
+          >
+            {/* Row 1 — Title */}
+            <div className="flex items-baseline gap-4 min-w-0" style={textStyle}>
+              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(2.4rem, 4vw, 5rem)', fontWeight: 300, color: C.ivory, lineHeight: 1, letterSpacing: '-0.01em' }}>
+                {piano.brand} {piano.model}
               </span>
-            )}
-            <span
-              className="hidden md:inline"
-              style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(1.6rem, 2.4vw, 2.8rem)', fontWeight: 300, color: C.accent, flexShrink: 0, marginLeft: '0.5rem' }}
-            >
-              {piano.priceDisplay}
-            </span>
-          </div>
-
-          {/* Row 2 — Controls */}
-          <div className="flex items-center gap-4" style={fade(0.10)}>
-            {/* Progress bar */}
-            <div className="hidden lg:block relative shrink-0" style={{ width: '160px', height: '2px', backgroundColor: 'rgba(255,255,255,0.10)' }}>
-              <span style={{ position: 'absolute', inset: 0, transform: `scaleX(${progress / 100})`, transformOrigin: 'left', backgroundColor: C.accent, transition: 'transform 80ms linear' }} />
+              {piano.year && (
+                <span style={{ fontFamily: 'var(--font-display)', fontSize: '12px', letterSpacing: '0.3em', color: C.ivoryFaded, flexShrink: 0 }}>
+                  · {piano.year}
+                </span>
+              )}
+              <span
+                className="hidden md:inline"
+                style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(1.6rem, 2.4vw, 2.8rem)', fontWeight: 300, color: C.accent, flexShrink: 0, marginLeft: '0.5rem' }}
+              >
+                {piano.priceDisplay}
+              </span>
             </div>
 
-            {/* Counter */}
-            <span className="hidden sm:inline shrink-0" style={{ fontFamily: 'var(--font-display)', fontSize: '13px', letterSpacing: '0.38em', color: C.ivoryFaded }}>
-              {String(activeIndex + 1).padStart(2, '0')} / {String(pianos.length).padStart(2, '0')}
-            </span>
+            {/* Row 2 — Controls */}
+            <div className="flex items-center gap-4" style={textStyle}>
+              {/* Progress bar */}
+              <div className="hidden lg:block relative shrink-0" style={{ width: '160px', height: '2px', backgroundColor: 'rgba(255,255,255,0.10)' }}>
+                <span style={{ position: 'absolute', inset: 0, transform: `scaleX(${progress / 100})`, transformOrigin: 'left', backgroundColor: C.accent, transition: 'transform 80ms linear' }} />
+              </div>
 
-            <div className="flex-1" />
+              {/* Counter */}
+              <span className="hidden sm:inline shrink-0" style={{ fontFamily: 'var(--font-display)', fontSize: '13px', letterSpacing: '0.38em', color: C.ivoryFaded }}>
+                {String(activeIndex + 1).padStart(2, '0')} / {String(pianos.length).padStart(2, '0')}
+              </span>
 
-            {/* Arrows */}
-            <div className="flex items-center gap-2 shrink-0">
-              <ArrowBtn onClick={goPrev} direction="prev" aria-label="Previous piano" />
-              <ArrowBtn onClick={goNext} direction="next" aria-label="Next piano" />
+              <div className="flex-1" />
+
+              {/* Arrows */}
+              <div className="flex items-center gap-2 shrink-0">
+                <ArrowBtn onClick={goPrev} direction="prev" aria-label="Previous piano" />
+                <ArrowBtn onClick={goNext} direction="next" aria-label="Next piano" />
+              </div>
+
+              {/* CTA */}
+              <Link
+                href={`/pianos/${piano.slug}`}
+                className="shrink-0 hidden sm:inline-flex"
+                style={{
+                  fontFamily: 'var(--font-display)', fontSize: '12px',
+                  letterSpacing: '0.38em', textTransform: 'uppercase',
+                  color: C.darkBg, backgroundColor: C.accent,
+                  padding: '1rem 2.5rem',
+                  textDecoration: 'none',
+                  transition: 'opacity 200ms',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.80')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+              >
+                View Piano
+              </Link>
             </div>
-
-            {/* CTA */}
-            <Link
-              href={`/pianos/${piano.slug}`}
-              className="shrink-0 hidden sm:inline-flex"
-              style={{
-                fontFamily: 'var(--font-display)', fontSize: '12px',
-                letterSpacing: '0.38em', textTransform: 'uppercase',
-                color: C.darkBg, backgroundColor: C.accent,
-                padding: '1rem 2.5rem',
-                textDecoration: 'none',
-                transition: 'opacity 200ms',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.opacity = '0.80')}
-              onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
-            >
-              View Piano
-            </Link>
           </div>
-        </div>}
+        )}
 
       </div>
     </>

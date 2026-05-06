@@ -310,10 +310,31 @@ interface MediaGridItemProps {
  */
 function resolveMediaUrl(url: string | undefined | null): string {
   if (!url) return ''
-  if (url.startsWith('http://') || url.startsWith('https://')) return url
-  // Relative URL — prepend current origin (safe in 'use client' admin context)
-  if (typeof window !== 'undefined') return `${window.location.origin}${url}`
-  return url
+
+  // Encode each segment without touching slashes.
+  // Decode first to avoid double-encoding already-safe chars.
+  const encodeSegments = (path: string) =>
+    path.split('/').map(seg => {
+      try { return encodeURIComponent(decodeURIComponent(seg)) }
+      catch { return encodeURIComponent(seg) }
+    }).join('/')
+
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    // IMPORTANT: avoid new URL() here — it treats '#' as a fragment and drops
+    // the rest of the filename before we can encode it.
+    // Instead, split on the third slash to isolate origin vs path.
+    const protocolEnd = url.indexOf('//') + 2
+    const pathStart = url.indexOf('/', protocolEnd)
+    if (pathStart === -1) return url
+    const origin = url.slice(0, pathStart)
+    const rawPath = url.slice(pathStart)
+    return origin + encodeSegments(rawPath)
+  }
+
+  // Relative URL — encode path segments then prepend origin
+  const encodedPath = encodeSegments(url)
+  if (typeof window !== 'undefined') return `${window.location.origin}${encodedPath}`
+  return encodedPath
 }
 
 /**
@@ -324,6 +345,7 @@ function MediaGridItem({ item, isSelected, selectionOrder, onSelect, onCopyUrl, 
   const [showActions, setShowActions] = useState(false)
   const [showFolderMenu, setShowFolderMenu] = useState(false)
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 })
+  const [imgError, setImgError] = useState(false)
   const moreButtonRef = useRef<HTMLButtonElement>(null)
   const leaveTimerRef = useRef<NodeJS.Timeout | null>(null)
   const isImage = item.mimeType?.startsWith('image/')
@@ -400,7 +422,7 @@ function MediaGridItem({ item, isSelected, selectionOrder, onSelect, onCopyUrl, 
         overflow: 'hidden',
         backgroundColor: colors.inputBg
       }}>
-        {isImage ? (
+        {isImage && !imgError ? (
           <Image
             unoptimized
             src={thumbnailUrl}
@@ -409,7 +431,24 @@ function MediaGridItem({ item, isSelected, selectionOrder, onSelect, onCopyUrl, 
             height={150}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
             loading="lazy"
+            onError={() => setImgError(true)}
           />
+        ) : isImage && imgError ? (
+          <div style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            backgroundColor: colors.inputBg,
+          }}>
+            <svg style={{ width: '32px', height: '32px', color: colors.textMuted }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span style={{ fontSize: '11px', color: colors.textMuted }}>Preview unavailable</span>
+          </div>
         ) : (
           <div style={{
             width: '100%',

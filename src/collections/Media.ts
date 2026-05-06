@@ -18,7 +18,7 @@ export const Media: CollectionConfig = {
 
         const rewrite = (url: unknown, filename: unknown): string | unknown => {
           if (typeof url === 'string' && !url.startsWith('http') && typeof filename === 'string') {
-            return `${base}/${filename}`
+            return `${base}/${encodeURIComponent(filename)}`
           }
           return url
         }

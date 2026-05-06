@@ -47,7 +47,7 @@ function blackKeyX(whiteIdx: number) {
   return whiteIdx * (WW + GAP) + WW + GAP / 2 - BW / 2
 }
 
-function PianoKeyboard({ mounted }: { mounted: boolean }) {
+function PianoKeyboard({ mounted, isDark }: { mounted: boolean; isDark: boolean }) {
   return (
     <div
       style={{
@@ -66,8 +66,9 @@ function PianoKeyboard({ mounted }: { mounted: boolean }) {
             top: 0,
             width: WW,
             height: WH,
-            background:
-              'linear-gradient(180deg, hsl(38, 22%, 18%) 0%, hsl(36, 18%, 14%) 100%)',
+            background: isDark
+                ? 'linear-gradient(180deg, hsl(38, 22%, 18%) 0%, hsl(36, 18%, 14%) 100%)'
+                : 'linear-gradient(180deg, hsl(36, 10%, 88%) 0%, hsl(36, 8%, 82%) 100%)',
             border: '1px solid rgba(184,134,57,0.28)',
             borderTop: 'none',
             borderRadius: '0 0 3px 3px',
@@ -91,8 +92,9 @@ function PianoKeyboard({ mounted }: { mounted: boolean }) {
             top: 0,
             width: BW,
             height: BH,
-            background:
-              'linear-gradient(180deg, hsl(40, 55%, 38%) 0%, hsl(38, 50%, 26%) 100%)',
+            background: isDark
+                ? 'linear-gradient(180deg, hsl(40, 55%, 38%) 0%, hsl(38, 50%, 26%) 100%)'
+                : 'linear-gradient(180deg, hsl(40, 40%, 32%) 0%, hsl(38, 38%, 22%) 100%)',
             border: '1px solid rgba(184,134,57,0.5)',
             borderTop: '2px solid rgba(184,134,57,0.7)',
             borderRadius: '0 0 2px 2px',
@@ -116,8 +118,9 @@ function PianoKeyboard({ mounted }: { mounted: boolean }) {
           top: -14,
           width: TOTAL_WIDTH + 8,
           height: 14,
-          background:
-            'linear-gradient(180deg, hsl(38, 22%, 16%) 0%, hsl(36, 18%, 13%) 100%)',
+          background: isDark
+            ? 'linear-gradient(180deg, hsl(38, 22%, 16%) 0%, hsl(36, 18%, 13%) 100%)'
+            : 'linear-gradient(180deg, hsl(36, 8%, 80%) 0%, hsl(36, 6%, 74%) 100%)',
           border: '1px solid rgba(184,134,57,0.22)',
           borderBottom: 'none',
           borderRadius: '3px 3px 0 0',
@@ -172,7 +175,7 @@ export default function LoginBranding() {
           paddingTop: '16px',
         }}
       >
-        <PianoKeyboard mounted={mounted} />
+        <PianoKeyboard mounted={mounted} isDark={isDark} />
       </div>
 
       {/* Brand wordmark */}

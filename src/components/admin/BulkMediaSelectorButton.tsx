@@ -1,18 +1,17 @@
 'use client'
 
 import React from 'react'
-import { useField } from '@payloadcms/ui'
+import { useField, useForm } from '@payloadcms/ui'
 import { useMediaManager } from './media-manager/MediaManagerProvider'
 import type { MediaItem } from './media-manager/types'
-
-interface ArrayRow {
-  id?: string
-  image: string
-}
 
 /**
  * Button that opens the media manager in multi-select mode and appends all
  * chosen images (in selection order) as new rows in a sibling array field.
+ *
+ * Uses `addFieldRow` from `useForm()` — the correct Payload v3 API for
+ * programmatically adding rows (raw `setValue` bypasses the array field's
+ * internal row state and only applies the last row).
  *
  * Usage in collection config — add as a `ui` field before the target array:
  * ```typescript
@@ -26,12 +25,12 @@ interface ArrayRow {
  *   },
  * }
  * ```
- *
- * The component reads/writes the `images` array field by name. If you need it
- * for a different field, duplicate the component and change the `path` below.
  */
 export const BulkMediaSelectorButton: React.FC = () => {
-  const { value, setValue } = useField<ArrayRow[]>({ path: 'images' })
+  // Read-only: show how many images are currently in the gallery
+  const { value } = useField<Array<{ image: string }>>({ path: 'images' })
+  // useForm().addFieldRow is the correct Payload v3 way to append array rows
+  const { addFieldRow } = useForm()
   const { openModal } = useMediaManager()
 
   const currentCount = Array.isArray(value) ? value.length : 0
@@ -41,12 +40,21 @@ export const BulkMediaSelectorButton: React.FC = () => {
       mode: 'select',
       allowMultiple: true,
       onSelectMultiple: (items: MediaItem[]) => {
-        const currentArray: ArrayRow[] = Array.isArray(value) ? value : []
-        const newRows: ArrayRow[] = items.map((item) => ({
-          id: crypto.randomUUID(),
-          image: item.id,
-        }))
-        setValue([...currentArray, ...newRows])
+        // Add each selected item as its own row — Payload assigns the row ID internally.
+        // subFieldState pre-populates the `image` upload field in each new row.
+        items.forEach((item) => {
+          addFieldRow({
+            path: 'images',
+            schemaPath: 'pianos.images',
+            subFieldState: {
+              image: {
+                value: item.id,
+                initialValue: item.id,
+                valid: true,
+              },
+            },
+          })
+        })
       },
     })
   }

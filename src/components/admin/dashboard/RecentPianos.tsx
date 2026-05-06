@@ -4,13 +4,15 @@ import { useEffect } from 'react'
 import type { Piano, Brand } from '@/payload-types'
 
 const COLORS = {
-  charcoal: 'hsl(25, 5%, 14%)',
-  gold: 'hsl(40, 72%, 52%)',
-  goldBorder: 'rgba(184, 134, 57, 0.15)',
-  cream: 'hsl(36, 18%, 97%)',
-  silver: 'hsl(25, 4%, 58%)',
-  available: 'hsl(142, 50%, 45%)',
-  sold: 'hsl(25, 4%, 45%)',
+  bg: 'hsl(0, 0%, 100%)',
+  gold: 'hsl(40, 72%, 34%)',
+  border: 'rgba(0, 0, 0, 0.13)',
+  divider: 'rgba(0, 0, 0, 0.09)',
+  text: 'hsl(25, 6%, 9%)',
+  body: 'hsl(25, 5%, 18%)',
+  muted: 'hsl(25, 4%, 32%)',
+  available: 'hsl(142, 55%, 26%)',
+  sold: 'hsl(25, 4%, 35%)',
 }
 
 const STYLES = `
@@ -22,7 +24,7 @@ const STYLES = `
     transition: background 0.15s;
   }
   .usw-piano-row:hover {
-    background: hsl(25, 5%, 18%);
+    background: hsl(36, 14%, 96%);
   }
 `
 
@@ -57,8 +59,8 @@ export function RecentPianos({ pianos, adminBaseURL = '/admin' }: RecentPianosPr
   return (
     <div
       style={{
-        background: COLORS.charcoal,
-        border: `1px solid ${COLORS.goldBorder}`,
+        background: COLORS.bg,
+        border: `1px solid ${COLORS.border}`,
         borderRadius: '4px',
         overflow: 'hidden',
       }}
@@ -69,17 +71,17 @@ export function RecentPianos({ pianos, adminBaseURL = '/admin' }: RecentPianosPr
           justifyContent: 'space-between',
           alignItems: 'baseline',
           padding: '28px 32px 20px',
-          borderBottom: `1px solid rgba(184, 134, 57, 0.1)`,
+          borderBottom: `1px solid ${COLORS.divider}`,
         }}
       >
         <h2
           style={{
             fontFamily: 'inherit',
-            fontSize: '14px',
-            fontWeight: 600,
-            color: COLORS.cream,
+            fontSize: '17px',
+            fontWeight: 700,
+            color: COLORS.text,
             margin: 0,
-            letterSpacing: '0.03em',
+            letterSpacing: '0.01em',
           }}
         >
           Recent Listings
@@ -88,12 +90,12 @@ export function RecentPianos({ pianos, adminBaseURL = '/admin' }: RecentPianosPr
           href={`${adminBaseURL}/collections/pianos`}
           style={{
             fontFamily: 'inherit',
-            fontSize: '12px',
-            letterSpacing: '0.2em',
+            fontSize: '13px',
+            fontWeight: 600,
+            letterSpacing: '0.16em',
             textTransform: 'uppercase',
             color: COLORS.gold,
             textDecoration: 'none',
-            opacity: 0.8,
           }}
         >
           View all →
@@ -105,7 +107,7 @@ export function RecentPianos({ pianos, adminBaseURL = '/admin' }: RecentPianosPr
           style={{
             padding: '40px 32px',
             textAlign: 'center',
-            color: COLORS.silver,
+            color: COLORS.muted,
             fontSize: '15px',
             fontStyle: 'italic',
           }}
@@ -125,17 +127,17 @@ export function RecentPianos({ pianos, adminBaseURL = '/admin' }: RecentPianosPr
                 className="usw-piano-row"
                 style={{
                   padding: '20px 32px',
-                  borderBottom: isLast ? 'none' : `1px solid rgba(255,255,255,0.05)`,
+                  borderBottom: isLast ? 'none' : `1px solid ${COLORS.divider}`,
                 }}
               >
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div
                     style={{
                       fontFamily: 'inherit',
-                      fontSize: '14px',
-                      fontWeight: 500,
-                      color: COLORS.cream,
-                      marginBottom: '4px',
+                      fontSize: '15px',
+                      fontWeight: 600,
+                      color: COLORS.text,
+                      marginBottom: '5px',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
@@ -143,7 +145,7 @@ export function RecentPianos({ pianos, adminBaseURL = '/admin' }: RecentPianosPr
                   >
                     {piano.title}
                   </div>
-                  <div style={{ fontSize: '13px', color: COLORS.silver, letterSpacing: '0.04em' }}>
+                  <div style={{ fontSize: '13px', fontWeight: 500, color: COLORS.muted, letterSpacing: '0.03em' }}>
                     {[brandName, piano.condition].filter(Boolean).join(' · ')}
                   </div>
                 </div>
@@ -160,8 +162,8 @@ export function RecentPianos({ pianos, adminBaseURL = '/admin' }: RecentPianosPr
                   <div
                     style={{
                       fontFamily: 'inherit',
-                      fontSize: '14px',
-                      fontWeight: 600,
+                      fontSize: '15px',
+                      fontWeight: 700,
                       color: COLORS.gold,
                     }}
                   >
@@ -169,11 +171,12 @@ export function RecentPianos({ pianos, adminBaseURL = '/admin' }: RecentPianosPr
                   </div>
                   <div
                     style={{
-                      fontSize: '11px',
-                      letterSpacing: '0.18em',
+                      fontSize: '12px',
+                      fontWeight: 700,
+                      letterSpacing: '0.16em',
                       textTransform: 'uppercase',
                       color: piano.isAvailable ? COLORS.available : COLORS.sold,
-                      minWidth: '60px',
+                      minWidth: '68px',
                       textAlign: 'right',
                     }}
                   >

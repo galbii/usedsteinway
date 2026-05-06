@@ -211,6 +211,10 @@ export interface Page {
   };
   layout: (
     | {
+        /**
+         * Visual presentation of the call-to-action section.
+         */
+        style?: ('light' | 'dark' | 'ruled') | null;
         richText?: {
           root: {
             type: string;
@@ -592,6 +596,10 @@ export interface ContentBlock {
  * via the `definition` "CallToActionBlock".
  */
 export interface CallToActionBlock {
+  /**
+   * Visual presentation of the call-to-action section.
+   */
+  style?: ('light' | 'dark' | 'ruled') | null;
   richText?: {
     root: {
       type: string;
@@ -1564,6 +1572,7 @@ export interface PagesSelect<T extends boolean = true> {
  * via the `definition` "CallToActionBlock_select".
  */
 export interface CallToActionBlockSelect<T extends boolean = true> {
+  style?: T;
   richText?: T;
   links?:
     | T

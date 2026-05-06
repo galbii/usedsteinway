@@ -14,6 +14,20 @@ export const CallToAction: Block = {
   interfaceName: 'CallToActionBlock',
   fields: [
     {
+      name: 'style',
+      type: 'select',
+      defaultValue: 'light',
+      options: [
+        { label: 'Light — Ivory centered', value: 'light' },
+        { label: 'Dark — Burgundy atelier', value: 'dark' },
+        { label: 'Ruled — Editorial band', value: 'ruled' },
+      ],
+      admin: {
+        description: 'Visual presentation of the call-to-action section.',
+        position: 'sidebar',
+      },
+    },
+    {
       name: 'richText',
       type: 'richText',
       editor: lexicalEditor({

@@ -4,7 +4,7 @@
 //
 // Structure:
 //   1. Font import
-//   2. CSS variable overrides (primary color → gold, base palette → warm dark)
+//   2. CSS variable overrides (primary color → gold, base palette → warm ivory)
 //   3. Legibility — scale up font sizes
 //   4. Component-level refinements (nav, login, forms)
 // =============================================================================
@@ -31,21 +31,41 @@
 }
 
 // -----------------------------------------------------------------------------
-// 2. Dark theme base palette — warm piano-black instead of neutral gray
+// 2. Light theme base palette — warm ivory, high contrast text
 // -----------------------------------------------------------------------------
+:root {
+  --color-base-0:    hsl(25, 6%, 6%);     // near-black (primary text)
+  --color-base-50:   hsl(25, 6%, 10%);
+  --color-base-100:  hsl(25, 5%, 14%);
+  --color-base-150:  hsl(25, 5%, 20%);    // body text — clearly readable
+  --color-base-200:  hsl(25, 4%, 28%);    // secondary text
+  --color-base-500:  hsl(25, 3%, 38%);    // muted text
+  --color-base-550:  hsl(25, 3%, 46%);
+  --color-base-600:  hsl(25, 3%, 54%);
+  --color-base-650:  hsl(25, 4%, 62%);
+  --color-base-700:  hsl(25, 4%, 70%);
+  --color-base-750:  hsl(25, 4%, 78%);
+  --color-base-800:  hsl(30, 5%, 84%);    // subtle borders
+  --color-base-850:  hsl(36, 7%, 89%);
+  --color-base-900:  hsl(36, 10%, 93%);
+  --color-base-950:  hsl(36, 14%, 96%);   // warm linen
+  --color-base-1000: hsl(36, 18%, 98%);   // piano cream (page background)
+}
+
+// Dark mode override — keep but slightly warmer/lifted
 [data-theme='dark'] {
-  --color-base-1000: hsl(25, 6%, 6%);
-  --color-base-950:  hsl(25, 6%, 9%);   // piano-black
-  --color-base-900:  hsl(25, 5%, 11%);
-  --color-base-850:  hsl(25, 5%, 13%);  // piano-charcoal
-  --color-base-800:  hsl(25, 5%, 16%);
-  --color-base-750:  hsl(25, 4%, 20%);
-  --color-base-700:  hsl(25, 4%, 25%);
-  --color-base-650:  hsl(25, 4%, 30%);
-  --color-base-600:  hsl(25, 3%, 36%);
-  --color-base-550:  hsl(25, 3%, 42%);
-  --color-base-500:  hsl(25, 3%, 48%);  // piano-stone
-  --color-base-0:    hsl(36, 18%, 97%); // piano-cream
+  --color-base-1000: hsl(25, 6%, 7%);
+  --color-base-950:  hsl(25, 6%, 10%);
+  --color-base-900:  hsl(25, 5%, 13%);
+  --color-base-850:  hsl(25, 5%, 16%);
+  --color-base-800:  hsl(25, 5%, 19%);
+  --color-base-750:  hsl(25, 4%, 24%);
+  --color-base-700:  hsl(25, 4%, 30%);
+  --color-base-650:  hsl(25, 4%, 36%);
+  --color-base-600:  hsl(25, 3%, 42%);
+  --color-base-550:  hsl(25, 3%, 48%);
+  --color-base-500:  hsl(25, 3%, 54%);
+  --color-base-0:    hsl(36, 18%, 97%);
   --color-base-50:   hsl(36, 14%, 92%);
   --color-base-100:  hsl(36, 10%, 85%);
   --color-base-150:  hsl(30, 6%, 76%);
@@ -59,7 +79,6 @@ html {
   font-size: 15.5px;
 }
 
-// Payload sets font-size on specific elements — boost them proportionally
 .nav__link,
 .nav__label,
 .collection-list__item,
@@ -68,13 +87,11 @@ html {
   font-size: 1rem;
 }
 
-// Larger field labels
 .field-label,
 label {
   font-size: 0.9rem;
 }
 
-// Larger input text
 input[type='text'],
 input[type='email'],
 input[type='password'],
@@ -85,16 +102,20 @@ select {
   font-size: 1rem !important;
 }
 
-// Table / list row text
 .cell,
 .row-title {
   font-size: 0.95rem;
 }
 
 // -----------------------------------------------------------------------------
-// 4. Nav sidebar — warm dark, gold accent on active
+// 4. Nav sidebar — clean ivory, gold accent on active
 // -----------------------------------------------------------------------------
 .nav {
+  background-color: hsl(36, 14%, 95%) !important;
+  border-right: 1px solid rgba(184, 134, 57, 0.14) !important;
+}
+
+[data-theme='dark'] .nav {
   background-color: hsl(25, 5%, 10%) !important;
   border-right: 1px solid rgba(184, 134, 57, 0.12) !important;
 }
@@ -104,7 +125,6 @@ select {
   color: hsl(40, 72%, 52%) !important;
 }
 
-// Nav brand / logo area
 .nav__header {
   border-bottom-color: rgba(184, 134, 57, 0.12) !important;
 }
@@ -113,9 +133,8 @@ select {
 // 5. Login page — full redesign
 // -----------------------------------------------------------------------------
 
-// Full-page background with atmospheric radial gradient
 .template-minimal {
-  background-color: hsl(25, 6%, 9%) !important;
+  background-color: hsl(36, 18%, 97%) !important;
   background-image: radial-gradient(
     ellipse 80% 60% at 50% 30%,
     rgba(184, 134, 57, 0.04) 0%,
@@ -127,20 +146,22 @@ select {
   justify-content: center !important;
 }
 
+[data-theme='dark'] .template-minimal {
+  background-color: hsl(25, 6%, 9%) !important;
+}
+
 .template-minimal__wrap,
 .login,
 .login__content {
   background-color: transparent !important;
 }
 
-// Widen the login container for the piano keyboard
 .template-minimal__wrap {
   width: 100% !important;
   max-width: 480px !important;
   padding: 0 28px !important;
 }
 
-// Hide Payload's default logo — LoginBranding component replaces it
 .template-minimal__wrap > a:first-child,
 .template-minimal__wrap > a > svg,
 .template-minimal__wrap > a > img,
@@ -148,7 +169,6 @@ select {
   display: none !important;
 }
 
-// Dissolve the form card — let fields sit directly on the dark page
 .login__form,
 .template-minimal__wrap > form,
 .template-minimal form {
@@ -158,13 +178,13 @@ select {
   padding: 0 !important;
 }
 
-// Input fields — dark fill, gold border, cream text, taller
+// Input fields — light fill, gold border, warm text
 .template-minimal input[type='email'],
 .template-minimal input[type='password'],
 .template-minimal input[type='text'] {
-  background-color: hsl(25, 5%, 7%) !important;
-  color: hsl(36, 18%, 97%) !important;
-  border: 1px solid rgba(184, 134, 57, 0.18) !important;
+  background-color: hsl(0, 0%, 100%) !important;
+  color: hsl(25, 6%, 9%) !important;
+  border: 1px solid rgba(184, 134, 57, 0.22) !important;
   border-radius: 3px !important;
   caret-color: hsl(40, 72%, 52%) !important;
   transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
@@ -174,27 +194,32 @@ select {
 
   &:focus,
   &:focus-visible {
-    background-color: hsl(25, 5%, 8%) !important;
-    border-color: rgba(184, 134, 57, 0.5) !important;
+    border-color: rgba(184, 134, 57, 0.55) !important;
     outline: none !important;
-    box-shadow: 0 0 0 3px rgba(184, 134, 57, 0.06) !important;
+    box-shadow: 0 0 0 3px rgba(184, 134, 57, 0.07) !important;
   }
 }
 
-// Browser autofill injects a white background — override it
+[data-theme='dark'] .template-minimal input[type='email'],
+[data-theme='dark'] .template-minimal input[type='password'],
+[data-theme='dark'] .template-minimal input[type='text'] {
+  background-color: hsl(25, 5%, 7%) !important;
+  color: hsl(36, 18%, 97%) !important;
+  border: 1px solid rgba(184, 134, 57, 0.18) !important;
+}
+
 .template-minimal input:-webkit-autofill,
 .template-minimal input:-webkit-autofill:hover,
 .template-minimal input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 1000px hsl(25, 5%, 7%) inset !important;
-  -webkit-text-fill-color: hsl(36, 18%, 97%) !important;
-  caret-color: hsl(36, 18%, 97%) !important;
-  border-color: rgba(184, 134, 57, 0.18) !important;
+  -webkit-box-shadow: 0 0 0 1000px hsl(0, 0%, 100%) inset !important;
+  -webkit-text-fill-color: hsl(25, 6%, 9%) !important;
+  caret-color: hsl(25, 6%, 9%) !important;
+  border-color: rgba(184, 134, 57, 0.22) !important;
 }
 
-// Field labels — muted, spaced, uppercase
 .template-minimal .field-label,
 .template-minimal label {
-  color: hsl(25, 5%, 48%) !important;
+  color: hsl(25, 5%, 40%) !important;
   font-size: 0.68rem !important;
   letter-spacing: 0.1em !important;
   text-transform: uppercase !important;
@@ -202,12 +227,10 @@ select {
   margin-bottom: 8px !important;
 }
 
-// Required asterisk — softer gold
 .template-minimal .required {
   color: rgba(184, 134, 57, 0.5) !important;
 }
 
-// Login / submit button — full-width, piano gold
 .template-minimal .btn--style-primary,
 .template-minimal button[type='submit'],
 .template-minimal .form-submit .btn {
@@ -239,10 +262,9 @@ select {
   }
 }
 
-// Forgot password link — quiet, gold on hover
 .template-minimal .login__forgot-password,
 .template-minimal a[href*='forgot'] {
-  color: hsl(25, 5%, 38%) !important;
+  color: hsl(25, 5%, 45%) !important;
   font-size: 0.76rem !important;
   text-decoration: none !important;
   transition: color 0.18s ease !important;
@@ -253,18 +275,15 @@ select {
   }
 }
 
-// Prevent Payload from injecting colored backgrounds on login headings
 .template-minimal h1 {
   background: none !important;
   background-color: transparent !important;
 }
 
-// Spacing between form fields
 .template-minimal .field-type {
   margin-bottom: 20px !important;
 }
 
-// Form submit row — extra top spacing
 .template-minimal .form-submit {
   margin-top: 28px !important;
 }
@@ -273,15 +292,6 @@ select {
 // 6. General surface refinements
 // -----------------------------------------------------------------------------
 
-// Card / panel backgrounds — slightly warm
-.render-fields,
-.collection-edit,
-.doc-controls {
-  background-color: hsl(25, 5%, 11%) !important;
-}
-
-// Primary buttons — already handled by --color-blue-* override above
-// but reinforce focus ring color
 button:focus-visible,
 a:focus-visible {
   outline-color: hsl(40, 72%, 52%) !important;

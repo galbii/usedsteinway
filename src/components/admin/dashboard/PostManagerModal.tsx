@@ -4,19 +4,21 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 const COLORS = {
-  black: 'hsl(25, 6%, 9%)',
-  charcoal: 'hsl(25, 5%, 14%)',
-  charcoalHover: 'hsl(25, 5%, 18%)',
-  gold: 'hsl(40, 72%, 52%)',
-  goldBorder: 'rgba(184, 134, 57, 0.18)',
+  panel: 'hsl(0, 0%, 100%)',
+  surface: 'hsl(36, 12%, 96%)',
+  gold: 'hsl(40, 72%, 34%)',
+  goldBorder: 'rgba(184, 134, 57, 0.45)',
   goldFaint: 'rgba(184, 134, 57, 0.07)',
-  goldMuted: 'rgba(184, 134, 57, 0.45)',
-  cream: 'hsl(36, 18%, 97%)',
-  silver: 'hsl(25, 4%, 58%)',
-  published: 'hsl(142, 50%, 45%)',
-  publishedFaint: 'rgba(46, 160, 67, 0.12)',
-  draft: 'hsl(35, 70%, 55%)',
-  draftFaint: 'rgba(204, 130, 50, 0.12)',
+  goldMuted: 'hsl(40, 65%, 38%)',
+  border: 'rgba(0, 0, 0, 0.12)',
+  divider: 'rgba(0, 0, 0, 0.08)',
+  text: 'hsl(25, 6%, 9%)',
+  body: 'hsl(25, 5%, 18%)',
+  muted: 'hsl(25, 4%, 38%)',
+  published: 'hsl(142, 55%, 26%)',
+  publishedFaint: 'rgba(46, 160, 67, 0.09)',
+  draft: 'hsl(35, 70%, 34%)',
+  draftFaint: 'rgba(204, 130, 50, 0.09)',
 }
 
 const STYLES = `
@@ -27,9 +29,9 @@ const STYLES = `
   .usw-psm-skeleton {
     background: linear-gradient(
       90deg,
-      rgba(255,255,255,0.04) 25%,
-      rgba(255,255,255,0.09) 50%,
-      rgba(255,255,255,0.04) 75%
+      rgba(0,0,0,0.04) 25%,
+      rgba(0,0,0,0.08) 50%,
+      rgba(0,0,0,0.04) 75%
     );
     background-size: 800px 100%;
     animation: usw-psm-shimmer 1.6s infinite linear;
@@ -39,7 +41,7 @@ const STYLES = `
     display: flex;
     align-items: center;
     padding: 18px 40px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(0,0,0,0.07);
     transition: background 0.12s;
     cursor: default;
   }
@@ -47,12 +49,13 @@ const STYLES = `
     border-bottom: none;
   }
   .usw-psm-row:hover {
-    background: hsl(25, 5%, 17%);
+    background: hsl(36, 12%, 97%);
   }
   .usw-psm-edit-link {
-    color: ${COLORS.silver};
+    color: ${COLORS.muted};
     text-decoration: none;
     font-size: 13px;
+    font-weight: 600;
     letter-spacing: 0.06em;
     white-space: nowrap;
     flex-shrink: 0;
@@ -66,20 +69,21 @@ const STYLES = `
     border: 1px solid transparent;
     border-radius: 3px;
     padding: 5px 12px;
-    font-size: 12px;
-    letter-spacing: 0.08em;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
     cursor: pointer;
-    color: ${COLORS.silver};
+    color: ${COLORS.muted};
     transition: color 0.15s, border-color 0.15s, background 0.15s;
     font-family: inherit;
   }
   .usw-psm-filter-btn:hover {
-    color: ${COLORS.cream};
-    border-color: ${COLORS.goldBorder};
+    color: ${COLORS.text};
+    background: rgba(0,0,0,0.04);
   }
   .usw-psm-filter-btn.active {
     color: ${COLORS.gold};
-    border-color: ${COLORS.goldMuted};
+    border-color: ${COLORS.goldBorder};
     background: ${COLORS.goldFaint};
   }
   .usw-psm-type-btn {
@@ -87,70 +91,72 @@ const STYLES = `
     border: 1px solid transparent;
     border-radius: 20px;
     padding: 4px 12px;
-    font-size: 11px;
-    letter-spacing: 0.1em;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
     cursor: pointer;
-    color: ${COLORS.silver};
+    color: ${COLORS.muted};
     transition: color 0.15s, border-color 0.15s, background 0.15s;
     font-family: inherit;
   }
   .usw-psm-type-btn:hover {
-    color: ${COLORS.cream};
-    border-color: ${COLORS.goldBorder};
+    color: ${COLORS.text};
+    border-color: rgba(0,0,0,0.13);
   }
   .usw-psm-type-btn.active {
     color: ${COLORS.gold};
-    border-color: ${COLORS.goldMuted};
+    border-color: ${COLORS.goldBorder};
     background: ${COLORS.goldFaint};
   }
   .usw-psm-search {
-    background: ${COLORS.black};
-    border: 1px solid ${COLORS.goldBorder};
+    background: ${COLORS.surface};
+    border: 1px solid rgba(0,0,0,0.13);
     border-radius: 3px;
     padding: 7px 14px;
     font-size: 13px;
-    color: ${COLORS.cream};
+    color: ${COLORS.text};
     font-family: inherit;
     outline: none;
     flex: 1;
     max-width: 320px;
     height: 36px;
-    transition: border-color 0.15s;
+    transition: border-color 0.15s, background 0.15s;
   }
   .usw-psm-search::placeholder {
-    color: ${COLORS.silver};
+    color: ${COLORS.muted};
   }
   .usw-psm-search:focus {
-    border-color: ${COLORS.goldMuted};
+    border-color: rgba(184, 134, 57, 0.5);
+    background: hsl(0, 0%, 100%);
   }
   .usw-psm-sort-select {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: ${COLORS.surface};
+    border: 1px solid rgba(0,0,0,0.13);
     border-radius: 3px;
-    color: ${COLORS.silver};
+    color: ${COLORS.body};
     font-family: inherit;
-    font-size: 12px;
+    font-size: 13px;
     padding: 4px 8px;
     outline: none;
     cursor: pointer;
   }
   .usw-psm-new-btn {
-    background: rgba(184, 134, 57, 0.12);
-    border: 1px solid rgba(184, 134, 57, 0.4);
+    background: ${COLORS.gold};
+    border: none;
     border-radius: 3px;
-    padding: 9px 20px;
+    padding: 10px 22px;
     font-size: 13px;
+    font-weight: 600;
     letter-spacing: 0.1em;
-    color: ${COLORS.gold};
+    color: hsl(36, 18%, 97%);
     font-family: inherit;
     cursor: pointer;
     text-decoration: none;
     display: inline-block;
-    transition: background 0.15s, border-color 0.15s;
+    transition: background 0.15s;
   }
   .usw-psm-new-btn:hover {
-    background: rgba(184, 134, 57, 0.2);
-    border-color: rgba(184, 134, 57, 0.6);
+    background: hsl(40, 72%, 40%);
   }
   .usw-psm-scroll::-webkit-scrollbar {
     width: 6px;
@@ -159,12 +165,12 @@ const STYLES = `
     background: transparent;
   }
   .usw-psm-scroll::-webkit-scrollbar-thumb {
-    background: ${COLORS.goldBorder};
+    background: rgba(0,0,0,0.15);
     border-radius: 3px;
   }
   .usw-psm-scroll {
     scrollbar-width: thin;
-    scrollbar-color: ${COLORS.goldBorder} transparent;
+    scrollbar-color: rgba(0,0,0,0.15) transparent;
   }
 
   /* ── Entrance animations ─────────────────────────────────── */
@@ -193,7 +199,7 @@ const STYLES = `
     background: none;
     border: none;
     cursor: pointer;
-    color: ${COLORS.silver};
+    color: ${COLORS.muted};
     font-size: 20px;
     line-height: 1;
     padding: 2px 6px;
@@ -201,7 +207,7 @@ const STYLES = `
     transition: color 0.15s, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
   .usw-psm-close-btn:hover {
-    color: ${COLORS.cream};
+    color: ${COLORS.text};
     transform: rotate(90deg);
   }
   .usw-psm-close-btn:active {
@@ -379,8 +385,8 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
           inset: '20px',
           display: 'flex',
           flexDirection: 'column',
-          background: COLORS.charcoal,
-          border: `1px solid ${COLORS.goldBorder}`,
+          background: COLORS.panel,
+          border: `1px solid ${COLORS.border}`,
           borderRadius: 6,
           overflow: 'hidden',
         }}
@@ -394,7 +400,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
             alignItems: 'flex-start',
             justifyContent: 'space-between',
             padding: '32px 40px 24px',
-            borderBottom: `1px solid ${COLORS.goldBorder}`,
+            borderBottom: `1px solid ${COLORS.divider}`,
           }}
         >
           <div>
@@ -403,7 +409,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
                 fontFamily: 'inherit',
                 fontSize: 20,
                 fontWeight: 600,
-                color: COLORS.cream,
+                color: COLORS.text,
                 lineHeight: 1.2,
                 letterSpacing: '0.01em',
               }}
@@ -414,7 +420,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
               style={{
                 marginTop: 4,
                 fontSize: 13,
-                color: COLORS.silver,
+                color: COLORS.muted,
                 fontFamily: 'inherit',
               }}
             >
@@ -449,7 +455,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
             display: 'flex',
             alignItems: 'center',
             gap: 10,
-            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            borderBottom: `1px solid ${COLORS.divider}`,
             flexWrap: 'wrap',
           }}
         >
@@ -472,7 +478,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
             style={{
               width: 1,
               height: 16,
-              background: 'rgba(255,255,255,0.12)',
+              background: 'rgba(0,0,0,0.12)',
               flexShrink: 0,
             }}
           />
@@ -535,7 +541,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
                       flexShrink: 0,
                       textAlign: 'right',
                       paddingRight: 20,
-                      borderRight: '1px solid rgba(255,255,255,0.06)',
+                      borderRight: `1px solid ${COLORS.divider}`,
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'flex-end',
@@ -572,7 +578,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: COLORS.silver,
+                color: COLORS.muted,
                 fontSize: 14,
                 fontStyle: 'italic',
               }}
@@ -588,7 +594,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: COLORS.silver,
+                color: COLORS.muted,
                 fontSize: 14,
                 fontStyle: 'italic',
               }}
@@ -625,7 +631,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
                       flexShrink: 0,
                       textAlign: 'right',
                       paddingRight: 20,
-                      borderRight: '1px solid rgba(255,255,255,0.06)',
+                      borderRight: `1px solid ${COLORS.divider}`,
                     }}
                   >
                     <div
@@ -644,7 +650,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
                     <div
                       style={{
                         fontSize: 14,
-                        color: COLORS.silver,
+                        color: COLORS.muted,
                         letterSpacing: '0.06em',
                         marginTop: 3,
                       }}
@@ -694,7 +700,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
                         style={{
                           fontFamily: 'inherit',
                           fontSize: 15,
-                          color: COLORS.cream,
+                          color: COLORS.text,
                           fontWeight: 500,
                           lineHeight: 1.2,
                           overflow: 'hidden',
@@ -722,7 +728,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
                           <span
                             style={{
                               fontSize: 12,
-                              color: COLORS.silver,
+                              color: COLORS.muted,
                               letterSpacing: '0.04em',
                             }}
                           >
@@ -737,7 +743,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
                               fontSize: 10,
                               background: COLORS.goldFaint,
                               color: COLORS.gold,
-                              border: `1px solid ${COLORS.goldBorder}`,
+                              border: `1px solid ${COLORS.border}`,
                             }}
                           >
                             News
@@ -751,7 +757,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
                               fontSize: 10,
                               background: COLORS.goldFaint,
                               color: COLORS.gold,
-                              border: `1px solid ${COLORS.goldBorder}`,
+                              border: `1px solid ${COLORS.border}`,
                             }}
                           >
                             Guide
@@ -779,7 +785,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
           style={{
             flexShrink: 0,
             padding: '22px 40px',
-            borderTop: `1px solid ${COLORS.goldBorder}`,
+            borderTop: `1px solid ${COLORS.divider}`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -789,7 +795,7 @@ export function PostManagerModal({ open, onClose }: PostManagerModalProps) {
           <span
             style={{
               fontSize: 13,
-              color: COLORS.silver,
+              color: COLORS.muted,
               fontFamily: 'inherit',
             }}
           >

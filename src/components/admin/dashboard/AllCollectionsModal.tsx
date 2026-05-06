@@ -3,16 +3,17 @@
 import { useEffect, useState, useCallback } from 'react'
 
 const COLORS = {
-  black: 'hsl(25, 6%, 9%)',
-  charcoal: 'hsl(25, 5%, 14%)',
-  charcoalHover: 'hsl(25, 5%, 18%)',
-  gold: 'hsl(40, 72%, 52%)',
-  goldBorder: 'rgba(184, 134, 57, 0.18)',
+  panel: 'hsl(0, 0%, 100%)',
+  surface: 'hsl(36, 12%, 96%)',
+  gold: 'hsl(40, 72%, 34%)',
+  goldBorder: 'rgba(184, 134, 57, 0.45)',
   goldFaint: 'rgba(184, 134, 57, 0.07)',
-  goldMuted: 'rgba(184, 134, 57, 0.45)',
-  cream: 'hsl(36, 18%, 97%)',
-  silver: 'hsl(25, 4%, 58%)',
-  silverFaint: 'rgba(255,255,255,0.05)',
+  border: 'rgba(0, 0, 0, 0.12)',
+  divider: 'rgba(0, 0, 0, 0.09)',
+  text: 'hsl(25, 6%, 9%)',
+  body: 'hsl(25, 5%, 18%)',
+  muted: 'hsl(25, 4%, 38%)',
+  subtle: 'hsl(25, 4%, 50%)',
 }
 
 const STYLES = `
@@ -34,8 +35,8 @@ const STYLES = `
     max-height: 92vh;
     display: flex;
     flex-direction: column;
-    background: ${COLORS.charcoal};
-    border: 1px solid ${COLORS.goldBorder};
+    background: ${COLORS.panel};
+    border: 1px solid ${COLORS.border};
     border-radius: 4px;
     overflow: hidden;
   }
@@ -45,27 +46,28 @@ const STYLES = `
     align-items: flex-start;
     justify-content: space-between;
     padding: 28px 32px 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid ${COLORS.divider};
   }
   .usw-acm-title {
     font-family: inherit;
-    font-size: 17px;
-    font-weight: 600;
-    color: ${COLORS.cream};
+    font-size: 19px;
+    font-weight: 700;
+    color: ${COLORS.text};
     margin: 0 0 4px;
     line-height: 1.1;
   }
   .usw-acm-subtitle {
     font-size: 13px;
-    color: ${COLORS.silver};
+    font-weight: 500;
+    color: ${COLORS.muted};
     margin: 0;
     line-height: 1;
   }
   .usw-acm-close {
     background: transparent;
-    border: 1px solid rgba(255,255,255,0.08);
+    border: 1px solid rgba(0,0,0,0.12);
     border-radius: 3px;
-    color: ${COLORS.silver};
+    color: ${COLORS.muted};
     cursor: pointer;
     font-size: 16px;
     line-height: 1;
@@ -76,12 +78,14 @@ const STYLES = `
     margin-top: 2px;
   }
   .usw-acm-close:hover {
-    color: ${COLORS.cream};
-    border-color: rgba(255,255,255,0.2);
+    color: ${COLORS.text};
+    border-color: rgba(0,0,0,0.25);
   }
   .usw-acm-body {
     flex: 1;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,0.15) transparent;
   }
   .usw-acm-collections-grid {
     display: grid;
@@ -92,15 +96,16 @@ const STYLES = `
   .usw-acm-globals-label {
     padding: 0 32px;
     margin-bottom: 12px;
-    font-size: 11px;
-    letter-spacing: 0.22em;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: rgba(148, 140, 133, 0.5);
+    color: ${COLORS.muted};
     font-family: inherit;
   }
   .usw-acm-divider {
     height: 1px;
-    background: rgba(255,255,255,0.06);
+    background: ${COLORS.divider};
     margin: 0 32px 20px;
   }
   .usw-acm-globals-grid {
@@ -113,24 +118,25 @@ const STYLES = `
     display: flex;
     flex-direction: column;
     padding: 20px 18px 16px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.07);
+    background: ${COLORS.surface};
+    border: 1px solid rgba(0,0,0,0.1);
     border-radius: 3px;
     text-decoration: none;
     cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
     gap: 8px;
   }
   .usw-acm-card:hover {
     background: ${COLORS.goldFaint};
-    border-color: rgba(184, 134, 57, 0.3);
+    border-color: rgba(184, 134, 57, 0.45);
+    box-shadow: 0 2px 8px rgba(184, 134, 57, 0.08);
   }
   .usw-acm-global-card {
     display: flex;
     flex-direction: column;
     padding: 14px 16px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.07);
+    background: ${COLORS.surface};
+    border: 1px solid rgba(0,0,0,0.1);
     border-radius: 3px;
     text-decoration: none;
     cursor: pointer;
@@ -139,7 +145,7 @@ const STYLES = `
   }
   .usw-acm-global-card:hover {
     background: ${COLORS.goldFaint};
-    border-color: rgba(184, 134, 57, 0.3);
+    border-color: rgba(184, 134, 57, 0.45);
   }
   .usw-acm-card-top {
     display: flex;
@@ -148,26 +154,28 @@ const STYLES = `
   }
   .usw-acm-icon {
     font-size: 20px;
-    color: ${COLORS.silver};
+    color: ${COLORS.subtle};
     line-height: 1;
   }
   .usw-acm-count {
     font-family: inherit;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 700;
     color: ${COLORS.gold};
     line-height: 1;
   }
   .usw-acm-label {
-    font-size: 14px;
-    color: ${COLORS.cream};
-    letter-spacing: 0.05em;
+    font-size: 15px;
+    font-weight: 600;
+    color: ${COLORS.text};
+    letter-spacing: 0.03em;
     line-height: 1.2;
   }
   .usw-acm-desc {
     font-size: 12px;
-    color: ${COLORS.silver};
-    letter-spacing: 0.03em;
+    font-weight: 500;
+    color: ${COLORS.muted};
+    letter-spacing: 0.02em;
     line-height: 1.3;
   }
   @media (max-width: 599px) {
@@ -193,49 +201,49 @@ const COLLECTIONS = [
     label: 'Posts',
     description: 'Blog posts and articles',
     icon: '✦',
-    color: COLORS.silver,
+    color: COLORS.subtle,
   },
   {
     slug: 'brands',
     label: 'Brands',
     description: 'Piano brands and models',
     icon: '◈',
-    color: COLORS.silver,
+    color: COLORS.subtle,
   },
   {
     slug: 'testimonials',
     label: 'Testimonials',
     description: 'Customer stories',
     icon: '◇',
-    color: COLORS.silver,
+    color: COLORS.subtle,
   },
   {
     slug: 'pages',
     label: 'Pages',
     description: 'Website pages',
     icon: '▣',
-    color: COLORS.silver,
+    color: COLORS.subtle,
   },
   {
     slug: 'categories',
     label: 'Categories',
     description: 'Post categories',
     icon: '⊞',
-    color: COLORS.silver,
+    color: COLORS.subtle,
   },
   {
     slug: 'media',
     label: 'Media',
     description: 'Images and files',
     icon: '◫',
-    color: COLORS.silver,
+    color: COLORS.subtle,
   },
   {
     slug: 'users',
     label: 'Users',
     description: 'Admin accounts',
     icon: '◉',
-    color: COLORS.silver,
+    color: COLORS.subtle,
   },
 ]
 

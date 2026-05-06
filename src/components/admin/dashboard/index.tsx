@@ -6,7 +6,7 @@ import { RecentPianos } from './RecentPianos'
 import { QuickLinks } from './QuickLinks'
 
 const COLORS = {
-  black: 'hsl(25, 6%, 9%)',
+  bg: 'hsl(36, 18%, 97%)',
 }
 
 export default async function Dashboard() {
@@ -37,7 +37,7 @@ export default async function Dashboard() {
   return (
     <div
       style={{
-        background: COLORS.black,
+        background: COLORS.bg,
         minHeight: '100vh',
         padding: '0',
         // Extend edge-to-edge within the admin content pane

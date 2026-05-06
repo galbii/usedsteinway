@@ -3,27 +3,24 @@
 import { useEffect } from 'react'
 
 const COLORS = {
-  charcoal: 'hsl(25, 5%, 14%)',
-  gold: 'hsl(40, 72%, 52%)',
-  goldBorder: 'rgba(184, 134, 57, 0.15)',
-  cream: 'hsl(36, 18%, 97%)',
-  silver: 'hsl(25, 4%, 58%)',
+  gold: 'hsl(40, 72%, 36%)',
+  label: 'hsl(25, 5%, 18%)',
 }
 
 const STYLES = `
   .usw-stat-card {
     display: block;
-    background: hsl(25, 5%, 14%);
-    border: 1px solid rgba(184, 134, 57, 0.15);
+    background: hsl(0, 0%, 100%);
+    border: 1px solid rgba(0, 0, 0, 0.14);
     border-radius: 4px;
     padding: 32px 32px 28px;
     text-decoration: none;
-    transition: border-color 0.2s, background 0.2s;
+    transition: border-color 0.2s, box-shadow 0.2s;
     cursor: pointer;
   }
   .usw-stat-card:hover {
-    background: hsl(25, 5%, 17%);
-    border-color: rgba(184, 134, 57, 0.45);
+    border-color: rgba(184, 134, 57, 0.55);
+    box-shadow: 0 2px 12px rgba(184, 134, 57, 0.1);
   }
 `
 
@@ -60,11 +57,11 @@ export function StatsRow({ stats }: StatsRowProps) {
           <div
             style={{
               fontFamily: 'inherit',
-              fontSize: 'clamp(32px, 3vw, 44px)',
-              fontWeight: 200,
+              fontSize: 'clamp(34px, 3vw, 46px)',
+              fontWeight: 300,
               lineHeight: 1,
               color: COLORS.gold,
-              marginBottom: '10px',
+              marginBottom: '12px',
               letterSpacing: '-0.02em',
             }}
           >
@@ -73,11 +70,11 @@ export function StatsRow({ stats }: StatsRowProps) {
           <div
             style={{
               fontFamily: 'inherit',
-              fontSize: '12px',
-              fontWeight: 400,
-              letterSpacing: '0.22em',
+              fontSize: '13px',
+              fontWeight: 700,
+              letterSpacing: '0.18em',
               textTransform: 'uppercase',
-              color: COLORS.silver,
+              color: COLORS.label,
             }}
           >
             {stat.label}

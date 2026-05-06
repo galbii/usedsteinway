@@ -10,33 +10,35 @@ const STYLES = `
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 11px 20px;
-    background: rgba(184, 134, 57, 0.07);
-    border: 1px solid rgba(184, 134, 57, 0.25);
+    padding: 12px 22px;
+    background: hsl(0, 0%, 100%);
+    border: 1.5px solid rgba(184, 134, 57, 0.55);
     border-radius: 3px;
-    font-size: 13px;
-    letter-spacing: 0.08em;
-    color: hsl(36, 18%, 97%);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    color: hsl(25, 6%, 9%);
     cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s;
     font-family: inherit;
     line-height: 1;
   }
   .usw-ql-primary:hover {
-    background: rgba(184, 134, 57, 0.13);
-    border-color: rgba(184, 134, 57, 0.5);
+    border-color: rgba(184, 134, 57, 0.85);
+    box-shadow: 0 2px 8px rgba(184, 134, 57, 0.12);
   }
   .usw-ql-secondary {
     display: inline-flex;
     align-items: center;
-    padding: 11px 16px;
+    padding: 12px 18px;
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    border: 1.5px solid rgba(0, 0, 0, 0.2);
     border-radius: 3px;
-    font-size: 12px;
-    letter-spacing: 0.14em;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: hsl(25, 4%, 48%);
+    color: hsl(25, 5%, 25%);
     cursor: pointer;
     text-decoration: none;
     transition: color 0.15s, border-color 0.15s;
@@ -44,8 +46,8 @@ const STYLES = `
     line-height: 1;
   }
   .usw-ql-secondary:hover {
-    color: hsl(25, 4%, 72%);
-    border-color: rgba(255, 255, 255, 0.15);
+    color: hsl(25, 5%, 9%);
+    border-color: rgba(0, 0, 0, 0.35);
   }
 `
 

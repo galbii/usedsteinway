@@ -8,18 +8,20 @@ import type { Piano, Brand, Media } from '@/payload-types'
 // ---------------------------------------------------------------------------
 
 const COLORS = {
-  black: 'hsl(25, 6%, 9%)',
-  charcoal: 'hsl(25, 5%, 14%)',
-  charcoalHover: 'hsl(25, 5%, 18%)',
-  gold: 'hsl(40, 72%, 52%)',
-  goldBorder: 'rgba(184, 134, 57, 0.18)',
+  panel: 'hsl(0, 0%, 100%)',
+  surface: 'hsl(36, 12%, 96%)',
+  gold: 'hsl(40, 72%, 34%)',
+  goldBorder: 'rgba(184, 134, 57, 0.45)',
   goldFaint: 'rgba(184, 134, 57, 0.07)',
-  goldMuted: 'rgba(184, 134, 57, 0.45)',
-  cream: 'hsl(36, 18%, 97%)',
-  silver: 'hsl(25, 4%, 58%)',
-  available: 'hsl(142, 50%, 45%)',
-  availableFaint: 'rgba(46, 160, 67, 0.12)',
-  sold: 'hsl(25, 4%, 45%)',
+  goldMuted: 'rgba(184, 134, 57, 0.55)',
+  border: 'rgba(0, 0, 0, 0.12)',
+  divider: 'rgba(0, 0, 0, 0.08)',
+  text: 'hsl(25, 6%, 9%)',
+  body: 'hsl(25, 5%, 18%)',
+  muted: 'hsl(25, 4%, 40%)',
+  available: 'hsl(142, 55%, 26%)',
+  availableFaint: 'rgba(46, 160, 67, 0.09)',
+  sold: 'hsl(25, 4%, 38%)',
 }
 
 const STYLES = `
@@ -35,7 +37,7 @@ const STYLES = `
     background: none;
     border: none;
     cursor: pointer;
-    color: hsl(25, 4%, 58%);
+    color: hsl(25, 4%, 40%);
     font-size: 22px;
     line-height: 1;
     padding: 4px 8px;
@@ -44,8 +46,8 @@ const STYLES = `
     font-family: inherit;
   }
   .usw-pm-close-btn:hover {
-    color: hsl(36, 18%, 97%);
-    background: rgba(255,255,255,0.07);
+    color: hsl(25, 6%, 9%);
+    background: rgba(0,0,0,0.06);
   }
   .usw-pm-filter-btn {
     background: none;
@@ -54,19 +56,22 @@ const STYLES = `
     cursor: pointer;
     font-family: inherit;
     font-size: 13px;
+    font-weight: 500;
     letter-spacing: 0.07em;
     padding: 6px 14px;
+    color: hsl(25, 4%, 38%);
     transition: background 0.15s, border-color 0.15s, color 0.15s;
   }
   .usw-pm-filter-btn:hover {
-    background: rgba(184, 134, 57, 0.1);
+    background: rgba(184, 134, 57, 0.08);
+    color: hsl(25, 6%, 9%);
   }
   .usw-pm-sort-select {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: hsl(36, 12%, 96%);
+    border: 1px solid rgba(0,0,0,0.13);
     border-radius: 3px;
-    color: hsl(25, 4%, 58%);
-    font-size: 12px;
+    color: hsl(25, 5%, 20%);
+    font-size: 13px;
     padding: 5px 10px;
     outline: none;
     cursor: pointer;
@@ -74,15 +79,15 @@ const STYLES = `
     transition: border-color 0.15s;
   }
   .usw-pm-sort-select:focus {
-    border-color: rgba(184, 134, 57, 0.45);
+    border-color: rgba(184, 134, 57, 0.5);
   }
   .usw-pm-search {
     flex: 1;
     max-width: 320px;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: hsl(36, 12%, 96%);
+    border: 1px solid rgba(0,0,0,0.13);
     border-radius: 3px;
-    color: hsl(36, 18%, 97%);
+    color: hsl(25, 6%, 9%);
     font-family: inherit;
     font-size: 13px;
     letter-spacing: 0.04em;
@@ -93,16 +98,17 @@ const STYLES = `
     height: 36px;
   }
   .usw-pm-search::placeholder {
-    color: hsl(25, 4%, 40%);
+    color: hsl(25, 4%, 52%);
   }
   .usw-pm-search:focus {
-    border-color: rgba(184, 134, 57, 0.45);
+    border-color: rgba(184, 134, 57, 0.5);
+    background: hsl(0, 0%, 100%);
   }
   .usw-pm-list {
     flex: 1;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: rgba(184, 134, 57, 0.25) transparent;
+    scrollbar-color: rgba(0,0,0,0.15) transparent;
   }
   .usw-pm-list::-webkit-scrollbar {
     width: 6px;
@@ -111,11 +117,11 @@ const STYLES = `
     background: transparent;
   }
   .usw-pm-list::-webkit-scrollbar-thumb {
-    background: rgba(184, 134, 57, 0.25);
+    background: rgba(0,0,0,0.15);
     border-radius: 3px;
   }
   .usw-pm-card {
-    background: hsl(25, 5%, 14%);
+    background: hsl(0, 0%, 100%);
     padding: 22px 24px;
     display: flex;
     flex-direction: column;
@@ -124,7 +130,7 @@ const STYLES = `
     transition: background 0.15s;
   }
   .usw-pm-card:hover {
-    background: hsl(25, 5%, 17%);
+    background: hsl(36, 12%, 97%);
   }
   .usw-pm-star-btn {
     background: none;
@@ -138,8 +144,9 @@ const STYLES = `
   }
   .usw-pm-avail-btn {
     border-radius: 3px;
-    padding: 4px 10px;
+    padding: 5px 11px;
     font-size: 12px;
+    font-weight: 600;
     letter-spacing: 0.08em;
     cursor: pointer;
     font-family: inherit;
@@ -148,10 +155,11 @@ const STYLES = `
     border-width: 1px;
   }
   .usw-pm-edit-link {
-    color: hsl(25, 4%, 58%);
+    color: hsl(25, 4%, 38%);
     font-family: inherit;
-    font-size: 12px;
-    letter-spacing: 0.1em;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
     text-decoration: none;
     transition: color 0.15s;
     background: none;
@@ -161,25 +169,25 @@ const STYLES = `
     text-align: left;
   }
   .usw-pm-edit-link:hover {
-    color: hsl(40, 72%, 52%);
+    color: hsl(40, 72%, 34%);
   }
   .usw-pm-add-btn {
-    background: rgba(184, 134, 57, 0.12);
-    border: 1px solid rgba(184, 134, 57, 0.4);
+    background: hsl(40, 72%, 34%);
+    border: none;
     border-radius: 3px;
-    color: hsl(40, 72%, 52%);
+    color: hsl(36, 18%, 97%);
     cursor: pointer;
     font-family: inherit;
     font-size: 13px;
+    font-weight: 600;
     letter-spacing: 0.1em;
-    padding: 10px 22px;
-    transition: background 0.15s, border-color 0.15s;
+    padding: 11px 24px;
+    transition: background 0.15s;
     text-decoration: none;
     display: inline-block;
   }
   .usw-pm-add-btn:hover {
-    background: rgba(184, 134, 57, 0.22);
-    border-color: rgba(184, 134, 57, 0.65);
+    background: hsl(40, 72%, 40%);
   }
 
   /* ── Entrance animations ─────────────────────────────────── */
@@ -251,7 +259,7 @@ const STYLES = `
     transition: background 0.18s, box-shadow 0.22s ease;
   }
   .usw-pm-card:hover {
-    box-shadow: 0 0 0 1px rgba(184, 134, 57, 0.18) inset;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08) inset;
   }
 `
 
@@ -301,7 +309,7 @@ function SkeletonCard() {
       style={{
         width: w,
         height: h,
-        background: 'rgba(255,255,255,0.06)',
+        background: 'rgba(0,0,0,0.06)',
         borderRadius: '3px',
         marginBottom: mb,
       }}
@@ -327,7 +335,7 @@ function SkeletonCard() {
       {/* edit row */}
       <div
         style={{
-          borderTop: '1px solid rgba(255,255,255,0.06)',
+          borderTop: `1px solid ${COLORS.divider}`,
           paddingTop: '10px',
           marginTop: '4px',
         }}
@@ -350,12 +358,12 @@ function ConditionBadge({ condition }: { condition: string | null | undefined })
     ? {
         color: COLORS.gold,
         background: COLORS.goldFaint,
-        border: `1px solid ${COLORS.goldBorder}`,
+        border: `1px solid ${COLORS.border}`,
       }
     : {
-        color: COLORS.silver,
-        background: 'rgba(255,255,255,0.06)',
-        border: '1px solid rgba(255,255,255,0.1)',
+        color: COLORS.muted,
+        background: 'rgba(0,0,0,0.06)',
+        border: `1px solid ${COLORS.border}`,
       }
 
   return (
@@ -485,7 +493,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
   const availableCount = pianos.filter((p) => p.isAvailable).length
 
   const filterBtnStyle = (f: FilterType): React.CSSProperties => ({
-    color: filter === f ? COLORS.gold : COLORS.silver,
+    color: filter === f ? COLORS.gold : COLORS.muted,
     borderColor: filter === f ? COLORS.goldMuted : 'transparent',
     background: filter === f ? COLORS.goldFaint : 'none',
   })
@@ -514,8 +522,8 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
           zIndex: 10000,
           display: 'flex',
           flexDirection: 'column',
-          background: COLORS.charcoal,
-          border: `1px solid ${COLORS.goldBorder}`,
+          background: COLORS.panel,
+          border: `1px solid ${COLORS.border}`,
           borderRadius: '6px',
           overflow: 'hidden',
         }}
@@ -528,7 +536,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
             justifyContent: 'space-between',
             alignItems: 'flex-start',
             padding: '32px 40px 24px',
-            borderBottom: `1px solid rgba(184, 134, 57, 0.1)`,
+            borderBottom: `1px solid ${COLORS.divider}`,
           }}
         >
           <div>
@@ -537,7 +545,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
                 fontFamily: 'inherit',
                 fontSize: '20px',
                 fontWeight: 600,
-                color: COLORS.cream,
+                color: COLORS.text,
                 margin: '0 0 4px',
                 letterSpacing: '0.01em',
               }}
@@ -548,7 +556,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
               style={{
                 fontFamily: 'inherit',
                 fontSize: '13px',
-                color: COLORS.silver,
+                color: COLORS.muted,
                 margin: 0,
                 letterSpacing: '0.04em',
               }}
@@ -569,7 +577,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
             display: 'flex',
             gap: '12px',
             alignItems: 'center',
-            borderBottom: `1px solid rgba(255,255,255,0.06)`,
+            borderBottom: `1px solid ${COLORS.divider}`,
           }}
         >
           {/* Filter tabs */}
@@ -621,7 +629,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
                 gap: '1px',
-                background: 'rgba(255,255,255,0.05)',
+                background: 'rgba(0,0,0,0.06)',
               }}
             >
               {[0, 1, 2, 3].map((i) => (
@@ -635,7 +643,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: COLORS.silver,
+                color: COLORS.muted,
                 fontSize: '15px',
                 fontStyle: 'italic',
               }}
@@ -649,7 +657,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
                 gap: '1px',
-                background: 'rgba(255,255,255,0.05)',
+                background: 'rgba(0,0,0,0.06)',
               }}
             >
               {sorted.map((piano, pianoIdx) => {
@@ -678,7 +686,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
                           marginRight: '-24px',
                           marginBottom: '8px',
                           overflow: 'hidden',
-                          borderBottom: '1px solid rgba(255,255,255,0.06)',
+                          borderBottom: `1px solid ${COLORS.divider}`,
                           flexShrink: 0,
                         }}
                       >
@@ -705,7 +713,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
                         className="usw-pm-star-btn"
                         title={piano.isFeatured ? 'Remove from featured' : 'Mark as featured'}
                         onClick={() => toggleFeatured(piano)}
-                        style={{ color: piano.isFeatured ? COLORS.gold : COLORS.silver }}
+                        style={{ color: piano.isFeatured ? COLORS.gold : COLORS.muted }}
                       >
                         {piano.isFeatured ? '★' : '☆'}
                       </button>
@@ -717,7 +725,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
                         fontFamily: 'inherit',
                         fontSize: '14px',
                         fontWeight: 500,
-                        color: COLORS.cream,
+                        color: COLORS.text,
                         lineHeight: 1.35,
                         overflow: 'hidden',
                         display: '-webkit-box',
@@ -734,7 +742,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
                         style={{
                           fontFamily: 'inherit',
                           fontSize: '13px',
-                          color: COLORS.silver,
+                          color: COLORS.muted,
                           letterSpacing: '0.04em',
                           whiteSpace: 'nowrap',
                           overflow: 'hidden',
@@ -779,9 +787,9 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
                                 borderColor: 'rgba(46,160,67,0.25)',
                               }
                             : {
-                                color: COLORS.silver,
-                                background: 'rgba(255,255,255,0.05)',
-                                borderColor: 'rgba(255,255,255,0.1)',
+                                color: COLORS.muted,
+                                background: 'rgba(0,0,0,0.06)',
+                                borderColor: 'rgba(0,0,0,0.13)',
                               }
                         }
                       >
@@ -792,7 +800,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
                     {/* Edit link row */}
                     <div
                       style={{
-                        borderTop: '1px solid rgba(255,255,255,0.06)',
+                        borderTop: `1px solid ${COLORS.divider}`,
                         paddingTop: '10px',
                         marginTop: '4px',
                       }}
@@ -827,7 +835,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
             style={{
               fontFamily: 'inherit',
               fontSize: '13px',
-              color: COLORS.silver,
+              color: COLORS.muted,
               letterSpacing: '0.04em',
             }}
           >

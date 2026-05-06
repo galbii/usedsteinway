@@ -408,9 +408,9 @@ export function UsedSteinwaysHomePage({ locations = [], phone, featured: feature
           {[0, 1].map((i) => (
             <div key={i} className="flex items-center shrink-0">
               {[
-                'Steinway & Sons', '·', 'Handcrafted European Pianos', '·',
-                'Bösendorfer', '·', 'C. Bechstein', '·', 'Blüthner', '·',
-                'Petrof', '·', 'Schimmel', '·', 'Shigeru Kawai',
+                'Steinway & Sons', '·', 'Shigeru Kawai', '·', 'Handcrafted European Pianos', '·',
+                'Blüthner', '·', 'Bösendorfer', '·', 'C. Bechstein', '·',
+                'Petrof', '·', 'Schimmel', '·',
               ].map((item, idx) => (
                 <span
                   key={idx}
