@@ -84,7 +84,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
     <>
       <header
         className={cn(
-          'w-full relative animate-header-reveal overflow-visible cursor-pointer',
+          'w-full relative animate-header-reveal overflow-visible',
           'transition-[background-color,box-shadow] duration-300 ease-out',
         )}
         style={{
@@ -92,11 +92,6 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
           boxShadow: scrolled
             ? '0 1px 0 0 rgba(200,160,75,0.1), 0 12px 40px -8px rgba(0,0,0,0.6)'
             : 'none',
-        }}
-        onClick={(e) => {
-          if (!(e.target as HTMLElement).closest('a, button')) {
-            window.scrollTo({ top: 0, behavior: 'smooth' })
-          }
         }}
         {...(theme ? { 'data-theme': theme } : {})}
       >
@@ -107,14 +102,8 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
             scrolled ? 'h-[60px]' : 'h-[72px]',
           )}
         >
-          {/* Logo — scrolls to top of current page */}
-          <button
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            aria-label="Scroll to top"
-            className="overflow-visible relative z-50"
-          >
-            <PianoLogo theme="dark" size="md" monogramOffset={8} noLink />
-          </button>
+            {/* Logo — navigates to homepage */}
+          <PianoLogo theme="dark" size="md" monogramOffset={8} />
 
           {/* Center nav */}
           <HeaderNav data={data} models={models} scrolled={scrolled} />

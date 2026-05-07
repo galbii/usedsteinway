@@ -46,23 +46,13 @@ export function PianoHeader() {
 
   return (
     <header
-      className="sticky top-0 z-50 w-full bg-piano-cream cursor-pointer"
+      className="sticky top-0 z-50 w-full bg-piano-cream"
       style={{ borderBottom: '30px solid hsl(40 72% 52%)' }}
-      onClick={(e) => {
-        if (!(e.target as HTMLElement).closest('a, button')) {
-          window.scrollTo({ top: 0, behavior: 'smooth' })
-        }
-      }}
     >
       <div className="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">
 
-        {/* Logo — scrolls to top of current page */}
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          aria-label="Scroll to top"
-        >
-          <PianoLogo theme="light" size="md" noLink />
-        </button>
+        {/* Logo — navigates to homepage */}
+        <PianoLogo theme="light" size="md" />
 
         {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center gap-10">
