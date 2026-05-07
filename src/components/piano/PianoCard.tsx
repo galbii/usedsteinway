@@ -217,12 +217,6 @@ function DefaultCard({
             className="mt-auto flex items-end justify-between gap-3"
             style={{ paddingTop: 'clamp(0.9rem, 1.4vw, 1.2rem)', borderTop: '1px solid hsl(36 18% 90%)', marginTop: 'clamp(1rem, 1.8vw, 1.6rem)' }}
           >
-            <p
-              className="font-display uppercase leading-none"
-              style={{ fontSize: '11px', letterSpacing: '0.18em', color: 'hsl(25 4% 58%)', flexShrink: 0 }}
-            >
-              {piano.size || '—'}
-            </p>
             <div className="flex items-baseline gap-2 min-w-0">
               <span
                 className="font-cormorant font-light text-piano-black"
@@ -371,7 +365,7 @@ function FeaturedCard({
                 className="flex items-center flex-wrap gap-x-3 gap-y-1"
                 style={{ marginBottom: '1.6rem' }}
               >
-                {[piano.condition, piano.finish, piano.size]
+                {[piano.condition, piano.finish]
                   .filter(Boolean)
                   .map((val, i, arr) => (
                     <span key={val} className="flex items-center gap-3">

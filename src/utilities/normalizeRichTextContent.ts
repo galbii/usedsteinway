@@ -9,6 +9,16 @@ function getNodeText(node: Record<string, unknown>): string {
   return ''
 }
 
+// Returns true when every text node in a paragraph carries non-zero inline
+// formatting (bold, italic, etc.). Those are intentional emphasis blocks and
+// should not be merged with adjacent paragraphs.
+function isFullyFormatted(node: Record<string, unknown>): boolean {
+  const children = node['children'] as Record<string, unknown>[] | undefined
+  if (!Array.isArray(children)) return false
+  const textNodes = children.filter((c) => c['type'] === 'text')
+  return textNodes.length > 0 && textNodes.every((c) => (c['format'] as number) !== 0)
+}
+
 const SENTENCE_END = /[.!?:;"'»\])]$/
 
 /**
@@ -55,6 +65,12 @@ export function normalizeRichTextContent(
     let merged: Node = { ...curr, children: [...(curr['children'] as unknown[])] }
     i++
 
+    // Don't merge if this paragraph is entirely formatted (bold/italic block)
+    if (isFullyFormatted(merged)) {
+      result.push(merged)
+      continue
+    }
+
     // Keep merging subsequent paragraphs while the running text doesn't end
     // with sentence-ending punctuation
     while (i < children.length) {
@@ -63,6 +79,9 @@ export function normalizeRichTextContent(
 
       const next = children[i]!
       if (next['type'] !== 'paragraph') break
+
+      // Don't merge into a fully-formatted paragraph (bold/italic block)
+      if (isFullyFormatted(next)) break
 
       i++ // consume next
 

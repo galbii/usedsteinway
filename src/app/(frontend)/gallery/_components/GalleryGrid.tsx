@@ -190,8 +190,6 @@ export function GalleryGrid({ images }: Props) {
               {filtered.map((image, index) => {
                 const bento = BENTO[index % BENTO.length]
                 const label = String(index + 1).padStart(2, '0')
-                // Tags visible in the hover overlay — skip 'gallery' since it's internal
-                const displayTags = (image.tags ?? []).filter((t) => t !== 'gallery')
 
                 return (
                   <div
@@ -216,29 +214,17 @@ export function GalleryGrid({ images }: Props) {
                     {/* Permanent vignette */}
                     <div className="absolute inset-0 bg-gradient-to-t from-piano-black/30 via-transparent to-transparent pointer-events-none" />
 
-                    {/* Caption + tag overlay — slides up on hover */}
-                    <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] z-10 bg-gradient-to-t from-piano-black/92 via-piano-black/60 to-transparent pt-16 pb-5 px-5">
-                      {(image.caption || image.alt) && (
+                    {/* Hover overlay — brand + model only */}
+                    {image.alt && (
+                      <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] z-10 bg-gradient-to-t from-piano-black/88 via-piano-black/40 to-transparent pt-14 pb-5 px-5">
                         <p
                           className="font-cormorant font-light text-piano-cream leading-snug"
-                          style={{ fontSize: 'clamp(0.95rem, 1.5vw, 1.15rem)' }}
+                          style={{ fontSize: 'clamp(0.9rem, 1.4vw, 1.05rem)' }}
                         >
-                          {stripTrailingCounter(image.caption ?? image.alt ?? '')}
+                          {stripTrailingCounter(image.alt)}
                         </p>
-                      )}
-                      {displayTags.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mt-2.5">
-                          {displayTags.map((tag) => (
-                            <span
-                              key={tag}
-                              className="font-display text-[8px] tracking-[0.35em] uppercase text-piano-gold/65"
-                            >
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
 
                     {/* Gold accent line — sweeps in on hover */}
                     <div className="absolute bottom-0 left-0 right-0 h-[1.5px] bg-piano-gold origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-500 delay-75 z-20 pointer-events-none" />

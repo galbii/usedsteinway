@@ -30,7 +30,7 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
   const displayPhone = phone ?? '508-545-0766'
   const displayEmail = email ?? 'info@usedsteinways.com'
   const displayHours =
-    hoursOfOperation ?? 'By appointment. Walk-in may be possible but not guaranteed.'
+    hoursOfOperation ?? 'By appointment. Walk-in welcome but not guaranteed.'
   const telHref = `tel:+1${displayPhone.replace(/\D/g, '')}`
 
   return (

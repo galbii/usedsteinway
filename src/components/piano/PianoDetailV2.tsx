@@ -123,8 +123,8 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
             >
               <ConditionBadge condition={piano.condition} />
               <span className="text-piano-stone/60 text-base font-light">
-                {piano.finish} · {piano.size}
-              </span>
+                {piano.finish}
+  </span>
               {piano.isFeatured && (
                 <span className="animate-float-badge bg-piano-burgundy/8 text-piano-burgundy text-xs font-display tracking-[0.4em] uppercase px-3 py-1 border border-piano-burgundy/25">
                   Featured
@@ -163,14 +163,14 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
               className="flex flex-col gap-3"
               style={{ animation: 'fade-up 0.65s ease-out 0.36s both' }}
             >
-              <Link
-                href={`/contact?subject=${encodeURIComponent(`Schedule Viewing: ${piano.title}`)}`}
+              <a
+                href="#inquiry"
                 className="w-full text-center bg-piano-black text-piano-cream px-10 py-4 font-display text-xs tracking-[0.3em] uppercase hover:bg-piano-burgundy transition-colors duration-200"
               >
                 Schedule a Viewing
-              </Link>
+              </a>
               <a
-                href="#inquiry"
+                href="#description"
                 className="w-full text-center border border-piano-burgundy/55 text-piano-burgundy px-10 py-4 font-display text-xs tracking-[0.3em] uppercase hover:bg-piano-burgundy/5 hover:border-piano-burgundy transition-colors duration-200"
               >
                 Check Availability
@@ -218,6 +218,15 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
               />
             </div>
           ))}
+
+          {/* Location badge — top left */}
+          {piano.location && (
+            <div className="absolute top-5 left-5 z-20">
+              <span className="bg-piano-burgundy border border-piano-burgundy/80 px-3 py-1.5 text-piano-cream font-display text-xs tracking-[0.35em] uppercase">
+                Available at {piano.location}
+              </span>
+            </div>
+          )}
 
           {/* Counter + ref — glass pill */}
           <div
@@ -280,10 +289,9 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
       <div className="bg-white border-y border-black/[0.05] shadow-[0_1px_24px_rgba(0,0,0,0.04)] overflow-x-auto">
         <dl className="flex divide-x divide-black/[0.05] max-w-7xl mx-auto">
           {[
-            { label: 'Year', value: piano.year },
+            { label: piano.condition === 'rebuilt' || piano.condition === 'rebuilt-partial' ? 'Rebuilt' : 'Year', value: piano.year },
             { label: 'Brand', value: piano.brand },
             { label: 'Finish', value: piano.finish },
-            { label: 'Size', value: piano.size },
             ...(piano.serialNumber ? [{ label: 'Serial', value: `#${piano.serialNumber}` }] : []),
           ].map(({ label, value }) => (
             <div key={label} className="flex flex-col px-8 py-6 min-w-[130px]">
@@ -297,7 +305,7 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
       </div>
 
       {/* ── Story & Details ── */}
-      <section className="bg-piano-cream py-28 px-8">
+      <section id="description" className="bg-piano-cream py-28 px-8">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-[3fr_2fr] gap-16 xl:gap-24">
 
@@ -347,18 +355,6 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
                 </p>
               ) : null}
 
-              {/* Restoration */}
-              {piano.restorationHistory && (
-                <div className="border-l-2 border-piano-burgundy/40 pl-8 sr sr-d1">
-                  <p className="font-display text-xs tracking-[0.45em] uppercase text-piano-burgundy mb-4">
-                    Restoration History
-                  </p>
-                  <p className="text-piano-stone text-xl leading-relaxed">
-                    {piano.restorationHistory}
-                  </p>
-                </div>
-              )}
-
               {/* Condition Report */}
               {piano.conditionReport && (
                 <div className="bg-white/80 backdrop-blur-sm border border-piano-burgundy/10 shadow-[0_2px_20px_rgba(0,0,0,0.04)] p-8 sr sr-d2">
@@ -396,12 +392,12 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
                 </dl>
 
                 <div className="mt-8 pt-8 border-t border-black/[0.05] space-y-3">
-                  <Link
-                    href="/contact"
+                  <a
+                    href="#inquiry"
                     className="block text-center bg-piano-black text-piano-cream px-8 py-4 font-display text-xs tracking-[0.3em] uppercase hover:bg-piano-burgundy transition-colors"
                   >
                     Get in Touch
-                  </Link>
+                  </a>
                   {displayPhone && telHref && (
                     <a
                       href={telHref}

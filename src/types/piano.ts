@@ -15,7 +15,6 @@ export interface Piano {
   retailPrice?: number
   condition: 'new' | 'used' | 'reconditioned' | 'rebuilt' | 'rebuilt-partial' | 'work-in-progress' | 'display' | 'Excellent' | 'Very Good' | 'Good' | 'Fair'
   finish: string
-  size: string
   /** Showroom location — 'Natick', 'Burlington', 'Incoming', or undefined */
   location?: string | null
   isAvailable: boolean
@@ -27,8 +26,6 @@ export interface Piano {
   description: string
   /** Lexical rich text state from CMS — rendered by RichText component on detail page */
   richTextDescription?: import('@payloadcms/richtext-lexical').DefaultTypedEditorState
-  provenance?: string
-  restorationHistory?: string
   conditionReport?: string
   specs: Record<string, string>
   tags: string[]

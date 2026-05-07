@@ -40,14 +40,14 @@ export async function InquiryCTA({ brand, pianoTitle, variant = 'dark', classNam
           style={{ fontSize: 'clamp(3rem, 5vw, 5rem)' }}
         >
           {pianoTitle
-            ? `Inquire About This Piano`
+            ? pianoTitle
             : brand
               ? `Inquire About ${brand} Pianos`
               : 'Begin Your Piano Search'}
         </h2>
         <p
           className={cn(
-            'text-lg mb-12 max-w-xl mx-auto leading-relaxed',
+            'text-xl mb-12 max-w-xl mx-auto leading-relaxed',
             isDark ? 'text-piano-stone' : 'text-piano-stone',
           )}
         >
@@ -55,17 +55,17 @@ export async function InquiryCTA({ brand, pianoTitle, variant = 'dark', classNam
           come see us at the showroom — and we'll find the right instrument for you.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link
-            href={`/contact?subject=${encodeURIComponent(subject)}`}
+          <a
+            href={pianoTitle ? '#inquiry' : `/contact?subject=${encodeURIComponent(subject)}`}
             className={cn(
               'inline-flex items-center justify-center px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase transition-opacity duration-200 hover:opacity-80',
               isDark ? 'bg-piano-cream text-piano-burgundy' : 'bg-piano-black text-piano-cream',
             )}
           >
             Get in Touch
-          </Link>
+          </a>
           <Link
-            href="/visit"
+            href="/about"
             className={cn(
               'inline-flex items-center justify-center px-10 py-4 border font-display text-[11px] tracking-[0.3em] uppercase transition-colors',
               isDark
@@ -73,7 +73,7 @@ export async function InquiryCTA({ brand, pianoTitle, variant = 'dark', classNam
                 : 'border-piano-black/25 text-piano-black hover:border-piano-black hover:bg-piano-black hover:text-piano-cream',
             )}
           >
-            Visit the Showroom
+            Learn About Us
           </Link>
         </div>
         <p className={cn('mt-10 text-base font-display tracking-wide', isDark ? 'text-piano-stone' : 'text-piano-stone')}>

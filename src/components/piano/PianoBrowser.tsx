@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect, useLayoutEffect } from 'react'
+import { useState, useMemo, useEffect, useLayoutEffect, useRef } from 'react'
 import { PianoCard } from './PianoCard'
 import type { Piano } from '@/types/piano'
 import {
@@ -62,6 +62,8 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
 
   const [sidebarOpen,     setSidebarOpen]     = useState(false)
   const [brandFilter,     setBrandFilter]     = useState<BrandFilter>(initialBrandFilter ?? 'all')
+  const [filterKey,       setFilterKey]       = useState(0)
+  const firstRender = useRef(true)
 
   useEffect(() => {
     if (initialBrandFilter !== undefined) setBrandFilter(initialBrandFilter)
@@ -71,6 +73,12 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
   const [sizeFilter,      setSizeFilter]      = useState<SizeFilter>('all')
   const [finishFilter,    setFinishFilter]    = useState<FinishFilter>('all')
   const [query,           setQuery]           = useState('')
+
+  // Increment filterKey on filter change to re-trigger card entry animations
+  useEffect(() => {
+    if (firstRender.current) { firstRender.current = false; return }
+    setFilterKey(k => k + 1)
+  }, [brandFilter, conditionFilter, priceFilter, sizeFilter, finishFilter, query])
 
   useEffect(() => {
     document.body.style.overflow = sidebarOpen ? 'hidden' : ''
@@ -110,6 +118,17 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
   const featuredPianos = filtered.filter(p => p.isFeatured)
   const regularPianos  = filtered.filter(p => !p.isFeatured)
 
+  // Delay offset for cards on initial load (so they sequence after the header reveals)
+  const cardBaseDelay = filterKey === 0 ? 520 : 0
+
+  function handleBrandTabClick(key: BrandFilter) {
+    if (key === brandFilter) return
+    setBrandFilter(key)
+    setTimeout(() => {
+      document.getElementById('inventory')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 60)
+  }
+
   return (
     <>
       {/* ═══════════════════════════════════════════════════════════
@@ -129,13 +148,24 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
             <div className="flex-shrink-0">
               <p
                 className="font-display uppercase leading-none"
-                style={{ fontSize: '11px', letterSpacing: '0.45em', color: C.gold, marginBottom: '0.55rem' }}
+                style={{
+                  fontSize:  '11px',
+                  letterSpacing: '0.45em',
+                  color:     C.gold,
+                  marginBottom: '0.55rem',
+                  animation: 'piano-card-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both',
+                  animationDelay: '40ms',
+                }}
               >
                 Complete Inventory
               </p>
               <h2
                 className="font-cormorant font-light leading-none text-white"
-                style={{ fontSize: 'clamp(2.6rem, 4vw, 3.6rem)' }}
+                style={{
+                  fontSize:  'clamp(2.6rem, 4vw, 3.6rem)',
+                  animation: 'reveal-up 0.85s cubic-bezier(0.16, 1, 0.3, 1) both',
+                  animationDelay: '120ms',
+                }}
               >
                 Browse Instruments
               </h2>
@@ -204,12 +234,27 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
           </div>
 
           {/* Right: result count + filter toggle */}
-          <div className="flex items-center gap-5 flex-shrink-0">
+          <div
+            className="flex items-center gap-5 flex-shrink-0"
+            style={{
+              animation:      'reveal-right 0.7s cubic-bezier(0.16, 1, 0.3, 1) both',
+              animationDelay: '260ms',
+            }}
+          >
             <p
               className="font-display uppercase tabular-nums hidden sm:block"
               style={{ fontSize: '15px', letterSpacing: '0.28em', color: C.muted }}
             >
-              <span style={{ color: C.gold }}>{filtered.length}</span>
+              <span
+                key={`count-${filterKey}`}
+                style={{
+                  color:     C.gold,
+                  display:   'inline-block',
+                  animation: 'piano-count-flip 0.4s cubic-bezier(0.2, 0, 0, 1) both',
+                }}
+              >
+                {filtered.length}
+              </span>
               {' '}/ {pianos.length}
             </p>
 
@@ -263,27 +308,43 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
           >
             {/* Brand tabs — scrollable on mobile */}
             <div
-              className="flex items-center overflow-x-auto"
+              className="flex items-center overflow-x-auto relative"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
             >
-              {BRAND_TABS.map(({ key, label }) => {
+              {BRAND_TABS.map(({ key, label }, tabIndex) => {
                 const active = brandFilter === key
                 return (
                   <button
                     key={key}
-                    onClick={() => setBrandFilter(key)}
-                    className="font-display uppercase flex-shrink-0 transition-all duration-150"
+                    onClick={() => handleBrandTabClick(key)}
+                    className="font-display uppercase flex-shrink-0 relative"
                     style={{
-                      padding:       '1.3rem 1.6rem',
-                      fontSize:      '12px',
-                      letterSpacing: '0.38em',
-                      color:         active ? C.gold : C.muted,
-                      borderBottom:  active ? `2px solid ${C.gold}` : '2px solid transparent',
-                      marginBottom:  '-1px',
-                      whiteSpace:    'nowrap',
+                      padding:        '1.3rem 1.6rem',
+                      fontSize:       '12px',
+                      letterSpacing:  '0.38em',
+                      color:          active ? C.gold : C.muted,
+                      transition:     'color 0.3s cubic-bezier(0.2, 0, 0, 1)',
+                      marginBottom:   '-1px',
+                      whiteSpace:     'nowrap',
+                      animation:      'piano-card-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both',
+                      animationDelay: `${360 + tabIndex * 55}ms`,
                     }}
                   >
                     {label}
+                    {/* Active indicator — springs out from centre */}
+                    <span
+                      style={{
+                        position:        'absolute',
+                        bottom:          0,
+                        left:            active ? '1.6rem' : '50%',
+                        right:           active ? '1.6rem' : '50%',
+                        height:          '2px',
+                        backgroundColor: C.gold,
+                        transition:      'left 0.4s cubic-bezier(0.16, 1, 0.3, 1), right 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease',
+                        opacity:         active ? 1 : 0,
+                        borderRadius:    '1px',
+                      }}
+                    />
                   </button>
                 )
               })}
@@ -292,7 +353,11 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
             {/* Search input */}
             <div
               className="hidden sm:flex items-center gap-2 flex-shrink-0"
-              style={{ paddingLeft: '2rem' }}
+              style={{
+                paddingLeft:    '2rem',
+                animation:      'reveal-fade 0.6s ease both',
+                animationDelay: '590ms',
+              }}
             >
               <svg width="15" height="15" viewBox="0 0 12 12" fill="none">
                 <circle cx="5" cy="5" r="4" stroke="rgba(255,255,255,0.28)" strokeWidth="1.2" />
@@ -332,7 +397,12 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
       <div style={{ backgroundColor: C.cream }}>
         <div className="max-w-7xl mx-auto" style={{ padding: '3.5rem 2.5rem 6rem' }}>
           {filtered.length === 0 ? (
-            <EmptyState onClear={clearAll} hasFilters={hasFilters} />
+            <div
+              key={`empty-${filterKey}`}
+              style={{ animation: 'piano-card-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both' }}
+            >
+              <EmptyState onClear={clearAll} hasFilters={hasFilters} />
+            </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '3.5rem' }}>
 
@@ -341,8 +411,16 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
                 <section>
                   <SectionDivider label="Featured Instruments" />
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                    {featuredPianos.map(piano => (
-                      <PianoCard key={piano.id} piano={piano} variant="featured" />
+                    {featuredPianos.map((piano, i) => (
+                      <div
+                        key={`feat-${piano.id}-${filterKey}`}
+                        style={{
+                          animation:      'piano-card-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both',
+                          animationDelay: `${cardBaseDelay + i * 100}ms`,
+                        }}
+                      >
+                        <PianoCard piano={piano} variant="featured" />
+                      </div>
                     ))}
                   </div>
                 </section>
@@ -355,8 +433,16 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
                     <SectionDivider label="All Instruments" muted />
                   )}
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-6">
-                    {regularPianos.map(piano => (
-                      <PianoCard key={piano.id} piano={piano} />
+                    {regularPianos.map((piano, i) => (
+                      <div
+                        key={`${piano.id}-${filterKey}`}
+                        style={{
+                          animation:      'piano-card-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both',
+                          animationDelay: `${cardBaseDelay + i * 52}ms`,
+                        }}
+                      >
+                        <PianoCard piano={piano} />
+                      </div>
                     ))}
                   </div>
                 </section>
@@ -463,7 +549,18 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
             className="font-display uppercase"
             style={{ fontSize: '9px', letterSpacing: '0.35em', color: C.muted, padding: '1.1rem 0 1.4rem', borderBottom: `1px solid ${C.divider}` }}
           >
-            Showing <span style={{ color: C.gold }}>{filtered.length}</span> of {pianos.length} instruments
+            Showing{' '}
+            <span
+              key={`sidebar-count-${filterKey}`}
+              style={{
+                color:     C.gold,
+                display:   'inline-block',
+                animation: 'piano-count-flip 0.35s cubic-bezier(0.2, 0, 0, 1) both',
+              }}
+            >
+              {filtered.length}
+            </span>{' '}
+            of {pianos.length} instruments
           </p>
 
           {/* Brand */}
@@ -526,16 +623,24 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
         <div className="flex-shrink-0" style={{ padding: '1.25rem 2rem', borderTop: `1px solid ${C.divider}` }}>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="w-full font-display uppercase transition-all duration-200"
+            className="w-full font-display uppercase transition-all duration-200 hover:brightness-110 active:scale-[0.98]"
             style={{
               padding:         '0.85rem',
               backgroundColor: C.gold,
               color:           'hsl(25 6% 9%)',
               fontSize:        '10px',
               letterSpacing:   '0.45em',
+              transform:       'translateZ(0)',
             }}
           >
-            View {filtered.length} Instrument{filtered.length !== 1 ? 's' : ''}
+            View{' '}
+            <span
+              key={`btn-count-${filterKey}`}
+              style={{ animation: 'piano-count-flip 0.35s cubic-bezier(0.2, 0, 0, 1) both' }}
+            >
+              {filtered.length}
+            </span>{' '}
+            Instrument{filtered.length !== 1 ? 's' : ''}
           </button>
         </div>
       </aside>
@@ -595,18 +700,28 @@ function EmptyState({ onClear, hasFilters }: { onClear: () => void; hasFilters: 
 
 function SectionDivider({ label, muted }: { label: string; muted?: boolean }) {
   return (
-    <div className="flex items-center gap-4" style={{ marginBottom: '1.75rem' }}>
+    <div className="flex items-center gap-4" style={{ marginBottom: '1.75rem', overflow: 'hidden' }}>
       <p
         className="font-display uppercase flex-shrink-0"
         style={{
           fontSize:      '8px',
           letterSpacing: '0.5em',
           color:         muted ? C.creamMuted : 'hsl(40 72% 52%)',
+          animation:     'reveal-fade 0.6s ease both',
         }}
       >
         {label}
       </p>
-      <div style={{ flex: 1, height: '1px', backgroundColor: C.creamLine }} />
+      <div
+        style={{
+          flex:            1,
+          height:          '1px',
+          backgroundColor: C.creamLine,
+          animation:       'scale-x-in 0.9s cubic-bezier(0.16, 1, 0.3, 1) both',
+          animationDelay:  '80ms',
+          transformOrigin: 'left',
+        }}
+      />
     </div>
   )
 }

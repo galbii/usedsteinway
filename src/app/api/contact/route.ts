@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
     phone: data.phone?.trim() || undefined,
     inquiryType: data.inquiryType,
     message: data.message.trim(),
+    pianoTitle: data.pianoTitle?.trim() || undefined,
     budget: data.budget || undefined,
     timeline: data.timeline || undefined,
   }

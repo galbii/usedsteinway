@@ -133,27 +133,12 @@ export const Pianos: CollectionConfig<'pianos'> = {
               label: 'Specifications',
               fields: [
                 {
-                  type: 'row',
-                  fields: [
-                    {
-                      name: 'size',
-                      type: 'text',
-                      label: 'Size',
-                      admin: {
-                        description: "e.g. \"6'10\" (211 cm)\"",
-                        width: '50%',
-                      },
-                    },
-                    {
-                      name: 'length',
-                      type: 'text',
-                      label: 'Length',
-                      admin: {
-                        description: "e.g. \"6'10\"\"",
-                        width: '50%',
-                      },
-                    },
-                  ],
+                  name: 'length',
+                  type: 'text',
+                  label: 'Length',
+                  admin: {
+                    description: "e.g. \"6'10\"\"",
+                  },
                 },
                 {
                   type: 'row',
@@ -259,23 +244,6 @@ export const Pianos: CollectionConfig<'pianos'> = {
                 description: 'Main listing description shown on the piano detail page. Paste from any source — formatting (bold, italic) is preserved and line-wrap breaks are automatically cleaned up. Provenance and restoration notes have their own fields below.',
               },
             },
-            {
-              name: 'provenance',
-              type: 'textarea',
-              label: 'Provenance',
-              admin: {
-                description: 'Optional. Notable history — previous owners, institutions, performances.',
-              },
-            },
-            {
-              name: 'restorationHistory',
-              type: 'textarea',
-              label: 'Restoration History',
-              admin: {
-                description: 'Optional. Notes on any restoration or rebuilding work performed.',
-              },
-            },
-
             // Tags
             {
               name: 'tags',

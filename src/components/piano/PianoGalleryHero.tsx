@@ -308,7 +308,7 @@ export function PianoGalleryHero({ pianos }: Props) {
                 className="pgh-t3 flex items-center flex-wrap gap-x-3 gap-y-1"
                 style={{ marginBottom: '2rem' }}
               >
-                {[piano.finish, piano.size, piano.condition]
+                {[piano.finish, piano.condition]
                   .filter(Boolean)
                   .map((val, i, arr) => (
                     <span key={val} className="flex items-center gap-3">

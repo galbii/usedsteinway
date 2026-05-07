@@ -136,7 +136,7 @@ export function filterPianos(pianos: Piano[], filters: PianoFilters): Piano[] {
       const searchable = [
         p.title, p.brand, p.model, p.finish,
         p.description, p.tags.join(' '),
-        p.size, String(p.year),
+        String(p.year),
       ].join(' ').toLowerCase()
       if (!searchable.includes(q)) return false
     }
@@ -160,7 +160,7 @@ export function filterPianos(pianos: Piano[], filters: PianoFilters): Piano[] {
     }
 
     // Size
-    if (filters.size !== 'all' && getSizeBucket(p.size) !== filters.size) return false
+    if (filters.size !== 'all' && getSizeBucket(p.specs['Length'] ?? '') !== filters.size) return false
 
     // Finish
     if (filters.finish !== 'all' && getFinishBucket(p.finish) !== filters.finish) return false

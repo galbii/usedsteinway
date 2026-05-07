@@ -7,7 +7,16 @@ import {
   $isParagraphNode,
   $isTextNode,
   $createTextNode,
+  type ParagraphNode,
 } from '@payloadcms/richtext-lexical/lexical'
+
+// Returns true when every text node in the paragraph carries inline formatting
+// (bold, italic, etc.). Such paragraphs are intentional emphasis blocks, not
+// line-wrap artifacts, so the normalizer should leave them alone.
+function isFullyFormatted(paragraph: ParagraphNode): boolean {
+  const textNodes = paragraph.getChildren().filter($isTextNode)
+  return textNodes.length > 0 && textNodes.every((n) => n.getFormat() !== 0)
+}
 
 // Merges consecutive paragraph nodes that appear to be line-wrapped text
 // (i.e., the paragraph doesn't end with sentence-ending punctuation).
@@ -45,6 +54,13 @@ export const PasteNormalizerPlugin: PluginComponent = () => {
             // If current paragraph doesn't end with sentence punctuation,
             // it's a split line — merge with the next paragraph
             if (!/[.!?:;"'»\])]$/.test(currentText)) {
+              // Skip merge if either paragraph is entirely formatted (bold/italic).
+              // Those are intentional emphasis blocks, not line-wrap artifacts.
+              if (isFullyFormatted(current) || isFullyFormatted(next)) {
+                i++
+                continue
+              }
+
               // Only add a space if the last character isn't already a space.
               // Inherit the format of the last text node so we don't break
               // bold/italic runs at the merge boundary.

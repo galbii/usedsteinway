@@ -53,7 +53,7 @@ export function PianoCardFeatured({ piano, className }: PianoCardFeaturedProps) 
           {piano.model}
         </h3>
         <p className="text-piano-stone text-sm mb-6">
-          {piano.finish} · {piano.size}
+          {piano.finish}
         </p>
 
         <div className="flex items-center justify-between pt-5 border-t border-piano-linen">

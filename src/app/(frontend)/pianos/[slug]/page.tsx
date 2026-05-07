@@ -44,7 +44,7 @@ function buildProductSchema(piano: Piano, baseUrl: string) {
     name: `${piano.brand} ${piano.model}`,
     description:
       piano.description ||
-      `${piano.brand} ${piano.model} piano, ${piano.year}. ${piano.finish} finish, ${piano.size}.`,
+      `${piano.brand} ${piano.model} piano, ${piano.year}. ${piano.finish} finish.`,
     ...(images.length > 0 ? { image: images } : {}),
     brand: { '@type': 'Brand', name: piano.brand },
     model: piano.model,
@@ -170,7 +170,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const description =
     piano.meta?.description ||
-    `${conditionLabel} ${piano.brand} ${piano.model} grand piano — ${piano.finish} finish, ${piano.size}. ${piano.priceDisplay}. Personally evaluated by Roger, a Registered Piano Technician with 30+ years of experience.`
+    `${conditionLabel} ${piano.brand} ${piano.model} grand piano — ${piano.finish} finish. ${piano.priceDisplay}. Personally evaluated by Roger, a Registered Piano Technician with 30+ years of experience.`
 
   const firstImage = piano.imageUrls[0]
   const ogImageUrl =

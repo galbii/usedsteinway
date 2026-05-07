@@ -44,7 +44,7 @@ function StaticHero() {
     <section className="bg-piano-burgundy flex items-end" style={{ minHeight: '60vh', padding: '5rem 2.5rem 4rem' }}>
       <div className="max-w-7xl mx-auto w-full">
         <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-5">
-          New Hampshire · Est. 2005
+          Burlington & Natick · Est. 1980
         </p>
         <h1
           className="font-cormorant font-light text-white leading-none max-w-4xl"
@@ -263,7 +263,7 @@ export function HeroCarousel({ pianos }: HeroCarouselProps) {
           style={{ zIndex: 20, padding: '2rem 2.5rem' }}
         >
           <p className="font-display text-[10px] tracking-[0.55em] uppercase text-piano-cream/40">
-            New Hampshire · Est. 2005
+            Burlington & Natick · Est. 1980
           </p>
           <p
             className="font-display tabular-nums"
@@ -308,15 +308,11 @@ export function HeroCarousel({ pianos }: HeroCarouselProps) {
                 {piano.model || piano.title}
               </h1>
 
-              {/* Size · Condition */}
-              {(piano.size || piano.condition) && (
+              {/* Condition */}
+              {piano.condition && (
                 <p className="hc-t3 font-display uppercase"
                    style={{ fontSize: '10px', letterSpacing: '0.35em', color: 'rgba(255,255,255,0.38)', marginBottom: '2.2rem' }}>
-                  {piano.size && <span>{piano.size}</span>}
-                  {piano.size && piano.condition && (
-                    <span style={{ margin: '0 0.75rem', color: C.goldFaint }}>·</span>
-                  )}
-                  {piano.condition && <span style={{ textTransform: 'capitalize' }}>{piano.condition}</span>}
+                  <span style={{ textTransform: 'capitalize' }}>{piano.condition}</span>
                 </p>
               )}
 

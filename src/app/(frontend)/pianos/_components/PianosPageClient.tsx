@@ -67,17 +67,32 @@ export function PianosPageClient({ pianos }: Props) {
   function handleBlockClick(brand: BrandFilter) {
     const next = activeBrand === brand ? 'all' : brand
     setActiveBrand(next)
-    if (next !== 'all') {
+    // Always scroll to the top of the inventory so the user sees results from the beginning
+    setTimeout(() => {
       document.getElementById('inventory')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
+    }, 80)
   }
 
   return (
     <>
       {/* ── Category blocks ── */}
       <section aria-label="Browse by category">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }} className="max-sm:grid-cols-1">
-          {BLOCKS.map((block) => {
+        {/* Entry animation shimmer line */}
+        <div
+          style={{
+            height: '1px',
+            background: `linear-gradient(to right, transparent, ${C.accent}, transparent)`,
+            animation: 'piano-block-in 1s cubic-bezier(0.16, 1, 0.3, 1) both',
+            animationDelay: '0ms',
+            opacity: 0.4,
+          }}
+        />
+
+        <div
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}
+          className="max-sm:grid-cols-1"
+        >
+          {BLOCKS.map((block, index) => {
             const isActive = activeBrand === block.brand
             const count    = counts[block.brand as string] ?? 0
             const bgColor  = block.dark ? C.darkBg : C.bg
@@ -91,18 +106,21 @@ export function PianosPageClient({ pianos }: Props) {
                 key={block.brand}
                 type="button"
                 onClick={() => handleBlockClick(block.brand)}
-                className="group text-left w-full transition-all duration-300 focus-visible:outline-none"
+                className="group text-left w-full focus-visible:outline-none"
                 style={{
                   backgroundColor: bgColor,
                   borderTop:       `1px solid ${borderColor}`,
                   position:        'relative',
                   cursor:          'pointer',
+                  overflow:        'hidden',
+                  transform:       'translateZ(0)', // promote to its own layer for smooth animations
+                  animation:       `piano-block-in 0.75s cubic-bezier(0.16, 1, 0.3, 1) both`,
+                  animationDelay:  `${index * 110}ms`,
                 }}
                 aria-pressed={isActive}
               >
-                {/* Accent top bar */}
+                {/* Gold top bar — sweeps in on active */}
                 <div
-                  className="transition-all duration-500 ease-out"
                   style={{
                     height:          '3px',
                     backgroundColor: C.accent,
@@ -110,17 +128,58 @@ export function PianosPageClient({ pianos }: Props) {
                     position:        'absolute',
                     top:             0,
                     left:            0,
+                    transition:      'width 0.65s cubic-bezier(0.16, 1, 0.3, 1)',
+                    zIndex:          2,
                   }}
                 />
+
                 {/* Hover bar (only when not active) */}
                 {!isActive && (
                   <div
-                    className="absolute top-0 left-0 h-[3px] w-0 group-hover:w-full transition-all duration-500 ease-out"
-                    style={{ backgroundColor: C.accent, opacity: 0.5 }}
+                    className="absolute top-0 left-0 h-[3px] w-0 group-hover:w-full"
+                    style={{
+                      backgroundColor: C.accent,
+                      opacity:         0.4,
+                      transition:      'width 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+                    }}
                   />
                 )}
 
-                <div style={{ padding: 'clamp(2.5rem, 4vw, 4rem) clamp(2rem, 3.5vw, 3.5rem)' }}>
+                {/* Active overlay — subtle gold wash */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    backgroundColor: block.dark
+                      ? 'rgba(180, 130, 60, 0.07)'
+                      : 'rgba(180, 130, 60, 0.05)',
+                    opacity:    isActive ? 1 : 0,
+                    transition: 'opacity 0.5s ease',
+                    zIndex:     1,
+                  }}
+                />
+
+                {/* Shimmer sweep on activation */}
+                {isActive && (
+                  <div
+                    className="absolute inset-y-0 pointer-events-none"
+                    style={{
+                      width:           '60%',
+                      background:      block.dark
+                        ? 'linear-gradient(90deg, transparent, rgba(255,200,100,0.06), transparent)'
+                        : 'linear-gradient(90deg, transparent, rgba(255,200,100,0.1), transparent)',
+                      animation:       'piano-shimmer 0.9s cubic-bezier(0.4, 0, 0.6, 1) both',
+                      zIndex:          2,
+                    }}
+                  />
+                )}
+
+                <div
+                  style={{
+                    padding:  'clamp(2.5rem, 4vw, 4rem) clamp(2rem, 3.5vw, 3.5rem)',
+                    position: 'relative',
+                    zIndex:   3,
+                  }}
+                >
                   {/* Eyebrow */}
                   <p
                     className="font-display uppercase mb-5"
@@ -133,9 +192,10 @@ export function PianosPageClient({ pianos }: Props) {
                   <h3
                     className="font-cormorant font-light leading-[0.9]"
                     style={{
-                      fontSize:  'clamp(2.2rem, 4vw, 4.5rem)',
-                      color:     textColor,
+                      fontSize:     'clamp(2.2rem, 4vw, 4.5rem)',
+                      color:        textColor,
                       marginBottom: '1.25rem',
+                      transition:   'color 0.3s ease',
                     }}
                   >
                     {block.label}
@@ -144,11 +204,23 @@ export function PianosPageClient({ pianos }: Props) {
                   {/* Model tags */}
                   {block.tags && (
                     <div className="flex flex-wrap gap-2 mb-5">
-                      {block.tags.map((t) => (
+                      {block.tags.map((t, ti) => (
                         <span
                           key={t}
                           className="font-display uppercase"
-                          style={{ fontSize: '9px', letterSpacing: '0.18em', padding: '0.35rem 0.75rem', ...tagStyle }}
+                          style={{
+                            fontSize:       '9px',
+                            letterSpacing:  '0.18em',
+                            padding:        '0.35rem 0.75rem',
+                            transition:     'all 0.3s ease',
+                            transitionDelay: `${ti * 25}ms`,
+                            ...(isActive
+                              ? block.dark
+                                ? { border: '1px solid rgba(245,235,220,0.28)', color: 'rgba(245,235,220,0.7)' }
+                                : { backgroundColor: 'hsla(40, 72%, 52%, 0.2)', color: 'hsl(40, 55%, 32%)' }
+                              : tagStyle
+                            ),
+                          }}
                         >
                           {t}
                         </span>
@@ -159,25 +231,43 @@ export function PianosPageClient({ pianos }: Props) {
                   {/* Footer row: count + active indicator */}
                   <div
                     className="flex items-center justify-between"
-                    style={{ paddingTop: '1.25rem', borderTop: `1px solid ${borderColor}`, marginTop: '0.5rem' }}
+                    style={{
+                      paddingTop:  '1.25rem',
+                      borderTop:   `1px solid ${isActive ? (block.dark ? 'rgba(180,130,60,0.3)' : 'rgba(180,130,60,0.25)') : borderColor}`,
+                      marginTop:   '0.5rem',
+                      transition:  'border-color 0.4s ease',
+                    }}
                   >
                     <span
-                      className="font-display uppercase"
-                      style={{ fontSize: '10px', letterSpacing: '0.32em', color: muteColor }}
+                      className="font-display uppercase tabular-nums"
+                      style={{
+                        fontSize:      '10px',
+                        letterSpacing: '0.32em',
+                        color:         isActive ? C.accent : muteColor,
+                        transition:    'color 0.35s ease',
+                      }}
                     >
                       {count} {count === 1 ? 'instrument' : 'instruments'}
                     </span>
 
                     <span
-                      className="font-display uppercase flex items-center gap-2 transition-all duration-300 group-hover:gap-3"
+                      className="font-display uppercase flex items-center gap-2 group-hover:gap-3"
                       style={{
-                        fontSize:     '10px',
-                        letterSpacing:'0.32em',
-                        color:        isActive ? C.accent : muteColor,
+                        fontSize:      '10px',
+                        letterSpacing: '0.32em',
+                        color:         isActive ? C.accent : muteColor,
+                        transition:    'color 0.35s ease, gap 0.25s ease',
                       }}
                     >
                       {isActive ? 'Filtered ✓' : 'Filter'}
-                      {!isActive && <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>}
+                      {!isActive && (
+                        <span
+                          className="group-hover:translate-x-1 transition-transform duration-300"
+                          style={{ display: 'inline-block' }}
+                        >
+                          →
+                        </span>
+                      )}
                     </span>
                   </div>
                 </div>

@@ -31,7 +31,8 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, phone }: P
           email: form.email,
           phone: form.phone || undefined,
           inquiryType: 'buy',
-          message: `Inquiry about: ${pianoTitle}\n\n${form.message}`,
+          pianoTitle,
+          message: form.message,
         }),
       })
 
@@ -66,12 +67,12 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, phone }: P
           className="font-cormorant font-light text-piano-cream leading-tight mb-6"
           style={{ fontSize: 'clamp(3rem, 6vw, 5rem)' }}
         >
-          Roger Will Be In Touch
+          We&apos;ll Be In Touch
         </h3>
 
         <p className="text-piano-silver text-lg leading-relaxed max-w-sm mb-12">
-          You&apos;ll receive a confirmation shortly. Roger reviews every inquiry personally and
-          responds within one business day.
+          You&apos;ll receive a confirmation shortly. Every inquiry is reviewed personally and
+          you&apos;ll hear back within one business day.
         </p>
 
         <Link
@@ -180,7 +181,7 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, phone }: P
             value={form.message}
             onChange={(e) => setForm({ ...form, message: e.target.value })}
             className="w-full bg-transparent border-b border-piano-cream/20 text-piano-cream text-xl py-3 focus:outline-none focus:border-piano-gold transition-colors duration-200 placeholder:text-piano-cream/30 resize-none leading-loose"
-            placeholder="What would you like to know? Schedule a viewing, request additional photos, discuss pricing..."
+            placeholder="What would you like to know? Schedule a viewing, request additional information..."
           />
         </div>
 
@@ -210,35 +211,13 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, phone }: P
       {/* ── Right: Sidebar ── */}
       <div className="lg:border-l lg:border-piano-gold/10 lg:pl-16 space-y-12 pt-2">
 
-        {/* Full contact page funnel */}
-        <div>
-          <p className="font-display text-sm tracking-[0.5em] uppercase text-piano-gold mb-4">
-            Prefer a Full Conversation?
-          </p>
-          <p className="text-piano-silver text-lg leading-relaxed mb-7">
-            Visit the contact page to schedule a showroom visit, discuss trade-ins, explore
-            financing, or simply have a more detailed conversation with Roger about this instrument.
-          </p>
-          <Link
-            href={`/contact?piano=${encodeURIComponent(pianoTitle)}`}
-            className="inline-flex items-center gap-3 border border-piano-gold/40 text-piano-gold px-8 py-4 font-display text-sm tracking-[0.4em] uppercase hover:border-piano-gold hover:bg-piano-gold/5 transition-all duration-300 group"
-          >
-            Full Contact Page
-            <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
-          </Link>
-        </div>
-
-        {/* Divider */}
-        <div className="flex items-center gap-4">
-          <div className="flex-1 h-px bg-piano-gold/10" />
-          <span className="text-piano-cream/25 text-base">or</span>
-          <div className="flex-1 h-px bg-piano-gold/10" />
-        </div>
-
         {/* Phone */}
         {(phone ?? telHref) && (
           <div>
-            <p className="font-display text-sm tracking-[0.5em] uppercase text-piano-silver mb-3">
+            <p className="font-cormorant font-light text-piano-cream mb-3" style={{ fontSize: 'clamp(1.4rem, 2vw, 1.8rem)' }}>
+              Not sure this is the right piano for you?
+            </p>
+            <p className="font-display text-[10px] tracking-[0.4em] uppercase text-piano-silver mb-4">
               Call Directly
             </p>
             <a
@@ -248,8 +227,11 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, phone }: P
             >
               {phone}
             </a>
-            <p className="text-piano-silver/70 text-sm font-display tracking-[0.35em] uppercase mt-2">
-              Mon–Sat, 10am–6pm EST
+            <p className="text-piano-silver/70 text-base leading-relaxed mt-3">
+              to have a personal conversation about your piano search.
+            </p>
+            <p className="text-piano-silver/50 text-sm font-display tracking-[0.35em] uppercase mt-2">
+              By appointment. Walk-in welcome but not guaranteed.
             </p>
           </div>
         )}

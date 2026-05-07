@@ -35,14 +35,14 @@ function buildSpecs(doc: PayloadPiano): Record<string, string> {
   const specs: Record<string, string> = {}
   const s = doc.specifications
 
-  if (s?.size) specs['Size'] = s.size
   if (s?.length) specs['Length'] = s.length
   if (s?.width) specs['Width'] = s.width
   if (s?.stringLength) specs['String Length'] = s.stringLength
   if (s?.keys) specs['Keys'] = String(s.keys)
   if (s?.pedals) specs['Pedals'] = String(s.pedals)
   if (doc.finish) specs['Finish'] = doc.finish
-  if (doc.year) specs['Year'] = String(doc.year)
+  const isRebuilt = doc.condition === 'rebuilt' || doc.condition === 'rebuilt-partial'
+  if (doc.year) specs[isRebuilt ? 'Rebuilt' : 'Year'] = String(doc.year)
   if (doc.serialNumber) specs['Serial'] = doc.serialNumber
 
   return specs
@@ -72,7 +72,6 @@ export function adaptPayloadPiano(doc: PayloadPiano): Piano {
     retailPrice: doc.retailPrice ?? undefined,
     condition: doc.condition as Piano['condition'],
     finish: doc.finish ?? '',
-    size: doc.specifications?.size ?? '',
     location: doc.location ?? null,
     isAvailable: doc.isAvailable ?? false,
     isFeatured: doc.isFeatured ?? false,
@@ -82,8 +81,6 @@ export function adaptPayloadPiano(doc: PayloadPiano): Piano {
     videoUrl: doc.videoUrl ?? undefined,
     description: descriptionPlainText,
     richTextDescription: (doc.description ?? undefined) as DefaultTypedEditorState | undefined,
-    provenance: doc.provenance ?? undefined,
-    restorationHistory: doc.restorationHistory ?? undefined,
     conditionReport: doc.conditionReport ?? undefined,
     specs: buildSpecs(doc),
     tags: (doc.tags ?? []).map((t) => t.tag),
@@ -116,8 +113,8 @@ function sortPianoGrid(pianos: Piano[]): Piano[] {
     if (pDiff !== 0) return pDiff
 
     // 2. Physical length ascending (smaller → larger)
-    const aFt = parseSizeFt(a.size)
-    const bFt = parseSizeFt(b.size)
+    const aFt = parseSizeFt(a.specs['Length'] ?? '')
+    const bFt = parseSizeFt(b.specs['Length'] ?? '')
     if (aFt === null && bFt === null) return brandPriority(a.brandSlug) - brandPriority(b.brandSlug)
     if (aFt === null) return 1
     if (bFt === null) return -1

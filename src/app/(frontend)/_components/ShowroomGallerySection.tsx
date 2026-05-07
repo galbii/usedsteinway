@@ -1,10 +1,14 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Media } from '@/components/Media'
 import { cn } from '@/utilities/ui'
 import type { Media as MediaType } from '@/payload-types'
+
+function stripTrailingCounter(text: string): string {
+  return text.replace(/\s+\d+$/, '')
+}
 
 // 6-cell bento, 12-column grid, 2 rows
 const BENTO: Array<{ cols: string; rows: string }> = [
@@ -16,9 +20,19 @@ const BENTO: Array<{ cols: string; rows: string }> = [
   { cols: 'col-span-12 md:col-span-4', rows: 'row-span-1' },               // bottom-right C
 ]
 
-const CELL_COUNT = BENTO.length
-const ROTATE_INTERVAL = 2800   // ms between each cell swap
-const CROSSFADE_MS    = 1000   // opacity transition duration
+const CELL_COUNT    = BENTO.length
+const ROTATE_BASE   = 2200   // base ms between swaps
+const ROTATE_JITTER = 1600   // ± half this for randomness
+const CROSSFADE_MS  = 900    // opacity transition duration
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[a[i], a[j]] = [a[j]!, a[i]!]
+  }
+  return a
+}
 
 const C = {
   bg:      'hsl(36, 22%, 96%)',
@@ -44,22 +58,23 @@ interface Props {
 }
 
 export function ShowroomGallerySection({ images }: Props) {
-  const [cells, setCells] = useState<CellSlots[]>(() =>
-    BENTO.map((_, i) => ({
-      a:     i % Math.max(images.length, 1),
-      b:     (i + CELL_COUNT) % Math.max(images.length, 1),
-      front: 'a',
+  const [cells, setCells] = useState<CellSlots[]>(() => {
+    const indices = shuffle(images.map((_, i) => i))
+    const len = Math.max(images.length, 1)
+    return BENTO.map((_, i) => ({
+      a:     indices[i % len]!,
+      b:     indices[(i + CELL_COUNT) % len]!,
+      front: 'a' as const,
     }))
-  )
-
-  const cursorRef = useRef(0)
+  })
 
   useEffect(() => {
     if (images.length <= CELL_COUNT) return
 
-    const timer = setInterval(() => {
-      const cellIdx = cursorRef.current % CELL_COUNT
-      cursorRef.current += 1
+    let timeout: ReturnType<typeof setTimeout>
+
+    function tick() {
+      const cellIdx = Math.floor(Math.random() * CELL_COUNT)
 
       setCells((prev) => {
         const next = [...prev] as CellSlots[]
@@ -67,7 +82,8 @@ export function ShowroomGallerySection({ images }: Props) {
 
         const shownIndices = new Set(prev.map((c) => (c.front === 'a' ? c.a : c.b)))
         const currentShown = cell.front === 'a' ? cell.a : cell.b
-        let nextIdx = (currentShown + 1) % images.length
+        // pick a random starting offset so we don't always cycle forward
+        let nextIdx = (currentShown + 1 + Math.floor(Math.random() * 3)) % images.length
         let tries = 0
         while (shownIndices.has(nextIdx) && tries < images.length) {
           nextIdx = (nextIdx + 1) % images.length
@@ -85,9 +101,12 @@ export function ShowroomGallerySection({ images }: Props) {
         next[cellIdx] = cell
         return next
       })
-    }, ROTATE_INTERVAL)
 
-    return () => clearInterval(timer)
+      timeout = setTimeout(tick, ROTATE_BASE + (Math.random() - 0.5) * ROTATE_JITTER)
+    }
+
+    timeout = setTimeout(tick, ROTATE_BASE + Math.random() * ROTATE_JITTER)
+    return () => clearTimeout(timeout)
   }, [images.length])
 
   if (images.length === 0) return null
@@ -194,17 +213,17 @@ export function ShowroomGallerySection({ images }: Props) {
                     style={{ backgroundColor: C.accent }}
                   />
 
-                  {/* Caption reveal on hover */}
+                  {/* Caption reveal on hover — alt text only (brand + model) */}
                   {(() => {
                     const activeImg = cell.front === 'a' ? imgA : imgB
-                    const caption   = activeImg?.caption ?? activeImg?.alt
-                    return caption ? (
-                      <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] z-20 bg-gradient-to-t from-black/85 via-black/45 to-transparent pt-12 pb-5 px-5">
+                    const label = activeImg?.alt ? stripTrailingCounter(activeImg.alt) : null
+                    return label ? (
+                      <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] z-20 bg-gradient-to-t from-black/80 via-black/35 to-transparent pt-12 pb-5 px-5">
                         <p
                           className="font-cormorant font-light text-white leading-snug"
                           style={{ fontSize: 'clamp(0.85rem, 1.4vw, 1.05rem)' }}
                         >
-                          {caption}
+                          {label}
                         </p>
                       </div>
                     ) : null

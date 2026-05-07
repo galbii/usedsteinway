@@ -17,7 +17,6 @@ type PianoSeed = {
   location?: 'Natick' | 'Burlington' | 'Incoming'
   stockImageUrl?: string
   specifications: {
-    size: string
     length?: string
     width?: string
     stringLength?: string
@@ -25,7 +24,6 @@ type PianoSeed = {
     pedals?: number
   }
   conditionReport?: string
-  restorationHistory?: string
   tags: Array<{ tag: string }>
 }
 
@@ -44,7 +42,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 150900,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "6'10.5\" (210 cm)", length: "6'10.5\"", width: '58"', keys: 88, pedals: 3 },
+    specifications: { length: "6'10.5\"", width: '58"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Rebuilt' }],
   },
   {
@@ -61,7 +59,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 226465,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "7'8\" (234 cm)", length: "7'8\"", width: '61"', keys: 88, pedals: 3 },
+    specifications: { length: "7'8\"", width: '61"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'European' }],
   },
   {
@@ -78,7 +76,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 211999,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "7' (214 cm)", length: "7'", width: '59"', keys: 88, pedals: 3 },
+    specifications: { length: "7'", width: '59"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'European' }, { tag: 'Reconditioned' }],
   },
   {
@@ -95,7 +93,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 248999,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "7'4\" (225 cm)", length: "7'4\"", width: '59"', keys: 88, pedals: 3 },
+    specifications: { length: "7'4\"", width: '59"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'European' }, { tag: 'Handcrafted' }],
   },
   {
@@ -111,7 +109,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     priceOnCall: true,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "6'1\" (185 cm)", length: "6'1\"", width: '58"', keys: 88, pedals: 3 },
+    specifications: { length: "6'1\"", width: '58"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'European' }, { tag: 'Restored' }],
   },
   {
@@ -127,7 +125,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     price: 36999,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "5'1\" (155 cm)", length: "5'1\"", width: '58"', keys: 88, pedals: 2 },
+    specifications: { length: "5'1\"", width: '58"', keys: 88, pedals: 2 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'European' }, { tag: 'Restored' }],
   },
   {
@@ -142,7 +140,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 154596,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "7'2\" (219 cm)", length: "7'2\"", width: '60"', keys: 88, pedals: 3 },
+    specifications: { length: "7'2\"", width: '60"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'New' }, { tag: 'European' }, { tag: 'Handcrafted' }],
   },
   {
@@ -159,7 +157,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 210200,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "6'1\" (185 cm)", length: "6'1\"", width: '58"', keys: 88, pedals: 3 },
+    specifications: { length: "6'1\"", width: '58"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Restored' }, { tag: 'Rebuilt' }],
   },
   {
@@ -176,7 +174,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 253900,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "8'11.75\" (274 cm)", length: "8'11.75\"", width: '60"', keys: 88, pedals: 3 },
+    specifications: { length: "8'11.75\"", width: '60"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Restored' }, { tag: 'Rebuilt' }],
   },
   {
@@ -193,7 +191,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 253900,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "8'11.75\" (274 cm)", length: "8'11.75\"", width: '60"', keys: 88, pedals: 3 },
+    specifications: { length: "8'11.75\"", width: '60"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Restored' }, { tag: 'Rebuilt' }],
   },
   {
@@ -209,7 +207,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     priceOnCall: true,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "8'11.75\" (274 cm)", length: "8'11.75\"", width: '60"', keys: 88, pedals: 3 },
+    specifications: { length: "8'11.75\"", width: '60"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Restored' }, { tag: 'Rebuilt' }],
   },
   {
@@ -225,7 +223,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     price: 99999,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "6'10.5\" (210 cm)", length: "6'10.5\"", width: '56"', keys: 88, pedals: 3 },
+    specifications: { length: "6'10.5\"", width: '56"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Rare' }],
   },
   {
@@ -241,7 +239,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     price: 69999,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "6'4\" (193 cm)", length: "6'4\"", width: '56"', keys: 88, pedals: 3 },
+    specifications: { length: "6'4\"", width: '56"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Restored' }, { tag: 'Rebuilt' }],
   },
   {
@@ -257,7 +255,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     price: 99999,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "6'1\" (185 cm)", length: "6'1\"", width: '56"', keys: 88, pedals: 3 },
+    specifications: { length: "6'1\"", width: '56"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Rebuilt' }, { tag: 'Rare' }, { tag: 'Designer Case' }],
   },
   {
@@ -274,7 +272,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 157000,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "5'10.5\" (179 cm)", length: "5'10.5\"", width: '56"', keys: 88, pedals: 3 },
+    specifications: { length: "5'10.5\"", width: '56"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Restored' }, { tag: 'Rebuilt' }],
   },
   {
@@ -291,7 +289,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 157000,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "5'10.5\" (179 cm)", length: "5'10.5\"", width: '56"', keys: 88, pedals: 3 },
+    specifications: { length: "5'10.5\"", width: '56"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Restored' }, { tag: 'Rebuilt' }],
   },
   {
@@ -307,7 +305,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     priceOnCall: true,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "7'5.5\" (227 cm)", length: "7'5.5\"", width: '56"', keys: 85, pedals: 3 },
+    specifications: { length: "7'5.5\"", width: '56"', keys: 85, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Restored' }, { tag: 'Rebuilt' }],
   },
   {
@@ -324,7 +322,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 106200,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "5'7\" (170 cm)", length: "5'7\"", width: '56"', keys: 88, pedals: 3 },
+    specifications: { length: "5'7\"", width: '56"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Restored' }, { tag: 'Rebuilt' }],
   },
   {
@@ -341,7 +339,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 106200,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "5'7\" (170 cm)", length: "5'7\"", width: '56"', keys: 88, pedals: 3 },
+    specifications: { length: "5'7\"", width: '56"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Reconditioned' }],
   },
   {
@@ -358,7 +356,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 143000,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "5'7\" (170 cm)", length: "5'7\"", width: '56"', keys: 88, pedals: 3 },
+    specifications: { length: "5'7\"", width: '56"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Restored' }, { tag: 'Rebuilt' }],
   },
   {
@@ -375,7 +373,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 135700,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "5'1\" (155 cm)", length: "5'1\"", width: '56"', keys: 88, pedals: 3 },
+    specifications: { length: "5'1\"", width: '56"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Restored' }, { tag: 'Rebuilt' }],
   },
   {
@@ -392,7 +390,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 138100,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "5'1\" (155 cm)", length: "5'1\"", width: '56"', keys: 88, pedals: 3 },
+    specifications: { length: "5'1\"", width: '56"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Reconditioned' }],
   },
   {
@@ -409,7 +407,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 35200,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "5'4\" (162 cm)", length: "5'4\"", width: '58"', keys: 88, pedals: 3 },
+    specifications: { length: "5'4\"", width: '58"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }],
   },
   {
@@ -424,7 +422,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 31790,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: '49" (125 cm)', length: '49"', width: '59"', keys: 88, pedals: 3 },
+    specifications: { length: '49"', width: '59"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Upright Piano' }, { tag: 'New' }, { tag: 'European' }, { tag: 'Handcrafted' }],
   },
   {
@@ -438,7 +436,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     priceOnCall: true,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: '50" (127 cm)', length: '50"', width: '59"', keys: 88, pedals: 3 },
+    specifications: { length: '50"', width: '59"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Upright Piano' }, { tag: 'New' }, { tag: 'European' }, { tag: 'Handcrafted' }, { tag: 'Designer Case' }],
   },
   {
@@ -453,7 +451,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 88640,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "5'8\" (173 cm)", length: "6'4\"", width: '59"', keys: 88, pedals: 3 },
+    specifications: { length: "6'4\"", width: '59"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'New' }, { tag: 'European' }, { tag: 'Handcrafted' }],
   },
   {
@@ -468,7 +466,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 98640,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "6'4\" (194 cm)", length: "5'8\"", width: '59"', keys: 88, pedals: 3 },
+    specifications: { length: "5'8\"", width: '59"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'New' }, { tag: 'European' }, { tag: 'Handcrafted' }],
   },
   {
@@ -483,7 +481,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 128640,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "6'10.6\" (210 cm)", length: "6'10.6\"", width: '59"', keys: 88, pedals: 3 },
+    specifications: { length: "6'10.6\"", width: '59"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'New' }, { tag: 'European' }, { tag: 'Handcrafted' }],
   },
   {
@@ -498,7 +496,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 32258,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: '48.5" (123 cm)', length: '48.5"', width: '59"', keys: 88, pedals: 3 },
+    specifications: { length: '48.5"', width: '59"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Upright Piano' }, { tag: 'New' }, { tag: 'European' }],
   },
   {
@@ -514,7 +512,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     price: 29999,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "6'1\" (185 cm)", length: "6'1\"", width: '59"', keys: 88, pedals: 3 },
+    specifications: { length: "6'1\"", width: '59"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Reconditioned' }, { tag: 'Player Piano' }],
   },
   {
@@ -530,7 +528,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     price: 19999,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "6'1\" (185 cm)", length: "6'1\"", width: '59"', keys: 88, pedals: 3 },
+    specifications: { length: "6'1\"", width: '59"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Reconditioned' }],
   },
   {
@@ -547,7 +545,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 199000,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "6'11\" (211 cm)", length: "6'11\"", width: '59"', keys: 88, pedals: 2 },
+    specifications: { length: "6'11\"", width: '59"', keys: 88, pedals: 2 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Restored' }, { tag: 'Rebuilt' }],
   },
   {
@@ -564,7 +562,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 190000,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "6'11\" (211 cm)", length: "6'11\"", width: '59"', keys: 88, pedals: 3 },
+    specifications: { length: "6'11\"", width: '59"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'Restored' }, { tag: 'Rebuilt' }],
   },
   {
@@ -578,7 +576,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     price: 69999,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "5'6\" (169 cm)", length: "5'6\"", width: '59"', keys: 88, pedals: 3 },
+    specifications: { length: "5'6\"", width: '59"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'New' }, { tag: 'European' }, { tag: 'Handcrafted' }, { tag: 'Rare' }, { tag: 'Designer Case' }],
   },
   {
@@ -593,7 +591,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 254189,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "9'2\" (280 cm)", length: "9'2\"", width: '59"', keys: 88, pedals: 3 },
+    specifications: { length: "9'2\"", width: '59"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Concert Grand Piano' }, { tag: 'European' }, { tag: 'Handcrafted' }],
   },
   {
@@ -608,7 +606,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 69281,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: "5'11\" (180 cm)", length: "5'11\"", width: '59"', keys: 88, pedals: 3 },
+    specifications: { length: "5'11\"", width: '59"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'New' }, { tag: 'European' }],
   },
   {
@@ -624,7 +622,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     price: 41999,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: '52" (132 cm)', length: '52"', width: '60"', keys: 88, pedals: 3 },
+    specifications: { length: '52"', width: '60"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Upright Piano' }, { tag: 'Used' }, { tag: 'Restored' }, { tag: 'Rebuilt' }],
   },
   {
@@ -640,7 +638,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     price: 9999,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: '45" (114 cm)', length: '45"', width: '60"', keys: 88, pedals: 3 },
+    specifications: { length: '45"', width: '60"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Upright Piano' }, { tag: 'Used' }, { tag: 'Reconditioned' }],
   },
   {
@@ -654,7 +652,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     priceOnCall: true,
     isAvailable: false,
     isFeatured: false,
-    specifications: { size: "5' (152 cm)", length: "5'", width: '59"', keys: 88, pedals: 3 },
+    specifications: { length: "5'", width: '59"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Grand Piano' }, { tag: 'Used' }, { tag: 'European' }],
   },
   {
@@ -671,7 +669,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 17800,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: '46.5" (118 cm)', length: '46.5"', width: '59"', keys: 88, pedals: 3 },
+    specifications: { length: '46.5"', width: '59"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Upright Piano' }, { tag: 'Used' }, { tag: 'Reconditioned' }],
   },
   {
@@ -688,7 +686,7 @@ const PIANO_INVENTORY: PianoSeed[] = [
     retailPrice: 11700,
     isAvailable: true,
     isFeatured: false,
-    specifications: { size: '48" (123 cm)', length: '48"', width: '59"', keys: 88, pedals: 3 },
+    specifications: { length: '48"', width: '59"', keys: 88, pedals: 3 },
     tags: [{ tag: 'Upright Piano' }, { tag: 'Used' }, { tag: 'Reconditioned' }],
   },
 ]

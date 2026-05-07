@@ -17,7 +17,7 @@ export default async function VisitPage() {
   const locations = siteSettings?.locations ?? []
 
   const displayPhone = phone ?? '508-545-0766'
-  const displayHours = hoursOfOperation ?? 'By appointment. Walk-in may be possible but not guaranteed.'
+  const displayHours = hoursOfOperation ?? 'By appointment. Walk-in welcome but not guaranteed.'
   const telHref = `tel:+1${displayPhone.replace(/\D/g, '')}`
 
   return (

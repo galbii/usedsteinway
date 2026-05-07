@@ -171,6 +171,31 @@
   --animate-reveal-right: reveal-right 0.85s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-scale-x-in: scale-x-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-counter-up: counter-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  /* ── Piano browser animations ──────────────────────────────── */
+  @keyframes piano-card-in {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes piano-block-in {
+    from { opacity: 0; transform: translateY(32px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes piano-count-flip {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes piano-shimmer {
+    0%   { transform: translateX(-120%) skewX(-12deg); }
+    100% { transform: translateX(220%) skewX(-12deg); }
+  }
+
+  --animate-piano-card-in: piano-card-in 0.55s cubic-bezier(0.2, 0, 0, 1) both;
+  --animate-piano-block-in: piano-block-in 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-piano-count-flip: piano-count-flip 0.4s cubic-bezier(0.2, 0, 0, 1) both;
 }
 
 /* ── Semantic color utilities (maps :root CSS vars → Tailwind classes) ─ */

@@ -23,6 +23,8 @@ interface ExtendedState extends MediaManagerState {
   batchReviewFiles: File[]
   modalOptions: import('./types').MediaManagerModalOptions | null
   selectedMediaItems: MediaItem[] // Ordered list for multi-select mode
+  selectedTags: string[] // Active tag filters
+  availableTags: string[] // All tags found across media items
 }
 
 const initialState: ExtendedState = {
@@ -45,6 +47,8 @@ const initialState: ExtendedState = {
   batchReviewFiles: [],
   modalOptions: null,
   selectedMediaItems: [],
+  selectedTags: [],
+  availableTags: [],
   // Folder state
   folders: [],
   folderTree: [],
@@ -78,6 +82,9 @@ interface ExtendedContextValue extends MediaManagerContextValue {
   clearBatchReview: () => void
   toggleMediaSelection: (media: MediaItem) => void
   clearMediaSelection: () => void
+  selectedTags: string[]
+  availableTags: string[]
+  setSelectedTags: (tags: string[]) => void
 }
 
 const MediaManagerContext = createContext<ExtendedContextValue | null>(null)
@@ -368,6 +375,24 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showToast, state.currentPage])
 
+  // Fetch all unique tags across all media (lightweight — depth=0, limit=500)
+  const fetchAvailableTags = useCallback(async () => {
+    try {
+      const response = await fetch('/api/media?limit=500&depth=0&pagination=false')
+      if (!response.ok) return
+      const data = await response.json()
+      const tagSet = new Set<string>()
+      for (const doc of (data.docs as Array<{ tags?: string[] | null }>)) {
+        if (Array.isArray(doc.tags)) {
+          doc.tags.forEach(t => tagSet.add(t))
+        }
+      }
+      setState(prev => ({ ...prev, availableTags: Array.from(tagSet).sort() }))
+    } catch {
+      // silently fail — tags filter just won't show options
+    }
+  }, [])
+
   // Fetch media from API
   const fetchMedia = useCallback(async (page: number = 1) => {
     setState(prev => ({ ...prev, isLoading: true, error: null }))
@@ -380,15 +405,27 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
         depth: '1', // Include folder relationship
       })
 
-      // Add search filter if query exists
+      // Build where conditions as an AND array so search + tags + folder compose cleanly
+      let andIdx = 0
+
+      // Search: alt OR filename contains query
       if (state.searchQuery) {
-        params.append('where[or][0][alt][contains]', state.searchQuery)
-        params.append('where[or][1][filename][contains]', state.searchQuery)
+        params.append(`where[and][${andIdx}][or][0][alt][contains]`, state.searchQuery)
+        params.append(`where[and][${andIdx}][or][1][filename][contains]`, state.searchQuery)
+        andIdx++
       }
 
-      // Add folder filter
+      // Tag filter: tags contains any of the selected tags (OR between tags)
+      if (state.selectedTags && state.selectedTags.length > 0) {
+        state.selectedTags.forEach((tag, i) => {
+          params.append(`where[and][${andIdx}][or][${i}][tags][contains]`, tag)
+        })
+        andIdx++
+      }
+
+      // Folder filter
       if (state.currentFolder) {
-        params.append('where[folder][equals]', state.currentFolder.id)
+        params.append(`where[and][${andIdx}][folder][equals]`, state.currentFolder.id)
       }
 
       const response = await fetch(`/api/media?${params.toString()}`)
@@ -415,7 +452,7 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
       }))
       showToast('error', 'Failed to load media')
     }
-  }, [state.searchQuery, state.currentFolder, transformMedia, showToast])
+  }, [state.searchQuery, state.selectedTags, state.currentFolder, transformMedia, showToast])
 
   // Upload files directly without editing
   const uploadFilesDirectly = useCallback(async (files: File[]) => {
@@ -901,6 +938,10 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
     setState(prev => ({ ...prev, selectedMediaItems: [] }))
   }, [])
 
+  const setSelectedTags = useCallback((tags: string[]) => {
+    setState(prev => ({ ...prev, selectedTags: tags }))
+  }, [])
+
   // Modal controls
   const openModal = useCallback((options?: import('./types').MediaManagerModalOptions) => {
     console.log('[MediaManagerProvider] ========== openModal CALLED ==========')
@@ -934,6 +975,7 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
       pendingFiles: [],
       modalOptions: null,
       selectedMediaItems: [],
+      selectedTags: [],
     }))
   }, [])
 
@@ -969,20 +1011,21 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
     }
   }, [showToast])
 
-  // Fetch folders and media when modal opens
+  // Fetch folders, available tags, and media when modal opens
   useEffect(() => {
     if (state.isOpen) {
       fetchFolders()
+      fetchAvailableTags()
       fetchMedia(1)
     }
-  }, [state.isOpen, fetchFolders, fetchMedia])
+  }, [state.isOpen, fetchFolders, fetchAvailableTags, fetchMedia])
 
-  // Refetch media when search query or current folder changes
+  // Refetch media when search query, tag filters, or current folder changes
   useEffect(() => {
     if (state.isOpen) {
       fetchMedia(1)
     }
-  }, [state.searchQuery, state.currentFolder, state.isOpen, fetchMedia])
+  }, [state.searchQuery, state.selectedTags, state.currentFolder, state.isOpen, fetchMedia])
 
   const contextValue: ExtendedContextValue = {
     ...state,
@@ -1009,6 +1052,7 @@ export function MediaManagerProvider({ children }: MediaManagerProviderProps) {
     clearBatchReview,
     toggleMediaSelection,
     clearMediaSelection,
+    setSelectedTags,
     // Folder actions
     fetchFolders,
     createFolder,

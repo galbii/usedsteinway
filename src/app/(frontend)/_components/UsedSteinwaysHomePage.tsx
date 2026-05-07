@@ -477,7 +477,7 @@ export function UsedSteinwaysHomePage({ locations = [], phone, featured: feature
                 className="text-base leading-relaxed xl:max-w-[28ch] xl:ml-auto"
                 style={{ color: 'rgba(245,235,220,0.46)' }}
               >
-                From the world&apos;s finest makers — selected individually, not by catalogue.
+                From the world&apos;s finest makers — Each with its unique tone and touch
               </p>
             </div>
           </div>
@@ -494,7 +494,10 @@ export function UsedSteinwaysHomePage({ locations = [], phone, featured: feature
           const european   = brands.filter((b) => b.category === 'european')
           const shigeru    = brands.find((b) => b.category === 'shigeru-kawai')
 
-          const steinwayModels  = steinway?.models.slice(0, 5) ?? []
+          const STEINWAY_ORDER = ['model-s', 'model-m', 'model-o', 'model-a', 'model-b', 'model-c', 'model-d']
+          const steinwayModels = (steinway?.models ?? [])
+            .filter((m) => STEINWAY_ORDER.includes(m.slug))
+            .sort((a, b) => STEINWAY_ORDER.indexOf(a.slug) - STEINWAY_ORDER.indexOf(b.slug))
           const shigeruModels   = shigeru?.models.slice(0, 5) ?? []
 
           const steinwayEyebrow = [steinway?.country, steinway?.founded ? `Est. ${steinway.founded}` : null].filter(Boolean).join(' · ')
@@ -675,15 +678,16 @@ export function UsedSteinwaysHomePage({ locations = [], phone, featured: feature
             className="sr sr-d1 font-cormorant font-light leading-[1.05] mb-8"
             style={{ fontSize: 'clamp(3rem, 6vw, 6.5rem)', color: C.ivory }}
           >
-            People, Policies<br />and Pianos.
+            People + Pianos<br />= Music.
           </h2>
 
           <p
-            className="sr sr-d2 leading-relaxed mx-auto mb-14"
+            className="sr sr-d2 leading-loose mx-auto mb-14"
             style={{ fontSize: '1.125rem', color: 'rgba(245,235,220,0.50)', maxWidth: '42ch' }}
           >
-            Over 45 years of expertise. A trade-up policy that lets you grow.
-            Over two hundred instruments — selected individually, not by catalogue.
+            Over 45 years of expertise.<br />
+            A trade-up policy that lets you grow.<br />
+            Two showrooms with over two hundred pianos to match individual preferences.
           </p>
 
           <div className="sr sr-d3 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -741,7 +745,7 @@ export function UsedSteinwaysHomePage({ locations = [], phone, featured: feature
               className="font-display text-[10px] tracking-[0.48em] uppercase"
               style={{ color: C.muted }}
             >
-              New Hampshire Showroom
+              Burlington & Natick Showrooms
             </span>
             <div className="h-px w-10" style={{ backgroundColor: 'hsla(40, 72%, 52%, 0.38)' }} />
           </div>

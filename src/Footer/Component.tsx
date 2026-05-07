@@ -16,19 +16,9 @@ const NAV_COLUMNS = [
     ],
   },
   {
-    title: 'Guides',
-    links: [
-      { label: 'Buying a Used Steinway', href: '/guides/buying-a-used-steinway' },
-      { label: 'Steinway Pricing Guide', href: '/guides/steinway-pricing-guide' },
-      { label: 'Steinway vs. Bösendorfer', href: '/guides/steinway-vs-bosendorfer' },
-      { label: 'Best Model for Home', href: '/guides/best-steinway-model-for-home' },
-      { label: 'All Guides', href: '/guides' },
-    ],
-  },
-  {
     title: 'Showroom',
     links: [
-      { label: 'About Roger', href: '/about' },
+      { label: 'About Us', href: '/about' },
       { label: 'Visit Us', href: '/visit' },
       { label: 'Testimonials', href: '/testimonials' },
       { label: 'Sell Your Piano', href: '/sell-your-piano' },
@@ -43,7 +33,7 @@ export async function Footer() {
 
   const displayPhone = phone ?? '508-545-0766'
   const displayEmail = email ?? 'info@usedsteinways.com'
-  const displayHours = hoursOfOperation ?? 'By appointment'
+  const displayHours = hoursOfOperation ?? 'By appointment. Walk-in welcome but not guaranteed.'
   const telHref = `tel:+1${displayPhone.replace(/\D/g, '')}`
 
   return (
@@ -92,7 +82,7 @@ export async function Footer() {
             <div>
               <PianoLogo theme="dark" size="lg" />
               <p className="text-piano-cream/30 font-display text-[10px] tracking-[0.4em] uppercase mt-3">
-                Massachusetts · Est. 1993 · Roger, RPT
+                Massachusetts · Est. 1980
               </p>
             </div>
             <p className="font-cormorant font-light italic text-lg text-piano-cream/25 max-w-xs leading-relaxed text-right hidden md:block">
@@ -102,7 +92,7 @@ export async function Footer() {
         </div>
 
         {/* Nav columns */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-10 mb-12">
+        <div className="grid grid-cols-2 gap-10 mb-12">
           {NAV_COLUMNS.map((col) => (
             <div key={col.title}>
               <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold/60 mb-6">

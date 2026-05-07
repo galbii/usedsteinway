@@ -333,7 +333,7 @@ export function FeaturedCarousel({ pianos }: FeaturedCarouselProps) {
 
             {/* Finish · size · condition */}
             <p style={{ fontFamily: 'var(--font-display)', fontSize: '13px', letterSpacing: '0.34em', textTransform: 'uppercase', color: C.ivoryGhost, marginBottom: '2.25rem', ...reveal(0.16) }}>
-              {piano.finish}{piano.size ? ` · ${piano.size}` : ''}
+              {piano.finish}
               {piano.condition && <span style={{ color: C.accent }}>{` · ${piano.condition}`}</span>}
             </p>
 

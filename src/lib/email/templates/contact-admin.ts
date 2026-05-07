@@ -6,6 +6,7 @@ export type ContactFormData = {
   phone?: string
   inquiryType: 'buy' | 'sell' | 'general'
   message: string
+  pianoTitle?: string
   budget?: string
   timeline?: string
 }
@@ -33,12 +34,14 @@ const timelineLabels: Record<string, string> = {
 }
 
 export function adminEmailSubject(data: ContactFormData): string {
-  return `[Used Steinways] ${inquiryLabels[data.inquiryType]} — ${data.name}`
+  const detail = data.pianoTitle ?? inquiryLabels[data.inquiryType]
+  return `${data.name} — ${detail}`
 }
 
 export function adminEmailHtml(data: ContactFormData): string {
   const rows = [
     ['Inquiry Type', inquiryLabels[data.inquiryType]],
+    data.pianoTitle ? ['Piano', escapeHtml(data.pianoTitle)] : null,
     ['Name', escapeHtml(data.name)],
     ['Email', `<a href="mailto:${escapeHtml(data.email)}">${escapeHtml(data.email)}</a>`],
     data.phone ? ['Phone', escapeHtml(data.phone)] : null,

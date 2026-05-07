@@ -93,12 +93,17 @@ export function MediaManagerModal() {
     batchReviewFiles,
     selectedMediaItems,
     clearMediaSelection,
+    selectedTags,
+    setSelectedTags,
+    availableTags,
   } = useMediaManager()
 
   const [isDragging, setIsDragging] = useState(false)
   const [showMoveMenu, setShowMoveMenu] = useState(false)
+  const [showTagFilter, setShowTagFilter] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const tagFilterRef = useRef<HTMLDivElement>(null)
   const dragCounterRef = useRef(0)
 
   // Footer tag state
@@ -248,6 +253,26 @@ export function MediaManagerModal() {
     }
   }, [handleFilesSelected])
 
+  // Close tag filter dropdown on outside click
+  useEffect(() => {
+    if (!showTagFilter) return
+    const handleOutside = (e: MouseEvent) => {
+      if (tagFilterRef.current && !tagFilterRef.current.contains(e.target as Node)) {
+        setShowTagFilter(false)
+      }
+    }
+    document.addEventListener('mousedown', handleOutside)
+    return () => document.removeEventListener('mousedown', handleOutside)
+  }, [showTagFilter])
+
+  const toggleTag = useCallback((tag: string) => {
+    setSelectedTags(
+      selectedTags.includes(tag)
+        ? selectedTags.filter(t => t !== tag)
+        : [...selectedTags, tag],
+    )
+  }, [selectedTags, setSelectedTags])
+
   // Handle move to folder
   const handleMoveToFolder = useCallback(async (folderId: string | null) => {
     if (selectedMedia) {
@@ -341,6 +366,8 @@ export function MediaManagerModal() {
                 backgroundColor: colors.headerBg,
                 borderBottom: `1px solid ${colors.border}`,
                 background: `linear-gradient(135deg, ${colors.headerBg} 0%, ${colors.modalBg} 100%)`,
+                position: 'relative',
+                zIndex: 1000002,
               }}
             >
               {/* Left: Title & Info */}
@@ -413,7 +440,7 @@ export function MediaManagerModal() {
               </div>
 
               {/* Right: Search, Upload, Close */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative', zIndex: 1000003 }}>
                 {/* Search Bar */}
                 <div style={{ position: 'relative' }}>
                   <svg
@@ -464,6 +491,278 @@ export function MediaManagerModal() {
                       e.target.style.boxShadow = 'none'
                     }}
                   />
+                </div>
+
+                {/* Tag Guide */}
+                <div style={{ position: 'relative' }} className="tag-guide-wrapper">
+                  <button
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '36px',
+                      height: '36px',
+                      borderRadius: '50%',
+                      border: `1px solid ${colors.border}`,
+                      backgroundColor: colors.inputBg,
+                      color: colors.textMuted,
+                      cursor: 'default',
+                      flexShrink: 0,
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = colors.primary
+                      e.currentTarget.style.color = colors.primary
+                      const tip = e.currentTarget.nextElementSibling as HTMLElement | null
+                      if (tip) tip.style.opacity = '1'
+                      if (tip) tip.style.pointerEvents = 'auto'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = colors.border
+                      e.currentTarget.style.color = colors.textMuted
+                      const tip = e.currentTarget.nextElementSibling as HTMLElement | null
+                      if (tip) tip.style.opacity = '0'
+                      if (tip) tip.style.pointerEvents = 'none'
+                    }}
+                  >
+                    <svg style={{ width: '16px', height: '16px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </button>
+                  {/* Tooltip */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 10px)',
+                      right: 0,
+                      zIndex: 9999999,
+                      width: '300px',
+                      backgroundColor: colors.cardBg,
+                      border: `1px solid ${colors.borderLight}`,
+                      borderRadius: '14px',
+                      boxShadow: '0 16px 40px rgba(0,0,0,0.45)',
+                      padding: '18px 20px',
+                      opacity: 0,
+                      pointerEvents: 'none',
+                      transition: 'opacity 0.18s ease',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+                      <svg style={{ width: '14px', height: '14px', color: colors.primary, flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                      </svg>
+                      <span style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: colors.textSecondary }}>
+                        Using Tags
+                      </span>
+                    </div>
+                    <ol style={{ margin: 0, padding: '0 0 0 18px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <li style={{ fontSize: '13px', lineHeight: '1.6', color: colors.textSecondary }}>
+                        Tag a media item{' '}
+                        {(['showroom', 'burlington', 'steinway', 'natick'] as const).map((t, i, arr) => (
+                          <span key={t}>
+                            <span style={{ padding: '1px 7px', borderRadius: '5px', backgroundColor: `${colors.primary}22`, color: colors.primaryLight, fontWeight: 600, fontSize: '12px', fontFamily: 'monospace' }}>{t}</span>
+                            {i < arr.length - 1 && <span style={{ color: colors.textMuted }}>, </span>}
+                          </span>
+                        ))}{' '}
+                        and it will appear in the <span style={{ color: colors.textPrimary, fontWeight: 600 }}>homepage hero</span>.
+                      </li>
+                      <li style={{ fontSize: '13px', lineHeight: '1.6', color: colors.textSecondary }}>
+                        Tag a media item{' '}
+                        <span style={{ padding: '1px 7px', borderRadius: '5px', backgroundColor: `${colors.accent}22`, color: colors.accent, fontWeight: 600, fontSize: '12px', fontFamily: 'monospace' }}>piano</span>{' '}
+                        and it will appear in the <span style={{ color: colors.textPrimary, fontWeight: 600 }}>homepage gallery</span>.
+                      </li>
+                    </ol>
+                  </div>
+                </div>
+
+                {/* Tag Filter */}
+                <div ref={tagFilterRef} style={{ position: 'relative' }}>
+                  <button
+                    onClick={() => setShowTagFilter(v => !v)}
+                    title="Filter by tag"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '14px 18px',
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      borderRadius: '12px',
+                      border: `1px solid ${selectedTags.length > 0 ? colors.accent : colors.border}`,
+                      backgroundColor: selectedTags.length > 0 ? `${colors.accent}18` : colors.inputBg,
+                      color: selectedTags.length > 0 ? colors.accent : colors.textSecondary,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      whiteSpace: 'nowrap',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = colors.accent
+                      e.currentTarget.style.color = colors.accent
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = selectedTags.length > 0 ? colors.accent : colors.border
+                      e.currentTarget.style.color = selectedTags.length > 0 ? colors.accent : colors.textSecondary
+                    }}
+                  >
+                    <svg style={{ width: '16px', height: '16px', flexShrink: 0 }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                    <span>Tags</span>
+                    {selectedTags.length > 0 && (
+                      <span
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          minWidth: '20px',
+                          height: '20px',
+                          padding: '0 6px',
+                          borderRadius: '10px',
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          backgroundColor: colors.accent,
+                          color: colors.white,
+                          lineHeight: 1,
+                        }}
+                      >
+                        {selectedTags.length}
+                      </span>
+                    )}
+                    <svg
+                      style={{
+                        width: '14px',
+                        height: '14px',
+                        flexShrink: 0,
+                        transform: showTagFilter ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.2s ease',
+                      }}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+
+                  {/* Tag Dropdown */}
+                  {showTagFilter && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: 'calc(100% + 8px)',
+                        right: 0,
+                        zIndex: 9999999,
+                        minWidth: '220px',
+                        maxWidth: '280px',
+                        maxHeight: '320px',
+                        overflowY: 'auto',
+                        backgroundColor: colors.cardBg,
+                        border: `1px solid ${colors.borderLight}`,
+                        borderRadius: '14px',
+                        boxShadow: '0 16px 40px rgba(0,0,0,0.4)',
+                        padding: '8px',
+                      }}
+                    >
+                      {/* Header row */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '8px 12px 10px',
+                        }}
+                      >
+                        <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: colors.textMuted }}>
+                          Filter by tag
+                        </span>
+                        {selectedTags.length > 0 && (
+                          <button
+                            onClick={() => setSelectedTags([])}
+                            style={{
+                              fontSize: '11px',
+                              fontWeight: 600,
+                              color: colors.error,
+                              background: 'none',
+                              border: 'none',
+                              cursor: 'pointer',
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                            }}
+                          >
+                            Clear all
+                          </button>
+                        )}
+                      </div>
+
+                      {availableTags.length === 0 ? (
+                        <p style={{ fontSize: '13px', color: colors.textMuted, padding: '8px 12px 12px', margin: 0 }}>
+                          No tags found
+                        </p>
+                      ) : (
+                        availableTags.map(tag => {
+                          const isActive = selectedTags.includes(tag)
+                          return (
+                            <button
+                              key={tag}
+                              onClick={() => toggleTag(tag)}
+                              style={{
+                                width: '100%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '10px',
+                                padding: '9px 12px',
+                                fontSize: '13px',
+                                fontWeight: isActive ? 600 : 400,
+                                borderRadius: '8px',
+                                border: 'none',
+                                backgroundColor: isActive ? `${colors.accent}20` : 'transparent',
+                                color: isActive ? colors.accent : colors.textSecondary,
+                                cursor: 'pointer',
+                                textAlign: 'left',
+                                transition: 'all 0.15s ease',
+                              }}
+                              onMouseEnter={(e) => {
+                                if (!isActive) {
+                                  e.currentTarget.style.backgroundColor = colors.hoverBg
+                                  e.currentTarget.style.color = colors.textPrimary
+                                }
+                              }}
+                              onMouseLeave={(e) => {
+                                if (!isActive) {
+                                  e.currentTarget.style.backgroundColor = 'transparent'
+                                  e.currentTarget.style.color = colors.textSecondary
+                                }
+                              }}
+                            >
+                              {/* Checkbox */}
+                              <span
+                                style={{
+                                  flexShrink: 0,
+                                  width: '16px',
+                                  height: '16px',
+                                  borderRadius: '4px',
+                                  border: `2px solid ${isActive ? colors.accent : colors.borderLight}`,
+                                  backgroundColor: isActive ? colors.accent : 'transparent',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  transition: 'all 0.15s ease',
+                                }}
+                              >
+                                {isActive && (
+                                  <svg style={{ width: '10px', height: '10px', color: colors.white }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                )}
+                              </span>
+                              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {tag}
+                              </span>
+                            </button>
+                          )
+                        })
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Upload Button */}

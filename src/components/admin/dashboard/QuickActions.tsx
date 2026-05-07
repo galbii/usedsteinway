@@ -7,7 +7,7 @@ import {
   FileText,
   Tag,
   MessageSquare,
-  Image,
+  Image as ImageIcon,
   ExternalLink,
 } from 'lucide-react'
 
@@ -116,7 +116,7 @@ const DEFAULT_ACTIONS: QuickAction[] = [
   { label: 'New Post',        href: '/admin/collections/posts/create',         primary: true, icon: <FileText size={16} /> },
   { label: 'Add Brand',       href: '/admin/collections/brands/create',        icon: <Tag size={16} /> },
   { label: 'New Testimonial', href: '/admin/collections/testimonials/create',  icon: <MessageSquare size={16} /> },
-  { label: 'Media Library',   href: '/admin/collections/media',                icon: <Image size={16} /> },
+  { label: 'Media Library',   href: '/admin/collections/media',                icon: <ImageIcon size={16} /> },
   { label: 'View Live Site',  href: '/',                                       icon: <ExternalLink size={16} /> },
 ]
 

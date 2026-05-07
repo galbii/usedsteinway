@@ -1050,10 +1050,6 @@ export interface Piano {
   finish?: string | null;
   specifications?: {
     /**
-     * e.g. "6'10" (211 cm)"
-     */
-    size?: string | null;
-    /**
      * e.g. "6'10""
      */
     length?: string | null;
@@ -1096,14 +1092,6 @@ export interface Piano {
     };
     [k: string]: unknown;
   } | null;
-  /**
-   * Optional. Notable history — previous owners, institutions, performances.
-   */
-  provenance?: string | null;
-  /**
-   * Optional. Notes on any restoration or rebuilding work performed.
-   */
-  restorationHistory?: string | null;
   /**
    * Optional freeform tags e.g. "concert-quality", "single-owner"
    */
@@ -1908,7 +1896,6 @@ export interface PianosSelect<T extends boolean = true> {
   specifications?:
     | T
     | {
-        size?: T;
         length?: T;
         width?: T;
         stringLength?: T;
@@ -1920,8 +1907,6 @@ export interface PianosSelect<T extends boolean = true> {
   condition?: T;
   conditionReport?: T;
   description?: T;
-  provenance?: T;
-  restorationHistory?: T;
   tags?:
     | T
     | {

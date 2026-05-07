@@ -858,6 +858,75 @@ const piano = await payload.findByID({
 
 ---
 
+## Querying Media by Tag
+
+Media is tagged in the admin and queried via functions in `src/lib/payload/media.ts`. All query functions follow the same pattern — add new ones here rather than inlining queries in pages or components.
+
+### Pattern
+
+```typescript
+import { cache } from 'react'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
+import type { Media } from '@/payload-types'
+
+function isMediaObject(val: unknown): val is Media {
+  return typeof val === 'object' && val !== null && 'url' in (val as object)
+}
+
+// Single tag
+export const queryHeroImages = cache(async (limit = 18): Promise<Media[]> => {
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const { docs } = await payload.find({
+      collection: 'media',
+      overrideAccess: false,
+      limit,
+      pagination: false,
+      where: { tags: { contains: 'hero' } },
+    })
+    return docs.filter(isMediaObject)
+  } catch {
+    return []
+  }
+})
+
+// Multiple tags (OR)
+export const queryShowroomPhotos = cache(async (limit = 18): Promise<Media[]> => {
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const { docs } = await payload.find({
+      collection: 'media',
+      overrideAccess: false,
+      limit,
+      pagination: false,
+      where: {
+        or: [
+          { tags: { contains: 'burlington' } },
+          { tags: { contains: 'natick' } },
+          { tags: { contains: 'showroom' } },
+        ],
+      },
+    })
+    return docs.filter(isMediaObject)
+  } catch {
+    return []
+  }
+})
+```
+
+### Rules
+
+- ✅ All media query functions live in `src/lib/payload/media.ts` — never inline `payload.find` for media in a page or component
+- ✅ Always wrap with `cache()` from React for request deduplication
+- ✅ Always set `overrideAccess: false` and `pagination: false`
+- ✅ Always filter results with `isMediaObject` to satisfy strict TypeScript
+- ✅ Use `or: [...]` for multiple tags; use `{ tags: { contains: 'tag' } }` directly for a single tag
+- ✅ Always return `[]` in the catch block so the UI degrades gracefully
+- ❌ Never add a new media query anywhere other than `src/lib/payload/media.ts`
+
+---
+
 ## Media Manager System
 
 **The most important project-specific feature.** This is a production-grade media library ported from KAWAI project.
