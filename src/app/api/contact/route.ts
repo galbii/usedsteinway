@@ -35,6 +35,9 @@ export async function POST(req: NextRequest) {
     pianoTitle: data.pianoTitle?.trim() || undefined,
     budget: data.budget || undefined,
     timeline: data.timeline || undefined,
+    preferredDate: data.preferredDate?.trim() || undefined,
+    preferredTime: data.preferredTime?.trim() || undefined,
+    source: data.source ?? undefined,
   }
 
   const payload = await getPayload({ config: configPromise })
@@ -56,7 +59,7 @@ export async function POST(req: NextRequest) {
   payload
     .sendEmail({
       to: validated.email,
-      subject: confirmationEmailSubject(),
+      subject: confirmationEmailSubject(validated),
       html: confirmationEmailHtml(validated),
     })
     .catch((err) => console.error('[contact] Confirmation email failed:', err))

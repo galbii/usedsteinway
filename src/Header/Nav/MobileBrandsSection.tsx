@@ -7,7 +7,7 @@ const brands = [
   {
     eyebrow: 'Grand · Upright',
     label: 'Steinway & Sons',
-    description: "The world's most celebrated piano",
+    description: "The World's Most Recognized Brand",
     href: '/steinway',
   },
   {

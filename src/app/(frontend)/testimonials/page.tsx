@@ -48,8 +48,8 @@ export default async function TestimonialsPage() {
             What Our Customers Say
           </h1>
           <p className="text-piano-cream/70 text-lg max-w-xl leading-relaxed">
-            Our reputation is built one instrument at a time. Here&apos;s what buyers have to say
-            about the experience.
+            Our reputation is built one instrument at a time.<br />
+            Here is what buyers say about their experience.
           </p>
         </div>
       </section>

@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import type { Piano } from '@/types/piano'
 import { ConditionBadge } from './ConditionBadge'
 import { PianoInquiryForm } from './PianoInquiryForm'
+import { ScheduleViewingModal } from './ScheduleViewingModal'
 import { PianoMediaCarousel } from './PianoMediaCarousel'
 import { LocationTabs } from './LocationTabs'
 import { cn } from '@/utilities/ui'
@@ -31,6 +32,7 @@ interface PianoDetailV2Props {
 
 export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Props) {
   const [activeImage, setActiveImage] = useState(0)
+  const [scheduleOpen, setScheduleOpen] = useState(false)
 
   const allImages = [
     ...piano.imageUrls,
@@ -163,17 +165,18 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
               className="flex flex-col gap-3"
               style={{ animation: 'fade-up 0.65s ease-out 0.36s both' }}
             >
-              <a
-                href="#inquiry"
+              <button
+                type="button"
+                onClick={() => setScheduleOpen(true)}
                 className="w-full text-center bg-piano-black text-piano-cream px-10 py-4 font-display text-xs tracking-[0.3em] uppercase hover:bg-piano-burgundy transition-colors duration-200"
               >
                 Schedule a Viewing
-              </a>
+              </button>
               <a
                 href="#description"
                 className="w-full text-center border border-piano-burgundy/55 text-piano-burgundy px-10 py-4 font-display text-xs tracking-[0.3em] uppercase hover:bg-piano-burgundy/5 hover:border-piano-burgundy transition-colors duration-200"
               >
-                Check Availability
+                About This Piano
               </a>
               {displayPhone && telHref && (
                 <a
@@ -467,6 +470,13 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
         </section>
       )}
 
+      <ScheduleViewingModal
+        open={scheduleOpen}
+        onClose={() => setScheduleOpen(false)}
+        pianoTitle={piano.title}
+        pianoSlug={piano.slug}
+        phone={phone}
+      />
     </main>
   )
 }

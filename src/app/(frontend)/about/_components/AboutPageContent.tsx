@@ -130,7 +130,7 @@ export function AboutPageContent() {
           </div>
 
           {/* Image + stat */}
-          <div className="sr-right relative lg:pb-14">
+          <div className="sr-right relative">
             <div className="relative aspect-[4/5] overflow-hidden bg-piano-charcoal">
               <Image
                 src="/api/media/file/IMG_8832.JPG"
@@ -139,18 +139,6 @@ export function AboutPageContent() {
                 className="object-cover"
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
-            </div>
-            {/* Stat block — anchored inside the padded area */}
-            <div className="absolute bottom-0 -left-4 lg:-left-8 bg-piano-burgundy px-8 py-7">
-              <p
-                className="font-cormorant font-light text-piano-gold leading-none mb-1"
-                style={{ fontSize: 'clamp(2.8rem, 4vw, 4rem)' }}
-              >
-                40+
-              </p>
-              <p className="text-piano-silver text-[0.7rem] font-display tracking-[0.3em] uppercase">
-                Years of Steinway craftsmanship
-              </p>
             </div>
           </div>
 
@@ -163,17 +151,17 @@ export function AboutPageContent() {
 
           {/* Editorial statement — left */}
           <div className="sr-left order-2 lg:order-1">
-            <div className="relative border-l-2 border-piano-gold/30 pl-10 py-4">
+            <div className="relative border-l-2 border-piano-gold/50 pl-10 py-4">
               <p
-                className="font-cormorant font-light italic text-piano-cream/85 leading-[1.25]"
-                style={{ fontSize: 'clamp(2.2rem, 3.8vw, 3.8rem)' }}
+                className="font-cormorant font-light italic text-piano-cream leading-[1.25]"
+                style={{ fontSize: 'clamp(2.6rem, 4.2vw, 4.4rem)' }}
               >
                 Authenticity over replacement — preserving what makes a great Steinway
                 <em className="not-italic text-piano-gold"> great.</em>
               </p>
               <div className="mt-8 flex items-center gap-4">
-                <div className="h-px w-8 bg-piano-gold/40" />
-                <span className="font-display text-[10px] tracking-[0.45em] uppercase text-piano-silver/40">
+                <div className="h-px w-8 bg-piano-gold/50" />
+                <span className="font-display text-[10px] tracking-[0.45em] uppercase text-piano-silver/70">
                   Restoration Philosophy
                 </span>
               </div>
@@ -193,12 +181,12 @@ export function AboutPageContent() {
               <br />
               Meets Craftsmanship
             </h2>
-            <div className="space-y-5 text-piano-silver/65">
-              <p className="sr sr-d2 text-[1.0625rem] leading-[1.85]">
+            <div className="space-y-5 text-piano-cream/85">
+              <p className="sr sr-d2 text-[1.125rem] leading-[1.85]">
                 Our rebuilt Steinway pianos offer a compelling alternative to buying new —
                 delivering legendary performance and prestige at significantly greater value.
               </p>
-              <p className="sr sr-d3 text-[1.0625rem] leading-[1.85]">
+              <p className="sr sr-d3 text-[1.125rem] leading-[1.85]">
                 We follow a restoration philosophy that emphasizes authenticity over replacement,
                 preserving original components whenever possible to retain the tonal character
                 and musical maturity that define classic Steinways.

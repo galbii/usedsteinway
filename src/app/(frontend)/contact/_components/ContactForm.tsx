@@ -6,9 +6,9 @@ import { cn } from '@/utilities/ui'
 type InquiryType = 'buy' | 'sell' | 'general'
 
 const inquiryTypes: { id: InquiryType; label: string; description: string }[] = [
-  { id: 'buy', label: 'Buy a Piano', description: 'Browse inventory or find a specific instrument' },
-  { id: 'sell', label: 'Sell a Piano', description: 'Request an appraisal for your piano' },
-  { id: 'general', label: 'Contact', description: 'Advice, appraisals, or anything else' },
+  { id: 'buy', label: 'Buy a Piano', description: 'Interested in buying a piano?' },
+  { id: 'sell', label: 'Sell a Piano', description: '' },
+  { id: 'general', label: 'Other', description: '' },
 ]
 
 interface ContactFormProps {
@@ -113,9 +113,6 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
 
       {/* Inquiry Type Tabs */}
       <div>
-        <p className="font-display text-sm tracking-[0.45em] uppercase text-piano-gold mb-6">
-          Nature of Enquiry
-        </p>
         <div className="flex bg-piano-burgundy">
           {inquiryTypes.map((type) => (
             <button
@@ -136,9 +133,11 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
             </button>
           ))}
         </div>
-        <p className="text-piano-stone text-sm mt-5 leading-relaxed">
-          {inquiryTypes.find((t) => t.id === inquiryType)?.description}
-        </p>
+        {inquiryTypes.find((t) => t.id === inquiryType)?.description && (
+          <p className="text-piano-stone text-sm mt-5 leading-relaxed">
+            {inquiryTypes.find((t) => t.id === inquiryType)?.description}
+          </p>
+        )}
       </div>
 
       {/* Name + Email */}

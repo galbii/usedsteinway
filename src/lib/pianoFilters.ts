@@ -82,7 +82,6 @@ export const BRAND_TABS: { key: BrandFilter; label: string; sub?: string }[] = [
   { key: 'steinway',      label: 'Steinway & Sons',  sub: 'Hamburg · New York'                  },
   { key: 'shigeru-kawai', label: 'Shigeru Kawai',    sub: 'Hamamatsu, Japan'                    },
   { key: 'european',      label: 'European',          sub: 'Bösendorfer · Bechstein · Blüthner' },
-  { key: 'other',         label: 'Other',             sub: 'Yamaha · Kawai · More'               },
 ]
 
 export const CONDITION_OPTS: { key: ConditionFilter; label: string }[] = [

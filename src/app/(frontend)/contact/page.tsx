@@ -69,9 +69,9 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
                   color: 'hsl(36, 22%, 96%)',
                 }}
               >
-                Get in
+                Contact
                 <br />
-                <span style={{ fontStyle: 'italic', color: 'hsl(40, 72%, 62%)' }}>Touch</span>
+                <span style={{ fontStyle: 'italic', color: 'hsl(40, 72%, 62%)' }}>Us</span>
               </h1>
               <div className="flex items-center gap-6 mb-8">
                 <div className="w-10 h-px shrink-0" style={{ backgroundColor: 'hsla(40,72%,52%,0.40)' }} />
@@ -104,14 +104,14 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
       </div>
 
       {/* ── Form + Sidebar ───────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-8 py-20">
+      <section id="appt" className="max-w-7xl mx-auto px-8 py-20">
         <div className="grid lg:grid-cols-[1fr_400px] gap-12 items-start">
 
           {/* Form Panel */}
           <div className="bg-piano-warm-white px-12 py-14">
             <div className="flex items-center gap-5 mb-12">
               <p className="font-display text-sm tracking-[0.45em] uppercase text-piano-gold shrink-0">
-                Send a Message
+                Contact Us
               </p>
               <div className="flex-1 h-px bg-piano-linen" />
             </div>

@@ -44,7 +44,7 @@ const BLOCKS: BlockDef[] = [
     label:   'European Handcrafted',
     eyebrow: 'Vienna · Berlin · Leipzig · Prague',
     dark:    true,
-    tags:    ['Bösendorfer', 'Bechstein', 'Blüthner', 'Schimmel', 'Petrof'],
+    tags:    ['Bechstein', 'Blüthner', 'Bösendorfer', 'Petrof', 'Schimmel'],
   },
   {
     brand:   'shigeru-kawai',
@@ -228,9 +228,9 @@ export function PianosPageClient({ pianos }: Props) {
                     </div>
                   )}
 
-                  {/* Footer row: count + active indicator */}
+                  {/* Footer row: active indicator */}
                   <div
-                    className="flex items-center justify-between"
+                    className="flex items-center justify-end"
                     style={{
                       paddingTop:  '1.25rem',
                       borderTop:   `1px solid ${isActive ? (block.dark ? 'rgba(180,130,60,0.3)' : 'rgba(180,130,60,0.25)') : borderColor}`,
@@ -238,18 +238,6 @@ export function PianosPageClient({ pianos }: Props) {
                       transition:  'border-color 0.4s ease',
                     }}
                   >
-                    <span
-                      className="font-display uppercase tabular-nums"
-                      style={{
-                        fontSize:      '10px',
-                        letterSpacing: '0.32em',
-                        color:         isActive ? C.accent : muteColor,
-                        transition:    'color 0.35s ease',
-                      }}
-                    >
-                      {count} {count === 1 ? 'instrument' : 'instruments'}
-                    </span>
-
                     <span
                       className="font-display uppercase flex items-center gap-2 group-hover:gap-3"
                       style={{
@@ -259,7 +247,7 @@ export function PianosPageClient({ pianos }: Props) {
                         transition:    'color 0.35s ease, gap 0.25s ease',
                       }}
                     >
-                      {isActive ? 'Filtered ✓' : 'Filter'}
+                      {isActive ? 'See less ✓' : 'See more'}
                       {!isActive && (
                         <span
                           className="group-hover:translate-x-1 transition-transform duration-300"

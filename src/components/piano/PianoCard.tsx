@@ -235,6 +235,26 @@ function DefaultCard({
                 →
               </span>
             </div>
+
+            {piano.location && piano.location !== 'Incoming' && (
+              <span
+                className="font-display uppercase flex-shrink-0 flex items-center gap-1"
+                style={{ fontSize: '9px', letterSpacing: '0.28em', color: 'hsl(25 4% 60%)' }}
+              >
+                <svg width="8" height="10" viewBox="0 0 8 10" fill="none" aria-hidden="true">
+                  <path d="M4 0C2.07 0 0.5 1.57 0.5 3.5c0 2.625 3.5 6.5 3.5 6.5s3.5-3.875 3.5-6.5C7.5 1.57 5.93 0 4 0zm0 4.75a1.25 1.25 0 1 1 0-2.5 1.25 1.25 0 0 1 0 2.5z" fill="currentColor"/>
+                </svg>
+                {piano.location}
+              </span>
+            )}
+            {piano.location === 'Incoming' && (
+              <span
+                className="font-display uppercase flex-shrink-0"
+                style={{ fontSize: '9px', letterSpacing: '0.28em', color: 'hsl(40 72% 52%)' }}
+              >
+                Incoming
+              </span>
+            )}
           </div>
         </div>
       </Link>
@@ -360,12 +380,12 @@ function FeaturedCard({
                 {piano.model || piano.title}
               </h3>
 
-              {/* Spec row: condition · finish · size */}
+              {/* Spec row: condition · finish · location */}
               <div
                 className="flex items-center flex-wrap gap-x-3 gap-y-1"
                 style={{ marginBottom: '1.6rem' }}
               >
-                {[piano.condition, piano.finish]
+                {[piano.condition, piano.finish, piano.location ?? undefined]
                   .filter(Boolean)
                   .map((val, i, arr) => (
                     <span key={val} className="flex items-center gap-3">
