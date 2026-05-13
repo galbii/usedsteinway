@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import type { Piano, Brand, Media } from '@/payload-types'
 
 // ---------------------------------------------------------------------------
@@ -395,6 +395,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
   const [filter, setFilter] = useState<FilterType>('all')
   const [sortBy, setSortBy] = useState<SortType>('newest')
   const [search, setSearch] = useState('')
+  const searchRef = useRef<HTMLInputElement>(null)
 
   // Inject styles once
   useEffect(() => {
@@ -405,6 +406,13 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
       document.head.appendChild(el)
     }
   }, [])
+
+  // Auto-focus search when modal opens (delay lets panel animation settle)
+  useEffect(() => {
+    if (!open) return
+    const timer = setTimeout(() => searchRef.current?.focus(), 280)
+    return () => clearTimeout(timer)
+  }, [open])
 
   // Fetch pianos when modal opens
   useEffect(() => {
@@ -612,6 +620,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
 
           {/* Search */}
           <input
+            ref={searchRef}
             className="usw-pm-search"
             type="text"
             placeholder="Search pianos…"
@@ -750,6 +759,21 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
                         }}
                       >
                         {meta}
+                      </div>
+                    )}
+
+                    {/* Serial number */}
+                    {piano.serialNumber && (
+                      <div
+                        style={{
+                          fontFamily: 'inherit',
+                          fontSize: '11px',
+                          color: COLORS.muted,
+                          letterSpacing: '0.08em',
+                          opacity: 0.7,
+                        }}
+                      >
+                        S/N #{piano.serialNumber}
                       </div>
                     )}
 

@@ -282,6 +282,22 @@ function AdminUI({ children }: { children: React.ReactNode }) {
   const [pianoManagerOpen, setPianoManagerOpen] = useState(false)
   const [postManagerOpen, setPostManagerOpen] = useState(false)
 
+  // Global 'L' shortcut — open Piano Manager when idle (no modal open, not in a text field)
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key !== 'l' && e.key !== 'L') return
+      if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) return
+      const tag = (e.target as HTMLElement).tagName
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) return
+      if ((e.target as HTMLElement).isContentEditable) return
+      if (collectionsOpen || dashboardOpen || postManagerOpen) return
+      e.preventDefault()
+      setPianoManagerOpen(true)
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [collectionsOpen, dashboardOpen, postManagerOpen])
+
   const dialItems: SpeedDialItem[] = [
     { label: 'Dashboard',     icon: <IconDashboard />,   onClick: () => setDashboardOpen(true) },
     { label: 'Piano Manager', icon: <IconPiano />,       onClick: () => setPianoManagerOpen(true) },
