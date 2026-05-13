@@ -286,6 +286,13 @@ export interface Page {
       }
     | ArchiveBlock
     | FormBlock
+    | HeroHomepageBlock
+    | TickerBlock
+    | BrandRowsBlock
+    | ShowroomGalleryBlock
+    | PhilosophyBlock
+    | FeaturedPianosBlock
+    | NewsSectionBlock
   )[];
   meta?: {
     title?: string | null;
@@ -928,99 +935,239 @@ export interface Form {
   createdAt: string;
 }
 /**
- * Piano brands with embedded model specifications.
- *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "brands".
+ * via the `definition` "HeroHomepageBlock".
  */
-export interface Brand {
-  id: string;
+export interface HeroHomepageBlock {
   /**
-   * e.g. "Steinway & Sons"
+   * Small text above the wordmark (e.g. 'Est. 1980 · Massachusetts')
    */
-  name: string;
+  eyebrow?: string | null;
   /**
-   * e.g. "steinway"
+   * Main heading displayed in large italic Cormorant Garamond (e.g. 'UsedSteinways')
    */
-  slug: string;
-  country?: string | null;
-  founded?: number | null;
-  category?: ('steinway' | 'european' | 'shigeru-kawai' | 'other') | null;
-  prestige?: ('Ultra Premium' | 'Premium' | 'Professional') | null;
+  heading: string;
+  /**
+   * Small gold uppercase label below the heading (e.g. 'Quality Instruments · Expert Hands')
+   */
+  subLabel?: string | null;
+  /**
+   * Body paragraph shown below the sub-label
+   */
   tagline?: string | null;
-  description?: string | null;
-  whyBuyPreowned?:
+  /**
+   * Monogram badge displayed above the heading (recommended: 110×110px)
+   */
+  logoImage?: (string | null) | Media;
+  /**
+   * Images that cycle in the right panel (min 2 recommended for crossfade)
+   */
+  heroImages?:
     | {
-        text: string;
+        image: string | Media;
         id?: string | null;
       }[]
     | null;
   /**
-   * e.g. "$30,000 – $200,000+"
+   * Key numbers displayed below the CTAs
    */
-  priceRange?: string | null;
-  accentColor?: string | null;
-  heroImage?: (string | null) | Media;
-  /**
-   * Piano models offered by this brand.
-   */
-  models?:
+  stats?:
     | {
         /**
-         * e.g. "Model B"
+         * e.g. '45+'
          */
-        name: string;
+        number: string;
         /**
-         * e.g. "model-b"
+         * e.g. 'Years'
          */
-        slug: string;
-        type: 'Grand' | 'Upright' | 'Concert Grand';
-        /**
-         * e.g. "6'10""
-         */
-        size?: string | null;
-        /**
-         * e.g. "82"
-         */
-        sizeInches?: string | null;
-        weight?: string | null;
-        stringLength?: string | null;
-        /**
-         * e.g. "1884 – present"
-         */
-        yearRange?: string | null;
-        description: string;
-        highlights?:
-          | {
-              text: string;
-              id?: string | null;
-            }[]
-          | null;
-        priceGuide?:
-          | {
-              era: string;
-              condition: string;
-              priceRange: string;
-              id?: string | null;
-            }[]
-          | null;
-        adjacentModels?:
-          | {
-              adjacentSlug: string;
-              adjacentName: string;
-              id?: string | null;
-            }[]
-          | null;
-        /**
-         * Lower numbers appear first
-         */
-        order?: number | null;
-        image?: (string | null) | Media;
+        label: string;
         id?: string | null;
       }[]
     | null;
-  updatedAt: string;
-  createdAt: string;
+  primaryCta?: {
+    /**
+     * e.g. 'Browse Collection'
+     */
+    label?: string | null;
+    /**
+     * e.g. '/pianos'
+     */
+    href?: string | null;
+  };
+  secondaryCta?: {
+    /**
+     * e.g. 'Get in Touch'
+     */
+    label?: string | null;
+    /**
+     * e.g. '/contact'
+     */
+    href?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'heroHomepage';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TickerBlock".
+ */
+export interface TickerBlock {
+  /**
+   * Brand names or labels that scroll across the ticker bar
+   */
+  items: {
+    /**
+     * e.g. 'Steinway & Sons'
+     */
+    text: string;
+    id?: string | null;
+  }[];
+  /**
+   * Background color of the ticker bar
+   */
+  style?: ('dark' | 'light') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'ticker';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BrandRowsBlock".
+ */
+export interface BrandRowsBlock {
+  /**
+   * Each row is a full-width brand category link with large editorial typography
+   */
+  rows: {
+    /**
+     * e.g. 'Steinway & Sons'
+     */
+    heading: string;
+    /**
+     * Country and founding year (e.g. 'New York, USA · Est. 1853')
+     */
+    eyebrow?: string | null;
+    /**
+     * Short description shown below the brand name
+     */
+    tagline?: string | null;
+    /**
+     * e.g. '/steinway'
+     */
+    href: string;
+    /**
+     * Defaults to 'Browse Collection' if left empty
+     */
+    ctaLabel?: string | null;
+    /**
+     * Optional pill badges showing model names (e.g. Model S, Model B)
+     */
+    tags?:
+      | {
+          name: string;
+          id?: string | null;
+        }[]
+      | null;
+    style?: ('light' | 'dark') | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'brandRows';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ShowroomGalleryBlock".
+ */
+export interface ShowroomGalleryBlock {
+  /**
+   * Overline label above the heading
+   */
+  eyebrow?: string | null;
+  /**
+   * Section heading — use \n for line breaks
+   */
+  heading?: string | null;
+  /**
+   * Gallery images for the bento grid (min 6 recommended)
+   */
+  images?:
+    | {
+        image: string | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * URL for the "View Full Gallery" button
+   */
+  galleryHref?: string | null;
+  /**
+   * URL for the "Visit Our Showroom" button
+   */
+  showroomHref?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'showroomGallery';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PhilosophyBlock".
+ */
+export interface PhilosophyBlock {
+  /**
+   * Small label above the heading (e.g. 'Our Philosophy')
+   */
+  eyebrow?: string | null;
+  /**
+   * Large display heading — use \n for line breaks
+   */
+  heading: string;
+  /**
+   * Body paragraph beneath the heading
+   */
+  body?: string | null;
+  /**
+   * Full-bleed image shown with a dark overlay behind the text
+   */
+  backgroundImage?: (string | null) | Media;
+  primaryCta?: {
+    label?: string | null;
+    href?: string | null;
+  };
+  secondaryCta?: {
+    label?: string | null;
+    href?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'philosophy';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeaturedPianosBlock".
+ */
+export interface FeaturedPianosBlock {
+  /**
+   * Internal label for this block (e.g. 'Featured Instruments')
+   */
+  heading?: string | null;
+  /**
+   * How many pianos to display. Ignored if specific pianos are pinned below.
+   */
+  limit?: number | null;
+  /**
+   * Leave empty to show the most recent featured pianos automatically. Add rows to pin specific instruments.
+   */
+  pianos?:
+    | {
+        piano: string | Piano;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'featuredPianos';
 }
 /**
  * Individual piano listings available for sale.
@@ -1155,6 +1302,118 @@ export interface Piano {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * Piano brands with embedded model specifications.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "brands".
+ */
+export interface Brand {
+  id: string;
+  /**
+   * e.g. "Steinway & Sons"
+   */
+  name: string;
+  /**
+   * e.g. "steinway"
+   */
+  slug: string;
+  country?: string | null;
+  founded?: number | null;
+  category?: ('steinway' | 'european' | 'shigeru-kawai' | 'other') | null;
+  prestige?: ('Ultra Premium' | 'Premium' | 'Professional') | null;
+  tagline?: string | null;
+  description?: string | null;
+  whyBuyPreowned?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * e.g. "$30,000 – $200,000+"
+   */
+  priceRange?: string | null;
+  accentColor?: string | null;
+  heroImage?: (string | null) | Media;
+  /**
+   * Piano models offered by this brand.
+   */
+  models?:
+    | {
+        /**
+         * e.g. "Model B"
+         */
+        name: string;
+        /**
+         * e.g. "model-b"
+         */
+        slug: string;
+        type: 'Grand' | 'Upright' | 'Concert Grand';
+        /**
+         * e.g. "6'10""
+         */
+        size?: string | null;
+        /**
+         * e.g. "82"
+         */
+        sizeInches?: string | null;
+        weight?: string | null;
+        stringLength?: string | null;
+        /**
+         * e.g. "1884 – present"
+         */
+        yearRange?: string | null;
+        description: string;
+        highlights?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        priceGuide?:
+          | {
+              era: string;
+              condition: string;
+              priceRange: string;
+              id?: string | null;
+            }[]
+          | null;
+        adjacentModels?:
+          | {
+              adjacentSlug: string;
+              adjacentName: string;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Lower numbers appear first
+         */
+        order?: number | null;
+        image?: (string | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NewsSectionBlock".
+ */
+export interface NewsSectionBlock {
+  /**
+   * Internal label (e.g. 'Latest News')
+   */
+  heading?: string | null;
+  /**
+   * How many recent published posts to display
+   */
+  limit?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'newsSection';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1540,6 +1799,13 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
+        heroHomepage?: T | HeroHomepageBlockSelect<T>;
+        ticker?: T | TickerBlockSelect<T>;
+        brandRows?: T | BrandRowsBlockSelect<T>;
+        showroomGallery?: T | ShowroomGalleryBlockSelect<T>;
+        philosophy?: T | PhilosophyBlockSelect<T>;
+        featuredPianos?: T | FeaturedPianosBlockSelect<T>;
+        newsSection?: T | NewsSectionBlockSelect<T>;
       };
   meta?:
     | T
@@ -1620,6 +1886,152 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "HeroHomepageBlock_select".
+ */
+export interface HeroHomepageBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  subLabel?: T;
+  tagline?: T;
+  logoImage?: T;
+  heroImages?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  stats?:
+    | T
+    | {
+        number?: T;
+        label?: T;
+        id?: T;
+      };
+  primaryCta?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+      };
+  secondaryCta?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TickerBlock_select".
+ */
+export interface TickerBlockSelect<T extends boolean = true> {
+  items?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  style?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "BrandRowsBlock_select".
+ */
+export interface BrandRowsBlockSelect<T extends boolean = true> {
+  rows?:
+    | T
+    | {
+        heading?: T;
+        eyebrow?: T;
+        tagline?: T;
+        href?: T;
+        ctaLabel?: T;
+        tags?:
+          | T
+          | {
+              name?: T;
+              id?: T;
+            };
+        style?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ShowroomGalleryBlock_select".
+ */
+export interface ShowroomGalleryBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  galleryHref?: T;
+  showroomHref?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PhilosophyBlock_select".
+ */
+export interface PhilosophyBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  body?: T;
+  backgroundImage?: T;
+  primaryCta?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+      };
+  secondaryCta?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeaturedPianosBlock_select".
+ */
+export interface FeaturedPianosBlockSelect<T extends boolean = true> {
+  heading?: T;
+  limit?: T;
+  pianos?:
+    | T
+    | {
+        piano?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NewsSectionBlock_select".
+ */
+export interface NewsSectionBlockSelect<T extends boolean = true> {
+  heading?: T;
+  limit?: T;
   id?: T;
   blockName?: T;
 }

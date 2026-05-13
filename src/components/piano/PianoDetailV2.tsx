@@ -202,7 +202,7 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
 
         {/* Right: Image Gallery */}
         <div
-          className="relative lg:w-[56%] overflow-hidden bg-piano-linen"
+          className="relative order-first lg:order-none lg:w-[56%] overflow-hidden bg-piano-linen"
           style={{ minHeight: '56vw' }}
         >
           {allImages.map((url, i) => (

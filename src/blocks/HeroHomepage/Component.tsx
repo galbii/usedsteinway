@@ -1,0 +1,228 @@
+import React from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import type { Media } from '@/payload-types'
+import { Media as MediaComponent } from '@/components/Media'
+import { HeroImageCycler } from './Component.client'
+
+type HeroHomepageBlockProps = {
+  eyebrow?: string | null
+  heading?: string | null
+  subLabel?: string | null
+  tagline?: string | null
+  logoImage?: Media | string | null
+  heroImages?: Array<{ image: Media | string | null; id?: string | null }> | null
+  stats?: Array<{ number: string; label: string; id?: string | null }> | null
+  primaryCta?: { label?: string | null; href?: string | null } | null
+  secondaryCta?: { label?: string | null; href?: string | null } | null
+  blockType: 'heroHomepage'
+  id?: string | null
+  blockName?: string | null
+  disableInnerContainer?: boolean
+}
+
+const C = {
+  bg:          'hsl(36, 22%, 96%)',
+  darkBg:      'hsl(350, 62%, 26%)',
+  accent:      'hsl(40, 72%, 52%)',
+  text:        'hsl(350, 12%, 11%)',
+  muted:       'hsl(350, 5%, 46%)',
+  border:      'hsl(36, 18%, 89%)',
+  ivory:       'hsl(36, 22%, 96%)',
+}
+
+function isMedia(val: Media | string | null | undefined): val is Media {
+  return typeof val === 'object' && val !== null && 'url' in val
+}
+
+export const HeroHomepageBlock: React.FC<HeroHomepageBlockProps> = ({
+  eyebrow,
+  heading,
+  subLabel,
+  tagline,
+  logoImage,
+  heroImages,
+  stats,
+  primaryCta,
+  secondaryCta,
+}) => {
+  const resolvedHeroImages: Media[] = (heroImages ?? [])
+    .map((item) => item.image)
+    .filter(isMedia)
+
+  return (
+    <section
+      className="relative overflow-hidden"
+      style={{ backgroundColor: C.ivory, minHeight: '100svh' }}
+    >
+      {/* Warm radial glow */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(ellipse 80% 80% at 20% 50%, hsl(36, 42%, 90%) 0%, transparent 60%)`,
+        }}
+      />
+
+      <div className="relative z-10 lg:grid lg:grid-cols-[58%_42%] min-h-[100svh]">
+
+        {/* LEFT COLUMN */}
+        <div
+          className="flex flex-col justify-center min-w-0 overflow-hidden px-10 md:px-16 xl:px-24 py-28 lg:py-20"
+          style={{ borderRight: `1px solid hsla(40, 72%, 52%, 0.16)` }}
+        >
+          {/* Eyebrow overline */}
+          {eyebrow && (
+            <div className="flex items-center gap-5 mb-14">
+              <div className="h-px shrink-0" style={{ width: '2.5rem', backgroundColor: C.accent }} />
+              <span className="font-display text-[11px] tracking-[0.55em] uppercase" style={{ color: C.muted }}>
+                {eyebrow}
+              </span>
+            </div>
+          )}
+
+          {/* Logo + wordmark */}
+          <div className="mb-8">
+            {isMedia(logoImage) && (
+              <div className="mb-8 flex justify-center">
+                <MediaComponent resource={logoImage} imgClassName="w-[110px] h-[110px] object-contain" priority />
+              </div>
+            )}
+            {heading && (
+              <h1
+                className="leading-[0.90]"
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: 'clamp(4rem, 7.8vw, 8.5rem)',
+                  fontWeight: 300,
+                  fontStyle: 'italic',
+                  color: C.text,
+                  letterSpacing: '-0.015em',
+                }}
+              >
+                {heading}
+              </h1>
+            )}
+          </div>
+
+          {/* Gold sub-label */}
+          {subLabel && (
+            <p className="font-display text-[11px] tracking-[0.50em] uppercase mb-12" style={{ color: C.accent }}>
+              {subLabel}
+            </p>
+          )}
+
+          {/* Tagline */}
+          {tagline && (
+            <p className="text-xl leading-[1.75] mb-14" style={{ color: C.muted, maxWidth: '34ch' }}>
+              {tagline}
+            </p>
+          )}
+
+          {/* CTAs */}
+          {(primaryCta?.label || secondaryCta?.label) && (
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+              {primaryCta?.label && (
+                <Link
+                  href={primaryCta.href ?? '/pianos'}
+                  className="group relative inline-flex items-center justify-center overflow-hidden font-display text-[13px] tracking-[0.38em] uppercase transition-transform duration-200 hover:scale-[1.02] active:scale-[0.99]"
+                  style={{ backgroundColor: C.darkBg, color: C.ivory, padding: '1.25rem 3.2rem' }}
+                >
+                  <span
+                    className="absolute inset-0 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out"
+                    style={{ backgroundColor: C.accent }}
+                    aria-hidden
+                  />
+                  <span className="relative z-10 transition-colors duration-300 group-hover:text-[hsl(350,62%,14%)]">
+                    {primaryCta.label}
+                  </span>
+                </Link>
+              )}
+              {secondaryCta?.label && (
+                <Link
+                  href={secondaryCta.href ?? '/contact'}
+                  className="inline-flex items-center justify-center font-display text-[13px] tracking-[0.38em] uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.99]"
+                  style={{ border: `1.5px solid ${C.text}`, color: C.text, padding: '1.2rem 2.8rem' }}
+                >
+                  {secondaryCta.label}
+                </Link>
+              )}
+            </div>
+          )}
+
+          {/* Stats */}
+          {stats && stats.length > 0 && (
+            <div className="flex items-start justify-center pt-10 w-full" style={{ borderTop: `1px solid ${C.border}` }}>
+              {stats.map((stat, i) => (
+                <div key={stat.id ?? i} className="flex items-stretch">
+                  {i > 0 && (
+                    <div className="w-px mx-8 self-stretch" style={{ backgroundColor: C.border }} />
+                  )}
+                  <div>
+                    <p
+                      className="font-light leading-none"
+                      style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(2.8rem, 3.5vw, 4rem)', color: C.text }}
+                    >
+                      {stat.number}
+                    </p>
+                    <p className="font-display text-[10px] tracking-[0.42em] uppercase mt-2" style={{ color: C.muted }}>
+                      {stat.label}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* RIGHT COLUMN — cycling images (desktop) */}
+        <div className="relative hidden lg:block overflow-hidden">
+          {resolvedHeroImages.length > 0 ? (
+            <HeroImageCycler heroImages={resolvedHeroImages} />
+          ) : (
+            <Image
+              src="/Roger-at-work-2-for-web.jpg"
+              alt="Roger evaluating a piano in the showroom"
+              fill
+              priority
+              className="object-cover object-[65%_center]"
+              sizes="42vw"
+            />
+          )}
+
+          {/* Corner marks */}
+          {['top-8 left-8', 'top-8 right-8', 'bottom-8 left-8', 'bottom-8 right-8'].map((pos, i) => (
+            <div key={i} className={`absolute ${pos} z-20 pointer-events-none ${i % 2 === 1 ? 'flex flex-col items-end' : ''} ${i >= 2 ? 'justify-end' : ''}`}>
+              {i < 2 ? (
+                <>
+                  <div className="w-7 h-px" style={{ backgroundColor: C.accent }} />
+                  <div className="w-px h-7" style={{ backgroundColor: C.accent }} />
+                </>
+              ) : (
+                <>
+                  <div className="w-px h-7" style={{ backgroundColor: C.accent }} />
+                  <div className="w-7 h-px" style={{ backgroundColor: C.accent }} />
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+
+      </div>
+
+      {/* Mobile — full-bleed photo strip */}
+      <div className="relative lg:hidden w-full overflow-hidden" style={{ height: '60vw', minHeight: '280px', maxHeight: '480px' }}>
+        {resolvedHeroImages.length > 0 ? (
+          <HeroImageCycler heroImages={resolvedHeroImages} />
+        ) : (
+          <Image
+            src="/Roger-at-work-2-for-web.jpg"
+            alt="Roger evaluating a piano in the showroom"
+            fill
+            className="object-cover object-center"
+            sizes="100vw"
+          />
+        )}
+      </div>
+    </section>
+  )
+}

@@ -9,19 +9,33 @@ import { ContentBlock } from '@/blocks/Content/Component'
 import { ExpertBlock } from '@/blocks/Expert/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { HeroHomepageBlock } from '@/blocks/HeroHomepage/Component'
+import { TickerBlock } from '@/blocks/Ticker/Component'
+import { BrandRowsBlock } from '@/blocks/BrandRows/Component'
+import { ShowroomGalleryBlock } from '@/blocks/ShowroomGallery/Component'
+import { PhilosophyBlock } from '@/blocks/Philosophy/Component'
+import { FeaturedPianosBlock } from '@/blocks/FeaturedPianos/Component'
+import { NewsSectionBlock } from '@/blocks/NewsSection/Component'
 
 // Registry: blockType slug → React component.
 // To add a new block: create src/blocks/YourBlock/Component.tsx,
 // add the config to the relevant collection's layout field,
 // then add an entry here.
 const blockComponents = {
-  archive:    ArchiveBlock,
-  banner:     BannerBlock,
-  content:    ContentBlock,
-  cta:        CallToActionBlock,
-  expert:     ExpertBlock,
-  formBlock:  FormBlock,
-  mediaBlock: MediaBlock,
+  archive:        ArchiveBlock,
+  banner:         BannerBlock,
+  content:        ContentBlock,
+  cta:            CallToActionBlock,
+  expert:         ExpertBlock,
+  formBlock:      FormBlock,
+  mediaBlock:     MediaBlock,
+  heroHomepage:   HeroHomepageBlock,
+  ticker:         TickerBlock,
+  brandRows:      BrandRowsBlock,
+  showroomGallery: ShowroomGalleryBlock,
+  philosophy:     PhilosophyBlock,
+  featuredPianos: FeaturedPianosBlock,
+  newsSection:    NewsSectionBlock,
 }
 
 // Union of all block types that any collection's layout field may contain.
