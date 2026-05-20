@@ -47,6 +47,23 @@ export function PianoDetailV2({ piano, locations = [], phone, isAdmin = false }:
   const stockImageIndex = piano.stockImageUrl ? allImages.indexOf(piano.stockImageUrl) : -1
   const isActiveStockImage = activeImage === stockImageIndex && stockImageIndex !== -1
 
+  // Track which gallery indices have ever been "near" the active image.
+  // We only mount images that are active or adjacent — this caps the number
+  // of simultaneous large-variant <Image> requests to ~3 regardless of how
+  // many photos the piano has. Once an image is mounted it stays mounted so
+  // opacity transitions back to it remain instant.
+  const [mountedIndices, setMountedIndices] = useState<Set<number>>(() => new Set([0]))
+
+  useEffect(() => {
+    setMountedIndices((prev) => {
+      const next = new Set(prev)
+      next.add(activeImage)
+      if (activeImage > 0) next.add(activeImage - 1)
+      if (activeImage < allImages.length - 1) next.add(activeImage + 1)
+      return next.size === prev.size ? prev : next
+    })
+  }, [activeImage, allImages.length])
+
   const telHref = phone ? `tel:+1${phone.replace(/\D/g, '')}` : undefined
   const displayPhone = phone ?? undefined
 
@@ -209,22 +226,25 @@ export function PianoDetailV2({ piano, locations = [], phone, isAdmin = false }:
           className="relative order-first lg:order-none lg:w-[56%] overflow-hidden bg-piano-linen"
           style={{ minHeight: '56vw' }}
         >
-          {allImages.map((url, i) => (
-            <div
-              key={i}
-              className="absolute inset-0 transition-opacity duration-700"
-              style={{ opacity: activeImage === i ? 1 : 0 }}
-            >
-              <Image
-                src={url}
-                alt={`${piano.title} — photo ${i + 1} of ${allImages.length}`}
-                fill
-                className={cn('object-cover', activeImage === i && 'animate-kenburns')}
-                sizes="(max-width: 1024px) 100vw, 56vw"
-                priority={i === 0}
-              />
-            </div>
-          ))}
+          {allImages.map((url, i) => {
+            if (!mountedIndices.has(i)) return null
+            return (
+              <div
+                key={i}
+                className="absolute inset-0 transition-opacity duration-700"
+                style={{ opacity: activeImage === i ? 1 : 0 }}
+              >
+                <Image
+                  src={url}
+                  alt={`${piano.title} — photo ${i + 1} of ${allImages.length}`}
+                  fill
+                  className={cn('object-cover', activeImage === i && 'animate-kenburns')}
+                  sizes="(max-width: 1024px) 100vw, 56vw"
+                  priority={i === 0}
+                />
+              </div>
+            )
+          })}
 
           {/* Location badge — top left */}
           {piano.location && (

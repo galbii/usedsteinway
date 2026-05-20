@@ -7,11 +7,15 @@ import type { PostCard } from '@/lib/payload/posts'
 
 const C = {
   darkBg:       'hsl(350, 62%, 26%)',
+  darkBgDeep:   'hsl(350, 62%, 14%)',
   accent:       'hsl(40, 72%, 52%)',
   accentBorder: 'hsla(40, 72%, 52%, 0.30)',
   accentFaint:  'hsla(40, 72%, 52%, 0.08)',
   ivory:        'hsl(36, 22%, 96%)',
   ivoryFaded:   'rgba(245, 235, 215, 0.50)',
+  ivoryDim:     'rgba(245, 235, 215, 0.40)',
+  ivoryGhost:   'rgba(245, 235, 215, 0.18)',
+  ivoryStroke:  'rgba(245, 235, 215, 0.30)',
   borderLight:  'hsl(36, 18%, 88%)',
   text:         'hsl(350, 12%, 11%)',
   muted:        'hsl(350, 5%, 44%)',
@@ -144,6 +148,7 @@ export function NewsCarousel({ posts }: Props) {
   }
 
   const post = posts[activeIndex]!
+  const isReversed = activeIndex % 2 === 1
 
   return (
     <>
@@ -167,23 +172,24 @@ export function NewsCarousel({ posts }: Props) {
       `}</style>
 
       <section
-        className="relative w-full overflow-hidden"
+        className="relative w-full overflow-hidden flex flex-col"
         style={{ minHeight: 'clamp(640px, 88vh, 980px)' }}
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Full-bleed two-column grid */}
-        <div
-          className="relative lg:grid lg:grid-cols-[55%_45%]"
-          style={{ minHeight: 'clamp(640px, 88vh, 980px)' }}
-        >
+        {/* Two-column grid — panels alternate sides per slide */}
+        <div className="relative lg:grid lg:grid-cols-[55%_45%] flex-1">
 
           {/* ── IMAGE PANEL ──────────────────────────────── */}
           <div
             className="relative overflow-hidden"
-            style={{ backgroundColor: C.imageBg, minHeight: 'clamp(360px, 50vw, 640px)' }}
+            style={{
+              backgroundColor: C.imageBg,
+              minHeight: 'clamp(360px, 50vw, 640px)',
+              order: isReversed ? 2 : 1,
+            }}
           >
             {/* Ken Burns image */}
             <div
@@ -219,12 +225,18 @@ export function NewsCarousel({ posts }: Props) {
               style={{ height: '60%', background: 'linear-gradient(to top, rgba(4,1,1,0.88) 0%, rgba(4,1,1,0.50) 40%, transparent 100%)' }}
             />
 
-            {/* Heading overlay — anchored bottom-left of image panel */}
+            {/* Heading overlay — flips to the OUTER corner of the image panel */}
             <div
-              className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none"
-              style={{ padding: 'clamp(2rem, 4vw, 3.5rem)' }}
+              className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none flex flex-col"
+              style={{
+                padding: 'clamp(2rem, 4vw, 3.5rem)',
+                alignItems: isReversed ? 'flex-end' : 'flex-start',
+              }}
             >
-              <div className="flex items-center gap-4 mb-4">
+              <div
+                className="flex items-center gap-4 mb-4"
+                style={{ flexDirection: isReversed ? 'row-reverse' : 'row' }}
+              >
                 <div className="h-px w-7 shrink-0" style={{ backgroundColor: C.accent }} />
                 <span style={{ fontFamily: 'var(--font-display)', fontSize: '9px', letterSpacing: '0.55em', textTransform: 'uppercase', color: C.ivoryFaded }}>
                   From the Showroom
@@ -238,26 +250,15 @@ export function NewsCarousel({ posts }: Props) {
                   lineHeight: 0.92,
                   color: C.ivory,
                   letterSpacing: '-0.01em',
+                  textAlign: isReversed ? 'right' : 'left',
                 }}
               >
                 News &amp; Insights
               </h2>
             </div>
 
-            {/* Gold curtain transition */}
-            {isTransitioning && (
-              <div
-                key={`nc2-curtain-${transitionKey}`}
-                className="absolute inset-0 z-30 pointer-events-none"
-                style={{
-                  backgroundColor: C.accent,
-                  animation: `nc2-curtain-${direction} ${TRANS}ms cubic-bezier(0.4, 0, 0.2, 1) forwards`,
-                }}
-              />
-            )}
-
-            {/* Corner mark — top left */}
-            <div className="absolute top-8 left-8 z-20 pointer-events-none">
+            {/* Corner mark — outer corner of image panel */}
+            <div className={`absolute top-8 z-20 pointer-events-none ${isReversed ? 'right-8' : 'left-8'}`}>
               <div className="w-6 h-px" style={{ backgroundColor: C.accent }} />
               <div className="w-px h-6" style={{ backgroundColor: C.accent }} />
             </div>
@@ -269,14 +270,16 @@ export function NewsCarousel({ posts }: Props) {
 
           {/* ── CONTENT PANEL — white/ivory base ─────────── */}
           <div
-            className="relative flex flex-col justify-between"
+            className="relative flex flex-col"
             style={{
               backgroundColor: C.ivory,
               padding: 'clamp(2.5rem, 5vw, 5rem)',
-              borderLeft: `1px solid ${C.borderLight}`,
+              order: isReversed ? 1 : 2,
+              borderLeft:  !isReversed ? `1px solid ${C.borderLight}` : 'none',
+              borderRight: isReversed  ? `1px solid ${C.borderLight}` : 'none',
             }}
           >
-            {/* Ghost numeral — decorative */}
+            {/* Ghost numeral — decorative, flips to the OUTER corner */}
             <span
               className="absolute pointer-events-none select-none"
               style={{
@@ -284,7 +287,7 @@ export function NewsCarousel({ posts }: Props) {
                 fontSize: 'clamp(10rem, 18vw, 18rem)',
                 color: 'hsla(350, 12%, 11%, 0.04)',
                 bottom: '-0.10em',
-                right: '-0.02em',
+                [isReversed ? 'left' : 'right']: '-0.02em',
                 lineHeight: 1,
                 letterSpacing: '-0.04em',
               }}
@@ -292,7 +295,7 @@ export function NewsCarousel({ posts }: Props) {
               {String(activeIndex + 1).padStart(2, '0')}
             </span>
 
-            {/* ── ARTICLE CONTENT ── */}
+            {/* ── ARTICLE CONTENT — fills the panel now ── */}
             <div className="relative z-10 flex-1 flex flex-col justify-center">
 
               {/* Slide indicators + category */}
@@ -425,34 +428,62 @@ export function NewsCarousel({ posts }: Props) {
                 </Link>
               </div>
             </div>
-
-            {/* ── NAVIGATION FOOTER ── */}
-            <div
-              className="relative z-10 flex items-center justify-between pt-8"
-              style={{ borderTop: `1px solid ${C.borderLight}`, ...reveal(0.38) }}
-            >
-              {/* Progress bar */}
-              <div className="flex-1 h-px mr-6 relative" style={{ backgroundColor: C.borderLight }}>
-                <span
-                  style={{
-                    position: 'absolute', inset: 0,
-                    transform: `scaleX(${progress / 100})`,
-                    transformOrigin: 'left',
-                    backgroundColor: C.accent,
-                    transition: 'transform 80ms linear',
-                  }}
-                />
-              </div>
-
-              {/* Arrow buttons */}
-              <div className="flex items-center gap-1.5">
-                <NavBtn onClick={goPrev} aria-label="Previous article" direction="prev" />
-                <NavBtn onClick={goNext} aria-label="Next article"     direction="next" />
-              </div>
-            </div>
-
           </div>
 
+          {/* Gold curtain — section-level, sweeps across BOTH panels and masks the side swap */}
+          {isTransitioning && (
+            <div
+              key={`nc2-curtain-${transitionKey}`}
+              className="absolute inset-0 z-30 pointer-events-none"
+              style={{
+                backgroundColor: C.accent,
+                animation: `nc2-curtain-${direction} ${TRANS}ms cubic-bezier(0.4, 0, 0.2, 1) forwards`,
+              }}
+            />
+          )}
+        </div>
+
+        {/* ── PERSISTENT BOTTOM NAV STRIP — arrows live here, never move ──────── */}
+        <div
+          className="relative z-40 flex items-center shrink-0"
+          style={{
+            backgroundColor: C.darkBgDeep,
+            padding: 'clamp(0.875rem, 1.5vw, 1.25rem) clamp(1.25rem, 3vw, 2.5rem)',
+            gap: 'clamp(1rem, 2.5vw, 1.75rem)',
+            borderTop: `1px solid hsla(40, 72%, 52%, 0.22)`,
+          }}
+        >
+          {/* Slide counter */}
+          <div
+            className="shrink-0 hidden sm:flex items-baseline gap-2"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            <span style={{ fontSize: '14px', letterSpacing: '0.30em', color: C.accent }}>
+              {String(activeIndex + 1).padStart(2, '0')}
+            </span>
+            <span style={{ fontSize: '10px', letterSpacing: '0.40em', color: C.ivoryDim }}>
+              / {String(posts.length).padStart(2, '0')}
+            </span>
+          </div>
+
+          {/* Progress bar */}
+          <div className="flex-1 h-px relative" style={{ backgroundColor: C.ivoryGhost }}>
+            <span
+              style={{
+                position: 'absolute', inset: 0,
+                transform: `scaleX(${progress / 100})`,
+                transformOrigin: 'left',
+                backgroundColor: C.accent,
+                transition: 'transform 80ms linear',
+              }}
+            />
+          </div>
+
+          {/* Arrow buttons — anchored bottom-right, identical on every slide */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            <NavBtn onClick={goPrev} aria-label="Previous article" direction="prev" />
+            <NavBtn onClick={goNext} aria-label="Next article"     direction="next" />
+          </div>
         </div>
       </section>
     </>
@@ -474,17 +505,17 @@ function NavBtn({
       aria-label={ariaLabel}
       style={{
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        width: '48px', height: '48px', cursor: 'pointer',
-        backgroundColor: hov ? 'hsl(350, 62%, 14%)' : 'transparent',
-        border: `1px solid ${hov ? 'hsl(350, 62%, 14%)' : 'hsl(36, 18%, 88%)'}`,
+        width: '44px', height: '44px', cursor: 'pointer',
+        backgroundColor: hov ? 'hsl(40, 72%, 52%)' : 'transparent',
+        border: `1px solid ${hov ? 'hsl(40, 72%, 52%)' : 'rgba(245, 235, 215, 0.30)'}`,
         transition: 'background-color 200ms, border-color 200ms',
       }}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
     >
       {direction === 'prev'
-        ? <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M8 6H4M5.5 3.5L3 6l2.5 2.5" stroke={hov ? 'hsl(36,22%,96%)' : 'hsl(350,12%,11%)'} strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" /></svg>
-        : <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M4 6h4M6.5 3.5L9 6l-2.5 2.5" stroke={hov ? 'hsl(36,22%,96%)' : 'hsl(350,12%,11%)'} strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        ? <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M8 6H4M5.5 3.5L3 6l2.5 2.5" stroke={hov ? 'hsl(350, 62%, 14%)' : 'hsl(36,22%,96%)'} strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        : <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M4 6h4M6.5 3.5L9 6l-2.5 2.5" stroke={hov ? 'hsl(350, 62%, 14%)' : 'hsl(36,22%,96%)'} strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" /></svg>
       }
     </button>
   )
