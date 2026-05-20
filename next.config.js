@@ -56,6 +56,8 @@ const nextConfig = {
       { hostname: 'www.fazioli.com',             protocol: 'https' },
       { hostname: 'www.petrof.com',              protocol: 'http'  },
       { hostname: 'wl-piano.com',                protocol: 'http'  },
+      // Shopify CDN — used by Shigeru Kawai (and possibly other brands) for stockImageUrl
+      { hostname: 'cdn.shopify.com',             protocol: 'https' },
     ],
   },
   webpack: (webpackConfig) => {
