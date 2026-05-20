@@ -12,6 +12,12 @@ const nextConfig = {
     optimizePackageImports: ['@/components/ui', '@/hooks', '@/utilities'],
   },
   images: {
+    // Cap at 2048. Next.js default includes 3840 which:
+    //   (a) is never displayed at full density on piano gallery layouts
+    //       (gallery is ~56vw — 2048 covers 4K screens)
+    //   (b) is the variant that times out under Sharp+R2 cold-worker load.
+    // See docs/superpowers/plans/2026-05-20-piano-image-optimizer-502.md
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
     remotePatterns: [
       ...[NEXT_PUBLIC_SERVER_URL /* 'https://example.com' */].map((item) => {
         const url = new URL(item)
