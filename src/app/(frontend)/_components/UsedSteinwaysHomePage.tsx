@@ -459,23 +459,9 @@ export function UsedSteinwaysHomePage({ locations = [], phone, featured: feature
             </h2>
 
             <div className="xl:text-right space-y-5 shrink-0 pb-2">
-              <div>
-                <span
-                  className="font-cormorant font-light block leading-none"
-                  style={{ fontSize: 'clamp(2.8rem, 4.5vw, 5rem)', color: C.accent }}
-                >
-                  {availablePianosCount ?? '—'}
-                </span>
-                <span
-                  className="font-display text-[9px] tracking-[0.4em] uppercase"
-                  style={{ color: 'rgba(245,235,220,0.28)' }}
-                >
-                  Pianos In Stock
-                </span>
-              </div>
               <p
                 className="text-base leading-relaxed xl:max-w-[28ch] xl:ml-auto"
-                style={{ color: 'rgba(245,235,220,0.46)' }}
+                style={{ color: C.accent }}
               >
                 From the world&apos;s finest makers — Each with its unique tone and touch
               </p>
@@ -570,7 +556,7 @@ export function UsedSteinwaysHomePage({ locations = [], phone, featured: feature
                       <h3 className="font-cormorant font-light leading-[0.92]" style={{ fontSize: 'clamp(4.5rem, 9vw, 11rem)', color: C.ivory }}>
                         Handcrafted European
                       </h3>
-                      <p className="mt-6 text-lg leading-relaxed max-w-[38ch]" style={{ color: 'rgba(245,235,220,0.48)' }}>
+                      <p className="mt-6 text-lg leading-relaxed" style={{ color: 'rgba(245,235,220,0.48)' }}>
                         The finest European ateliers — each instrument a life&apos;s work.
                       </p>
                       {european.length > 0 && (

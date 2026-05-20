@@ -113,7 +113,7 @@ export const HeroHomepageBlock: React.FC<HeroHomepageBlockProps> = ({
 
           {/* Tagline */}
           {tagline && (
-            <p className="text-xl leading-[1.75] mb-14" style={{ color: C.muted, maxWidth: '34ch' }}>
+            <p className="text-xl leading-[1.75] mb-14" style={{ color: C.muted, maxWidth: '46ch' }}>
               {tagline}
             </p>
           )}
@@ -162,7 +162,7 @@ export const HeroHomepageBlock: React.FC<HeroHomepageBlockProps> = ({
                       className="font-light leading-none"
                       style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(2.8rem, 3.5vw, 4rem)', color: C.text }}
                     >
-                      {stat.number}
+                      {stat.number.endsWith('+') ? stat.number : `${stat.number}+`}
                     </p>
                     <p className="font-display text-[10px] tracking-[0.42em] uppercase mt-2" style={{ color: C.muted }}>
                       {stat.label}

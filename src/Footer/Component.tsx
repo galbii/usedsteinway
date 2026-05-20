@@ -43,7 +43,7 @@ export async function Footer() {
       <div style={{ backgroundColor: 'hsl(350, 56%, 32%)', borderTop: '1px solid hsl(350, 48%, 40%)', borderBottom: '1px solid hsl(350, 48%, 40%)' }}>
         <div className="max-w-7xl mx-auto px-8 py-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 text-base">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 text-sm">
               <a
                 href={telHref}
                 className="flex items-center gap-2 text-piano-cream hover:text-piano-gold transition-colors"
@@ -58,7 +58,7 @@ export async function Footer() {
                 <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold hidden sm:inline">Email</span>
                 <span>{displayEmail}</span>
               </a>
-              <div className="flex items-center gap-2 text-piano-cream/60 text-xs">
+              <div className="flex items-center gap-2 text-piano-cream/60">
                 <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold hidden sm:inline">Hours</span>
                 <span>{displayHours}</span>
               </div>

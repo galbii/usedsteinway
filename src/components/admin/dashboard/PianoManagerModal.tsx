@@ -2,6 +2,25 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import type { Piano, Brand, Media } from '@/payload-types'
+import { useMediaManager } from '@/components/admin/media-manager/MediaManagerProvider'
+import type { MediaItem } from '@/components/admin/media-manager/types'
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -189,6 +208,30 @@ const STYLES = `
   .usw-pm-add-btn:hover {
     background: hsl(40, 72%, 40%);
   }
+  .usw-pm-media-btn {
+    background: none;
+    border: 1px solid rgba(184, 134, 57, 0.35);
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 4px 10px;
+    color: hsl(40, 72%, 34%);
+    transition: background 0.15s, border-color 0.15s, transform 0.1s ease;
+  }
+  .usw-pm-media-btn:hover {
+    background: rgba(184, 134, 57, 0.08);
+    border-color: rgba(184, 134, 57, 0.7);
+  }
+  .usw-pm-media-btn:active {
+    transform: scale(0.92);
+  }
+  .usw-pm-media-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 
   /* ── Entrance animations ─────────────────────────────────── */
   @keyframes usw-pm-backdrop-in {
@@ -292,6 +335,8 @@ function formatPrice(price: number | null | undefined): string {
 
 type FilterType = 'all' | 'available' | 'sold'
 type SortType = 'newest' | 'price-asc' | 'price-desc' | 'title'
+type ActiveTab = 'manage' | 'sort-order'
+type SaveState = 'idle' | 'saving' | 'saved' | 'error'
 
 interface PianoManagerModalProps {
   open: boolean
@@ -396,6 +441,11 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
   const [sortBy, setSortBy] = useState<SortType>('newest')
   const [search, setSearch] = useState('')
   const searchRef = useRef<HTMLInputElement>(null)
+  const [addingMediaTo, setAddingMediaTo] = useState<string | null>(null)
+  const { openModal } = useMediaManager()
+  const [activeTab, setActiveTab] = useState<ActiveTab>('manage')
+  const [sortItems, setSortItems] = useState<Piano[]>([])
+  const [saveState, setSaveState] = useState<SaveState>('idle')
 
   // Inject styles once
   useEffect(() => {
@@ -476,6 +526,103 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
       )
     }
   }, [])
+
+  // Open media manager in multi-select mode and append chosen images to the piano
+  const handleAddMedia = useCallback(
+    (piano: Piano) => {
+      openModal({
+        mode: 'select',
+        allowMultiple: true,
+        onSelectMultiple: (items: MediaItem[]) => {
+          if (items.length === 0) return
+          setAddingMediaTo(piano.id)
+
+          // IDs of images already on this piano
+          const existingIds = (piano.images ?? []).map((item) =>
+            typeof item.image === 'string' ? item.image : (item.image as Media).id,
+          )
+          const newIds = items.map((m) => m.id)
+
+          // Optimistic: append new image stubs (IDs only — thumbnail stays unchanged)
+          setPianos((prev) =>
+            prev.map((p) =>
+              p.id !== piano.id
+                ? p
+                : {
+                    ...p,
+                    images: [
+                      ...(p.images ?? []),
+                      ...newIds.map((id) => ({ image: id as unknown as string | Media, id: null })),
+                    ],
+                  },
+            ),
+          )
+
+          fetch(`/api/pianos/${piano.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              images: [...existingIds, ...newIds].map((id) => ({ image: id })),
+            }),
+          })
+            .catch(() => {
+              // Revert on failure
+              setPianos((prev) => prev.map((p) => (p.id === piano.id ? piano : p)))
+            })
+            .finally(() => setAddingMediaTo(null))
+        },
+      })
+    },
+    [openModal],
+  )
+
+  // Sync sort list when tab opens or pianos refresh
+  useEffect(() => {
+    if (activeTab === 'sort-order') {
+      setSortItems([...pianos].sort((a, b) => (a.priority ?? 20) - (b.priority ?? 20)))
+      setSaveState('idle')
+    }
+  }, [activeTab, pianos])
+
+  // Reset tab when modal closes
+  useEffect(() => {
+    if (!open) {
+      setActiveTab('manage')
+      setSaveState('idle')
+    }
+  }, [open])
+
+  const handleSaveOrder = useCallback(async () => {
+    setSaveState('saving')
+    try {
+      const updates = sortItems
+        .map((piano, idx) => ({ piano, newPriority: idx + 1 }))
+        .filter(({ piano, newPriority }) => piano.priority !== newPriority)
+
+      await Promise.all(
+        updates.map(({ piano, newPriority }) =>
+          fetch(`/api/pianos/${piano.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ priority: newPriority }),
+          }),
+        ),
+      )
+
+      // Reflect new priority values in the main pianos list
+      setPianos((prev) =>
+        prev.map((p) => {
+          const updated = updates.find((u) => u.piano.id === p.id)
+          return updated ? { ...p, priority: updated.newPriority } : p
+        }),
+      )
+
+      setSaveState('saved')
+      setTimeout(() => setSaveState('idle'), 3000)
+    } catch {
+      setSaveState('error')
+    }
+  }, [sortItems])
 
   if (!open) return null
 
@@ -577,59 +724,109 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
           </button>
         </div>
 
-        {/* Toolbar */}
+        {/* Tab strip */}
         <div
           style={{
             flexShrink: 0,
-            padding: '16px 40px',
             display: 'flex',
-            gap: '12px',
-            alignItems: 'center',
             borderBottom: `1px solid ${COLORS.divider}`,
+            padding: '0 40px',
           }}
         >
-          {/* Filter tabs */}
-          <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
-            {(['all', 'available', 'sold'] as FilterType[]).map((f) => (
-              <button
-                key={f}
-                type="button"
-                className="usw-pm-filter-btn"
-                style={filterBtnStyle(f)}
-                onClick={() => setFilter(f)}
-              >
-                {f.charAt(0).toUpperCase() + f.slice(1)}
-              </button>
-            ))}
-          </div>
-
-          {/* Sort select */}
-          <select
-            className="usw-pm-sort-select"
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as SortType)}
-          >
-            <option value="newest">Newest First</option>
-            <option value="price-asc">Price ↑</option>
-            <option value="price-desc">Price ↓</option>
-            <option value="title">Title A–Z</option>
-          </select>
-
-          {/* Spacer */}
-          <div style={{ flex: 1 }} />
-
-          {/* Search */}
-          <input
-            ref={searchRef}
-            className="usw-pm-search"
-            type="text"
-            placeholder="Search pianos…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          {(['manage', 'sort-order'] as ActiveTab[]).map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              style={{
+                background: 'none',
+                border: 'none',
+                borderBottom:
+                  activeTab === tab
+                    ? `2px solid ${COLORS.gold}`
+                    : '2px solid transparent',
+                padding: '12px 20px 11px',
+                fontSize: '13px',
+                fontWeight: 500,
+                color: activeTab === tab ? COLORS.gold : COLORS.muted,
+                cursor: 'pointer',
+                marginBottom: '-1px',
+                transition: 'color 0.15s, border-color 0.15s',
+                fontFamily: 'inherit',
+                letterSpacing: '0.04em',
+              }}
+            >
+              {tab === 'manage' ? 'Manage' : 'Sort Order'}
+            </button>
+          ))}
         </div>
 
-        {/* Scrollable list */}
+        {/* Toolbar — only on Manage tab */}
+        {activeTab === 'manage' && (
+          <div
+            style={{
+              flexShrink: 0,
+              padding: '16px 40px',
+              display: 'flex',
+              gap: '12px',
+              alignItems: 'center',
+              borderBottom: `1px solid ${COLORS.divider}`,
+            }}
+          >
+            {/* Filter tabs */}
+            <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
+              {(['all', 'available', 'sold'] as FilterType[]).map((f) => (
+                <button
+                  key={f}
+                  type="button"
+                  className="usw-pm-filter-btn"
+                  style={filterBtnStyle(f)}
+                  onClick={() => setFilter(f)}
+                >
+                  {f.charAt(0).toUpperCase() + f.slice(1)}
+                </button>
+              ))}
+            </div>
+
+            {/* Sort select */}
+            <select
+              className="usw-pm-sort-select"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortType)}
+            >
+              <option value="newest">Newest First</option>
+              <option value="price-asc">Price ↑</option>
+              <option value="price-desc">Price ↓</option>
+              <option value="title">Title A–Z</option>
+            </select>
+
+            {/* Spacer */}
+            <div style={{ flex: 1 }} />
+
+            {/* Search */}
+            <input
+              ref={searchRef}
+              className="usw-pm-search"
+              type="text"
+              placeholder="Search pianos…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+        )}
+
+        {/* Sort Order tab panel */}
+        {activeTab === 'sort-order' && (
+          <SortOrderPanel
+            items={sortItems}
+            onReorder={setSortItems}
+            saveState={saveState}
+            onSave={handleSaveOrder}
+          />
+        )}
+
+        {/* Scrollable list — Manage tab only */}
+        {activeTab === 'manage' && (
         <div className="usw-pm-list">
           {loading ? (
             /* Skeleton grid */
@@ -827,6 +1024,9 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
                         borderTop: `1px solid ${COLORS.divider}`,
                         paddingTop: '10px',
                         marginTop: '4px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
                       }}
                     >
                       <a
@@ -836,6 +1036,15 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
                       >
                         Edit listing →
                       </a>
+                      <button
+                        type="button"
+                        className="usw-pm-media-btn"
+                        title="Add photos from media library"
+                        disabled={addingMediaTo === piano.id}
+                        onClick={() => handleAddMedia(piano)}
+                      >
+                        {addingMediaTo === piano.id ? '…' : '+ Photos'}
+                      </button>
                     </div>
                   </div>
                 )
@@ -843,6 +1052,7 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
             </div>
           )}
         </div>
+        )}
 
         {/* Footer */}
         <div
@@ -872,5 +1082,291 @@ export function PianoManagerModal({ open, onClose }: PianoManagerModalProps) {
         </div>
       </div>
     </>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Sort Order Panel
+// ---------------------------------------------------------------------------
+
+interface SortOrderPanelProps {
+  items: Piano[]
+  onReorder: (items: Piano[]) => void
+  saveState: SaveState
+  onSave: () => void
+}
+
+function SortOrderPanel({ items, onReorder, saveState, onSave }: SortOrderPanelProps) {
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  )
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+    const oldIdx = items.findIndex((p) => p.id === active.id)
+    const newIdx = items.findIndex((p) => p.id === over.id)
+    onReorder(arrayMove(items, oldIdx, newIdx))
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
+      {/* Instruction */}
+      <p
+        style={{
+          flexShrink: 0,
+          padding: '16px 40px 8px',
+          margin: 0,
+          fontSize: '13px',
+          color: COLORS.muted,
+          letterSpacing: '0.04em',
+          fontFamily: 'inherit',
+        }}
+      >
+        Drag rows to set display order on the <strong style={{ color: COLORS.body, fontWeight: 600 }}>/pianos</strong> page. Click <em>Save Order</em> to apply.
+      </p>
+
+      {/* Scrollable drag list */}
+      <div
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          padding: '8px 40px 8px',
+          scrollbarWidth: 'thin',
+          scrollbarColor: 'rgba(0,0,0,0.15) transparent',
+        }}
+      >
+        {items.length === 0 ? (
+          <div
+            style={{
+              minHeight: '160px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: COLORS.muted,
+              fontSize: '14px',
+              fontStyle: 'italic',
+              fontFamily: 'inherit',
+            }}
+          >
+            No pianos found.
+          </div>
+        ) : (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={items.map((p) => p.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {items.map((piano, idx) => (
+                <SortableRow key={piano.id} piano={piano} position={idx + 1} />
+              ))}
+            </SortableContext>
+          </DndContext>
+        )}
+      </div>
+
+      {/* Save bar */}
+      <div
+        style={{
+          flexShrink: 0,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '16px',
+          padding: '16px 40px',
+          borderTop: `1px solid ${COLORS.divider}`,
+        }}
+      >
+        <button
+          type="button"
+          onClick={onSave}
+          disabled={saveState === 'saving'}
+          style={{
+            background: saveState === 'saving' ? COLORS.goldMuted : COLORS.gold,
+            border: 'none',
+            borderRadius: '3px',
+            color: 'hsl(36, 18%, 97%)',
+            cursor: saveState === 'saving' ? 'default' : 'pointer',
+            fontFamily: 'inherit',
+            fontSize: '13px',
+            fontWeight: 600,
+            letterSpacing: '0.08em',
+            padding: '10px 22px',
+            transition: 'background 0.15s',
+          }}
+        >
+          {saveState === 'saving' ? 'Saving…' : 'Save Order'}
+        </button>
+
+        {saveState === 'saved' && (
+          <span style={{ fontSize: '13px', color: COLORS.available, fontFamily: 'inherit' }}>
+            ✓ Order saved
+          </span>
+        )}
+        {saveState === 'error' && (
+          <span style={{ fontSize: '13px', color: 'hsl(0, 70%, 45%)', fontFamily: 'inherit' }}>
+            Save failed — try again
+          </span>
+        )}
+
+        <span
+          style={{
+            marginLeft: 'auto',
+            fontSize: '12px',
+            color: COLORS.muted,
+            fontFamily: 'inherit',
+            letterSpacing: '0.04em',
+          }}
+        >
+          {items.length} {items.length === 1 ? 'piano' : 'pianos'}
+        </span>
+      </div>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Sortable Row
+// ---------------------------------------------------------------------------
+
+function SortableRow({ piano, position }: { piano: Piano; position: number }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: piano.id,
+  })
+
+  const brandName = isBrandObject(piano.brand) ? (piano.brand.name ?? '') : ''
+  const thumb = getFirstImageUrl(piano)
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.45 : 1,
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px',
+        padding: '9px 12px',
+        marginBottom: '3px',
+        background: isDragging ? COLORS.goldFaint : COLORS.surface,
+        border: `1px solid ${isDragging ? COLORS.goldBorder : COLORS.divider}`,
+        borderRadius: '4px',
+        userSelect: 'none',
+        boxShadow: isDragging ? '0 4px 16px rgba(0,0,0,0.12)' : 'none',
+        zIndex: isDragging ? 1 : 'auto',
+        position: 'relative',
+      }}
+      {...attributes}
+    >
+      {/* Drag handle */}
+      <span
+        {...listeners}
+        style={{
+          color: COLORS.muted,
+          fontSize: '17px',
+          lineHeight: 1,
+          cursor: isDragging ? 'grabbing' : 'grab',
+          flexShrink: 0,
+          padding: '2px 4px',
+        }}
+        title="Drag to reorder"
+      >
+        ⠿
+      </span>
+
+      {/* Position badge */}
+      <span
+        style={{
+          width: '22px',
+          fontSize: '11px',
+          color: COLORS.muted,
+          flexShrink: 0,
+          textAlign: 'right',
+          fontFamily: 'inherit',
+          letterSpacing: '0.05em',
+        }}
+      >
+        {position}
+      </span>
+
+      {/* Thumbnail */}
+      {thumb ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={thumb}
+          alt=""
+          style={{
+            width: '52px',
+            height: '38px',
+            objectFit: 'cover',
+            borderRadius: '2px',
+            flexShrink: 0,
+            border: `1px solid ${COLORS.divider}`,
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            width: '52px',
+            height: '38px',
+            borderRadius: '2px',
+            flexShrink: 0,
+            background: 'rgba(0,0,0,0.06)',
+            border: `1px solid ${COLORS.divider}`,
+          }}
+        />
+      )}
+
+      {/* Title + brand */}
+      <div style={{ minWidth: 0, flex: 1 }}>
+        <p
+          style={{
+            margin: 0,
+            fontSize: '13px',
+            fontWeight: 500,
+            color: COLORS.text,
+            fontFamily: 'inherit',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          {piano.title}
+        </p>
+        {brandName && (
+          <p
+            style={{
+              margin: 0,
+              fontSize: '11px',
+              color: COLORS.muted,
+              fontFamily: 'inherit',
+              letterSpacing: '0.04em',
+            }}
+          >
+            {brandName}
+          </p>
+        )}
+      </div>
+
+      {/* Current DB priority */}
+      <span
+        style={{
+          flexShrink: 0,
+          fontSize: '11px',
+          color: COLORS.muted,
+          fontFamily: 'inherit',
+          letterSpacing: '0.06em',
+          opacity: 0.7,
+        }}
+        title="Current saved priority value"
+      >
+        #{piano.priority}
+      </span>
+    </div>
   )
 }

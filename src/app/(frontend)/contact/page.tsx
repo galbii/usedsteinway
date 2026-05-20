@@ -157,7 +157,12 @@ export default async function ContactPage({ searchParams }: ContactPageProps) {
                     Hours
                   </p>
                   <p className="text-piano-cream/80 text-base leading-relaxed font-light">
-                    {displayHours}
+                    {displayHours.split('. ').map((part, i, arr) => (
+                      <span key={i}>
+                        {part}{i < arr.length - 1 ? '.' : ''}
+                        {i < arr.length - 1 && <br />}
+                      </span>
+                    ))}
                   </p>
                 </div>
               </div>
