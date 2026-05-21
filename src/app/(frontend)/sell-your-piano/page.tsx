@@ -42,12 +42,18 @@ export default async function SellYourPianoPage() {
       {/* Form */}
       <section className="max-w-4xl mx-auto px-8 py-20">
         <div className="bg-piano-warm-white px-10 py-14">
-          <div className="flex items-center gap-5 mb-12">
+          <div className="flex items-center gap-5 mb-4">
             <p className="font-display text-sm tracking-[0.45em] uppercase text-piano-gold shrink-0">
               Piano Inquiry
             </p>
             <div className="flex-1 h-px bg-piano-linen" />
           </div>
+          <p
+            className="text-piano-black mb-12 font-light"
+            style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: 'clamp(1.5rem, 2.4vw, 2rem)' }}
+          >
+            Please provide information about your piano
+          </p>
 
           <p className="text-piano-stone text-base leading-relaxed mb-12 border-l-2 border-piano-gold/40 pl-5">
             <span className="font-medium text-piano-black">Please note:</span> Due to the high volume of

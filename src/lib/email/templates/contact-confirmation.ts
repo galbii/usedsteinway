@@ -1,5 +1,33 @@
 import { emailLayout, ctaButton, divider, escapeHtml } from './layout'
-import type { ContactFormData } from './contact-admin'
+import type { ContactFormData, SellPianoDetails } from './contact-admin'
+
+const styleLabels: Record<NonNullable<SellPianoDetails['style']>, string> = {
+  grand: 'Grand',
+  upright: 'Upright',
+  digital: 'Digital',
+  unknown: "Don't know",
+}
+
+const playerSystemLabels: Record<NonNullable<SellPianoDetails['playerSystem']>, string> = {
+  yes: 'Yes',
+  no: 'No',
+}
+
+function pianoDetailRows(details: SellPianoDetails): Array<[string, string]> {
+  const rows: Array<[string, string] | null> = [
+    details.brand ? ['Brand', escapeHtml(details.brand)] : null,
+    details.model ? ['Model', escapeHtml(details.model)] : null,
+    details.size ? ['Size', escapeHtml(details.size)] : null,
+    details.style ? ['Style', styleLabels[details.style]] : null,
+    details.finish ? ['Finish', escapeHtml(details.finish)] : null,
+    details.age ? ['Age', escapeHtml(details.age)] : null,
+    details.serialNumber ? ['Serial Number', escapeHtml(details.serialNumber)] : null,
+    details.playerSystem ? ['Player System', playerSystemLabels[details.playerSystem]] : null,
+    details.location ? ['Piano Location', escapeHtml(details.location)] : null,
+    details.askingPrice ? ['Asking Price', escapeHtml(details.askingPrice)] : null,
+  ]
+  return rows.filter((r): r is [string, string] => r !== null)
+}
 
 function formatPreferredDateTime(date?: string, time?: string): string | null {
   if (!date) return null
@@ -45,8 +73,59 @@ export function confirmationEmailSubject(data: ContactFormData): string {
 
 export function confirmationEmailHtml(data: ContactFormData): string {
   const isSchedule = data.source === 'schedule'
+  const isSell = data.inquiryType === 'sell'
   const regarding = data.pianoTitle ?? inquiryLabels[data.inquiryType]
   const preferredDateTime = formatPreferredDateTime(data.preferredDate, data.preferredTime)
+
+  const sellDetailsRows =
+    isSell && data.pianoDetails ? pianoDetailRows(data.pianoDetails) : []
+
+  const sellBody = `
+    <tr>
+      <td style="padding:40px 40px 28px;">
+        <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:20px;color:#1a1a1a;">
+          Thank you, ${escapeHtml(data.name)}.
+        </p>
+        <p style="margin:0 0 16px;font-family:sans-serif;font-size:14px;color:#555;line-height:1.7;">
+          We received the details on your piano. ${nextSteps.sell}
+        </p>
+        <p style="margin:0;font-family:sans-serif;font-size:14px;color:#555;line-height:1.7;">
+          If you need to reach us sooner, call <strong>508-545-0766</strong> or reply directly to this email.
+        </p>
+      </td>
+    </tr>
+
+    ${sellDetailsRows.length > 0 ? `
+    ${divider()}
+
+    <tr>
+      <td style="padding:28px 40px 8px;">
+        <p style="margin:0 0 12px;font-family:sans-serif;font-size:11px;color:#aaa;letter-spacing:3px;text-transform:uppercase;">
+          Piano Details You Submitted
+        </p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #f0ede8;">
+          ${sellDetailsRows
+            .map(
+              ([label, value]) => `
+            <tr>
+              <td style="padding:10px 16px;font-family:sans-serif;font-size:13px;color:#888;white-space:nowrap;vertical-align:top;border-bottom:1px solid #f0ede8;">${label}</td>
+              <td style="padding:10px 16px;font-family:sans-serif;font-size:14px;color:#1a1a1a;border-bottom:1px solid #f0ede8;">${value}</td>
+            </tr>`,
+            )
+            .join('')}
+        </table>
+      </td>
+    </tr>` : ''}
+
+    ${data.message.trim() ? `
+    <tr>
+      <td style="padding:28px 40px;">
+        <p style="margin:0 0 12px;font-family:sans-serif;font-size:11px;color:#aaa;letter-spacing:3px;text-transform:uppercase;">
+          Additional Notes
+        </p>
+        <div style="background:#f8f6f1;padding:20px;font-family:Georgia,serif;font-size:14px;color:#555;line-height:1.7;white-space:pre-wrap;">${escapeHtml(data.message)}</div>
+      </td>
+    </tr>` : ''}`
 
   const scheduleBody = `
     <tr>
@@ -92,6 +171,7 @@ export function confirmationEmailHtml(data: ContactFormData): string {
       </td>
     </tr>
 
+    ${data.message.trim() ? `
     ${divider()}
 
     <tr>
@@ -101,10 +181,10 @@ export function confirmationEmailHtml(data: ContactFormData): string {
         </p>
         <div style="background:#f8f6f1;padding:20px;font-family:Georgia,serif;font-size:14px;color:#555;line-height:1.7;white-space:pre-wrap;">${escapeHtml(data.message)}</div>
       </td>
-    </tr>`
+    </tr>` : ''}`
 
   const body = `
-    ${isSchedule ? scheduleBody : inquiryBody}
+    ${isSchedule ? scheduleBody : isSell ? sellBody : inquiryBody}
     ${ctaButton('https://www.usedsteinways.com/pianos', 'Browse the Collection')}`
 
   return emailLayout({

@@ -20,7 +20,8 @@ function formatPrice(price: number | null | undefined, priceOnCall?: boolean | n
   }).format(price)
 }
 
-function getImageUrl(image: string | Media): string {
+function getImageUrl(image: string | Media | null | undefined): string {
+  if (!image) return ''
   if (typeof image === 'string') return ''
   return image.url ?? image.thumbnailURL ?? ''
 }
@@ -142,6 +143,10 @@ export const queryAvailablePianosCount = cache(async (): Promise<number> => {
   return result.totalDocs
 })
 
+function isRenderablePiano(doc: PayloadPiano | undefined): doc is PayloadPiano {
+  return Boolean(doc && doc.title && doc.slug && doc.condition)
+}
+
 export const queryPianoBySlug = cache(async (slug: string): Promise<Piano | null> => {
   const { isEnabled: draft } = await draftMode()
   const payload = await getPayload({ config: configPromise })
@@ -158,8 +163,24 @@ export const queryPianoBySlug = cache(async (slug: string): Promise<Piano | null
     },
   })
 
-  const doc = result.docs?.[0]
-  if (!doc) return null
+  let doc = result.docs?.[0]
+
+  // If the draft is incomplete (e.g. partial save), fall back to the published version
+  // so the page never blanks out for authenticated viewers.
+  if (draft && !isRenderablePiano(doc)) {
+    const published = await payload.find({
+      collection: 'pianos',
+      draft: false,
+      limit: 1,
+      overrideAccess: false,
+      pagination: false,
+      depth: 1,
+      where: { slug: { equals: slug } },
+    })
+    doc = published.docs?.[0]
+  }
+
+  if (!isRenderablePiano(doc)) return null
   return adaptPayloadPiano(doc)
 })
 

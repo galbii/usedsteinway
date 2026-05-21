@@ -170,7 +170,9 @@ export default function EuropeanPianosPage() {
             style={{ fontSize: 'clamp(1.8rem, 2.8vw, 2.8rem)', color: C.ivory }}
           >
             &ldquo;The great European makers each have a voice as distinct as a great singer.
-            Bösendorfer sings. Bechstein speaks with precision. Blüthner shimmers.
+            <br /><br />
+            Bösendorfer sings. Bechstein speaks with precision. Blüthner glows. Petrof resonates.
+            <br /><br />
             Finding the right one for you requires hearing them all.&rdquo;
           </blockquote>
           <div className="flex items-center gap-5">

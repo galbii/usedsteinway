@@ -1,5 +1,18 @@
 import { emailLayout, ctaButton, escapeHtml } from './layout'
 
+export type SellPianoDetails = {
+  brand?: string
+  model?: string
+  size?: string
+  style?: 'grand' | 'upright' | 'digital' | 'unknown'
+  finish?: string
+  age?: string
+  serialNumber?: string
+  playerSystem?: 'yes' | 'no'
+  location?: string
+  askingPrice?: string
+}
+
 export type ContactFormData = {
   name: string
   email: string
@@ -12,6 +25,35 @@ export type ContactFormData = {
   preferredDate?: string
   preferredTime?: string
   source?: 'schedule' | 'inquiry'
+  pianoDetails?: SellPianoDetails
+}
+
+const styleLabels: Record<NonNullable<SellPianoDetails['style']>, string> = {
+  grand: 'Grand',
+  upright: 'Upright',
+  digital: 'Digital',
+  unknown: "Don't know",
+}
+
+const playerSystemLabels: Record<NonNullable<SellPianoDetails['playerSystem']>, string> = {
+  yes: 'Yes',
+  no: 'No',
+}
+
+function pianoDetailRows(details: SellPianoDetails): Array<[string, string]> {
+  const rows: Array<[string, string] | null> = [
+    details.brand ? ['Brand', escapeHtml(details.brand)] : null,
+    details.model ? ['Model', escapeHtml(details.model)] : null,
+    details.size ? ['Size', escapeHtml(details.size)] : null,
+    details.style ? ['Style', styleLabels[details.style]] : null,
+    details.finish ? ['Finish', escapeHtml(details.finish)] : null,
+    details.age ? ['Age', escapeHtml(details.age)] : null,
+    details.serialNumber ? ['Serial Number', escapeHtml(details.serialNumber)] : null,
+    details.playerSystem ? ['Player System', playerSystemLabels[details.playerSystem]] : null,
+    details.location ? ['Piano Location', escapeHtml(details.location)] : null,
+    details.askingPrice ? ['Asking Price', escapeHtml(details.askingPrice)] : null,
+  ]
+  return rows.filter((r): r is [string, string] => r !== null)
 }
 
 const inquiryLabels: Record<ContactFormData['inquiryType'], string> = {
@@ -68,11 +110,24 @@ export function adminEmailSubject(data: ContactFormData): string {
   return `${data.name} — ${detail}`
 }
 
+function renderRowsTable(rows: Array<[string, string]>): string {
+  return rows
+    .map(
+      ([label, value]) => `
+        <tr>
+          <td style="padding:10px 16px;font-family:sans-serif;font-size:13px;color:#888;white-space:nowrap;vertical-align:top;border-bottom:1px solid #f0ede8;">${label}</td>
+          <td style="padding:10px 16px;font-family:sans-serif;font-size:14px;color:#1a1a1a;border-bottom:1px solid #f0ede8;">${value}</td>
+        </tr>`,
+    )
+    .join('')
+}
+
 export function adminEmailHtml(data: ContactFormData): string {
   const preferredDateTime = formatPreferredDateTime(data.preferredDate, data.preferredTime)
   const isSchedule = data.source === 'schedule'
+  const isSell = data.inquiryType === 'sell'
 
-  const scheduleRows = [
+  const scheduleRows: Array<[string, string] | null> = [
     preferredDateTime ? ['Preferred Viewing', `<strong>${escapeHtml(preferredDateTime)}</strong>`] : null,
     data.pianoTitle ? ['Piano', escapeHtml(data.pianoTitle)] : null,
     ['Name', escapeHtml(data.name)],
@@ -80,7 +135,7 @@ export function adminEmailHtml(data: ContactFormData): string {
     data.phone ? ['Phone', escapeHtml(data.phone)] : null,
   ]
 
-  const inquiryRows = [
+  const inquiryRows: Array<[string, string] | null> = [
     ['Inquiry Type', inquiryLabels[data.inquiryType]],
     data.pianoTitle ? ['Piano', escapeHtml(data.pianoTitle)] : null,
     ['Name', escapeHtml(data.name)],
@@ -90,16 +145,24 @@ export function adminEmailHtml(data: ContactFormData): string {
     data.timeline ? ['Timeline', timelineLabels[data.timeline] ?? escapeHtml(data.timeline)] : null,
   ]
 
-  const rows = (isSchedule ? scheduleRows : inquiryRows)
-    .filter(Boolean)
-    .map(
-      (row) => `
-        <tr>
-          <td style="padding:10px 16px;font-family:sans-serif;font-size:13px;color:#888;white-space:nowrap;vertical-align:top;border-bottom:1px solid #f0ede8;">${row![0]}</td>
-          <td style="padding:10px 16px;font-family:sans-serif;font-size:14px;color:#1a1a1a;border-bottom:1px solid #f0ede8;">${row![1]}</td>
-        </tr>`,
-    )
-    .join('')
+  const contactTable = renderRowsTable(
+    (isSchedule ? scheduleRows : inquiryRows).filter((r): r is [string, string] => r !== null),
+  )
+
+  const pianoDetailsSection =
+    isSell && data.pianoDetails && pianoDetailRows(data.pianoDetails).length > 0
+      ? `
+    <tr>
+      <td style="padding:24px 40px 8px;">
+        <p style="margin:0 0 12px;font-family:sans-serif;font-size:11px;color:#888;letter-spacing:3px;text-transform:uppercase;">
+          Piano Details
+        </p>
+        <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #f0ede8;">
+          ${renderRowsTable(pianoDetailRows(data.pianoDetails))}
+        </table>
+      </td>
+    </tr>`
+      : ''
 
   const replySubject = encodeURIComponent(
     isSchedule
@@ -107,12 +170,13 @@ export function adminEmailHtml(data: ContactFormData): string {
       : `Re: ${inquiryLabels[data.inquiryType]}`,
   )
 
+  const messageLabel = isSchedule ? 'Notes' : isSell ? 'Anything else' : 'Message'
   const messageSection = data.message.trim()
     ? `
     <tr>
-      <td style="padding:8px 40px 32px;">
+      <td style="padding:24px 40px 8px;">
         <p style="margin:0 0 8px;font-family:sans-serif;font-size:11px;color:#888;letter-spacing:3px;text-transform:uppercase;">
-          ${isSchedule ? 'Notes' : 'Message'}
+          ${messageLabel}
         </p>
         <div style="background:#f8f6f1;padding:20px;font-family:Georgia,serif;font-size:15px;color:#1a1a1a;line-height:1.7;white-space:pre-wrap;">${escapeHtml(data.message)}</div>
       </td>
@@ -123,10 +187,12 @@ export function adminEmailHtml(data: ContactFormData): string {
     <tr>
       <td style="padding:32px 40px 8px;">
         <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #f0ede8;">
-          ${rows}
+          ${contactTable}
         </table>
       </td>
     </tr>
+
+    ${pianoDetailsSection}
 
     ${messageSection}
 
@@ -136,7 +202,7 @@ export function adminEmailHtml(data: ContactFormData): string {
     )}`
 
   return emailLayout({
-    subtitle: isSchedule ? 'Viewing Request' : 'New Inquiry',
+    subtitle: isSchedule ? 'Viewing Request' : isSell ? 'Piano Submission' : 'New Inquiry',
     body,
     footer: 'Sent from the contact form at usedsteinways.com',
   })

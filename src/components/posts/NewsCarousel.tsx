@@ -408,18 +408,17 @@ export function NewsCarousel({ posts }: Props) {
                     justifyContent: 'center',
                     gap: '0.875rem',
                     padding: '1.25rem 2.5rem',
-                    backgroundColor: 'transparent',
-                    color: C.text,
+                    backgroundColor: C.darkBg,
+                    color: C.ivory,
                     fontFamily: 'var(--font-display)',
                     fontSize: '13px',
                     letterSpacing: '0.38em',
                     textTransform: 'uppercase',
                     textDecoration: 'none',
-                    border: `1px solid ${C.borderLight}`,
-                    transition: 'border-color 200ms, color 200ms',
+                    transition: 'opacity 200ms',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.color = C.accent }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = C.borderLight; e.currentTarget.style.color = C.text }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = '0.82')}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
                 >
                   All Articles
                   <svg width="14" height="14" viewBox="0 0 12 12" fill="none">

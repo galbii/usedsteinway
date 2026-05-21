@@ -25,12 +25,11 @@ interface ScheduleViewingModalProps {
   onClose: () => void
   pianoTitle: string
   pianoSlug: string
-  phone?: string | null
 }
 
 const EMPTY_FORM = { name: '', email: '', phone: '', preferredDate: '', preferredTime: '', message: '' }
 
-export function ScheduleViewingModal({ open, onClose, pianoTitle, phone }: ScheduleViewingModalProps) {
+export function ScheduleViewingModal({ open, onClose, pianoTitle }: ScheduleViewingModalProps) {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -245,12 +244,12 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle, phone }: Sched
                   htmlFor="sv-phone"
                   className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-2.5 group-focus-within:text-piano-burgundy transition-colors duration-200"
                 >
-                  Phone{' '}
-                  <span className="text-piano-stone/35 normal-case font-sans text-sm tracking-normal ml-1">optional</span>
+                  Phone <span className="text-piano-burgundy">*</span>
                 </label>
                 <input
                   id="sv-phone"
                   type="tel"
+                  required
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-2.5 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 placeholder:text-piano-stone/35"
@@ -300,11 +299,9 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle, phone }: Sched
                     </select>
                   </div>
                 </div>
-                {phone && (
-                  <p className="text-piano-stone/50 text-xs font-display tracking-wide mt-3 uppercase">
-                    By appointment · 11 AM – 6 PM
-                  </p>
-                )}
+                <p className="text-piano-stone/70 text-sm leading-relaxed mt-4">
+                  We will do our best to accommodate your preferred date and time. Please watch for our confirmation.
+                </p>
               </div>
 
               {/* Notes */}
@@ -313,11 +310,10 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle, phone }: Sched
                   htmlFor="sv-message"
                   className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-2.5 group-focus-within:text-piano-burgundy transition-colors duration-200"
                 >
-                  Notes <span className="text-piano-burgundy">*</span>
+                  Notes <span className="text-piano-stone/35 normal-case font-sans text-sm tracking-normal ml-1">optional</span>
                 </label>
                 <textarea
                   id="sv-message"
-                  required
                   rows={3}
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}

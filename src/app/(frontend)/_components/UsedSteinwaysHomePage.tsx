@@ -249,7 +249,7 @@ export function UsedSteinwaysHomePage({ locations = [], phone, featured: feature
             >
               {[
                 { n: '45+', l: 'Years',     delay: '0.68s' },
-                { n: '20',  l: 'Steinways', delay: '0.80s' },
+                { n: '20+', l: 'Steinways', delay: '0.80s' },
               ].map(({ n, l, delay }, i) => (
                 <div
                   key={l}
@@ -664,7 +664,7 @@ export function UsedSteinwaysHomePage({ locations = [], phone, featured: feature
             className="sr sr-d1 font-cormorant font-light leading-[1.05] mb-8"
             style={{ fontSize: 'clamp(3rem, 6vw, 6.5rem)', color: C.ivory }}
           >
-            People + Pianos<br />= Music.
+            People + Pianos<br />= Music
           </h2>
 
           <p

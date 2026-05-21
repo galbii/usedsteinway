@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { cn } from '@/utilities/ui'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import type { SiteSetting } from '@/payload-types'
+import { ContactModal } from '@/components/contact/ContactModal'
 
 interface InquiryCTAProps {
   brand?: string
@@ -17,11 +18,6 @@ export async function InquiryCTA({ brand, pianoTitle, variant = 'dark', classNam
   const telHref = `tel:+1${rawPhone.replace(/\D/g, '')}`
 
   const isDark = variant === 'dark'
-  const subject = pianoTitle
-    ? `Inquiry: ${pianoTitle}`
-    : brand
-      ? `Inquiry About ${brand} Pianos`
-      : 'Piano Inquiry'
 
   return (
     <section
@@ -55,15 +51,16 @@ export async function InquiryCTA({ brand, pianoTitle, variant = 'dark', classNam
           come see us at the showroom — and we'll find the right instrument for you.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <a
-            href={pianoTitle ? '#inquiry' : `/contact?subject=${encodeURIComponent(subject)}`}
-            className={cn(
+          <ContactModal
+            variant="inquiry"
+            brand={brand}
+            pianoTitle={pianoTitle}
+            triggerLabel="Get in Touch"
+            triggerClassName={cn(
               'inline-flex items-center justify-center px-10 py-4 font-display text-[11px] tracking-[0.3em] uppercase transition-opacity duration-200 hover:opacity-80',
               isDark ? 'bg-piano-cream text-piano-burgundy' : 'bg-piano-black text-piano-cream',
             )}
-          >
-            Get in Touch
-          </a>
+          />
           <Link
             href="/about"
             className={cn(

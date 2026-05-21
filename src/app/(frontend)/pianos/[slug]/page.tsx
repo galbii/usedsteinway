@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { draftMode, cookies } from 'next/headers'
+import { draftMode } from 'next/headers'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { PianoDetailV2 } from '@/components/piano/PianoDetailV2'
+import { PianoEditButton } from '@/components/piano/PianoEditButton'
 import { InquiryCTA } from '@/components/piano/InquiryCTA'
 import { BrandPageV2 } from '@/components/piano/BrandPageV2'
 import { PianoHeroCarousel } from '@/components/piano/PianoHeroCarousel'
@@ -15,23 +16,6 @@ import { getServerSideURL } from '@/utilities/getURL'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import type { SiteSetting } from '@/payload-types'
 import type { Piano } from '@/types/piano'
-
-async function getIsAdmin(): Promise<boolean> {
-  try {
-    const cookieStore = await cookies()
-    const token = cookieStore.get('payload-token')?.value
-    if (!token) return false
-    const res = await fetch(`${getServerSideURL()}/api/users/me`, {
-      headers: { Authorization: `JWT ${token}` },
-      cache: 'no-store',
-    })
-    if (!res.ok) return false
-    const data = (await res.json()) as { user?: unknown }
-    return !!data.user
-  } catch {
-    return false
-  }
-}
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -243,7 +227,7 @@ export default async function PianoOrBrandPage({ params }: Props) {
         <PianoHeroCarousel
           pianos={featured.length > 0 ? featured : pianos.slice(0, 5)}
           eyebrow={brand.name}
-          headingLine1="Our Used"
+          headingLine1={brand.slug === 'petrof' || brand.slug === 'shigeru-kawai' ? 'Our' : 'Our Used'}
           headingLine2={brand.name}
           minimal
         />
@@ -260,10 +244,7 @@ export default async function PianoOrBrandPage({ params }: Props) {
   }
 
   // ── Piano detail page ────────────────────────────────────────────────────────
-  const [piano, isAdmin] = await Promise.all([
-    queryPianoBySlug(decoded),
-    getIsAdmin(),
-  ])
+  const piano = await queryPianoBySlug(decoded)
   if (!piano) notFound()
 
   const siteSettings = (await getCachedGlobal('site-settings', 0)()) as SiteSetting
@@ -290,8 +271,9 @@ export default async function PianoOrBrandPage({ params }: Props) {
         }}
       />
       {draft && <LivePreviewListener />}
-      <PianoDetailV2 piano={piano} locations={locations} phone={phone} isAdmin={isAdmin} />
+      <PianoDetailV2 piano={piano} locations={locations} phone={phone} />
       <InquiryCTA pianoTitle={piano.title} variant="dark" />
+      <PianoEditButton piano={piano} />
     </>
   )
 }

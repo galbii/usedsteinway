@@ -257,14 +257,14 @@ export function AboutPageContent() {
                   {title}
                 </h3>
                 {/* Body */}
-                <p className="text-piano-silver/50 text-[1rem] leading-[1.85]">{body}</p>
+                <p className="text-piano-silver/85 text-[1rem] leading-[1.85]">{body}</p>
               </div>
             ))}
 
           </div>
 
           {/* Closing line from brief */}
-          <p className="sr mt-14 text-piano-silver/40 text-[1rem] leading-[1.85]" style={{ maxWidth: '60ch' }}>
+          <p className="sr mt-14 text-piano-silver/75 text-[1rem] leading-[1.85]" style={{ maxWidth: '60ch' }}>
             We are not just a retailer, but a strategic partner in piano ownership — helping
             customers make informed, long-term investments in music.
           </p>
@@ -353,7 +353,7 @@ export function AboutPageContent() {
             >
               Beyond the Sale
             </h2>
-            <p className="sr sr-d2 text-piano-silver/55 text-[1.0625rem] leading-[1.85]">
+            <p className="sr sr-d2 text-piano-silver/85 text-[1.0625rem] leading-[1.85]">
               What truly differentiates Roger's Piano is our long-term commitment to customers.
               This end-to-end capability ensures that every piano continues to perform at its
               best for years to come.
@@ -391,7 +391,7 @@ export function AboutPageContent() {
                   {service}
                 </h3>
                 <div className="h-px w-8 bg-piano-gold/30 mb-5" />
-                <p className="text-piano-silver/50 text-[0.9375rem] leading-[1.85]">{detail}</p>
+                <p className="text-piano-silver/85 text-[0.9375rem] leading-[1.85]">{detail}</p>
               </div>
             ))}
           </div>

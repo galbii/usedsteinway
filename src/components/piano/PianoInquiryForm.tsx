@@ -151,14 +151,12 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, phone }: P
             htmlFor="inquiry-phone"
             className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200"
           >
-            Phone{' '}
-            <span className="text-piano-cream/30 normal-case font-sans text-base tracking-normal ml-1">
-              optional
-            </span>
+            Phone <span className="text-piano-gold">*</span>
           </label>
           <input
             id="inquiry-phone"
             type="tel"
+            required
             value={form.phone}
             onChange={(e) => setForm({ ...form, phone: e.target.value })}
             className="w-full bg-transparent border-b border-piano-cream/20 text-piano-cream text-xl py-3 focus:outline-none focus:border-piano-gold transition-colors duration-200 placeholder:text-piano-cream/30"
@@ -172,11 +170,10 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, phone }: P
             htmlFor="inquiry-message"
             className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200"
           >
-            Message <span className="text-piano-gold">*</span>
+            Message <span className="text-piano-cream/30 normal-case font-sans text-base tracking-normal ml-1">optional</span>
           </label>
           <textarea
             id="inquiry-message"
-            required
             rows={5}
             value={form.message}
             onChange={(e) => setForm({ ...form, message: e.target.value })}

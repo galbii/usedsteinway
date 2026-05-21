@@ -265,7 +265,7 @@ export function ShowroomGallerySection({ images }: Props) {
                 View Full Gallery
               </Link>
               <Link
-                href="/contact"
+                href="/visit#locations"
                 className="inline-flex items-center gap-3 px-10 py-3.5 font-display text-[11px] tracking-[0.38em] uppercase transition-opacity duration-200 hover:opacity-70"
                 style={{ border: `1px solid ${C.border}`, color: C.text }}
               >

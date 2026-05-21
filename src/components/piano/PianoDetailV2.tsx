@@ -2,11 +2,9 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
-import { Pencil } from 'lucide-react'
 import type { Piano } from '@/types/piano'
 import { ConditionBadge } from './ConditionBadge'
 import { PianoInquiryForm } from './PianoInquiryForm'
-import { PianoEditDrawer } from './PianoEditDrawer'
 import { ScheduleViewingModal } from './ScheduleViewingModal'
 import { PianoMediaCarousel } from './PianoMediaCarousel'
 import { LocationTabs } from './LocationTabs'
@@ -30,13 +28,11 @@ interface PianoDetailV2Props {
   piano: Piano
   locations?: Location[]
   phone?: string | null
-  isAdmin?: boolean
 }
 
-export function PianoDetailV2({ piano, locations = [], phone, isAdmin = false }: PianoDetailV2Props) {
+export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Props) {
   const [activeImage, setActiveImage] = useState(0)
   const [scheduleOpen, setScheduleOpen] = useState(false)
-  const [editOpen, setEditOpen] = useState(false)
 
   const allImages = [
     ...piano.imageUrls,
@@ -499,27 +495,8 @@ export function PianoDetailV2({ piano, locations = [], phone, isAdmin = false }:
         onClose={() => setScheduleOpen(false)}
         pianoTitle={piano.title}
         pianoSlug={piano.slug}
-        phone={phone}
       />
 
-      {/* ── Admin: floating edit button + drawer ── */}
-      {isAdmin && (
-        <>
-          <button
-            onClick={() => setEditOpen(true)}
-            className="fixed bottom-6 left-6 z-30 flex items-center gap-2 bg-piano-black text-piano-cream px-4 py-2.5 font-display text-[10px] tracking-[0.35em] uppercase shadow-lg hover:bg-piano-burgundy transition-colors duration-200"
-            aria-label="Edit this piano"
-          >
-            <Pencil size={13} />
-            Edit
-          </button>
-          <PianoEditDrawer
-            piano={piano}
-            open={editOpen}
-            onClose={() => setEditOpen(false)}
-          />
-        </>
-      )}
     </main>
   )
 }

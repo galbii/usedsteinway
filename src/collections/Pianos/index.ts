@@ -413,9 +413,6 @@ export const Pianos: CollectionConfig<'pianos'> = {
   },
   versions: {
     drafts: {
-      autosave: {
-        interval: 100,
-      },
       schedulePublish: true,
     },
     maxPerDoc: 50,

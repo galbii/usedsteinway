@@ -196,6 +196,46 @@
   --animate-piano-card-in: piano-card-in 0.55s cubic-bezier(0.2, 0, 0, 1) both;
   --animate-piano-block-in: piano-block-in 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-piano-count-flip: piano-count-flip 0.4s cubic-bezier(0.2, 0, 0, 1) both;
+
+  /* ── Contact modal animations ──────────────────────────────── */
+  @keyframes contact-modal-backdrop-in {
+    from { opacity: 0; backdrop-filter: blur(0px); }
+    to   { opacity: 1; backdrop-filter: blur(6px); }
+  }
+
+  @keyframes contact-modal-backdrop-out {
+    from { opacity: 1; backdrop-filter: blur(6px); }
+    to   { opacity: 0; backdrop-filter: blur(0px); }
+  }
+
+  @keyframes contact-modal-panel-in {
+    from {
+      opacity: 0;
+      transform: translateY(24px) scale(0.96);
+      filter: blur(2px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+  }
+
+  @keyframes contact-modal-panel-out {
+    from {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(12px) scale(0.97);
+    }
+  }
+
+  @keyframes contact-modal-field-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 }
 
 /* ── Semantic color utilities (maps :root CSS vars → Tailwind classes) ─ */

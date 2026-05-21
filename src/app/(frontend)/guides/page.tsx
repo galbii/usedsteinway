@@ -38,8 +38,9 @@ export default async function GuidesPage() {
             Guides & News
           </h1>
           <p className="text-piano-cream/70 text-lg max-w-2xl leading-relaxed">
-            Three decades of expertise distilled into practical guides. From pricing to restoration,
-            everything you need to buy a world-class piano with confidence.
+            Over four decades of expertise distilled into practical guides.
+            <br />
+            From selection to restoration, buy a world-class piano with confidence.
           </p>
         </div>
       </section>

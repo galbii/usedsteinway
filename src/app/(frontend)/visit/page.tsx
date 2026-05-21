@@ -1,15 +1,24 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import type { SiteSetting } from '@/payload-types'
 import { InquiryCTA } from '@/components/piano/InquiryCTA'
 import { LocationTabs } from '@/components/piano/LocationTabs'
+import { ContactModal } from '@/components/contact/ContactModal'
 
 export const metadata: Metadata = {
   title: 'Visit the Showroom | UsedSteinways.com',
   description:
     'Come hear the pianos for yourself. Our Massachusetts showrooms are open by appointment. Play before you decide.',
 }
+
+const maximizeTips = [
+  'Please be on time. We allow at least 60 minutes per appointment. We want you to have as much time with the pianos as possible.',
+  'Tell us your search criteria. The more we understand your needs, the better we can match you with the right piano.',
+  "If you have a specific piano you'd like to try, please tell us in advance of your visit so we can prep it.",
+  'During your visit, feel free to ask questions. We want you to know how each piano may fit your preferences and understand what you will be purchasing.',
+  'We suggest that you prepare 2 or 3 pieces of music to try on all pianos. This allows you to better compare the tone and touch of the different pianos.',
+  'We are happy to extend your visit if no other appointment is expected.',
+]
 
 export default async function VisitPage() {
   const siteSettings = await getCachedGlobal('site-settings', 0)() as SiteSetting
@@ -41,9 +50,41 @@ export default async function VisitPage() {
         </div>
       </section>
 
-      {/* Location selector — full width */}
+      {/* Showroom Hours + How to Maximize Your Visit — above the map */}
+      <section className="bg-piano-cream">
+        <div className="max-w-7xl mx-auto px-8 pt-20 pb-16">
+          <div className="grid lg:grid-cols-2 gap-14">
+            {/* Hours */}
+            <div>
+              <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-4">
+                Showroom Hours
+              </p>
+              <div className="bg-piano-cream border border-piano-linen p-6">
+                <p className="text-piano-stone text-base leading-relaxed">{displayHours}</p>
+              </div>
+            </div>
+
+            {/* How to Maximize Your Visit */}
+            <div>
+              <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-4">
+                How to Maximize Your Visit
+              </p>
+              <ul className="space-y-4">
+                {maximizeTips.map((tip, i) => (
+                  <li key={i} className="flex gap-3 text-piano-stone">
+                    <span className="text-piano-gold mt-1 shrink-0">◆</span>
+                    <span className="leading-relaxed text-base">{tip}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Location selector + Map */}
       {locations.length > 0 && (
-        <section className="bg-piano-cream border-b border-piano-linen">
+        <section id="locations" className="bg-piano-cream border-t border-b border-piano-linen scroll-mt-24">
           <div className="max-w-7xl mx-auto px-8 pt-16 pb-0">
             <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-6">
               Our Locations
@@ -56,91 +97,27 @@ export default async function VisitPage() {
         </section>
       )}
 
-      {/* Main content grid */}
+      {/* Appointment CTA — below the map */}
       <div className="max-w-7xl mx-auto px-8 py-24">
-        <div className="grid lg:grid-cols-2 gap-16">
-          {/* Left: Hours + What to Expect */}
-          <div className="space-y-10">
-            {/* Hours */}
-            <div>
-              <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-4">
-                Showroom Hours
-              </p>
-              <div className="bg-piano-cream border border-piano-linen p-6">
-                <p className="text-piano-stone text-base leading-relaxed">{displayHours}</p>
-              </div>
-            </div>
-
-            {/* What to Expect */}
-            <div>
-              <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-4">
-                What to Expect
-              </p>
-              <ul className="space-y-4">
-                {[
-                  'Play any piano in the collection without pressure or time limits',
-                  "Roger is available to discuss each instrument's history and character",
-                  'Acoustic environment is carefully designed for honest evaluation',
-                  "We'll answer every question directly — including questions about competitors' inventory",
-                  "No high-pressure sales. Our reputation depends on you finding the right piano, not just a piano.",
-                ].map((item, i) => (
-                  <li key={i} className="flex gap-3 text-piano-stone">
-                    <span className="text-piano-gold mt-1 shrink-0">◆</span>
-                    <span className="leading-relaxed text-base">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {/* Right: Appointment CTA + Tips */}
-          <div className="space-y-6">
-            <div className="bg-piano-cream border border-piano-gold/20 p-8">
-              <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-3">
-                Schedule a Visit
-              </p>
-              <h3 className="font-cormorant font-light text-piano-black text-3xl mb-4">
-                Book a Private Appointment
-              </h3>
-              <p className="text-piano-stone text-base leading-relaxed mb-6">
-                For a private session with no other visitors, give us a call or send a message.
-                {"We'll"} arrange a time that works for you.
-              </p>
-              <div className="flex flex-col gap-3">
-                <a
-                  href={telHref}
-                  className="block text-center bg-piano-black text-piano-cream py-3.5 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-charcoal transition-colors"
-                >
-                  Call {displayPhone}
-                </a>
-                <Link
-                  href="/contact?subject=Schedule+Visit"
-                  className="block text-center border border-piano-black text-piano-black py-3.5 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-black hover:text-white transition-colors"
-                >
-                  Send a Message
-                </Link>
-              </div>
-            </div>
-
-            {/* First Visit Tips */}
-            <div className="bg-piano-indigo-card p-8">
-              <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-4">
-                Tips for Your Visit
-              </p>
-              <ul className="space-y-3">
-                {[
-                  "Bring music you know well — familiar repertoire reveals a piano's character most honestly",
-                  "Allow at least 90 minutes if you're seriously evaluating more than one instrument",
-                  "Bring your teacher or accompanist if you'd like a second opinion",
-                  "Tell us in advance if you have a specific instrument you want to try — we'll make sure it's tuned and ready",
-                ].map((tip, i) => (
-                  <li key={i} className="flex gap-3">
-                    <span className="text-piano-gold/50 shrink-0 mt-0.5 text-xs">◆</span>
-                    <span className="text-piano-silver/80 text-base leading-relaxed">{tip}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+        <div className="max-w-xl mx-auto bg-piano-cream border border-piano-gold/20 p-8">
+          <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-3">
+            Schedule a Visit
+          </p>
+          <h3 className="font-cormorant font-light text-piano-black text-3xl mb-4">
+            Book an Appointment
+          </h3>
+          <p className="text-piano-stone text-base leading-relaxed mb-6">
+            Please call or send a message to book your appointment. We will confirm the location,
+            date and time.
+          </p>
+          <div className="flex flex-col gap-3">
+            <a
+              href={telHref}
+              className="block text-center bg-piano-black text-piano-cream py-3.5 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-charcoal transition-colors"
+            >
+              Call {displayPhone}
+            </a>
+            <ContactModal variant="schedule" locations={locations} />
           </div>
         </div>
       </div>

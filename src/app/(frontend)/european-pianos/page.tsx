@@ -23,9 +23,7 @@ const C = {
   ivory:       'hsl(36, 22%, 96%)',
 }
 
-const EUROPEAN_BRANDS = BRANDS.filter(
-  (b) => b.category !== 'steinway' && b.category !== 'shigeru-kawai',
-)
+const EUROPEAN_BRANDS = BRANDS.filter((b) => b.category === 'european')
 
 const BRAND_HREF: Record<string, string> = {
   bosendorfer: '/pianos/bosendorfer',
@@ -33,10 +31,6 @@ const BRAND_HREF: Record<string, string> = {
   bluthner:    '/pianos/bluthner',
   petrof:      '/pianos/petrof',
   schimmel:    '/pianos/schimmel',
-  kayserburg:  '/pianos/kayserburg',
-  yamaha:      '/pianos/yamaha',
-  'wendl-lung': '/pianos/wendl-lung',
-  brodmann:    '/pianos/brodmann',
 }
 
 export default async function EuropeanPianosPage() {
@@ -186,7 +180,9 @@ export default async function EuropeanPianosPage() {
             style={{ fontSize: 'clamp(1.8rem, 2.8vw, 2.8rem)', color: C.ivory }}
           >
             &ldquo;The great European makers each have a voice as distinct as a great singer.
-            Bösendorfer sings. Bechstein speaks with precision. Blüthner shimmers.
+            <br /><br />
+            Bösendorfer sings. Bechstein speaks with precision. Blüthner glows. Petrof resonates.
+            <br /><br />
             Finding the right one for you requires hearing them all.&rdquo;
           </blockquote>
           <div className="flex items-center gap-5">
