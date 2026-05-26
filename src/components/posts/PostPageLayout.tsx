@@ -29,7 +29,7 @@ export const PostPageLayout: React.FC<Props> = ({
           <PostHero post={post} />
 
           {hasBlocks && (
-            <div className="px-10 pt-14 pb-32 md:px-14 lg:px-16 max-w-[820px]">
+            <div className="mx-auto px-10 pt-14 pb-32 md:px-14 lg:px-16 max-w-[1180px]">
               <RenderBlocks blocks={post.layout!} />
             </div>
           )}
