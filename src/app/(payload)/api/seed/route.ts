@@ -30,7 +30,7 @@ export async function POST() {
         { link: { type: 'custom', url: '/about', label: 'About', newTab: false } },
         { link: { type: 'custom', url: '/sell-your-piano', label: 'Sell Your Piano', newTab: false } },
         { link: { type: 'custom', url: '/contact', label: 'Contact', newTab: false } },
-        { link: { type: 'custom', url: '/blog', label: 'Blog', newTab: false } },
+        { link: { type: 'custom', url: '/posts', label: 'Journal', newTab: false } },
       ],
     },
   })

@@ -7,12 +7,6 @@ import type { Post } from '@/payload-types'
 import { Media } from '@/components/Media'
 import { formatAuthors } from '@/utilities/formatAuthors'
 
-const gold       = 'hsl(40, 72%, 52%)'
-const black      = '#111'
-const charcoal   = '#444'
-const muted      = '#777'
-const borderLine = 'hsl(36, 20%, 88%)'
-
 export const PostHero: React.FC<{ post: Post }> = ({ post }) => {
   const { categories, heroImage, populatedAuthors, publishedAt, title, meta } = post
 
@@ -28,185 +22,110 @@ export const PostHero: React.FC<{ post: Post }> = ({ post }) => {
       : null
 
   const excerpt = meta?.description ?? null
+  const hasImage = heroImage && typeof heroImage !== 'string'
 
   return (
-    <div style={{ borderBottom: `1px solid ${borderLine}` }}>
+    <div className="relative isolate flex min-h-[62vh] flex-col overflow-hidden bg-piano-burgundy md:min-h-[68vh]">
+      {/* Layer 1 — featured image (or solid burgundy when missing) */}
+      {hasImage && (
+        <Media
+          fill
+          priority
+          resource={heroImage}
+          imgClassName="object-cover"
+        />
+      )}
 
-      {/* ── Title + meta ───────────────────────────────────────── */}
-      <div style={{ padding: '3.5rem 4rem 3rem' }}>
+      {/* Layer 2 — gradient overlay for legibility */}
+      <div
+        aria-hidden
+        className="absolute inset-0 z-[1] bg-gradient-to-t from-black/85 via-black/35 to-transparent"
+      />
 
-        {/* Breadcrumb */}
-        <nav style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '2.5rem' }}>
+      {/* Layer 3 — content */}
+      <div className="relative z-10 flex flex-1 flex-col px-10 py-12 md:px-14 lg:px-16">
+        {/* Breadcrumb pinned to top */}
+        <nav className="flex items-center gap-2.5">
           <Link
             href="/posts"
-            style={{
-              fontFamily: '"Syne", sans-serif',
-              fontSize: '10px',
-              letterSpacing: '0.35em',
-              textTransform: 'uppercase',
-              color: muted,
-              textDecoration: 'none',
-            }}
+            className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-cream/70 no-underline transition-colors hover:text-piano-cream"
           >
             News &amp; Insights
           </Link>
           {firstCategory && (
             <>
-              <span style={{ color: borderLine }}>—</span>
-              <span
-                style={{
-                  fontFamily: '"Syne", sans-serif',
-                  fontSize: '10px',
-                  letterSpacing: '0.35em',
-                  textTransform: 'uppercase',
-                  color: gold,
-                }}
-              >
+              <span className="text-piano-cream/40">—</span>
+              <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold">
                 {firstCategory}
               </span>
             </>
           )}
         </nav>
 
-        {/* Gold rule */}
-        <div style={{ width: '2.5rem', height: '2px', backgroundColor: gold, marginBottom: '2rem' }} />
+        {/* Spacer — pushes title block to the bottom */}
+        <div className="flex-1 min-h-[6rem]" />
 
-        {/* Title */}
-        <h1
-          style={{
-            fontFamily: '"Cormorant Garamond", Georgia, serif',
-            fontWeight: 400,
-            fontSize: 'clamp(2.5rem, 4.5vw, 5rem)',
-            lineHeight: 1.08,
-            color: black,
-            letterSpacing: '-0.01em',
-            marginBottom: excerpt ? '1.5rem' : '0',
-            maxWidth: '20ch',
-          }}
-        >
-          {title}
-        </h1>
+        {/* Bottom block: gold rule + title + excerpt + meta */}
+        <div>
+          <div className="mb-5 h-[2px] w-10 bg-piano-gold" />
 
-        {/* Excerpt */}
-        {excerpt && (
-          <p
-            style={{
-              fontFamily: '"Cormorant Garamond", Georgia, serif',
-              fontSize: '1.3rem',
-              lineHeight: 1.7,
-              color: charcoal,
-              fontWeight: 300,
-              maxWidth: '48ch',
-              marginBottom: 0,
-            }}
-          >
-            {excerpt}
-          </p>
-        )}
+          <h1 className="font-cormorant font-light leading-[1.08] tracking-[-0.005em] text-piano-cream text-[clamp(1.75rem,3.2vw,2.875rem)]">
+            {title}
+          </h1>
 
-        {/* Meta row */}
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            gap: '2rem 3rem',
-            marginTop: '2rem',
-            paddingTop: '1.75rem',
-            borderTop: `1px solid ${borderLine}`,
-          }}
-        >
-          {hasAuthors && (
-            <div>
-              <p
-                style={{
-                  fontFamily: '"Syne", sans-serif',
-                  fontSize: '9px',
-                  letterSpacing: '0.35em',
-                  textTransform: 'uppercase',
-                  color: muted,
-                  marginBottom: '5px',
-                }}
-              >
-                Author
-              </p>
-              <p
-                style={{
-                  fontFamily: '"Cormorant Garamond", Georgia, serif',
-                  fontSize: '1.1rem',
-                  color: black,
-                  fontWeight: 400,
-                }}
-              >
-                {formatAuthors(populatedAuthors)}
-              </p>
-            </div>
+          {excerpt && (
+            <p className="mt-4 max-w-[60ch] font-cormorant text-lg font-light leading-[1.65] text-piano-cream/85">
+              {excerpt}
+            </p>
           )}
 
-          {publishedAt && (
-            <div>
-              <p
-                style={{
-                  fontFamily: '"Syne", sans-serif',
-                  fontSize: '9px',
-                  letterSpacing: '0.35em',
-                  textTransform: 'uppercase',
-                  color: muted,
-                  marginBottom: '5px',
-                }}
-              >
-                Published
-              </p>
-              <time
-                dateTime={publishedAt}
-                style={{
-                  fontFamily: '"Cormorant Garamond", Georgia, serif',
-                  fontSize: '1.1rem',
-                  color: black,
-                  fontWeight: 400,
-                }}
-              >
-                {formatDateTime(publishedAt)}
-              </time>
-            </div>
-          )}
-
-          {/* Category pills */}
-          {categories && categories.length > 0 && (
-            <div style={{ marginLeft: 'auto' }}>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                {categories.map((cat, i) => {
-                  if (typeof cat !== 'object' || cat === null) return null
-                  const c = cat as { title?: string | null }
-                  return (
-                    <span
-                      key={i}
-                      style={{
-                        fontFamily: '"Syne", sans-serif',
-                        fontSize: '9px',
-                        letterSpacing: '0.25em',
-                        textTransform: 'uppercase',
-                        padding: '5px 12px',
-                        backgroundColor: 'hsla(40, 72%, 52%, 0.12)',
-                        color: 'hsl(40, 55%, 36%)',
-                      }}
-                    >
-                      {c.title}
-                    </span>
-                  )
-                })}
+          <div className="mt-7 flex flex-wrap items-center gap-x-12 gap-y-5 border-t border-piano-cream/15 pt-5">
+            {hasAuthors && (
+              <div>
+                <p className="mb-1 font-display text-[9px] tracking-[0.35em] uppercase text-piano-cream/55">
+                  Author
+                </p>
+                <p className="font-cormorant text-base font-normal text-piano-cream">
+                  {formatAuthors(populatedAuthors)}
+                </p>
               </div>
-            </div>
-          )}
+            )}
+
+            {publishedAt && (
+              <div>
+                <p className="mb-1 font-display text-[9px] tracking-[0.35em] uppercase text-piano-cream/55">
+                  Published
+                </p>
+                <time
+                  dateTime={publishedAt}
+                  className="font-cormorant text-base font-normal text-piano-cream"
+                >
+                  {formatDateTime(publishedAt)}
+                </time>
+              </div>
+            )}
+
+            {categories && categories.length > 0 && (
+              <div className="ml-auto">
+                <div className="flex flex-wrap gap-2">
+                  {categories.map((cat, i) => {
+                    if (typeof cat !== 'object' || cat === null) return null
+                    const c = cat as { title?: string | null }
+                    return (
+                      <span
+                        key={i}
+                        className="border border-piano-gold/30 bg-piano-gold/20 px-3 py-1 font-display text-[9px] tracking-[0.25em] uppercase text-piano-cream"
+                      >
+                        {c.title}
+                      </span>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-
-      {/* ── Hero image ─────────────────────────────────────────── */}
-      {heroImage && typeof heroImage !== 'string' && (
-        <div style={{ position: 'relative', aspectRatio: '16 / 7', overflow: 'hidden' }}>
-          <Media fill priority imgClassName="object-cover" resource={heroImage} />
-        </div>
-      )}
     </div>
   )
 }

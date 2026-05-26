@@ -3,29 +3,16 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 
-const gold   = 'hsl(40, 72%, 52%)'
-const black  = '#111'
-const muted  = '#666'
-const line   = 'hsl(36, 20%, 86%)'
-
-const Label: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <p
-    style={{
-      fontFamily: '"Syne", sans-serif',
-      fontSize: '10px',
-      letterSpacing: '0.3em',
-      textTransform: 'uppercase',
-      color: muted,
-      marginBottom: '14px',
-    }}
-  >
-    {children}
-  </p>
-)
-
-const Divider = () => (
-  <div style={{ height: '1px', backgroundColor: line, margin: '1.75rem 0' }} />
-)
+/**
+ * Editorial sidebar that lives beside a post (right side in PostPageLayout).
+ *
+ * Layout contract: the parent slot in PostPageLayout is `group` with
+ * `w-16 hover:w-[280px] focus-within:w-[280px]` and `overflow-hidden`.
+ * Content here renders at a fixed 280px width; when the parent slot is
+ * collapsed (64px) only the LEFT 64px of content is visible. Every row
+ * starts with a 64px icon column so icons fill the rail cleanly; labels
+ * and secondary UI sit to the right and fade in on hover/focus.
+ */
 
 type Props = {
   title: string
@@ -33,21 +20,51 @@ type Props = {
   backLabel?: string
 }
 
+const RAIL = 64 // matches w-16 on the parent slot
+
+const fadeIn =
+  'opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100'
+
+const IconBox: React.FC<{ children: React.ReactNode; className?: string }> = ({
+  children,
+  className = '',
+}) => (
+  <span
+    className={'inline-flex shrink-0 items-center justify-center leading-none ' + className}
+    style={{ width: RAIL, height: 28 }}
+    aria-hidden
+  >
+    {children}
+  </span>
+)
+
+const SectionLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <p className={`mb-2 pl-1 font-display text-[10px] tracking-[0.3em] uppercase text-piano-stone ${fadeIn}`}>
+    {children}
+  </p>
+)
+
+const RowLabel: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <span className={`whitespace-nowrap ${fadeIn}`}>{children}</span>
+)
+
+const Divider = () => (
+  <div className={`my-5 ml-1 mr-3 h-px bg-piano-linen ${fadeIn}`} />
+)
+
 export const PostSidebar: React.FC<Props> = ({
   title,
   backHref = '/posts',
   backLabel = 'All Posts',
 }) => {
-  const [progress, setProgress]         = useState(0)
-  const [shareUrl, setShareUrl]         = useState('')
-  const [copied, setCopied]             = useState(false)
-  const [enquireHovered, setEnquireHovered] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [shareUrl, setShareUrl] = useState('')
+  const [copied, setCopied] = useState(false)
 
   useEffect(() => {
     setShareUrl(window.location.href)
-
     const onScroll = () => {
-      const el    = document.documentElement
+      const el = document.documentElement
       const total = el.scrollHeight - el.clientHeight
       setProgress(total > 0 ? Math.min(100, (el.scrollTop / total) * 100) : 0)
     }
@@ -75,64 +92,57 @@ export const PostSidebar: React.FC<Props> = ({
 
   return (
     <aside
-      className="sticky top-0 flex flex-col"
-      style={{
-        maxHeight: '100vh',
-        overflowY: 'auto',
-        padding: '2.5rem 2rem',
-        scrollbarWidth: 'none',
-      }}
+      className="sticky top-0 flex w-[280px] flex-col py-5 pr-3"
+      style={{ maxHeight: '100vh', overflowY: 'auto', scrollbarWidth: 'none' }}
     >
-      {/* ── Logo ────────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
-        <Link href="/">
-          <Image
-            src="/UsedSteinway.png"
-            alt="UsedSteinways"
-            width={80}
-            height={87}
-            style={{ objectFit: 'contain' }}
-            priority
-          />
-        </Link>
+      {/* ── Mark / Logo ────────────────────────────────────────────
+          Collapsed: small serif "S" monogram fits cleanly in the rail.
+          Expanded: the full Steinway wordmark image appears beside it
+          and fades in. */}
+      <div className="mb-5 flex items-center">
+        {/* Collapsed mark — text "S" fades out as the full logo fades in */}
+        <IconBox className="font-cormorant text-[26px] font-light text-piano-gold transition-opacity duration-200 group-hover:opacity-0 group-focus-within:opacity-0">
+          <Link href="/" aria-label="UsedSteinways home" className="text-piano-gold no-underline">
+            S
+          </Link>
+        </IconBox>
+        {/* Expanded mark — full ornate logo, positioned to overlap the rail
+            so the crossfade reads as a single brand element growing in. */}
+        <span className={`-ml-12 ${fadeIn}`}>
+          <Link href="/" aria-label="UsedSteinways home">
+            <Image
+              src="/UsedSteinway.png"
+              alt="UsedSteinways"
+              width={56}
+              height={61}
+              className="object-contain"
+              priority
+            />
+          </Link>
+        </span>
       </div>
 
-      {/* Gold rule */}
-      <div style={{ height: '1px', background: `linear-gradient(to right, ${gold}, transparent)`, marginBottom: '2rem' }} />
+      {/* Gold rule — only visible when expanded */}
+      <div
+        className={`ml-1 mr-3 mb-5 h-px ${fadeIn}`}
+        style={{ background: 'linear-gradient(to right, hsl(40 72% 52%), transparent)' }}
+      />
 
-      {/* ── Reading Progress ────────────────────────────────────── */}
-      <Label>Reading Progress</Label>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-        {/* Bar */}
-        <div
-          style={{
-            flex: 1,
-            height: '3px',
-            backgroundColor: line,
-            borderRadius: '2px',
-            overflow: 'hidden',
-          }}
-        >
-          <div
-            style={{
-              height: '100%',
-              width: `${progress}%`,
-              backgroundColor: gold,
-              borderRadius: '2px',
-              transition: 'width 0.12s ease-out',
-            }}
-          />
-        </div>
-        {/* Percentage */}
+      {/* ── Reading Progress ──────────────────────────────────────
+          Collapsed: the progress fills a thin vertical-ish rectangle
+          across the icon column. Expanded: full horizontal bar + %. */}
+      <SectionLabel>Reading</SectionLabel>
+      <div className="mb-1 flex items-center" style={{ height: 28 }}>
+        <IconBox>
+          <div className="h-[3px] w-8 overflow-hidden rounded-sm bg-piano-linen">
+            <div
+              className="h-full rounded-sm bg-piano-gold transition-[width] duration-150 ease-out"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </IconBox>
         <span
-          style={{
-            fontFamily: '"Syne", sans-serif',
-            fontSize: '11px',
-            fontWeight: 600,
-            color: gold,
-            minWidth: '34px',
-            textAlign: 'right',
-          }}
+          className={`min-w-[34px] text-left font-display text-[11px] font-semibold text-piano-gold ${fadeIn}`}
         >
           {Math.round(progress)}%
         </span>
@@ -141,154 +151,86 @@ export const PostSidebar: React.FC<Props> = ({
       <Divider />
 
       {/* ── Navigation ──────────────────────────────────────────── */}
-      <Label>Navigation</Label>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+      <SectionLabel>Navigation</SectionLabel>
+      <div className="flex flex-col gap-1">
         <Link
           href={backHref}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            fontFamily: '"Cormorant Garamond", Georgia, serif',
-            fontSize: '17px',
-            fontWeight: 400,
-            color: black,
-            textDecoration: 'none',
-            lineHeight: 1.2,
-          }}
+          className="flex items-center font-cormorant text-[15px] font-normal text-piano-black no-underline"
+          title={backLabel}
         >
-          <span style={{ color: gold }}>←</span>
-          <span>{backLabel}</span>
+          <IconBox className="text-piano-gold text-base">←</IconBox>
+          <RowLabel>{backLabel}</RowLabel>
         </Link>
 
         <Link
           href="/pianos"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            fontFamily: '"Cormorant Garamond", Georgia, serif',
-            fontSize: '17px',
-            fontWeight: 400,
-            color: black,
-            textDecoration: 'none',
-            lineHeight: 1.2,
-          }}
+          className="flex items-center font-cormorant text-[15px] font-normal text-piano-black no-underline"
+          title="Browse Pianos"
         >
-          <span>Browse Pianos</span>
-          <span style={{ color: gold }}>→</span>
+          <IconBox className="text-piano-gold text-base">♪</IconBox>
+          <RowLabel>Browse Pianos</RowLabel>
         </Link>
       </div>
 
       <Divider />
 
       {/* ── Share ───────────────────────────────────────────────── */}
-      <Label>Share</Label>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-
-        {/* Copy link */}
+      <SectionLabel>Share</SectionLabel>
+      <div className="flex flex-col gap-1">
         <button
           onClick={handleCopy}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-            fontFamily: '"Cormorant Garamond", Georgia, serif',
-            fontSize: '17px',
-            color: copied ? gold : black,
-            background: 'none',
-            border: 'none',
-            padding: 0,
-            cursor: 'pointer',
-            textAlign: 'left',
-            transition: 'color 0.2s',
-          }}
+          className={
+            'flex items-center border-0 bg-transparent p-0 text-left font-cormorant text-[15px] transition-colors cursor-pointer ' +
+            (copied ? 'text-piano-gold' : 'text-piano-black')
+          }
+          title="Copy link"
         >
-          <span style={{ fontSize: '14px' }}>{copied ? '✓' : '⧉'}</span>
-          <span>{copied ? 'Copied!' : 'Copy Link'}</span>
+          <IconBox className="text-[13px]">{copied ? '✓' : '⧉'}</IconBox>
+          <RowLabel>{copied ? 'Copied!' : 'Copy Link'}</RowLabel>
         </button>
 
-        {/* X / Twitter */}
         {shareUrl && (
           <a
             href={twitterHref}
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              fontFamily: '"Cormorant Garamond", Georgia, serif',
-              fontSize: '17px',
-              color: black,
-              textDecoration: 'none',
-            }}
+            className="flex items-center font-cormorant text-[15px] text-piano-black no-underline"
+            title="Share on X"
           >
-            <span style={{ fontFamily: 'sans-serif', fontSize: '13px', fontWeight: 700 }}>𝕏</span>
-            <span>Share on X</span>
+            <IconBox className="text-[13px] font-bold">𝕏</IconBox>
+            <RowLabel>Share on X</RowLabel>
           </a>
         )}
 
-        {/* Facebook */}
         {shareUrl && (
           <a
             href={facebookHref}
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px',
-              fontFamily: '"Cormorant Garamond", Georgia, serif',
-              fontSize: '17px',
-              color: black,
-              textDecoration: 'none',
-            }}
+            className="flex items-center font-cormorant text-[15px] text-piano-black no-underline"
+            title="Share on Facebook"
           >
-            <span style={{ fontFamily: 'sans-serif', fontSize: '13px', fontWeight: 700 }}>f</span>
-            <span>Share on Facebook</span>
+            <IconBox className="text-[13px] font-bold">f</IconBox>
+            <RowLabel>Share on Facebook</RowLabel>
           </a>
         )}
       </div>
 
       <Divider />
 
-      {/* ── Enquire CTA ─────────────────────────────────────────── */}
+      {/* ── Enquire CTA — pill only visible when expanded ───────── */}
       <Link
         href="/pianos"
-        onMouseEnter={() => setEnquireHovered(true)}
-        onMouseLeave={() => setEnquireHovered(false)}
-        style={{
-          display: 'block',
-          textAlign: 'center',
-          padding: '13px 16px',
-          border: `1px solid ${gold}`,
-          background: enquireHovered ? gold : 'transparent',
-          color: enquireHovered ? '#fff' : black,
-          fontFamily: '"Syne", sans-serif',
-          fontSize: '10px',
-          letterSpacing: '0.22em',
-          textTransform: 'uppercase',
-          textDecoration: 'none',
-          transition: 'background 0.2s, color 0.2s',
-        }}
+        className={`ml-1 mr-3 block border border-piano-gold px-4 py-3 text-center font-display text-[10px] tracking-[0.22em] uppercase text-piano-black no-underline transition-[opacity,background-color,color] duration-200 hover:bg-piano-gold hover:text-piano-cream ${fadeIn}`}
       >
         Inquire About a Piano
       </Link>
 
-      {/* Spacer */}
-      <div style={{ flex: 1, minHeight: '2rem' }} />
+      <div className="min-h-6 flex-1" />
 
-      {/* ── Tagline ─────────────────────────────────────────────── */}
+      {/* ── Tagline — only when expanded ─────────────────────────── */}
       <p
-        style={{
-          fontFamily: '"Cormorant Garamond", Georgia, serif',
-          fontSize: '13px',
-          fontStyle: 'italic',
-          color: '#999',
-          lineHeight: 1.9,
-          textAlign: 'center',
-        }}
+        className={`ml-1 mr-3 text-center font-cormorant text-[13px] italic leading-[1.7] text-piano-stone ${fadeIn}`}
       >
         Fine instruments.<br />Honest counsel.
       </p>

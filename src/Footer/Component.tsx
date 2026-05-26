@@ -122,7 +122,7 @@ export async function Footer() {
           <div className="flex items-center gap-5">
             {[
               { label: 'Contact', href: '/contact' },
-              { label: 'Blog', href: '/blog' },
+              { label: 'Journal', href: '/posts' },
               { label: 'Sell', href: '/sell-your-piano' },
             ].map((l) => (
               <Link

@@ -36,13 +36,16 @@ export const generateMeta = async (args: {
     (doc && 'heroImage' in doc ? resolveImageURL(doc.heroImage as Media | string | null) : null) ??
     getServerSideURL() + FALLBACK_OG_IMAGE
 
+  const canonicalUrl = url ?? (Array.isArray(doc?.slug) ? '/' + doc?.slug.join('/') : '/')
+
   return {
     description,
+    alternates: { canonical: canonicalUrl },
     openGraph: mergeOpenGraph({
       description: description || '',
       images: [{ url: ogImage }],
       title,
-      url: url ?? (Array.isArray(doc?.slug) ? doc?.slug.join('/') : '/'),
+      url: canonicalUrl,
     }),
     title,
   }

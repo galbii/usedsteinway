@@ -44,7 +44,7 @@ export default async function GuidePage({ params: paramsPromise }: Args) {
       <PageClient />
       <PayloadRedirects disableNotFound url={url} />
       {draft && <LivePreviewListener />}
-      <PostPageLayout post={post} backHref="/posts" backLabel="All Posts" />
+      <PostPageLayout post={post} backHref="/guides" backLabel="All Guides" />
     </article>
   )
 }

@@ -10,13 +10,6 @@ import PageClient from './page.client'
 export const dynamic = 'force-static'
 export const revalidate = 600
 
-const C = {
-  accent:     'hsl(40, 72%, 52%)',
-  text:       'hsl(350, 12%, 11%)',
-  muted:      'hsl(350, 5%, 46%)',
-  border:     'hsl(36, 18%, 89%)',
-}
-
 export default async function Page() {
   const payload = await getPayload({ config: configPromise })
 
@@ -34,31 +27,25 @@ export default async function Page() {
   })
 
   return (
-    <div style={{ backgroundColor: '#fff', minHeight: '100vh' }}>
+    <div className="min-h-screen bg-white">
       <PageClient />
 
       {/* ── Section header ─────────────────────────────────────── */}
-      <div
-        className="max-w-7xl mx-auto px-8"
-        style={{ paddingTop: '7rem', paddingBottom: '4rem' }}
-      >
+      <div className="max-w-7xl mx-auto px-8 pt-28 pb-16">
         <div className="flex items-start justify-between gap-8">
           <div>
             {/* Overline */}
             <div className="flex items-center gap-4 mb-7">
-              <div style={{ height: '1px', width: '2.5rem', backgroundColor: C.accent, flexShrink: 0 }} />
-              <span
-                className="font-display text-[9px] tracking-[0.5em] uppercase"
-                style={{ color: C.accent }}
-              >
+              <div className="h-px w-10 shrink-0 bg-piano-gold" />
+              <span className="font-display text-[9px] tracking-[0.5em] uppercase text-piano-gold">
                 From the Showroom
               </span>
             </div>
 
             {/* Headline */}
             <h1
-              className="font-cormorant font-light leading-[1.02]"
-              style={{ fontSize: 'clamp(3.2rem, 6vw, 6.5rem)', color: C.text }}
+              className="font-cormorant font-light leading-[1.02] text-piano-black"
+              style={{ fontSize: 'clamp(3.2rem, 6vw, 6.5rem)' }}
             >
               News &amp; Insights
             </h1>
@@ -66,20 +53,11 @@ export default async function Page() {
 
           {/* Article count */}
           {posts.totalDocs > 0 && (
-            <div
-              className="shrink-0 text-right hidden md:block"
-              style={{ paddingTop: '3.5rem' }}
-            >
-              <p
-                className="font-cormorant font-light"
-                style={{ fontSize: '3.5rem', color: 'hsl(36, 18%, 86%)', lineHeight: 1 }}
-              >
+            <div className="shrink-0 text-right hidden md:block pt-14">
+              <p className="font-cormorant font-light text-[3.5rem] leading-none text-piano-linen">
                 {posts.totalDocs}
               </p>
-              <p
-                className="font-display text-[9px] tracking-[0.38em] uppercase mt-1"
-                style={{ color: 'hsl(36, 18%, 74%)' }}
-              >
+              <p className="mt-1 font-display text-[9px] tracking-[0.38em] uppercase text-piano-stone">
                 {posts.totalDocs === 1 ? 'Article' : 'Articles'}
               </p>
             </div>
@@ -87,20 +65,17 @@ export default async function Page() {
         </div>
 
         {/* Full-width rule */}
-        <div style={{ height: '1px', backgroundColor: C.border, marginTop: '3rem' }} />
+        <div className="mt-12 h-px bg-piano-linen" />
       </div>
 
       {/* ── Archive grid ──────────────────────────────────────── */}
-      <div style={{ paddingBottom: '6rem' }}>
+      <div className="pb-24">
         <CollectionArchive posts={posts.docs} />
       </div>
 
       {/* ── Pagination ────────────────────────────────────────── */}
       {posts.totalPages > 1 && posts.page && (
-        <div
-          className="max-w-7xl mx-auto px-8 pb-24"
-          style={{ borderTop: `1px solid ${C.border}` }}
-        >
+        <div className="max-w-7xl mx-auto px-8 pb-24 border-t border-piano-linen">
           <Pagination page={posts.page} totalPages={posts.totalPages} />
         </div>
       )}
@@ -113,5 +88,6 @@ export function generateMetadata(): Metadata {
     title: 'News & Insights — UsedSteinways.com',
     description:
       "Expert guidance, market insights, and stories from Roger's Piano — New Hampshire's most discerning piano collection.",
+    alternates: { canonical: '/posts' },
   }
 }

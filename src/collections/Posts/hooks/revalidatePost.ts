@@ -21,7 +21,6 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = ({
     if (doc._status === 'published') {
       const paths = [
         `/posts/${doc.slug}`,
-        `/blog/${doc.slug}`,
         ...(doc.isGuide ? [`/guide/${doc.slug}`] : []),
       ]
 
@@ -38,7 +37,6 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = ({
     if (previousDoc._status === 'published' && doc._status !== 'published') {
       const oldPaths = [
         `/posts/${previousDoc.slug}`,
-        `/blog/${previousDoc.slug}`,
         ...(previousDoc.isGuide ? [`/guide/${previousDoc.slug}`] : []),
       ]
 
@@ -58,7 +56,6 @@ export const revalidateDelete: CollectionAfterDeleteHook<Post> = ({ doc, req: { 
   if (!context.disableRevalidate) {
     const paths = [
       `/posts/${doc?.slug}`,
-      `/blog/${doc?.slug}`,
       ...(doc?.isGuide ? [`/guide/${doc?.slug}`] : []),
     ]
 
