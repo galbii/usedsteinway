@@ -171,7 +171,7 @@ function DefaultCard({
             {piano.brand}
           </p>
 
-          {/* Model */}
+          {/* Title */}
           <h3
             className="font-cormorant font-light text-piano-black"
             style={{
@@ -181,10 +181,10 @@ function DefaultCard({
               marginBottom:  '0.3rem',
             }}
           >
-            {piano.model || piano.title}
+            {piano.title || piano.model}
           </h3>
 
-          {/* Title */}
+          {/* Model */}
           {piano.model && piano.title !== piano.model && (
             <p
               className="font-display line-clamp-1"
@@ -195,7 +195,7 @@ function DefaultCard({
                 marginBottom:  '0.45rem',
               }}
             >
-              {piano.title}
+              {piano.model}
             </p>
           )}
 
@@ -367,7 +367,7 @@ function FeaturedCard({
                 {piano.brand}
               </p>
 
-              {/* Model */}
+              {/* Title */}
               <h3
                 className="font-cormorant font-light text-piano-black"
                 style={{
@@ -377,7 +377,7 @@ function FeaturedCard({
                   marginBottom:  '1.3rem',
                 }}
               >
-                {piano.model || piano.title}
+                {piano.title || piano.model}
               </h3>
 
               {/* Spec row: condition · finish · location */}
