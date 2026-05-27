@@ -16,6 +16,9 @@ import { ShowroomGalleryBlock } from '@/blocks/ShowroomGallery/Component'
 import { PhilosophyBlock } from '@/blocks/Philosophy/Component'
 import { FeaturedPianosBlock } from '@/blocks/FeaturedPianos/Component'
 import { NewsSectionBlock } from '@/blocks/NewsSection/Component'
+import { LocationsBlock } from '@/blocks/Locations/Component'
+import { FinalCtaBlock } from '@/blocks/FinalCta/Component'
+import { SectionHeaderBlock } from '@/blocks/SectionHeader/Component'
 
 // Registry: blockType slug → React component.
 // To add a new block: create src/blocks/YourBlock/Component.tsx,
@@ -36,6 +39,9 @@ const blockComponents = {
   philosophy:     PhilosophyBlock,
   featuredPianos: FeaturedPianosBlock,
   newsSection:    NewsSectionBlock,
+  locations:      LocationsBlock,
+  finalCta:       FinalCtaBlock,
+  sectionHeader:  SectionHeaderBlock,
 }
 
 // Union of all block types that any collection's layout field may contain.

@@ -1,14 +1,49 @@
 import type { Metadata } from 'next'
+import { cache } from 'react'
+import { draftMode } from 'next/headers'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
 import { getServerSideURL } from '@/utilities/getURL'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import type { SiteSetting } from '@/payload-types'
+import { RenderBlocks } from '@/blocks/RenderBlocks'
+import { RenderHero } from '@/heros/RenderHero'
+import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { UsedSteinwaysHomePage } from './_components/UsedSteinwaysHomePage'
 import { queryFeaturedPianos, queryAvailablePianosCount } from '@/lib/payload/pianos'
 import { queryRecentPosts } from '@/lib/payload/posts'
 import { queryGalleryImages, queryShowroomPhotos, querySteinwayPhotos } from '@/lib/payload/media'
 import { queryBrands } from '@/lib/payload/brands'
 
+const queryHomePage = cache(async () => {
+  const { isEnabled: draft } = await draftMode()
+  const payload = await getPayload({ config: configPromise })
+  const result = await payload.find({
+    collection: 'pages',
+    draft,
+    limit: 1,
+    pagination: false,
+    overrideAccess: draft,
+    where: { slug: { equals: 'home' } },
+  })
+  return result.docs?.[0] ?? null
+})
+
 export default async function HomePage() {
+  const { isEnabled: draft } = await draftMode()
+  const page = await queryHomePage()
+
+  if (page) {
+    const { hero, layout } = page
+    return (
+      <article className="pt-16 pb-24">
+        {draft && <LivePreviewListener />}
+        <RenderHero {...hero} />
+        <RenderBlocks blocks={layout} />
+      </article>
+    )
+  }
+
   const [siteSettings, featured, recentPosts, showroomPhotos, steinwayPhotos, galleryImages, brands, availablePianosCount] = await Promise.all([
     getCachedGlobal('site-settings', 0)() as Promise<SiteSetting>,
     queryFeaturedPianos(),

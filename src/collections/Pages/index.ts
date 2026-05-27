@@ -14,6 +14,9 @@ import { ShowroomGallery } from '../../blocks/ShowroomGallery/config'
 import { Philosophy } from '../../blocks/Philosophy/config'
 import { FeaturedPianos } from '../../blocks/FeaturedPianos/config'
 import { NewsSection } from '../../blocks/NewsSection/config'
+import { Locations } from '../../blocks/Locations/config'
+import { FinalCta } from '../../blocks/FinalCta/config'
+import { SectionHeader } from '../../blocks/SectionHeader/config'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
@@ -92,6 +95,9 @@ export const Pages: CollectionConfig<'pages'> = {
               Philosophy,
               FeaturedPianos,
               NewsSection,
+              Locations,
+              FinalCta,
+              SectionHeader,
             ],
               required: true,
               admin: {
