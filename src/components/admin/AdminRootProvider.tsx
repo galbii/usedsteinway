@@ -282,6 +282,23 @@ function AdminUI({ children }: { children: React.ReactNode }) {
   const [pianoManagerOpen, setPianoManagerOpen] = useState(false)
   const [postManagerOpen, setPostManagerOpen] = useState(false)
 
+  // Bridge for the Lexical "Media Library" toolbar button. The toolbar item
+  // is configured via a plain callback (no hooks allowed), so we expose
+  // openModal as a window-level function while the provider is mounted.
+  // See src/fields/lexical/MediaLibraryFeature.client.tsx
+  useEffect(() => {
+    window.__orcaOpenMediaLibrary = (options) => {
+      openModal({
+        mode: options?.mode ?? 'select',
+        filterMimeType: options?.filterMimeType,
+        onSelect: options?.onSelect,
+      })
+    }
+    return () => {
+      delete window.__orcaOpenMediaLibrary
+    }
+  }, [openModal])
+
   // Global 'L' shortcut — open Piano Manager when idle (no modal open, not in a text field)
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
