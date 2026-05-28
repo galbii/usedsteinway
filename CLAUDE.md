@@ -24,6 +24,7 @@ bun run generate:importmap   # Regenerate import map after component changes
 - ✅ **ALWAYS** pass `req` in hooks for transaction safety
 - ✅ **ALWAYS** use `bunx tsc --noEmit` to type-check — never `bun run build`
 - ✅ **ALWAYS** use `<Media resource={...} />` from `@/components/Media` to render media fields
+- ✅ **ALWAYS** register new Pages `layout` blocks in `src/blocks/registry.ts` (single source for the admin + on-page editor)
 - ❌ **NEVER** duplicate UI components in page folders
 - ❌ **NEVER** use raw `type: 'upload'` fields (use field utilities)
 - ❌ **NEVER** skip null checks (strict TypeScript mode enabled)
@@ -63,7 +64,7 @@ src/
 ├── utilities/               # General utilities (cn, formatters, data fetching, React hooks)
 ├── hooks/                   # Payload-level hooks shared across collections (beforeChange, afterChange, etc.)
 ├── access/                  # Access control functions
-├── blocks/                  # Layout blocks (8 types: Archive, Banner, CTA, Code, Content, Form, MediaBlock, RelatedPosts)
+├── blocks/                  # Layout blocks — registry.ts is the editable set; RenderBlocks.tsx maps blockType → component
 ├── heros/                   # Hero variants (4 types: HighImpact, MediumImpact, LowImpact, PostHero)
 └── payload.config.ts        # Main Payload configuration
 ```
@@ -1045,6 +1046,46 @@ bun run generate:types
 ```bash
 bun run generate:importmap
 ```
+
+---
+
+## On-Page Block Editor
+
+Admins can edit a Page's `layout` blocks directly on the live frontend through a slide-in drawer (same pattern as the piano edit drawer). It is **schema-driven**: it reads the same block configs the Payload admin uses, so blocks appear in the editor automatically — no per-block editor code.
+
+### Where it lives
+
+| File | Role |
+|------|------|
+| `src/blocks/registry.ts` | **Single source of truth** — the ordered `editableBlocks` array. Consumed by both `collections/Pages/index.ts` (admin) and the on-page editor. |
+| `src/components/admin/onpage/editorSchema.ts` | Serializes block configs → plain-JSON form schema (server-safe, pure). Flattens `row`/`collapsible`/`tabs`/`ui`; emits `unsupported` for types it can't render. |
+| `src/components/admin/onpage/BlockFieldRenderer.tsx` | Recursive renderer — switches on field `kind`; arrays get add/remove/drag rows. |
+| `src/components/admin/onpage/PageEditDrawer.tsx` | Drawer shell: accordion of blocks (add/reorder/delete) + Publish. Loads `/api/pages/:id?depth=0`, PATCHes the full `layout`. |
+| `src/components/admin/onpage/PageEditButton.tsx` | Admin-gated floating button + `MediaManagerProvider`/`MediaManagerModal`. |
+| `MediaField.tsx` / `RichTextField.tsx` / `fields.tsx` | Field-level helpers (media picker, Lexical editor, shared `Section`/`Field`/`CheckField`). |
+
+Mounted in `app/(frontend)/[slug]/page.tsx` and `app/(frontend)/page.tsx`, **only for real DB pages** (not the seeded `homeStatic` fallback).
+
+### Adding a new block (full workflow)
+
+1. Create `src/blocks/YourBlock/config.ts` + `Component.tsx` (use field utilities from `@/lib/payload/fields/media` for media fields).
+2. Add the config to `editableBlocks` in `src/blocks/registry.ts` → it now appears in the Payload admin **and** the on-page editor.
+3. Add the `blockType → Component` entry in `src/blocks/RenderBlocks.tsx` so it renders on the frontend.
+
+If the block uses only supported field types, **no editor code is needed.**
+
+### Supported field types
+
+Auto-rendered: `text`, `textarea`, `number`, `checkbox`, `select`, `group`, `array`, `upload` (media), `richText`.
+
+Anything else (e.g. `relationship`, `date`) renders a graceful "edit in full admin" note. To make a new field type editable everywhere, add one `kind` case to **both** `editorSchema.ts` (serialize it) and `BlockFieldRenderer.tsx` (render it) — paid once, then free for every block.
+
+### v1 limitations (intentional — extend as needed)
+
+- Loads at `depth=0`, so existing images show a placeholder until reselected (keeps relation data safe on save).
+- `relationship` and conditional (`admin.condition`) fields are deferred to full admin.
+- The drawer publishes live (`_status: 'published'`) — no draft toggle yet.
+- The Hero tab (`hero` field) is not editable here, only `layout` blocks.
 
 ---
 

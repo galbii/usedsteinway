@@ -9,6 +9,9 @@ import type { SiteSetting } from '@/payload-types'
 import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { RenderHero } from '@/heros/RenderHero'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { PageEditButton } from '@/components/admin/onpage/PageEditButton'
+import { serializeBlocks } from '@/components/admin/onpage/editorSchema'
+import { editableBlocks } from '@/blocks/registry'
 import { UsedSteinwaysHomePage } from './_components/UsedSteinwaysHomePage'
 import { queryFeaturedPianos, queryAvailablePianosCount } from '@/lib/payload/pianos'
 import { queryRecentPosts } from '@/lib/payload/posts'
@@ -40,6 +43,7 @@ export default async function HomePage() {
         {draft && <LivePreviewListener />}
         <RenderHero {...hero} />
         <RenderBlocks blocks={layout} />
+        <PageEditButton pageId={page.id} blockSchemas={serializeBlocks(editableBlocks)} />
       </article>
     )
   }

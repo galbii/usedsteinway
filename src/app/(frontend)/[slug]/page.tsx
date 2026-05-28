@@ -12,6 +12,9 @@ import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { PageEditButton } from '@/components/admin/onpage/PageEditButton'
+import { serializeBlocks } from '@/components/admin/onpage/editorSchema'
+import { editableBlocks } from '@/blocks/registry'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -55,6 +58,9 @@ export default async function Page({ params: paramsPromise }: Args) {
     slug: decodedSlug,
   })
 
+  // Real DB pages are editable on-page; the seeded homeStatic fallback is not.
+  const pageId = (page as { id?: string } | null)?.id
+
   // Remove this code once your website is seeded
   if (!page && slug === 'home') {
     page = homeStatic
@@ -76,6 +82,9 @@ export default async function Page({ params: paramsPromise }: Args) {
 
       <RenderHero {...hero} />
       <RenderBlocks blocks={layout} />
+      {pageId && (
+        <PageEditButton pageId={pageId} blockSchemas={serializeBlocks(editableBlocks)} />
+      )}
     </article>
   )
 }

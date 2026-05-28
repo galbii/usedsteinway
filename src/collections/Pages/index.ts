@@ -2,21 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
-import { Archive } from '../../blocks/ArchiveBlock/config'
-import { CallToAction } from '../../blocks/CallToAction/config'
-import { Content } from '../../blocks/Content/config'
-import { FormBlock } from '../../blocks/Form/config'
-import { MediaBlock } from '../../blocks/MediaBlock/config'
-import { HeroHomepage } from '../../blocks/HeroHomepage/config'
-import { Ticker } from '../../blocks/Ticker/config'
-import { BrandRows } from '../../blocks/BrandRows/config'
-import { ShowroomGallery } from '../../blocks/ShowroomGallery/config'
-import { Philosophy } from '../../blocks/Philosophy/config'
-import { FeaturedPianos } from '../../blocks/FeaturedPianos/config'
-import { NewsSection } from '../../blocks/NewsSection/config'
-import { Locations } from '../../blocks/Locations/config'
-import { FinalCta } from '../../blocks/FinalCta/config'
-import { SectionHeader } from '../../blocks/SectionHeader/config'
+import { editableBlocks } from '../../blocks/registry'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
@@ -82,23 +68,7 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [
-              CallToAction,
-              Content,
-              MediaBlock,
-              Archive,
-              FormBlock,
-              HeroHomepage,
-              Ticker,
-              BrandRows,
-              ShowroomGallery,
-              Philosophy,
-              FeaturedPianos,
-              NewsSection,
-              Locations,
-              FinalCta,
-              SectionHeader,
-            ],
+              blocks: editableBlocks,
               required: true,
               admin: {
                 initCollapsed: true,
