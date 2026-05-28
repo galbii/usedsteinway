@@ -2,7 +2,7 @@ import React from 'react'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import type { Piano as PianoType } from '@/payload-types'
-import { FeaturedCarousel } from '@/components/piano/FeaturedCarousel'
+import { FeaturedProductsCarousel } from '@/components/piano/FeaturedProductsCarousel'
 import type { Piano } from '@/types/piano'
 
 type FeaturedPianosBlockProps = {
@@ -94,5 +94,5 @@ export const FeaturedPianosBlock: React.FC<FeaturedPianosBlockProps> = async ({
 
   if (displayPianos.length === 0) return null
 
-  return <FeaturedCarousel pianos={displayPianos} />
+  return <FeaturedProductsCarousel pianos={displayPianos} />
 }

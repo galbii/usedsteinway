@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { useAntiSpam, HoneypotField } from '@/lib/contact/useAntiSpam'
 import { cn } from '@/utilities/ui'
 import Link from 'next/link'
 
@@ -57,6 +58,7 @@ export function SellPianoForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [form, setForm] = useState<FormState>(initialForm)
+  const { honeypotRef, getSpamSignals } = useAntiSpam()
 
   const update = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -87,6 +89,7 @@ export function SellPianoForm() {
             location: form.location,
             askingPrice: form.askingPrice,
           },
+          ...getSpamSignals(),
         }),
       })
       if (!res.ok) {
@@ -145,6 +148,7 @@ export function SellPianoForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-10">
+      <HoneypotField inputRef={honeypotRef} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
         <div className="group">
           <label className={labelClass}>

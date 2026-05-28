@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
+import { useAntiSpam, HoneypotField } from '@/lib/contact/useAntiSpam'
 import { cn } from '@/utilities/ui'
 
 const TIME_SLOTS = [
@@ -35,6 +36,7 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle }: ScheduleView
   const [error, setError] = useState<string | null>(null)
   const [form, setForm] = useState(EMPTY_FORM)
   const firstInputRef = useRef<HTMLInputElement>(null)
+  const { honeypotRef, getSpamSignals } = useAntiSpam()
 
   // ESC to close
   useEffect(() => {
@@ -86,6 +88,7 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle }: ScheduleView
           preferredDate: form.preferredDate || undefined,
           preferredTime: form.preferredTime || undefined,
           source: 'schedule',
+          ...getSpamSignals(),
         }),
       })
 
@@ -198,6 +201,7 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle }: ScheduleView
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-7">
+              <HoneypotField inputRef={honeypotRef} />
 
               {/* Name + Email */}
               <div className="grid sm:grid-cols-2 gap-7">

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import type { Brand, Piano, PianoModel } from '@/types/piano'
-import { FeaturedCarousel } from './FeaturedCarousel'
+import { FeaturedProductsCarousel } from './FeaturedProductsCarousel'
 import { InquiryCTA } from './InquiryCTA'
 
 const C = {
@@ -74,8 +74,8 @@ export function BrandPageV2({ brand, pianos, models, modelUrlBase, hideHero = fa
       )}
 
       {/* ── Current Inventory ── */}
-      {!hideInventory && <section className="py-36 px-8" style={{ backgroundColor: C.bg }}>
-        <div className="max-w-7xl mx-auto">
+      {!hideInventory && <section className="py-36" style={{ backgroundColor: C.bg }}>
+        <div className="max-w-7xl mx-auto px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
             <div>
               <span
@@ -100,10 +100,12 @@ export function BrandPageV2({ brand, pianos, models, modelUrlBase, hideHero = fa
               </p>
             )}
           </div>
+        </div>
 
-          {pianos.length > 0 ? (
-            <FeaturedCarousel pianos={pianos} />
-          ) : (
+        {pianos.length > 0 ? (
+          <FeaturedProductsCarousel pianos={pianos} />
+        ) : (
+          <div className="max-w-7xl mx-auto px-8">
             <div
               className="py-20 text-center"
               style={{ border: `1px solid ${C.border}` }}
@@ -126,8 +128,8 @@ export function BrandPageV2({ brand, pianos, models, modelUrlBase, hideHero = fa
                 Join the Waiting List
               </Link>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </section>}
 
       <div className="border-t border-piano-linen" />

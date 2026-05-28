@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { cn } from '@/utilities/ui'
+import { useAntiSpam, HoneypotField } from '@/lib/contact/useAntiSpam'
 
 interface PianoInquiryFormProps {
   pianoTitle: string
@@ -14,6 +15,7 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, phone }: P
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
+  const { honeypotRef, getSpamSignals } = useAntiSpam()
 
   const telHref = phone ? `tel:+1${phone.replace(/\D/g, '')}` : undefined
 
@@ -33,6 +35,7 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, phone }: P
           inquiryType: 'buy',
           pianoTitle,
           message: form.message,
+          ...getSpamSignals(),
         }),
       })
 
@@ -90,6 +93,7 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, phone }: P
 
       {/* ── Left: Form ── */}
       <form onSubmit={handleSubmit} className="space-y-10">
+        <HoneypotField inputRef={honeypotRef} />
 
         {/* Piano context accent */}
         <div className="flex items-start gap-5">

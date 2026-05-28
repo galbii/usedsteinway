@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Media as MediaComponent } from '@/components/Media'
 import { getFeaturedPianos } from '@/lib/piano-data'
-import { FeaturedCarousel } from '@/components/piano/FeaturedCarousel'
+import { FeaturedProductsCarousel } from '@/components/piano/FeaturedProductsCarousel'
 import { ShowroomGallerySection } from './ShowroomGallerySection'
 import { LocationTabs } from '@/components/piano/LocationTabs'
 import { NewsCarousel } from '@/components/posts/NewsCarousel'
@@ -624,7 +624,7 @@ export function UsedSteinwaysHomePage({ locations = [], phone, featured: feature
       {/* ═══════════════════════════════════════════════
           FEATURED INSTRUMENTS — full-viewport hero
       ═══════════════════════════════════════════════ */}
-      <FeaturedCarousel pianos={featured} />
+      <FeaturedProductsCarousel pianos={featured} />
 
       {/* ═══════════════════════════════════════════════
           SHOWROOM GALLERY — Bento grid preview
@@ -697,29 +697,6 @@ export function UsedSteinwaysHomePage({ locations = [], phone, featured: feature
       </section>
 
       {/* ═══════════════════════════════════════════════
-          LOCATIONS
-      ═══════════════════════════════════════════════ */}
-      {locations.length > 0 && (
-        <section className="px-8 py-24" style={{ backgroundColor: C.bg }}>
-          <div className="max-w-7xl mx-auto">
-            <div className="sr flex items-center gap-5 mb-14">
-              <div className="h-px w-10 shrink-0" style={{ backgroundColor: C.accent }} />
-              <span
-                className="font-display text-[10px] tracking-[0.5em] uppercase shrink-0"
-                style={{ color: C.muted }}
-              >
-                Our Locations
-              </span>
-              <div className="flex-1 h-px" style={{ backgroundColor: C.border }} />
-            </div>
-            <div className="sr sr-d1">
-              <LocationTabs locations={locations} phone={phone} />
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ═══════════════════════════════════════════════
           FINAL CTA
       ═══════════════════════════════════════════════ */}
       <section className="py-36 px-8" style={{ backgroundColor: C.bg }}>
@@ -783,6 +760,29 @@ export function UsedSteinwaysHomePage({ locations = [], phone, featured: feature
           </p>
         </div>
       </section>
+
+      {/* ═══════════════════════════════════════════════
+          LOCATIONS
+      ═══════════════════════════════════════════════ */}
+      {locations.length > 0 && (
+        <section className="px-8 py-24" style={{ backgroundColor: C.bg }}>
+          <div className="max-w-7xl mx-auto">
+            <div className="sr flex items-center gap-5 mb-14">
+              <div className="h-px w-10 shrink-0" style={{ backgroundColor: C.accent }} />
+              <span
+                className="font-display text-[10px] tracking-[0.5em] uppercase shrink-0"
+                style={{ color: C.muted }}
+              >
+                Our Locations
+              </span>
+              <div className="flex-1 h-px" style={{ backgroundColor: C.border }} />
+            </div>
+            <div className="sr sr-d1">
+              <LocationTabs locations={locations} phone={phone} />
+            </div>
+          </div>
+        </section>
+      )}
 
     </div>
   )

@@ -1,43 +1,57 @@
 'use client'
 
+/**
+ * FeaturedProductsCarousel — two-column editorial carousel for instruments.
+ *
+ * Inspired by the homepage NewsCarousel: an image panel (instrument identity)
+ * and an ivory content panel (specs + asking price) that swap sides per slide,
+ * with a gold curtain wipe on transition and a persistent bottom nav strip.
+ * One piano shown at a time; the content panel leads with the asking price.
+ */
+
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import type { PostCard } from '@/lib/payload/posts'
+import type { Piano } from '@/types/piano'
 
 const C = {
   darkBg:       'hsl(350, 62%, 26%)',
   darkBgDeep:   'hsl(350, 62%, 14%)',
   accent:       'hsl(40, 72%, 52%)',
   accentBorder: 'hsla(40, 72%, 52%, 0.30)',
-  accentFaint:  'hsla(40, 72%, 52%, 0.08)',
   ivory:        'hsl(36, 22%, 96%)',
   ivoryFaded:   'rgba(245, 235, 215, 0.50)',
   ivoryDim:     'rgba(245, 235, 215, 0.40)',
   ivoryGhost:   'rgba(245, 235, 215, 0.18)',
-  ivoryStroke:  'rgba(245, 235, 215, 0.30)',
   borderLight:  'hsl(36, 18%, 88%)',
   text:         'hsl(350, 12%, 11%)',
   muted:        'hsl(350, 5%, 44%)',
   imageBg:      'hsl(36, 22%, 96%)',
 }
 
-const DURATION   = 7000
-const TRANS      = 760
+const DURATION   = 4000
+const TRANS      = 620
 const TRANS_HALF = TRANS / 2
 
+const CONDITION_LABEL: Record<string, string> = {
+  'new':               'New',
+  'used':              'Pre-Owned',
+  'reconditioned':     'Reconditioned',
+  'rebuilt':           'Rebuilt',
+  'rebuilt-partial':   'Partially Rebuilt',
+  'work-in-progress':  'In Progress',
+  'display':           'Display Model',
+}
+
+function conditionLabel(condition: string): string {
+  return CONDITION_LABEL[condition] ?? condition
+}
+
 interface Props {
-  posts: PostCard[]
+  pianos: Piano[]
 }
 
-function formatDate(iso: string | null): string {
-  if (!iso) return ''
-  return new Date(iso).toLocaleDateString('en-US', {
-    month: 'long', day: 'numeric', year: 'numeric',
-  })
-}
-
-export function NewsCarousel({ posts }: Props) {
+export function FeaturedProductsCarousel({ pianos }: Props) {
   const prefersReducedMotion =
     typeof window !== 'undefined'
       ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -75,12 +89,12 @@ export function NewsCarousel({ posts }: Props) {
   )
 
   const goNext = useCallback(
-    () => navigate((activeIndex + 1) % posts.length, 'next'),
-    [activeIndex, posts.length, navigate],
+    () => navigate((activeIndex + 1) % pianos.length, 'next'),
+    [activeIndex, pianos.length, navigate],
   )
   const goPrev = useCallback(
-    () => navigate((activeIndex - 1 + posts.length) % posts.length, 'prev'),
-    [activeIndex, posts.length, navigate],
+    () => navigate((activeIndex - 1 + pianos.length) % pianos.length, 'prev'),
+    [activeIndex, pianos.length, navigate],
   )
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -96,7 +110,7 @@ export function NewsCarousel({ posts }: Props) {
   }
 
   useEffect(() => {
-    if (isTransitioning || isPaused) {
+    if (isTransitioning || isPaused || pianos.length < 2) {
       if (rafRef.current)   cancelAnimationFrame(rafRef.current)
       if (timerRef.current) clearTimeout(timerRef.current)
       return
@@ -109,14 +123,14 @@ export function NewsCarousel({ posts }: Props) {
     }
     rafRef.current = requestAnimationFrame(tick)
     timerRef.current = setTimeout(
-      () => navigate((activeIndex + 1) % posts.length, 'next'),
+      () => navigate((activeIndex + 1) % pianos.length, 'next'),
       DURATION,
     )
     return () => {
       if (rafRef.current)   cancelAnimationFrame(rafRef.current)
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [activeIndex, isPaused, isTransitioning, posts.length, navigate])
+  }, [activeIndex, isPaused, isTransitioning, pianos.length, navigate])
 
   useEffect(() => () => {
     ;[rafRef, timerRef, swapRef, doneRef].forEach(r => {
@@ -137,35 +151,35 @@ export function NewsCarousel({ posts }: Props) {
       ? { transform: 'scaleX(0)', transition: 'none' }
       : { transform: 'scaleX(1)', transition: `transform 0.75s cubic-bezier(0.4,0,0.2,1) ${delay}s` }
 
-  if (!posts.length) {
-    return (
-      <section style={{ backgroundColor: C.ivory, minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '2rem', fontStyle: 'italic', color: C.muted }}>
-          No articles yet
-        </p>
-      </section>
-    )
-  }
+  if (!pianos.length) return null
 
-  const post = posts[activeIndex]!
+  const piano      = pianos[activeIndex]!
   const isReversed = activeIndex % 2 === 1
+  const imageUrl   = piano.stockImageUrl ?? piano.imageUrls[0] ?? null
+
+  const metaParts = [
+    piano.finish,
+    piano.specs['Length'],
+    piano.year ? String(piano.year) : '',
+    piano.location ?? '',
+  ].filter(Boolean) as string[]
 
   return (
     <>
       <style>{`
-        @keyframes nc2-curtain-next {
+        @keyframes fp-curtain-next {
           0%   { transform: translateX(-101%); }
           42%  { transform: translateX(0%);    }
           58%  { transform: translateX(0%);    }
           100% { transform: translateX(101%);  }
         }
-        @keyframes nc2-curtain-prev {
+        @keyframes fp-curtain-prev {
           0%   { transform: translateX(101%);  }
           42%  { transform: translateX(0%);    }
           58%  { transform: translateX(0%);    }
           100% { transform: translateX(-101%); }
         }
-        @keyframes nc2-kb-zoom {
+        @keyframes fp-kb-zoom {
           from { transform: scale(1);    }
           to   { transform: scale(1.06); }
         }
@@ -198,7 +212,7 @@ export function NewsCarousel({ posts }: Props) {
         {/* Two-column grid — panels alternate sides per slide */}
         <div className="relative lg:grid lg:grid-cols-[55%_45%] flex-1">
 
-          {/* ── IMAGE PANEL ──────────────────────────────── */}
+          {/* ── IMAGE PANEL — instrument identity ───────────── */}
           <div
             className="relative overflow-hidden"
             style={{
@@ -207,33 +221,52 @@ export function NewsCarousel({ posts }: Props) {
               order: isReversed ? 2 : 1,
             }}
           >
-            {/* Ken Burns image */}
-            <div
-              key={`nc2-kb-${activeIndex}`}
-              className="absolute inset-0"
-              style={{
-                animation: isTransitioning || prefersReducedMotion
-                  ? undefined
-                  : `nc2-kb-zoom ${DURATION + TRANS}ms linear forwards`,
-              }}
-            >
-              {post.imageUrl ? (
+            {/* Ken Burns image — or "Photos Coming Soon" placeholder */}
+            {imageUrl ? (
+              <div
+                key={`fp-kb-${activeIndex}`}
+                className="absolute inset-0"
+                style={{
+                  animation: isTransitioning || prefersReducedMotion
+                    ? undefined
+                    : `fp-kb-zoom ${DURATION + TRANS}ms linear forwards`,
+                }}
+              >
                 <Image
-                  src={post.imageUrl}
-                  alt={post.title}
+                  src={imageUrl}
+                  alt={piano.title}
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 55vw"
                   priority={activeIndex === 0}
                 />
-              ) : (
-                <div className="absolute inset-0 flex items-center justify-center" style={{ backgroundColor: C.imageBg }}>
-                  <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '5rem', fontStyle: 'italic', color: 'hsla(40, 72%, 52%, 0.18)' }}>
-                    UsedSteinways
+              </div>
+            ) : (
+              <div className="absolute inset-0" style={{ backgroundColor: 'hsl(25, 6%, 9%)' }}>
+                {/* Faint brand monogram watermark */}
+                <Image
+                  src="/UsedSteinway.png"
+                  alt=""
+                  fill
+                  className="object-contain p-12 sm:p-20 opacity-20"
+                  sizes="(max-width: 1024px) 100vw, 55vw"
+                />
+                {/* Camera icon + caption */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none">
+                  <svg width="34" height="34" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <rect x="2" y="5" width="20" height="15" rx="2" stroke="rgba(255,255,255,0.30)" strokeWidth="1.4" />
+                    <circle cx="12" cy="12.5" r="3.5" stroke="rgba(255,255,255,0.30)" strokeWidth="1.4" />
+                    <path d="M8 5l1.5-2h5L16 5" stroke="rgba(255,255,255,0.30)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <span
+                    className="font-display uppercase"
+                    style={{ fontSize: '11px', letterSpacing: '0.42em', color: 'rgba(255,255,255,0.40)' }}
+                  >
+                    Photos Coming Soon
                   </span>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Dark gradient base for heading overlay */}
             <div
@@ -241,7 +274,7 @@ export function NewsCarousel({ posts }: Props) {
               style={{ height: '60%', background: 'linear-gradient(to top, rgba(4,1,1,0.88) 0%, rgba(4,1,1,0.50) 40%, transparent 100%)' }}
             />
 
-            {/* Heading overlay — flips to the OUTER corner of the image panel */}
+            {/* Identity overlay — brand eyebrow + model headline, flips to outer corner */}
             <div
               className="absolute bottom-0 left-0 right-0 z-20 pointer-events-none flex flex-col"
               style={{
@@ -254,8 +287,8 @@ export function NewsCarousel({ posts }: Props) {
                 style={{ flexDirection: isReversed ? 'row-reverse' : 'row' }}
               >
                 <div className="h-px w-7 shrink-0" style={{ backgroundColor: C.accent }} />
-                <span style={{ fontFamily: 'var(--font-display)', fontSize: '9px', letterSpacing: '0.55em', textTransform: 'uppercase', color: C.ivoryFaded }}>
-                  From the Showroom
+                <span style={{ fontFamily: 'var(--font-display)', fontSize: '11px', letterSpacing: '0.42em', textTransform: 'uppercase', color: C.accent }}>
+                  {piano.brand || 'Available Now'}
                 </span>
               </div>
               <h2
@@ -269,7 +302,7 @@ export function NewsCarousel({ posts }: Props) {
                   textAlign: isReversed ? 'right' : 'left',
                 }}
               >
-                News &amp; Insights
+                {piano.model || piano.title}
               </h2>
             </div>
 
@@ -284,7 +317,7 @@ export function NewsCarousel({ posts }: Props) {
             <button onClick={goNext} aria-label="Next"     className="absolute right-0 top-0 bottom-0 w-2/5 z-40 lg:hidden" />
           </div>
 
-          {/* ── CONTENT PANEL — white/ivory base ─────────── */}
+          {/* ── CONTENT PANEL — ivory base ──────────────────── */}
           <div
             className="relative flex flex-col"
             style={{
@@ -295,7 +328,7 @@ export function NewsCarousel({ posts }: Props) {
               borderRight: isReversed  ? `1px solid ${C.borderLight}` : 'none',
             }}
           >
-            {/* Ghost numeral — decorative, flips to the OUTER corner */}
+            {/* Ghost numeral — decorative, flips to the outer corner */}
             <span
               className="absolute pointer-events-none select-none"
               style={{
@@ -311,16 +344,15 @@ export function NewsCarousel({ posts }: Props) {
               {String(activeIndex + 1).padStart(2, '0')}
             </span>
 
-            {/* ── ARTICLE CONTENT — fills the panel now ── */}
             <div className="relative z-10 flex-1 flex flex-col justify-center">
 
-              {/* Slide indicators + category */}
+              {/* Slide indicators + condition tag */}
               <div className="flex items-center gap-2 mb-8" style={{ ...reveal(0.06) }}>
-                {posts.map((_, i) => (
+                {pianos.map((_, i) => (
                   <button
                     key={i}
                     onClick={() => !isTransitioning && i !== activeIndex && navigate(i, i > activeIndex ? 'next' : 'prev')}
-                    aria-label={`Article ${i + 1}`}
+                    aria-label={`Instrument ${i + 1}`}
                     style={{
                       height: '2px',
                       width: i === activeIndex ? '2rem' : '0.75rem',
@@ -333,14 +365,14 @@ export function NewsCarousel({ posts }: Props) {
                     }}
                   />
                 ))}
-                {post.category && (
+                {piano.condition && (
                   <>
                     <div style={{ flex: 1 }} />
                     <span
                       className="font-display text-[9px] tracking-[0.42em] uppercase px-3 py-1.5"
                       style={{ border: `1px solid ${C.accentBorder}`, color: C.accent }}
                     >
-                      {post.category}
+                      {conditionLabel(piano.condition)}
                     </span>
                   </>
                 )}
@@ -349,116 +381,75 @@ export function NewsCarousel({ posts }: Props) {
               {/* Gold rule */}
               <div style={{ height: '1px', backgroundColor: C.accentBorder, transformOrigin: 'left', marginBottom: '1.75rem', ...lineReveal(0.10) }} />
 
-              {/* Title */}
-              <h3
-                style={{
-                  fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: 'clamp(2.6rem, 4vw, 4.8rem)',
-                  fontWeight: 400,
-                  lineHeight: 1.05,
-                  color: C.text,
-                  maxWidth: '22ch',
-                  marginBottom: '1.5rem',
-                  ...reveal(0.16),
-                }}
-              >
-                {post.title}
-              </h3>
+              {/* Spec meta line */}
+              {metaParts.length > 0 && (
+                <p
+                  className="font-display text-[11px] tracking-[0.34em] uppercase mb-6"
+                  style={{ color: C.muted, ...reveal(0.16) }}
+                >
+                  {metaParts.join('  ·  ')}
+                </p>
+              )}
 
-              {/* Excerpt */}
-              {post.excerpt && (
+              {/* Description */}
+              {piano.description && (
                 <p
                   style={{
                     fontSize: '17px',
                     lineHeight: 1.85,
                     color: C.muted,
-                    maxWidth: '34ch',
-                    marginBottom: '1.25rem',
-                    ...reveal(0.24),
+                    maxWidth: '38ch',
+                    marginBottom: '2rem',
+                    ...reveal(0.22),
                   }}
                 >
-                  {post.excerpt.length > 180 ? post.excerpt.slice(0, 180) + '…' : post.excerpt}
+                  {piano.description.length > 180 ? piano.description.slice(0, 180) + '…' : piano.description}
                 </p>
               )}
 
-              {/* Date */}
-              <p
-                className="font-display text-[11px] tracking-[0.40em] uppercase mb-10"
-                style={{ color: C.muted, ...reveal(0.28) }}
-              >
-                {formatDate(post.publishedAt)}
-              </p>
+              {/* Asking price — the focal point */}
+              <div style={{ marginBottom: '2.5rem', ...reveal(0.28) }}>
+                <p
+                  className="font-display text-[10px] tracking-[0.40em] uppercase mb-2"
+                  style={{ color: C.muted }}
+                >
+                  Asking Price
+                </p>
+                <span
+                  style={{
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontSize: 'clamp(3rem, 4.4vw, 4.8rem)',
+                    fontWeight: 300,
+                    lineHeight: 1,
+                    color: C.text,
+                  }}
+                >
+                  {piano.priceDisplay}
+                </span>
+              </div>
 
               {/* CTAs */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem', ...reveal(0.32) }}>
-                <Link
-                  href={`/posts/${post.slug}`}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.875rem',
-                    padding: '1.25rem 2.5rem',
-                    backgroundColor: C.darkBg,
-                    color: C.ivory,
-                    fontFamily: 'var(--font-display)',
-                    fontSize: '13px',
-                    letterSpacing: '0.38em',
-                    textTransform: 'uppercase',
-                    textDecoration: 'none',
-                    transition: 'opacity 200ms',
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.opacity = '0.82')}
-                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
-                >
-                  Read Article
-                  <svg width="14" height="14" viewBox="0 0 12 12" fill="none">
-                    <path d="M3 6h6M7 3.5L9.5 6 7 8.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </Link>
-                <Link
-                  href="/posts"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.875rem',
-                    padding: '1.25rem 2.5rem',
-                    backgroundColor: C.darkBg,
-                    color: C.ivory,
-                    fontFamily: 'var(--font-display)',
-                    fontSize: '13px',
-                    letterSpacing: '0.38em',
-                    textTransform: 'uppercase',
-                    textDecoration: 'none',
-                    transition: 'opacity 200ms',
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.opacity = '0.82')}
-                  onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
-                >
-                  All Articles
-                  <svg width="14" height="14" viewBox="0 0 12 12" fill="none">
-                    <path d="M3 6h6M7 3.5L9.5 6 7 8.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </Link>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem', ...reveal(0.34) }}>
+                <CtaLink href={`/pianos/${piano.slug}`} label="View Instrument" />
+                <CtaLink href="/pianos" label="Browse All" />
               </div>
             </div>
           </div>
 
-          {/* Gold curtain — section-level, sweeps across BOTH panels and masks the side swap */}
+          {/* Gold curtain — sweeps across both panels and masks the side swap */}
           {isTransitioning && (
             <div
-              key={`nc2-curtain-${transitionKey}`}
+              key={`fp-curtain-${transitionKey}`}
               className="absolute inset-0 z-30 pointer-events-none"
               style={{
                 backgroundColor: C.accent,
-                animation: `nc2-curtain-${direction} ${TRANS}ms cubic-bezier(0.4, 0, 0.2, 1) forwards`,
+                animation: `fp-curtain-${direction} ${TRANS}ms cubic-bezier(0.4, 0, 0.2, 1) forwards`,
               }}
             />
           )}
         </div>
 
-        {/* ── PERSISTENT BOTTOM NAV STRIP — arrows live here, never move ──────── */}
+        {/* ── PERSISTENT BOTTOM NAV STRIP ─────────────────── */}
         <div
           className="relative z-40 flex items-center shrink-0"
           style={{
@@ -477,7 +468,7 @@ export function NewsCarousel({ posts }: Props) {
               {String(activeIndex + 1).padStart(2, '0')}
             </span>
             <span style={{ fontSize: '10px', letterSpacing: '0.40em', color: C.ivoryDim }}>
-              / {String(posts.length).padStart(2, '0')}
+              / {String(pianos.length).padStart(2, '0')}
             </span>
           </div>
 
@@ -494,14 +485,44 @@ export function NewsCarousel({ posts }: Props) {
             />
           </div>
 
-          {/* Arrow buttons — anchored bottom-right, identical on every slide */}
+          {/* Arrow buttons */}
           <div className="flex items-center gap-1.5 shrink-0">
-            <NavBtn onClick={goPrev} aria-label="Previous article" direction="prev" />
-            <NavBtn onClick={goNext} aria-label="Next article"     direction="next" />
+            <NavBtn onClick={goPrev} aria-label="Previous instrument" direction="prev" />
+            <NavBtn onClick={goNext} aria-label="Next instrument"     direction="next" />
           </div>
         </div>
       </section>
     </>
+  )
+}
+
+function CtaLink({ href, label }: { href: string; label: string }) {
+  return (
+    <Link
+      href={href}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '0.875rem',
+        padding: '1.25rem 2.5rem',
+        backgroundColor: C.darkBg,
+        color: C.ivory,
+        fontFamily: 'var(--font-display)',
+        fontSize: '13px',
+        letterSpacing: '0.38em',
+        textTransform: 'uppercase',
+        textDecoration: 'none',
+        transition: 'opacity 200ms',
+      }}
+      onMouseEnter={e => (e.currentTarget.style.opacity = '0.82')}
+      onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
+    >
+      {label}
+      <svg width="14" height="14" viewBox="0 0 12 12" fill="none">
+        <path d="M3 6h6M7 3.5L9.5 6 7 8.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </Link>
   )
 }
 

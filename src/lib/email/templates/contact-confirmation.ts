@@ -1,5 +1,6 @@
 import { emailLayout, ctaButton, divider, escapeHtml } from './layout'
 import type { ContactFormData, SellPianoDetails } from './contact-admin'
+import { getServerSideURL } from '@/utilities/getURL'
 
 const styleLabels: Record<NonNullable<SellPianoDetails['style']>, string> = {
   grand: 'Grand',
@@ -185,7 +186,7 @@ export function confirmationEmailHtml(data: ContactFormData): string {
 
   const body = `
     ${isSchedule ? scheduleBody : isSell ? sellBody : inquiryBody}
-    ${ctaButton('https://www.usedsteinways.com/pianos', 'Browse the Collection')}`
+    ${ctaButton(`${getServerSideURL()}/pianos`, 'Browse the Collection')}`
 
   return emailLayout({
     subtitle: isSchedule ? 'Viewing Request Received' : 'Message Received',

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { cn } from '@/utilities/ui'
+import { useAntiSpam, HoneypotField } from '@/lib/contact/useAntiSpam'
 
 type Location = { id?: string | null; name: string }
 
@@ -53,6 +54,7 @@ export function ContactModal({
     message: initialMessage,
     inquiryType: initialInquiryType,
   })
+  const { honeypotRef, getSpamSignals } = useAntiSpam()
 
   useEffect(() => {
     if (!open) return
@@ -118,6 +120,7 @@ export function ContactModal({
           preferredTime: isSchedule && form.preferredTime ? form.preferredTime : undefined,
           pianoTitle: pianoTitle || undefined,
           message,
+          ...getSpamSignals(),
         }),
       })
 
@@ -271,6 +274,7 @@ export function ContactModal({
                   )}
 
                   <form onSubmit={handleSubmit} className="space-y-6">
+                    <HoneypotField inputRef={honeypotRef} />
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5" style={fieldAnim(2)}>
                       <div>
                         <label className="block font-display text-[10px] tracking-[0.35em] uppercase text-piano-stone mb-2">

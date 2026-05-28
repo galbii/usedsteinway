@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { BRANDS } from '@/lib/piano-data'
 import { InquiryCTA } from '@/components/piano/InquiryCTA'
-import { FeaturedCarousel } from '@/components/piano/FeaturedCarousel'
+import { FeaturedProductsCarousel } from '@/components/piano/FeaturedProductsCarousel'
 import { queryPianosByCategory } from '@/lib/payload/pianos'
 
 export const metadata: Metadata = {
@@ -23,7 +23,9 @@ const C = {
   ivory:       'hsl(36, 22%, 96%)',
 }
 
-const EUROPEAN_BRANDS = BRANDS.filter((b) => b.category === 'european')
+const EUROPEAN_BRANDS = BRANDS.filter((b) => b.category === 'european').sort((a, b) =>
+  a.slug === 'petrof' ? -1 : b.slug === 'petrof' ? 1 : 0,
+)
 
 const BRAND_HREF: Record<string, string> = {
   bosendorfer: '/pianos/bosendorfer',
@@ -80,8 +82,8 @@ export default async function EuropeanPianosPage() {
 
       {/* ── Current Inventory ────────────────────────── */}
       {pianos.length > 0 && (
-        <section className="py-20 px-8" style={{ backgroundColor: C.bg }}>
-          <div className="max-w-7xl mx-auto mb-12">
+        <section className="py-20" style={{ backgroundColor: C.bg }}>
+          <div className="max-w-7xl mx-auto px-8 mb-12">
             <span
               className="font-display text-[11px] tracking-[0.45em] uppercase block mb-5"
               style={{ color: C.accent }}
@@ -103,7 +105,7 @@ export default async function EuropeanPianosPage() {
               </p>
             </div>
           </div>
-          <FeaturedCarousel pianos={pianos} />
+          <FeaturedProductsCarousel pianos={pianos} />
         </section>
       )}
 
