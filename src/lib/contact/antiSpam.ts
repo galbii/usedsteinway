@@ -133,6 +133,7 @@ export function validateContactSubmission(body: Record<string, unknown>): Valida
     inquiryType: inquiryType as ContactFormData['inquiryType'],
     message,
     pianoTitle: asString(body.pianoTitle).trim().slice(0, MAX_SHORT) || undefined,
+    pianoSerial: asString(body.pianoSerial).trim().slice(0, MAX_SHORT) || undefined,
     budget: ALLOWED_BUDGET.includes(budget) ? budget : undefined,
     timeline: ALLOWED_TIMELINE.includes(timeline) ? timeline : undefined,
     preferredDate: asString(body.preferredDate).trim().slice(0, MAX_SHORT) || undefined,

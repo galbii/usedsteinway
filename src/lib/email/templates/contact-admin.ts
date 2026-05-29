@@ -20,6 +20,7 @@ export type ContactFormData = {
   inquiryType: 'buy' | 'sell' | 'general'
   message: string
   pianoTitle?: string
+  pianoSerial?: string
   budget?: string
   timeline?: string
   preferredDate?: string
@@ -130,6 +131,7 @@ export function adminEmailHtml(data: ContactFormData): string {
   const scheduleRows: Array<[string, string] | null> = [
     preferredDateTime ? ['Preferred Viewing', `<strong>${escapeHtml(preferredDateTime)}</strong>`] : null,
     data.pianoTitle ? ['Piano', escapeHtml(data.pianoTitle)] : null,
+    data.pianoSerial ? ['Serial Number', escapeHtml(data.pianoSerial)] : null,
     ['Name', escapeHtml(data.name)],
     ['Email', `<a href="mailto:${escapeHtml(data.email)}">${escapeHtml(data.email)}</a>`],
     data.phone ? ['Phone', escapeHtml(data.phone)] : null,
@@ -138,6 +140,7 @@ export function adminEmailHtml(data: ContactFormData): string {
   const inquiryRows: Array<[string, string] | null> = [
     ['Inquiry Type', inquiryLabels[data.inquiryType]],
     data.pianoTitle ? ['Piano', escapeHtml(data.pianoTitle)] : null,
+    data.pianoSerial ? ['Serial Number', escapeHtml(data.pianoSerial)] : null,
     ['Name', escapeHtml(data.name)],
     ['Email', `<a href="mailto:${escapeHtml(data.email)}">${escapeHtml(data.email)}</a>`],
     data.phone ? ['Phone', escapeHtml(data.phone)] : null,

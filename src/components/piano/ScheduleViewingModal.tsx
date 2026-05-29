@@ -26,11 +26,12 @@ interface ScheduleViewingModalProps {
   onClose: () => void
   pianoTitle: string
   pianoSlug: string
+  pianoSerial?: string | null
 }
 
 const EMPTY_FORM = { name: '', email: '', phone: '', preferredDate: '', preferredTime: '', message: '' }
 
-export function ScheduleViewingModal({ open, onClose, pianoTitle }: ScheduleViewingModalProps) {
+export function ScheduleViewingModal({ open, onClose, pianoTitle, pianoSerial }: ScheduleViewingModalProps) {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -84,6 +85,7 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle }: ScheduleView
           phone: form.phone || undefined,
           inquiryType: 'buy',
           pianoTitle,
+          pianoSerial: pianoSerial || undefined,
           message: form.message,
           preferredDate: form.preferredDate || undefined,
           preferredTime: form.preferredTime || undefined,

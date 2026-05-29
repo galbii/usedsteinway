@@ -7,10 +7,11 @@ import { useAntiSpam, HoneypotField } from '@/lib/contact/useAntiSpam'
 interface PianoInquiryFormProps {
   pianoTitle: string
   pianoSlug: string
+  pianoSerial?: string | null
   phone?: string | null
 }
 
-export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, phone }: PianoInquiryFormProps) {
+export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, pianoSerial, phone }: PianoInquiryFormProps) {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -34,6 +35,7 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, phone }: P
           phone: form.phone || undefined,
           inquiryType: 'buy',
           pianoTitle,
+          pianoSerial: pianoSerial || undefined,
           message: form.message,
           ...getSpamSignals(),
         }),

@@ -465,7 +465,7 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
               Ask Us About This Piano
             </h2>
           </div>
-          <PianoInquiryForm pianoTitle={piano.title} pianoSlug={piano.slug} phone={phone} />
+          <PianoInquiryForm pianoTitle={piano.title} pianoSlug={piano.slug} pianoSerial={piano.serialNumber} phone={phone} />
         </div>
       </section>
 
@@ -495,6 +495,7 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
         onClose={() => setScheduleOpen(false)}
         pianoTitle={piano.title}
         pianoSlug={piano.slug}
+        pianoSerial={piano.serialNumber}
       />
 
     </main>
