@@ -3,15 +3,19 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { cn } from '@/utilities/ui'
 import { useAntiSpam, HoneypotField } from '@/lib/contact/useAntiSpam'
+import { ContactModal } from '@/components/contact/ContactModal'
+
+type InquiryFormLocation = { id?: string | null; name: string }
 
 interface PianoInquiryFormProps {
   pianoTitle: string
   pianoSlug: string
   pianoSerial?: string | null
   phone?: string | null
+  locations?: InquiryFormLocation[]
 }
 
-export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, pianoSerial, phone }: PianoInquiryFormProps) {
+export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, pianoSerial, phone, locations = [] }: PianoInquiryFormProps) {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -76,15 +80,14 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, pianoSeria
         </h3>
 
         <p className="text-piano-silver text-lg leading-relaxed max-w-sm mb-12">
-          You&apos;ll receive a confirmation shortly. Every inquiry is reviewed personally and
-          you&apos;ll hear back within one business day.
+          You&apos;ll receive a confirmation shortly. Every inquiry is reviewed personally.
         </p>
 
         <Link
-          href="/contact"
+          href="/pianos"
           className="inline-block border border-piano-gold/40 text-piano-gold px-10 py-5 font-display text-sm tracking-[0.4em] uppercase hover:border-piano-gold hover:bg-piano-gold/5 transition-all duration-300"
         >
-          Visit the Full Contact Page
+          Back to Inventory
         </Link>
       </div>
     )
@@ -212,7 +215,7 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, pianoSeria
       </form>
 
       {/* ── Right: Sidebar ── */}
-      <div className="lg:border-l lg:border-piano-gold/10 lg:pl-16 space-y-12 pt-2">
+      <div className="lg:border-l lg:border-piano-gold/10 lg:pl-16 space-y-8 pt-2">
 
         {/* Phone */}
         {(phone ?? telHref) && (
@@ -221,7 +224,7 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, pianoSeria
               Not sure this is the right piano for you?
             </p>
             <p className="font-display text-[10px] tracking-[0.4em] uppercase text-piano-silver mb-4">
-              Call Directly
+              Call or Text
             </p>
             <a
               href={telHref ?? '#'}
@@ -233,16 +236,19 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, pianoSeria
             <p className="text-piano-silver/70 text-base leading-relaxed mt-3">
               to have a personal conversation about your piano search.
             </p>
-            <p className="text-piano-silver/50 text-sm font-display tracking-[0.35em] uppercase mt-2">
-              By appointment. Walk-in welcome but not guaranteed.
-            </p>
           </div>
         )}
 
-        {/* Reassurance */}
-        <p className="text-piano-silver/70 text-base leading-relaxed border-t border-piano-gold/10 pt-8">
-          Every inquiry is read by Roger personally. No sales teams, no automated responses.
-        </p>
+        {/* Book Appointment */}
+        <div className="border-t border-piano-gold/10 pt-8">
+          <ContactModal
+            variant="schedule"
+            locations={locations}
+            pianoTitle={pianoTitle}
+            triggerLabel="Book an Appointment"
+            triggerClassName="block w-full text-center border border-piano-gold text-piano-gold py-3.5 font-display text-[11px] tracking-[0.4em] uppercase hover:bg-piano-gold hover:text-piano-burgundy transition-colors"
+          />
+        </div>
       </div>
     </div>
   )

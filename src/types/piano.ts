@@ -10,7 +10,7 @@ export interface Piano {
   serialNumber?: string
   price: number | null
   priceDisplay: string
-  priceOnCall?: boolean
+  showPrice?: boolean
   /** Optional: original new retail price — shown on detail page for value contrast */
   retailPrice?: number
   condition: 'new' | 'used' | 'reconditioned' | 'rebuilt' | 'rebuilt-partial' | 'work-in-progress' | 'display' | 'Excellent' | 'Very Good' | 'Good' | 'Fair'

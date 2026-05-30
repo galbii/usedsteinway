@@ -1143,7 +1143,7 @@ export interface Piano {
     pedals?: number | null;
   };
   /**
-   * e.g. 89500. Leave blank if "Price on Call" is checked.
+   * e.g. 89500. Only shown publicly when "Show Price" is checked.
    */
   price?: number | null;
   /**
@@ -1224,9 +1224,9 @@ export interface Piano {
    */
   priority?: number | null;
   /**
-   * Check if price should display as "Call for Pricing" instead of a number.
+   * When off (default), the public listing shows "Call for Pricing" instead of the price.
    */
-  priceOnCall?: boolean | null;
+  showPrice?: boolean | null;
   publishedAt?: string | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -2413,7 +2413,7 @@ export interface PianosSelect<T extends boolean = true> {
   isAvailable?: T;
   isFeatured?: T;
   priority?: T;
-  priceOnCall?: T;
+  showPrice?: T;
   publishedAt?: T;
   generateSlug?: T;
   slug?: T;

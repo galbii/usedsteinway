@@ -30,7 +30,7 @@ type EditForm = {
   finish: string
   price: string
   retailPrice: string
-  priceOnCall: boolean
+  showPrice: boolean
   condition: string
   location: string
   isAvailable: boolean
@@ -64,7 +64,7 @@ export function PianoEditDrawer({ piano, open, onClose }: PianoEditDrawerProps) 
     finish: piano.finish,
     price: piano.price != null ? String(piano.price) : '',
     retailPrice: piano.retailPrice != null ? String(piano.retailPrice) : '',
-    priceOnCall: piano.priceOnCall ?? false,
+    showPrice: piano.showPrice ?? false,
     condition: piano.condition,
     location: piano.location ?? '',
     isAvailable: piano.isAvailable,
@@ -88,8 +88,8 @@ export function PianoEditDrawer({ piano, open, onClose }: PianoEditDrawerProps) 
       year: form.year ? Number(form.year) : undefined,
       serialNumber: form.serialNumber || undefined,
       finish: form.finish || undefined,
-      priceOnCall: form.priceOnCall,
-      price: form.priceOnCall ? undefined : (form.price ? Number(form.price) : undefined),
+      showPrice: form.showPrice,
+      price: form.showPrice ? (form.price ? Number(form.price) : undefined) : undefined,
       retailPrice: form.retailPrice ? Number(form.retailPrice) : undefined,
       condition: form.condition,
       location: form.location || undefined,
@@ -258,12 +258,12 @@ export function PianoEditDrawer({ piano, open, onClose }: PianoEditDrawerProps) 
 
           <Section label="Pricing">
             <CheckField
-              id="priceOnCall"
-              label="Price on Call"
-              checked={form.priceOnCall}
-              onChange={(v) => set('priceOnCall', v)}
+              id="showPrice"
+              label="Show Price"
+              checked={form.showPrice}
+              onChange={(v) => set('showPrice', v)}
             />
-            {!form.priceOnCall && (
+            {form.showPrice && (
               <div className="grid grid-cols-2 gap-3">
                 <Field label="Asking Price ($)">
                   <Input

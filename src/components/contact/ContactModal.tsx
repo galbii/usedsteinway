@@ -36,7 +36,8 @@ export function ContactModal({
   const [error, setError] = useState<string | null>(null)
 
   const isSchedule = variant === 'schedule'
-  const initialInquiryType = defaultInquiryType ?? (isSchedule ? 'general' : 'buy')
+  const initialInquiryType: '' | 'buy' | 'sell' | 'general' =
+    defaultInquiryType ?? (isSchedule ? 'general' : '')
 
   const initialMessage = pianoTitle
     ? `I'm interested in the ${pianoTitle}.\n\n`
@@ -147,7 +148,7 @@ export function ContactModal({
         : 'Tell us what you’re looking for'
   const subhead = isSchedule
     ? "Tell us when you'd like to come by. We'll confirm the location, date, and time."
-    : "Share a few details and we'll be in touch within one business day."
+    : "Share a few details and we'll be in touch. Thank you."
 
   const label = triggerLabel ?? (isSchedule ? 'Send a Message' : 'Get in Touch')
   const fallbackTriggerClass =
@@ -231,7 +232,7 @@ export function ContactModal({
                   <p className="text-piano-stone text-base leading-relaxed mb-8">
                     {isSchedule
                       ? "We'll be in touch shortly to confirm the location, date, and time of your visit. A confirmation has been sent to your email."
-                      : "We'll be in touch within one business day. A confirmation has been sent to your email."}
+                      : "We'll be in touch. A confirmation has been sent to your email."}
                   </p>
                   <button
                     type="button"
@@ -339,15 +340,19 @@ export function ContactModal({
                             I&apos;m interested in
                           </label>
                           <select
+                            required
                             value={form.inquiryType}
                             onChange={(e) =>
                               setForm({
                                 ...form,
-                                inquiryType: e.target.value as 'buy' | 'sell' | 'general',
+                                inquiryType: e.target.value as '' | 'buy' | 'sell' | 'general',
                               })
                             }
                             className="w-full bg-transparent border-b border-piano-stone/30 text-piano-black text-base py-2 focus:outline-none focus:border-piano-burgundy transition-colors appearance-none cursor-pointer"
                           >
+                            <option value="" disabled>
+                              Please select…
+                            </option>
                             <option value="buy">Buying a piano</option>
                             <option value="sell">Selling a piano</option>
                             <option value="general">General inquiry</option>

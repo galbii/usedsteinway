@@ -62,6 +62,14 @@ export default async function VisitPage() {
               <div className="bg-piano-cream border border-piano-linen p-6">
                 <p className="text-piano-stone text-base leading-relaxed">{displayHours}</p>
               </div>
+              <div className="mt-5">
+                <ContactModal
+                  variant="schedule"
+                  locations={locations}
+                  triggerLabel="Book Appointment"
+                  triggerClassName="block w-full text-center bg-piano-black text-piano-cream py-3.5 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-burgundy transition-colors"
+                />
+              </div>
             </div>
 
             {/* How to Maximize Your Visit */}

@@ -41,7 +41,11 @@ function adaptPayloadPiano(doc: PianoType): Piano {
     model: doc.model ?? '',
     year: doc.year ?? 0,
     price: typeof doc.price === 'number' ? doc.price : null,
-    priceDisplay: doc.price ? `$${doc.price.toLocaleString()}` : 'Call for Price',
+    priceDisplay:
+      doc.showPrice && typeof doc.price === 'number'
+        ? `$${doc.price.toLocaleString()}`
+        : 'Call for Pricing',
+    showPrice: doc.showPrice ?? false,
     condition: (doc.condition as Piano['condition']) ?? 'used',
     finish: doc.finish ?? '',
     location: doc.location ?? null,

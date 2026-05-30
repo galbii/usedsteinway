@@ -10,9 +10,9 @@ import { parseSizeFt } from '@/lib/pianoFilters'
 
 // ─── Adapter ─────────────────────────────────────────────────────────────────
 
-function formatPrice(price: number | null | undefined, priceOnCall?: boolean | null): string {
-  if (priceOnCall) return 'Call for Pricing'
-  if (!price) return 'Contact for Price'
+function formatPrice(price: number | null | undefined, showPrice?: boolean | null): string {
+  if (!showPrice) return 'Call for Pricing'
+  if (!price) return 'Call for Pricing'
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -68,8 +68,8 @@ export function adaptPayloadPiano(doc: PayloadPiano): Piano {
     year: doc.year ?? 0,
     serialNumber: doc.serialNumber ?? undefined,
     price: doc.price ?? null,
-    priceDisplay: formatPrice(doc.price, doc.priceOnCall),
-    priceOnCall: doc.priceOnCall ?? false,
+    priceDisplay: formatPrice(doc.price, doc.showPrice),
+    showPrice: doc.showPrice ?? false,
     retailPrice: doc.retailPrice ?? undefined,
     condition: doc.condition as Piano['condition'],
     finish: doc.finish ?? '',
