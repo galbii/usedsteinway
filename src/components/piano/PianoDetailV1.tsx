@@ -102,7 +102,7 @@ export async function PianoDetailV1({ piano }: PianoDetailV1Props) {
                 href={telHref}
                 className="w-full text-center border border-gray-300 text-gray-700 py-3 font-display text-sm tracking-widest uppercase hover:border-gray-900 transition-colors"
               >
-                Call {rawPhone}
+                Call/Text {rawPhone}
               </a>
             </div>
           </div>

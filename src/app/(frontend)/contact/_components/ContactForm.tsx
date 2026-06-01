@@ -24,7 +24,8 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [form, setForm] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
     message: defaultPiano ? `I'm interested in the ${defaultPiano}.\n\n` : '',
@@ -151,34 +152,49 @@ export function ContactForm({ defaultPiano }: ContactFormProps) {
         )}
       </div>
 
-      {/* Name + Email */}
+      {/* First + Last Name */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
         <div className="group">
           <label className="block font-display text-xs tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
-            Full Name <span className="text-piano-gold">*</span>
+            First Name <span className="text-piano-gold">*</span>
           </label>
           <input
             type="text"
             required
-            value={form.name}
-            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            value={form.firstName}
+            onChange={(e) => setForm({ ...form, firstName: e.target.value })}
             className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-3 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 placeholder:text-piano-stone/40"
-            placeholder="Your name"
+            placeholder="First name"
           />
         </div>
         <div className="group">
           <label className="block font-display text-xs tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
-            Email Address <span className="text-piano-gold">*</span>
+            Last Name <span className="text-piano-gold">*</span>
           </label>
           <input
-            type="email"
+            type="text"
             required
-            value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            value={form.lastName}
+            onChange={(e) => setForm({ ...form, lastName: e.target.value })}
             className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-3 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 placeholder:text-piano-stone/40"
-            placeholder="you@email.com"
+            placeholder="Last name"
           />
         </div>
+      </div>
+
+      {/* Email */}
+      <div className="group">
+        <label className="block font-display text-xs tracking-[0.4em] uppercase text-piano-stone mb-3 group-focus-within:text-piano-gold transition-colors duration-200">
+          Email Address <span className="text-piano-gold">*</span>
+        </label>
+        <input
+          type="email"
+          required
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-3 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 placeholder:text-piano-stone/40"
+          placeholder="you@email.com"
+        />
       </div>
 
       {/* Phone + Conditional budget */}

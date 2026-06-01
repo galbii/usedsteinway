@@ -47,22 +47,21 @@ export default function FinancingPage() {
               {
                 number: '01',
                 title: 'Direct Purchase',
-                desc: 'Full payment at time of sale. We accept wire transfer, certified check, and cash. For buyers paying in full, we occasionally have flexibility on pricing — ask us directly.',
-                detail: 'Simplest process. No interest. Maximum negotiating position.',
+                desc: 'Full payment at time of sale. We accept wire transfer, cash, and credit cards.',
+                detail: 'Simplest process. No interest. Delivery generally within 1–2 weeks for in-stock pianos.',
               },
               {
                 number: '02',
                 title: 'Music Lending Programs',
-                desc: 'We work with lending institutions that specialize in musical instruments, including Berkshire Hills Music Academy partners. These lenders understand the asset class and offer favorable terms compared to generic personal loans.',
+                desc: 'We work with lending institutions that specialize in musical instruments. These lenders understand piano ownership and offer favorable terms compared to generic personal loans.',
                 detail:
-                  'Typical terms: 5–10 years, rates from 6.9% APR. Instrument serves as collateral. Pre-qualification available before you select a piano.',
+                  'Credit check is required. Terms typically range from 3 months up to 12 years.',
               },
               {
                 number: '03',
                 title: 'Private Payment Plans',
-                desc: 'For established clients and select transactions, Roger can arrange structured payment terms directly. These are negotiated individually based on instrument value and buyer relationship.',
-                detail:
-                  'Available on instruments $40,000+. Requires initial deposit. Flexible structure. Ask during your inquiry.',
+                desc: 'You may arrange financing with your preferred financial institution.',
+                detail: undefined,
               },
             ].map(({ number, title, desc, detail }) => (
               <div
@@ -74,9 +73,11 @@ export default function FinancingPage() {
                   {title}
                 </h3>
                 <p className="text-piano-stone text-base leading-relaxed mb-5">{desc}</p>
-                <p className="text-piano-gold text-xs font-display tracking-wide border-t border-piano-linen pt-4 leading-relaxed">
-                  {detail}
-                </p>
+                {detail && (
+                  <p className="text-piano-gold text-xs font-display tracking-wide border-t border-piano-linen pt-4 leading-relaxed">
+                    {detail}
+                  </p>
+                )}
               </div>
             ))}
           </div>

@@ -29,7 +29,7 @@ interface ScheduleViewingModalProps {
   pianoSerial?: string | null
 }
 
-const EMPTY_FORM = { name: '', email: '', phone: '', preferredDate: '', preferredTime: '', message: '' }
+const EMPTY_FORM = { firstName: '', lastName: '', email: '', phone: '', preferredDate: '', preferredTime: '', message: '' }
 
 export function ScheduleViewingModal({ open, onClose, pianoTitle, pianoSerial }: ScheduleViewingModalProps) {
   const [submitted, setSubmitted] = useState(false)
@@ -80,7 +80,8 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle, pianoSerial }:
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: form.name,
+          firstName: form.firstName,
+          lastName: form.lastName,
           email: form.email,
           phone: form.phone || undefined,
           inquiryType: 'buy',
@@ -205,43 +206,62 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle, pianoSerial }:
             <form onSubmit={handleSubmit} className="space-y-7">
               <HoneypotField inputRef={honeypotRef} />
 
-              {/* Name + Email */}
+              {/* First + Last Name */}
               <div className="grid sm:grid-cols-2 gap-7">
                 <div className="group">
                   <label
-                    htmlFor="sv-name"
+                    htmlFor="sv-first-name"
                     className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-2.5 group-focus-within:text-piano-burgundy transition-colors duration-200"
                   >
-                    Full Name <span className="text-piano-burgundy">*</span>
+                    First Name <span className="text-piano-burgundy">*</span>
                   </label>
                   <input
-                    id="sv-name"
+                    id="sv-first-name"
                     ref={firstInputRef}
                     type="text"
                     required
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    value={form.firstName}
+                    onChange={(e) => setForm({ ...form, firstName: e.target.value })}
                     className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-2.5 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 placeholder:text-piano-stone/35"
-                    placeholder="Your name"
+                    placeholder="First name"
                   />
                 </div>
                 <div className="group">
                   <label
-                    htmlFor="sv-email"
+                    htmlFor="sv-last-name"
                     className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-2.5 group-focus-within:text-piano-burgundy transition-colors duration-200"
                   >
-                    Email <span className="text-piano-burgundy">*</span>
+                    Last Name <span className="text-piano-burgundy">*</span>
                   </label>
                   <input
-                    id="sv-email"
-                    type="email"
+                    id="sv-last-name"
+                    type="text"
                     required
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    value={form.lastName}
+                    onChange={(e) => setForm({ ...form, lastName: e.target.value })}
                     className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-2.5 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 placeholder:text-piano-stone/35"
-                    placeholder="you@email.com"
+                    placeholder="Last name"
                   />
                 </div>
+              </div>
+
+              {/* Email */}
+              <div className="group">
+                <label
+                  htmlFor="sv-email"
+                  className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-2.5 group-focus-within:text-piano-burgundy transition-colors duration-200"
+                >
+                  Email <span className="text-piano-burgundy">*</span>
+                </label>
+                <input
+                  id="sv-email"
+                  type="email"
+                  required
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-2.5 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 placeholder:text-piano-stone/35"
+                  placeholder="you@email.com"
+                />
               </div>
 
               {/* Phone */}

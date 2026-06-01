@@ -19,7 +19,7 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, pianoSeria
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
+  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', phone: '', message: '' })
   const { honeypotRef, getSpamSignals } = useAntiSpam()
 
   const telHref = phone ? `tel:+1${phone.replace(/\D/g, '')}` : undefined
@@ -34,7 +34,8 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, pianoSeria
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: form.name,
+          firstName: form.firstName,
+          lastName: form.lastName,
           email: form.email,
           phone: form.phone || undefined,
           inquiryType: 'buy',
@@ -51,7 +52,7 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, pianoSeria
       }
 
       setSubmitted(true)
-      setForm({ name: '', email: '', phone: '', message: '' })
+      setForm({ firstName: '', lastName: '', email: '', phone: '', message: '' })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
     } finally {
@@ -116,42 +117,61 @@ export function PianoInquiryForm({ pianoTitle, pianoSlug: _pianoSlug, pianoSeria
           </div>
         </div>
 
-        {/* Name + Email row */}
+        {/* First + Last Name row */}
         <div className="grid sm:grid-cols-2 gap-10">
           <div className="group">
             <label
-              htmlFor="inquiry-name"
+              htmlFor="inquiry-first-name"
               className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200"
             >
-              Full Name <span className="text-piano-gold">*</span>
+              First Name <span className="text-piano-gold">*</span>
             </label>
             <input
-              id="inquiry-name"
+              id="inquiry-first-name"
               type="text"
               required
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
+              value={form.firstName}
+              onChange={(e) => setForm({ ...form, firstName: e.target.value })}
               className="w-full bg-transparent border-b border-piano-cream/20 text-piano-cream text-xl py-3 focus:outline-none focus:border-piano-gold transition-colors duration-200 placeholder:text-piano-cream/30"
-              placeholder="Your name"
+              placeholder="First name"
             />
           </div>
           <div className="group">
             <label
-              htmlFor="inquiry-email"
+              htmlFor="inquiry-last-name"
               className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200"
             >
-              Email <span className="text-piano-gold">*</span>
+              Last Name <span className="text-piano-gold">*</span>
             </label>
             <input
-              id="inquiry-email"
-              type="email"
+              id="inquiry-last-name"
+              type="text"
               required
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              value={form.lastName}
+              onChange={(e) => setForm({ ...form, lastName: e.target.value })}
               className="w-full bg-transparent border-b border-piano-cream/20 text-piano-cream text-xl py-3 focus:outline-none focus:border-piano-gold transition-colors duration-200 placeholder:text-piano-cream/30"
-              placeholder="you@email.com"
+              placeholder="Last name"
             />
           </div>
+        </div>
+
+        {/* Email */}
+        <div className="group">
+          <label
+            htmlFor="inquiry-email"
+            className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-silver mb-3 group-focus-within:text-piano-gold transition-colors duration-200"
+          >
+            Email <span className="text-piano-gold">*</span>
+          </label>
+          <input
+            id="inquiry-email"
+            type="email"
+            required
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            className="w-full bg-transparent border-b border-piano-cream/20 text-piano-cream text-xl py-3 focus:outline-none focus:border-piano-gold transition-colors duration-200 placeholder:text-piano-cream/30"
+            placeholder="you@email.com"
+          />
         </div>
 
         {/* Phone */}

@@ -74,7 +74,7 @@ export async function InquiryCTA({ brand, pianoTitle, variant = 'dark', classNam
           </Link>
         </div>
         <p className={cn('mt-10 text-base font-display tracking-wide', isDark ? 'text-piano-stone' : 'text-piano-stone')}>
-          Or call us directly:{' '}
+          Or call/text us directly:{' '}
           <a
             href={telHref}
             className={cn(

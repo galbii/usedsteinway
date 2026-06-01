@@ -8,7 +8,8 @@ type StyleOption = 'grand' | 'upright' | 'digital' | 'unknown'
 type PlayerSystemOption = 'yes' | 'no'
 
 type FormState = {
-  name: string
+  firstName: string
+  lastName: string
   email: string
   phone: string
   brand: string
@@ -25,7 +26,8 @@ type FormState = {
 }
 
 const initialForm: FormState = {
-  name: '',
+  firstName: '',
+  lastName: '',
   email: '',
   phone: '',
   brand: '',
@@ -65,6 +67,10 @@ export function SellPianoForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!form.style) {
+      setError('Please select a piano style.')
+      return
+    }
     setLoading(true)
     setError(null)
     try {
@@ -72,7 +78,8 @@ export function SellPianoForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: form.name,
+          firstName: form.firstName,
+          lastName: form.lastName,
           email: form.email,
           phone: form.phone,
           message: form.message,
@@ -152,17 +159,33 @@ export function SellPianoForm() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
         <div className="group">
           <label className={labelClass}>
-            Full Name <span className="text-piano-gold">*</span>
+            First Name <span className="text-piano-gold">*</span>
           </label>
           <input
             type="text"
             required
-            value={form.name}
-            onChange={(e) => update('name', e.target.value)}
+            value={form.firstName}
+            onChange={(e) => update('firstName', e.target.value)}
             className={inputClass}
-            placeholder="Your name"
+            placeholder="First name"
           />
         </div>
+        <div className="group">
+          <label className={labelClass}>
+            Last Name <span className="text-piano-gold">*</span>
+          </label>
+          <input
+            type="text"
+            required
+            value={form.lastName}
+            onChange={(e) => update('lastName', e.target.value)}
+            className={inputClass}
+            placeholder="Last name"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
         <div className="group">
           <label className={labelClass}>
             Email Address <span className="text-piano-gold">*</span>
@@ -176,17 +199,16 @@ export function SellPianoForm() {
             placeholder="you@email.com"
           />
         </div>
-      </div>
-
-      <div className="group">
-        <label className={labelClass}>Phone Number</label>
-        <input
-          type="tel"
-          value={form.phone}
-          onChange={(e) => update('phone', e.target.value)}
-          className={inputClass}
-          placeholder="(508) 555-0000"
-        />
+        <div className="group">
+          <label className={labelClass}>Phone Number</label>
+          <input
+            type="tel"
+            value={form.phone}
+            onChange={(e) => update('phone', e.target.value)}
+            className={inputClass}
+            placeholder="(508) 555-0000"
+          />
+        </div>
       </div>
 
       <div className="pt-4">
@@ -200,9 +222,12 @@ export function SellPianoForm() {
         <div className="space-y-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
             <div className="group">
-              <label className={labelClass}>Brand</label>
+              <label className={labelClass}>
+                Brand <span className="text-piano-gold">*</span>
+              </label>
               <input
                 type="text"
+                required
                 value={form.brand}
                 onChange={(e) => update('brand', e.target.value)}
                 className={inputClass}
@@ -210,9 +235,12 @@ export function SellPianoForm() {
               />
             </div>
             <div className="group">
-              <label className={labelClass}>Model</label>
+              <label className={labelClass}>
+                Model <span className="text-piano-gold">*</span>
+              </label>
               <input
                 type="text"
+                required
                 value={form.model}
                 onChange={(e) => update('model', e.target.value)}
                 className={inputClass}
@@ -256,9 +284,12 @@ export function SellPianoForm() {
               />
             </div>
             <div className="group">
-              <label className={labelClass}>Serial Number</label>
+              <label className={labelClass}>
+                Serial Number <span className="text-piano-gold">*</span>
+              </label>
               <input
                 type="text"
+                required
                 value={form.serialNumber}
                 onChange={(e) => update('serialNumber', e.target.value)}
                 className={inputClass}
@@ -291,7 +322,9 @@ export function SellPianoForm() {
           </div>
 
           <div>
-            <p className={cn(labelClass, 'mb-4')}>Style</p>
+            <p className={cn(labelClass, 'mb-4')}>
+              Style <span className="text-piano-gold">*</span>
+            </p>
             <div className="flex flex-wrap gap-3">
               {styleOptions.map((opt) => (
                 <button

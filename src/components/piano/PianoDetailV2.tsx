@@ -170,12 +170,6 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
                 <p className="text-piano-stone text-base leading-relaxed font-light">
                   {descriptionSnippet}
                 </p>
-                <a
-                  href="#description"
-                  className="inline-block mt-3 font-display text-[10px] tracking-[0.45em] uppercase text-piano-burgundy hover:text-piano-black transition-colors"
-                >
-                  Read More →
-                </a>
               </div>
             )}
 

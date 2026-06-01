@@ -14,6 +14,10 @@ export type SellPianoDetails = {
 }
 
 export type ContactFormData = {
+  firstName: string
+  lastName: string
+  // Combined "First Last" string used in admin emails and as a backward-compat
+  // display field; the validator builds this from firstName + lastName.
   name: string
   email: string
   phone?: string
@@ -25,6 +29,8 @@ export type ContactFormData = {
   timeline?: string
   preferredDate?: string
   preferredTime?: string
+  zipCode?: string
+  pianoType?: 'grand' | 'upright' | 'digital' | 'unknown'
   source?: 'schedule' | 'inquiry'
   pianoDetails?: SellPianoDetails
 }
@@ -43,13 +49,13 @@ const playerSystemLabels: Record<NonNullable<SellPianoDetails['playerSystem']>, 
 
 function pianoDetailRows(details: SellPianoDetails): Array<[string, string]> {
   const rows: Array<[string, string] | null> = [
-    details.brand ? ['Brand', escapeHtml(details.brand)] : null,
-    details.model ? ['Model', escapeHtml(details.model)] : null,
+    ['Brand', details.brand ? escapeHtml(details.brand) : '—'],
+    ['Model', details.model ? escapeHtml(details.model) : '—'],
+    ['Style', details.style ? styleLabels[details.style] : '—'],
+    ['Serial Number', details.serialNumber ? escapeHtml(details.serialNumber) : '—'],
     details.size ? ['Size', escapeHtml(details.size)] : null,
-    details.style ? ['Style', styleLabels[details.style]] : null,
     details.finish ? ['Finish', escapeHtml(details.finish)] : null,
     details.age ? ['Age', escapeHtml(details.age)] : null,
-    details.serialNumber ? ['Serial Number', escapeHtml(details.serialNumber)] : null,
     details.playerSystem ? ['Player System', playerSystemLabels[details.playerSystem]] : null,
     details.location ? ['Piano Location', escapeHtml(details.location)] : null,
     details.askingPrice ? ['Asking Price', escapeHtml(details.askingPrice)] : null,
@@ -128,6 +134,7 @@ export function adminEmailHtml(data: ContactFormData): string {
   const isSchedule = data.source === 'schedule'
   const isSell = data.inquiryType === 'sell'
 
+  const pianoTypeLabel = data.pianoType ? styleLabels[data.pianoType] : null
   const scheduleRows: Array<[string, string] | null> = [
     preferredDateTime ? ['Preferred Viewing', `<strong>${escapeHtml(preferredDateTime)}</strong>`] : null,
     data.pianoTitle ? ['Piano', escapeHtml(data.pianoTitle)] : null,
@@ -135,6 +142,9 @@ export function adminEmailHtml(data: ContactFormData): string {
     ['Name', escapeHtml(data.name)],
     ['Email', `<a href="mailto:${escapeHtml(data.email)}">${escapeHtml(data.email)}</a>`],
     data.phone ? ['Phone', escapeHtml(data.phone)] : null,
+    data.zipCode ? ['Zip Code', escapeHtml(data.zipCode)] : null,
+    pianoTypeLabel ? ['Piano Type', pianoTypeLabel] : null,
+    data.budget ? ['Budget', budgetLabels[data.budget] ?? escapeHtml(data.budget)] : null,
   ]
 
   const inquiryRows: Array<[string, string] | null> = [

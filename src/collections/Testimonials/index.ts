@@ -160,6 +160,16 @@ export const Testimonials: CollectionConfig<'testimonials'> = {
       },
     },
     {
+      name: 'priority',
+      type: 'number',
+      label: 'Display Priority',
+      defaultValue: 20,
+      admin: {
+        position: 'sidebar',
+        description: 'Controls grid order. Lower number = appears first. Default is 20 — use 1–19 to promote, 21+ to demote.',
+      },
+    },
+    {
       name: 'publishedAt',
       type: 'date',
       admin: {

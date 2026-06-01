@@ -16,13 +16,13 @@ const playerSystemLabels: Record<NonNullable<SellPianoDetails['playerSystem']>, 
 
 function pianoDetailRows(details: SellPianoDetails): Array<[string, string]> {
   const rows: Array<[string, string] | null> = [
-    details.brand ? ['Brand', escapeHtml(details.brand)] : null,
-    details.model ? ['Model', escapeHtml(details.model)] : null,
+    ['Brand', details.brand ? escapeHtml(details.brand) : '—'],
+    ['Model', details.model ? escapeHtml(details.model) : '—'],
+    ['Style', details.style ? styleLabels[details.style] : '—'],
+    ['Serial Number', details.serialNumber ? escapeHtml(details.serialNumber) : '—'],
     details.size ? ['Size', escapeHtml(details.size)] : null,
-    details.style ? ['Style', styleLabels[details.style]] : null,
     details.finish ? ['Finish', escapeHtml(details.finish)] : null,
     details.age ? ['Age', escapeHtml(details.age)] : null,
-    details.serialNumber ? ['Serial Number', escapeHtml(details.serialNumber)] : null,
     details.playerSystem ? ['Player System', playerSystemLabels[details.playerSystem]] : null,
     details.location ? ['Piano Location', escapeHtml(details.location)] : null,
     details.askingPrice ? ['Asking Price', escapeHtml(details.askingPrice)] : null,
@@ -62,7 +62,7 @@ const inquiryLabels: Record<ContactFormData['inquiryType'], string> = {
 
 const nextSteps: Record<ContactFormData['inquiryType'], string> = {
   buy: 'We\'ll review your inquiry and get back to you with any questions or next steps.',
-  sell: 'We\'ll review your piano details and be in touch with an appraisal or next steps.',
+  sell: 'We will review your piano details and be in touch with the next steps.',
   general: 'Every message is reviewed personally and we\'ll be in touch shortly.',
 }
 
@@ -85,13 +85,13 @@ export function confirmationEmailHtml(data: ContactFormData): string {
     <tr>
       <td style="padding:40px 40px 28px;">
         <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:20px;color:#1a1a1a;">
-          Thank you, ${escapeHtml(data.name)}.
+          Thank you, ${escapeHtml(data.firstName)}.
         </p>
         <p style="margin:0 0 16px;font-family:sans-serif;font-size:14px;color:#555;line-height:1.7;">
           We received the details on your piano. ${nextSteps.sell}
         </p>
         <p style="margin:0;font-family:sans-serif;font-size:14px;color:#555;line-height:1.7;">
-          If you need to reach us sooner, call <strong>508-545-0766</strong> or reply directly to this email.
+          If you need to reach us sooner, call/text <strong>508-545-0766</strong> or reply directly to this email.
         </p>
       </td>
     </tr>
@@ -132,7 +132,7 @@ export function confirmationEmailHtml(data: ContactFormData): string {
     <tr>
       <td style="padding:40px 40px 28px;">
         <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:20px;color:#1a1a1a;">
-          Thank you, ${escapeHtml(data.name)}.
+          Thank you, ${escapeHtml(data.firstName)}.
         </p>
         <p style="margin:0 0 24px;font-family:sans-serif;font-size:14px;color:#555;line-height:1.7;">
           Your viewing request for <strong>${escapeHtml(regarding)}</strong> has been received. We&rsquo;ll be in touch shortly to confirm your appointment.
@@ -151,7 +151,7 @@ export function confirmationEmailHtml(data: ContactFormData): string {
           </tr>
         </table>` : ''}
         <p style="margin:0;font-family:sans-serif;font-size:14px;color:#555;line-height:1.7;">
-          If you need to reach us sooner, call <strong>508-545-0766</strong> or reply directly to this email.
+          If you need to reach us sooner, call/text <strong>508-545-0766</strong> or reply directly to this email.
         </p>
       </td>
     </tr>`
@@ -160,14 +160,14 @@ export function confirmationEmailHtml(data: ContactFormData): string {
     <tr>
       <td style="padding:40px 40px 28px;">
         <p style="margin:0 0 20px;font-family:Georgia,serif;font-size:20px;color:#1a1a1a;">
-          Thank you, ${escapeHtml(data.name)}.
+          Thank you, ${escapeHtml(data.firstName)}.
         </p>
         <p style="margin:0 0 16px;font-family:sans-serif;font-size:14px;color:#555;line-height:1.7;">
           We received your inquiry regarding <strong>${escapeHtml(regarding)}</strong>.
           ${nextSteps[data.inquiryType]}
         </p>
         <p style="margin:0;font-family:sans-serif;font-size:14px;color:#555;line-height:1.7;">
-          If you need to reach us sooner, call <strong>508-545-0766</strong> or reply directly to this email.
+          If you need to reach us sooner, call/text <strong>508-545-0766</strong> or reply directly to this email.
         </p>
       </td>
     </tr>

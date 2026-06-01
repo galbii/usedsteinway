@@ -7,10 +7,11 @@ import { PianoDetailV2 } from '@/components/piano/PianoDetailV2'
 import { PianoEditButton } from '@/components/piano/PianoEditButton'
 import { InquiryCTA } from '@/components/piano/InquiryCTA'
 import { BrandPageV2 } from '@/components/piano/BrandPageV2'
+import { BrandPianosGrid } from '@/components/piano/BrandPianosGrid'
 import { PianoHeroCarousel } from '@/components/piano/PianoHeroCarousel'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { queryPianoBySlug, queryPianosByBrand } from '@/lib/payload/pianos'
-import { queryBrandBySlug, adaptPayloadBrandToDomain, adaptPayloadBrandModels } from '@/lib/payload/brands'
+import { queryBrandBySlug, adaptPayloadBrandToDomain } from '@/lib/payload/brands'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { getServerSideURL } from '@/utilities/getURL'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
@@ -219,7 +220,6 @@ export default async function PianoOrBrandPage({ params }: Props) {
       Promise.resolve(adaptPayloadBrandToDomain(brandDoc)),
       queryPianosByBrand(decoded),
     ])
-    const models = adaptPayloadBrandModels(brandDoc)
     const featured = pianos.filter((p) => p.isFeatured)
 
     return (
@@ -231,12 +231,12 @@ export default async function PianoOrBrandPage({ params }: Props) {
           headingLine2={brand.name}
           minimal
         />
+        <BrandPianosGrid pianos={pianos} brandName={brand.name} />
         <BrandPageV2
           brand={brand}
           pianos={pianos}
-          models={models.length > 0 ? models : undefined}
-          modelUrlBase={`/pianos/${brand.slug}`}
           hideHero
+          hideInventory
         />
       </>
     )

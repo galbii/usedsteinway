@@ -1483,6 +1483,10 @@ export interface Testimonial {
    * Show this testimonial in the featured carousel at the top of the testimonials page.
    */
   featured?: boolean | null;
+  /**
+   * Controls grid order. Lower number = appears first. Default is 20 — use 1–19 to promote, 21+ to demote.
+   */
+  priority?: number | null;
   publishedAt?: string | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -2439,6 +2443,7 @@ export interface TestimonialsSelect<T extends boolean = true> {
         description?: T;
       };
   featured?: T;
+  priority?: T;
   publishedAt?: T;
   generateSlug?: T;
   slug?: T;

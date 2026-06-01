@@ -123,7 +123,7 @@ export default async function VisitPage() {
               href={telHref}
               className="block text-center bg-piano-black text-piano-cream py-3.5 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-charcoal transition-colors"
             >
-              Call {displayPhone}
+              Call/Text {displayPhone}
             </a>
             <ContactModal variant="schedule" locations={locations} />
           </div>

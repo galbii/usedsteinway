@@ -23,6 +23,8 @@ const ALLOWED_BUDGET = ['under-30k', '30-50k', '50-80k', '80-120k', 'over-120k',
 const ALLOWED_TIMELINE = ['asap', '1-3months', '3-6months', 'exploring']
 const ALLOWED_STYLE = ['grand', 'upright', 'digital', 'unknown']
 const ALLOWED_PLAYER = ['yes', 'no']
+// Permissive US/CA-style postal code: 3–10 alphanumerics with optional space or dash.
+const ZIP_RE = /^[A-Za-z0-9][A-Za-z0-9 -]{1,9}$/
 
 function asString(v: unknown): string {
   return typeof v === 'string' ? v : ''
@@ -87,21 +89,26 @@ function sanitizePianoDetails(input: unknown): SellPianoDetails | undefined {
  * heuristics and the shape the email templates receive.
  */
 export function validateContactSubmission(body: Record<string, unknown>): ValidationResult {
-  const name = asString(body.name).trim()
+  const firstName = asString(body.firstName).trim()
+  const lastName = asString(body.lastName).trim()
   const email = asString(body.email).trim()
   const phone = asString(body.phone).trim()
   const message = asString(body.message).trim()
   const inquiryType = asString(body.inquiryType)
 
-  if (!name || !email || !inquiryType) {
-    return { ok: false, error: 'Please fill in your name, email, and inquiry type.' }
+  if (!firstName || !lastName || !email || !inquiryType) {
+    return { ok: false, error: 'Please fill in your first name, last name, email, and inquiry type.' }
   }
   if (!ALLOWED_INQUIRY.includes(inquiryType)) {
     return { ok: false, error: 'Invalid inquiry type.' }
   }
-  if (name.length < 2 || name.length > MAX_NAME || countLinks(name) > 0) {
-    return { ok: false, error: 'Please enter a valid name.' }
+  if (firstName.length > MAX_NAME || countLinks(firstName) > 0) {
+    return { ok: false, error: 'Please enter a valid first name.' }
   }
+  if (lastName.length > MAX_NAME || countLinks(lastName) > 0) {
+    return { ok: false, error: 'Please enter a valid last name.' }
+  }
+  const name = `${firstName} ${lastName}`
   if (email.length > MAX_EMAIL || !EMAIL_RE.test(email)) {
     return { ok: false, error: 'Please enter a valid email address.' }
   }
@@ -115,6 +122,16 @@ export function validateContactSubmission(body: Record<string, unknown>): Valida
   if (!isSell && !message) {
     return { ok: false, error: 'Please include a message.' }
   }
+
+  const sellDetails = isSell ? sanitizePianoDetails(body.pianoDetails) : undefined
+  if (isSell) {
+    if (!sellDetails?.brand || !sellDetails?.model || !sellDetails?.serialNumber || !sellDetails?.style) {
+      return {
+        ok: false,
+        error: 'Please fill in the brand, model, serial number, and style of your piano.',
+      }
+    }
+  }
   if (message.length > MAX_MESSAGE) {
     return { ok: false, error: 'Your message is too long. Please shorten it and try again.' }
   }
@@ -125,8 +142,22 @@ export function validateContactSubmission(body: Record<string, unknown>): Valida
   const budget = asString(body.budget)
   const timeline = asString(body.timeline)
   const source = asString(body.source)
+  const zipCode = asString(body.zipCode).trim()
+  const pianoType = asString(body.pianoType)
+
+  const isSchedule = source === 'schedule'
+  if (isSchedule) {
+    if (!zipCode) {
+      return { ok: false, error: 'Please enter your zip code.' }
+    }
+    if (!ZIP_RE.test(zipCode)) {
+      return { ok: false, error: 'Please enter a valid zip code.' }
+    }
+  }
 
   const data: ContactFormData = {
+    firstName,
+    lastName,
     name,
     email,
     phone: phone || undefined,
@@ -138,8 +169,12 @@ export function validateContactSubmission(body: Record<string, unknown>): Valida
     timeline: ALLOWED_TIMELINE.includes(timeline) ? timeline : undefined,
     preferredDate: asString(body.preferredDate).trim().slice(0, MAX_SHORT) || undefined,
     preferredTime: asString(body.preferredTime).trim().slice(0, MAX_SHORT) || undefined,
+    zipCode: zipCode ? zipCode.slice(0, MAX_SHORT) : undefined,
+    pianoType: ALLOWED_STYLE.includes(pianoType)
+      ? (pianoType as ContactFormData['pianoType'])
+      : undefined,
     source: source === 'schedule' || source === 'inquiry' ? source : undefined,
-    pianoDetails: isSell ? sanitizePianoDetails(body.pianoDetails) : undefined,
+    pianoDetails: sellDetails,
   }
 
   return { ok: true, data }

@@ -749,7 +749,7 @@ export function UsedSteinwaysHomePage({ locations = [], phone, featured: feature
             className="mt-10 font-display text-sm tracking-wide"
             style={{ color: C.muted }}
           >
-            or call{' '}
+            or call/text{' '}
             <a
               href={`tel:+1${(phone ?? '508-545-0766').replace(/\D/g, '')}`}
               className="transition-opacity hover:opacity-70"
