@@ -53,7 +53,7 @@ export default async function SteinwayModelPage({ params }: Props) {
       model={model}
       currentInventory={inventory}
       brandHref="/steinway"
-      brandLabel="Steinway & Sons"
+      brandLabel="Steinway"
       modelUrlBase="/steinway"
     />
   )

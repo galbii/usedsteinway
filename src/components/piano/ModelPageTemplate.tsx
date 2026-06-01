@@ -37,13 +37,13 @@ export function ModelPageTemplate({
             <span className="text-piano-cream">{model.name}</span>
           </nav>
           <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-4">
-            Steinway & Sons · {model.type}
+            {brandLabel} · {model.type}
           </p>
           <h1
             className="font-cormorant font-light text-white mb-6"
             style={{ fontSize: 'clamp(3.6rem, 7vw, 8.5rem)' }}
           >
-            Steinway {model.name}
+            {brandLabel} {model.name}
           </h1>
           <p className="text-piano-cream/70 text-xl max-w-2xl leading-relaxed">
             {model.size} · {model.yearRange}
@@ -156,7 +156,7 @@ export function ModelPageTemplate({
         </section>
       )}
 
-      <InquiryCTA brand="Steinway" variant="dark" />
+      <InquiryCTA brand={brandLabel} variant="dark" />
     </main>
   )
 }

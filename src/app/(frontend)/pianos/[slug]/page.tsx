@@ -237,7 +237,6 @@ export default async function PianoOrBrandPage({ params }: Props) {
           models={models.length > 0 ? models : undefined}
           modelUrlBase={`/pianos/${brand.slug}`}
           hideHero
-          modelsLinkable={false}
         />
       </>
     )
