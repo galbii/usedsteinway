@@ -40,7 +40,7 @@ const BLOCKS: BlockDef[] = [
     label:   'Steinway & Sons',
     eyebrow: 'Hamburg · New York',
     dark:    false,
-    tags:    ['Model B', 'Model C', 'Model D', 'Model A', 'Model M'],
+    tags:    ['Model M', 'Model A', 'Model B', 'Model C', 'Model D'],
   },
   {
     brand:   'european',

@@ -249,7 +249,7 @@ export const queryPianosByCategory = cache(async (category: string): Promise<Pia
     sort: '-publishedAt',
   })
 
-  return result.docs.map(adaptPayloadPiano)
+  return sortPianoGrid(result.docs.map(adaptPayloadPiano))
 })
 
 export const queryPianosByBrand = cache(async (brandSlug: string): Promise<Piano[]> => {
@@ -272,7 +272,7 @@ export const queryPianosByBrand = cache(async (brandSlug: string): Promise<Piano
     sort: '-publishedAt',
   })
 
-  return result.docs.map(adaptPayloadPiano)
+  return sortPianoGrid(result.docs.map(adaptPayloadPiano))
 })
 
 export const queryPianosByBrandAndModel = cache(
@@ -297,7 +297,7 @@ export const queryPianosByBrandAndModel = cache(
       sort: '-publishedAt',
     })
 
-    return result.docs.map(adaptPayloadPiano)
+    return sortPianoGrid(result.docs.map(adaptPayloadPiano))
   },
 )
 
@@ -328,5 +328,5 @@ export const querySearchPianos = cache(async (query: string): Promise<Piano[]> =
     sort: '-publishedAt',
   })
 
-  return result.docs.map(adaptPayloadPiano)
+  return sortPianoGrid(result.docs.map(adaptPayloadPiano))
 })
