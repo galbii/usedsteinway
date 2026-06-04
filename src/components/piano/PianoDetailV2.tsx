@@ -312,7 +312,7 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
             { label: 'Brand', value: piano.brand },
             { label: 'Finish', value: piano.finish },
             ...(piano.serialNumber ? [{ label: 'Serial', value: `#${piano.serialNumber}` }] : []),
-          ].map(({ label, value }) => (
+          ].filter(({ value }) => value !== 0 && value !== null && value !== undefined && value !== '').map(({ label, value }) => (
             <div key={label} className="flex flex-col px-8 py-6 min-w-[130px]">
               <dt className="text-piano-stone/40 text-[10px] font-display tracking-[0.45em] uppercase mb-1.5">
                 {label}

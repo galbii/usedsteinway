@@ -53,7 +53,7 @@ export function LocationTabs({ locations, phone }: Props) {
               'relative flex-1 px-10 py-6 font-display text-sm tracking-[0.3em] uppercase transition-all duration-200 focus:outline-none border-b-2',
               activeIndex === i
                 ? 'bg-piano-burgundy text-piano-cream border-piano-burgundy'
-                : 'text-piano-stone/60 hover:text-piano-stone bg-piano-linen/40 border-transparent hover:bg-piano-linen',
+                : 'text-piano-black hover:text-piano-black bg-piano-linen/40 border-transparent hover:bg-piano-linen',
             )}
           >
             {activeIndex === i && (
