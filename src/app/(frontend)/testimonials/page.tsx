@@ -6,7 +6,7 @@ import { InquiryCTA } from '@/components/piano/InquiryCTA'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
-import { FeaturedTestimonialsCarousel } from './_components/FeaturedTestimonialsCarousel'
+import { TestimonialsPageClient } from './_components/TestimonialsPageClient'
 
 export const metadata: Metadata = {
   title: 'Customer Testimonials | UsedSteinways.com',
@@ -23,7 +23,7 @@ export default async function TestimonialsPage() {
     limit: 100,
     overrideAccess: false,
     pagination: false,
-    sort: '-publishedAt',
+    sort: ['priority', '-publishedAt'],
     where: {
       _status: {
         equals: 'published',
@@ -31,11 +31,8 @@ export default async function TestimonialsPage() {
     },
   })
 
-  const featuredTestimonials = testimonials.filter((t) => t.featured)
-
   return (
     <main className="min-h-screen bg-piano-cream">
-      {/* Hero */}
       <section className="bg-piano-burgundy py-28 px-8">
         <div className="max-w-7xl mx-auto">
           <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-5">
@@ -54,50 +51,8 @@ export default async function TestimonialsPage() {
         </div>
       </section>
 
-      {/* Featured Carousel */}
-      {featuredTestimonials.length > 0 && (
-        <FeaturedTestimonialsCarousel testimonials={featuredTestimonials} />
-      )}
+      <TestimonialsPageClient testimonials={testimonials} />
 
-      {/* Testimonials Grid */}
-      <section className="py-24 px-8">
-        <div className="max-w-7xl mx-auto">
-          {testimonials.length === 0 ? (
-            <p className="text-piano-stone text-center text-lg">No testimonials published yet.</p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {testimonials.map((testimonial) => (
-                <div
-                  key={testimonial.id}
-                  className="group bg-piano-cream border border-piano-linen p-8 hover:border-piano-gold/30 transition-colors flex flex-col"
-                >
-                  <h2 className="font-cormorant font-light text-piano-black leading-snug mb-4 text-2xl group-hover:text-piano-burgundy transition-colors flex-1">
-                    {testimonial.title}
-                  </h2>
-                  <footer className="border-t border-piano-linen pt-5 flex items-end justify-between gap-4">
-                    <div>
-                      <p className="font-medium text-piano-black text-base">
-                        {testimonial.customerName}
-                      </p>
-                      {testimonial.location && (
-                        <p className="text-piano-stone/70 text-xs mt-0.5">{testimonial.location}</p>
-                      )}
-                    </div>
-                    <Link
-                      href={`/testimonials/${testimonial.slug}`}
-                      className="shrink-0 border border-piano-burgundy/30 text-piano-burgundy px-5 py-2 font-display text-[10px] tracking-[0.25em] uppercase hover:bg-piano-burgundy hover:text-piano-cream transition-colors duration-200 whitespace-nowrap"
-                    >
-                      View Testimonial
-                    </Link>
-                  </footer>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* CTA */}
       <section className="py-24 px-8 bg-piano-cream text-center border-t border-piano-linen">
         <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-3">
           Join Them

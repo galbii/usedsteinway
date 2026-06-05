@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { cn } from '@/utilities/ui'
+import { useAntiSpam, HoneypotField } from '@/lib/contact/useAntiSpam'
 
 type Location = { id?: string | null; name: string }
 
@@ -35,7 +36,8 @@ export function ContactModal({
   const [error, setError] = useState<string | null>(null)
 
   const isSchedule = variant === 'schedule'
-  const initialInquiryType = defaultInquiryType ?? (isSchedule ? 'general' : 'buy')
+  const initialInquiryType: '' | 'buy' | 'sell' | 'general' =
+    defaultInquiryType ?? (isSchedule ? 'general' : '')
 
   const initialMessage = pianoTitle
     ? `I'm interested in the ${pianoTitle}.\n\n`
@@ -44,15 +46,20 @@ export function ContactModal({
       : ''
 
   const [form, setForm] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
     preferredLocation: locations[0]?.name ?? '',
     preferredDate: '',
     preferredTime: '',
+    zipCode: '',
+    pianoType: '' as '' | 'grand' | 'upright' | 'digital' | 'unknown',
+    budget: '',
     message: initialMessage,
     inquiryType: initialInquiryType,
   })
+  const { honeypotRef, getSpamSignals } = useAntiSpam()
 
   useEffect(() => {
     if (!open) return
@@ -109,15 +116,20 @@ export function ContactModal({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: form.name,
+          firstName: form.firstName,
+          lastName: form.lastName,
           email: form.email,
           phone: form.phone || undefined,
           inquiryType: form.inquiryType,
           source: isSchedule ? 'schedule' : 'inquiry',
           preferredDate: isSchedule && form.preferredDate ? form.preferredDate : undefined,
           preferredTime: isSchedule && form.preferredTime ? form.preferredTime : undefined,
+          zipCode: isSchedule && form.zipCode ? form.zipCode : undefined,
+          pianoType: isSchedule && form.pianoType ? form.pianoType : undefined,
+          budget: isSchedule && form.budget ? form.budget : undefined,
           pianoTitle: pianoTitle || undefined,
           message,
+          ...getSpamSignals(),
         }),
       })
 
@@ -136,17 +148,17 @@ export function ContactModal({
 
   const eyebrow = isSchedule ? 'Schedule a Visit' : 'Get in Touch'
   const heading = isSchedule
-    ? 'Send us a message'
+    ? 'Appointment Request'
     : pianoTitle
       ? `Inquire about this piano`
       : brand
         ? `Inquire about ${brand}`
         : 'Tell us what you’re looking for'
   const subhead = isSchedule
-    ? "Tell us when you'd like to come by. We'll confirm the location, date, and time."
-    : "Share a few details and we'll be in touch within one business day."
+    ? "Tell us when you'd like to visit. We will confirm the location, date, and time."
+    : "Share a few details and we'll be in touch. Thank you."
 
-  const label = triggerLabel ?? (isSchedule ? 'Send a Message' : 'Get in Touch')
+  const label = triggerLabel ?? (isSchedule ? 'Book Appointment' : 'Get in Touch')
   const fallbackTriggerClass =
     'block w-full text-center border border-piano-black text-piano-black py-3.5 font-display text-[11px] tracking-[0.3em] uppercase hover:bg-piano-black hover:text-white transition-colors'
 
@@ -228,7 +240,7 @@ export function ContactModal({
                   <p className="text-piano-stone text-base leading-relaxed mb-8">
                     {isSchedule
                       ? "We'll be in touch shortly to confirm the location, date, and time of your visit. A confirmation has been sent to your email."
-                      : "We'll be in touch within one business day. A confirmation has been sent to your email."}
+                      : "We'll be in touch. A confirmation has been sent to your email."}
                   </p>
                   <button
                     type="button"
@@ -271,19 +283,35 @@ export function ContactModal({
                   )}
 
                   <form onSubmit={handleSubmit} className="space-y-6">
+                    <HoneypotField inputRef={honeypotRef} />
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5" style={fieldAnim(2)}>
                       <div>
                         <label className="block font-display text-[10px] tracking-[0.35em] uppercase text-piano-stone mb-2">
-                          Full Name <span className="text-piano-gold">*</span>
+                          First Name <span className="text-piano-gold">*</span>
                         </label>
                         <input
                           type="text"
                           required
-                          value={form.name}
-                          onChange={(e) => setForm({ ...form, name: e.target.value })}
+                          value={form.firstName}
+                          onChange={(e) => setForm({ ...form, firstName: e.target.value })}
                           className="w-full bg-transparent border-b border-piano-stone/30 text-piano-black text-base py-2 focus:outline-none focus:border-piano-burgundy transition-colors"
                         />
                       </div>
+                      <div>
+                        <label className="block font-display text-[10px] tracking-[0.35em] uppercase text-piano-stone mb-2">
+                          Last Name <span className="text-piano-gold">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={form.lastName}
+                          onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+                          className="w-full bg-transparent border-b border-piano-stone/30 text-piano-black text-base py-2 focus:outline-none focus:border-piano-burgundy transition-colors"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5" style={fieldAnim(3)}>
                       <div>
                         <label className="block font-display text-[10px] tracking-[0.35em] uppercase text-piano-stone mb-2">
                           Email <span className="text-piano-gold">*</span>
@@ -296,9 +324,6 @@ export function ContactModal({
                           className="w-full bg-transparent border-b border-piano-stone/30 text-piano-black text-base py-2 focus:outline-none focus:border-piano-burgundy transition-colors"
                         />
                       </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5" style={fieldAnim(3)}>
                       <div>
                         <label className="block font-display text-[10px] tracking-[0.35em] uppercase text-piano-stone mb-2">
                           Phone <span className="text-piano-gold">*</span>
@@ -311,48 +336,51 @@ export function ContactModal({
                           className="w-full bg-transparent border-b border-piano-stone/30 text-piano-black text-base py-2 focus:outline-none focus:border-piano-burgundy transition-colors"
                         />
                       </div>
-                      {isSchedule && locations.length > 1 ? (
-                        <div>
-                          <label className="block font-display text-[10px] tracking-[0.35em] uppercase text-piano-stone mb-2">
-                            Preferred Location
-                          </label>
-                          <select
-                            value={form.preferredLocation}
-                            onChange={(e) => setForm({ ...form, preferredLocation: e.target.value })}
-                            className="w-full bg-transparent border-b border-piano-stone/30 text-piano-black text-base py-2 focus:outline-none focus:border-piano-burgundy transition-colors appearance-none cursor-pointer"
-                          >
-                            <option value="">No preference</option>
-                            {locations.map((loc) => (
-                              <option key={loc.id ?? loc.name} value={loc.name}>
-                                {loc.name}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      ) : !isSchedule ? (
-                        <div>
-                          <label className="block font-display text-[10px] tracking-[0.35em] uppercase text-piano-stone mb-2">
-                            I&apos;m interested in
-                          </label>
-                          <select
-                            value={form.inquiryType}
-                            onChange={(e) =>
-                              setForm({
-                                ...form,
-                                inquiryType: e.target.value as 'buy' | 'sell' | 'general',
-                              })
-                            }
-                            className="w-full bg-transparent border-b border-piano-stone/30 text-piano-black text-base py-2 focus:outline-none focus:border-piano-burgundy transition-colors appearance-none cursor-pointer"
-                          >
-                            <option value="buy">Buying a piano</option>
-                            <option value="sell">Selling a piano</option>
-                            <option value="general">General inquiry</option>
-                          </select>
-                        </div>
-                      ) : (
-                        <div />
-                      )}
                     </div>
+
+                    {isSchedule && locations.length > 1 ? (
+                      <div style={fieldAnim(3)}>
+                        <label className="block font-display text-[10px] tracking-[0.35em] uppercase text-piano-stone mb-2">
+                          Preferred Location
+                        </label>
+                        <select
+                          value={form.preferredLocation}
+                          onChange={(e) => setForm({ ...form, preferredLocation: e.target.value })}
+                          className="w-full bg-transparent border-b border-piano-stone/30 text-piano-black text-base py-2 focus:outline-none focus:border-piano-burgundy transition-colors appearance-none cursor-pointer"
+                        >
+                          <option value="">No preference</option>
+                          {locations.map((loc) => (
+                            <option key={loc.id ?? loc.name} value={loc.name}>
+                              {loc.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    ) : !isSchedule ? (
+                      <div style={fieldAnim(3)}>
+                        <label className="block font-display text-[10px] tracking-[0.35em] uppercase text-piano-stone mb-2">
+                          I&apos;m interested in
+                        </label>
+                        <select
+                          required
+                          value={form.inquiryType}
+                          onChange={(e) =>
+                            setForm({
+                              ...form,
+                              inquiryType: e.target.value as '' | 'buy' | 'sell' | 'general',
+                            })
+                          }
+                          className="w-full bg-transparent border-b border-piano-stone/30 text-piano-black text-base py-2 focus:outline-none focus:border-piano-burgundy transition-colors appearance-none cursor-pointer"
+                        >
+                          <option value="" disabled>
+                            Please select…
+                          </option>
+                          <option value="buy">Buying a piano</option>
+                          <option value="sell">Selling a piano</option>
+                          <option value="general">General inquiry</option>
+                        </select>
+                      </div>
+                    ) : null}
 
                     {isSchedule && (
                       <div style={fieldAnim(4)}>
@@ -387,7 +415,68 @@ export function ContactModal({
                       </div>
                     )}
 
-                    <div style={fieldAnim(isSchedule ? 5 : 4)}>
+                    {isSchedule && (
+                      <>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5" style={fieldAnim(5)}>
+                          <div>
+                            <label className="block font-display text-[10px] tracking-[0.35em] uppercase text-piano-stone mb-2">
+                              Piano Type
+                            </label>
+                            <select
+                              value={form.pianoType}
+                              onChange={(e) =>
+                                setForm({
+                                  ...form,
+                                  pianoType: e.target.value as typeof form.pianoType,
+                                })
+                              }
+                              className="w-full bg-transparent border-b border-piano-stone/30 text-piano-black text-base py-2 focus:outline-none focus:border-piano-burgundy transition-colors appearance-none cursor-pointer"
+                            >
+                              <option value="">Select type…</option>
+                              <option value="grand">Grand</option>
+                              <option value="upright">Upright</option>
+                              <option value="digital">Digital</option>
+                              <option value="unknown">Not sure yet</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label className="block font-display text-[10px] tracking-[0.35em] uppercase text-piano-stone mb-2">
+                              Zip Code <span className="text-piano-gold">*</span>
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              inputMode="numeric"
+                              autoComplete="postal-code"
+                              value={form.zipCode}
+                              onChange={(e) => setForm({ ...form, zipCode: e.target.value })}
+                              className="w-full bg-transparent border-b border-piano-stone/30 text-piano-black text-base py-2 focus:outline-none focus:border-piano-burgundy transition-colors"
+                            />
+                          </div>
+                        </div>
+
+                        <div style={fieldAnim(5)}>
+                          <label className="block font-display text-[10px] tracking-[0.35em] uppercase text-piano-stone mb-2">
+                            Are you working with a set budget?
+                          </label>
+                          <select
+                            value={form.budget}
+                            onChange={(e) => setForm({ ...form, budget: e.target.value })}
+                            className="w-full bg-transparent border-b border-piano-stone/30 text-piano-black text-base py-2 focus:outline-none focus:border-piano-burgundy transition-colors appearance-none cursor-pointer"
+                          >
+                            <option value="">Select range…</option>
+                            <option value="under-30k">Under $30,000</option>
+                            <option value="30-50k">$30,000 – $50,000</option>
+                            <option value="50-80k">$50,000 – $80,000</option>
+                            <option value="80-120k">$80,000 – $120,000</option>
+                            <option value="over-120k">Over $120,000</option>
+                            <option value="flexible">Not sure</option>
+                          </select>
+                        </div>
+                      </>
+                    )}
+
+                    <div style={fieldAnim(isSchedule ? 6 : 4)}>
                       <label className="block font-display text-[10px] tracking-[0.35em] uppercase text-piano-stone mb-2">
                         Message
                       </label>
@@ -413,13 +502,13 @@ export function ContactModal({
                     <button
                       type="submit"
                       disabled={loading}
-                      style={fieldAnim(isSchedule ? 6 : 5)}
+                      style={fieldAnim(isSchedule ? 7 : 5)}
                       className={cn(
                         'w-full bg-piano-black text-piano-cream py-3.5 font-display text-[11px] tracking-[0.4em] uppercase transition-opacity',
                         loading ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-85',
                       )}
                     >
-                      {loading ? 'Sending…' : 'Send Message'}
+                      {loading ? 'Sending…' : isSchedule ? 'Book Appointment' : 'Send Message'}
                     </button>
                   </form>
                 </>

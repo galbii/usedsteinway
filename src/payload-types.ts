@@ -222,6 +222,9 @@ export interface Page {
     | PhilosophyBlock
     | FeaturedPianosBlock
     | NewsSectionBlock
+    | LocationsBlock
+    | FinalCtaBlock
+    | SectionHeaderBlock
   )[];
   meta?: {
     title?: string | null;
@@ -1140,7 +1143,7 @@ export interface Piano {
     pedals?: number | null;
   };
   /**
-   * e.g. 89500. Leave blank if "Price on Call" is checked.
+   * e.g. 89500. Only shown publicly when "Show Price" is checked.
    */
   price?: number | null;
   /**
@@ -1221,9 +1224,9 @@ export interface Piano {
    */
   priority?: number | null;
   /**
-   * Check if price should display as "Call for Pricing" instead of a number.
+   * When off (default), the public listing shows "Call for Pricing" instead of the price.
    */
-  priceOnCall?: boolean | null;
+  showPrice?: boolean | null;
   publishedAt?: string | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -1348,6 +1351,91 @@ export interface NewsSectionBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LocationsBlock".
+ */
+export interface LocationsBlock {
+  /**
+   * Small uppercase label above the tabs (e.g. 'Our Locations').
+   */
+  eyebrow?: string | null;
+  /**
+   * Optional large heading rendered above the location tabs. Leave blank to omit.
+   */
+  heading?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'locations';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FinalCtaBlock".
+ */
+export interface FinalCtaBlock {
+  /**
+   * Small label above the heading (e.g. 'Burlington & Natick Showrooms')
+   */
+  eyebrow?: string | null;
+  /**
+   * Large display heading — use \n for line breaks
+   */
+  heading: string;
+  /**
+   * Body paragraph beneath the heading
+   */
+  body?: string | null;
+  /**
+   * Filled primary call-to-action button
+   */
+  primaryCta?: {
+    label?: string | null;
+    href?: string | null;
+  };
+  /**
+   * Outline secondary call-to-action button
+   */
+  secondaryCta?: {
+    label?: string | null;
+    href?: string | null;
+  };
+  /**
+   * Where to pull the inline phone number from
+   */
+  phoneSource?: ('siteSettings' | 'custom') | null;
+  /**
+   * Custom phone number to display (used only when Phone Number Source is set to Custom Override)
+   */
+  phoneOverride?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'finalCta';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SectionHeaderBlock".
+ */
+export interface SectionHeaderBlock {
+  /**
+   * Small uppercase label above the heading (e.g. 'The Collection')
+   */
+  eyebrow?: string | null;
+  /**
+   * Giant italic display heading (e.g. 'Our Pianos')
+   */
+  heading: string;
+  /**
+   * Optional supporting paragraph aligned bottom-right beside the heading
+   */
+  tagline?: string | null;
+  /**
+   * Section background color
+   */
+  style?: ('dark' | 'light') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'sectionHeader';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "testimonials".
  */
 export interface Testimonial {
@@ -1395,6 +1483,10 @@ export interface Testimonial {
    * Show this testimonial in the featured carousel at the top of the testimonials page.
    */
   featured?: boolean | null;
+  /**
+   * Controls grid order. Lower number = appears first. Default is 20 — use 1–19 to promote, 21+ to demote.
+   */
+  priority?: number | null;
   publishedAt?: string | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -1737,6 +1829,9 @@ export interface PagesSelect<T extends boolean = true> {
         philosophy?: T | PhilosophyBlockSelect<T>;
         featuredPianos?: T | FeaturedPianosBlockSelect<T>;
         newsSection?: T | NewsSectionBlockSelect<T>;
+        locations?: T | LocationsBlockSelect<T>;
+        finalCta?: T | FinalCtaBlockSelect<T>;
+        sectionHeader?: T | SectionHeaderBlockSelect<T>;
       };
   meta?:
     | T
@@ -1963,6 +2058,53 @@ export interface FeaturedPianosBlockSelect<T extends boolean = true> {
 export interface NewsSectionBlockSelect<T extends boolean = true> {
   heading?: T;
   limit?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LocationsBlock_select".
+ */
+export interface LocationsBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FinalCtaBlock_select".
+ */
+export interface FinalCtaBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  body?: T;
+  primaryCta?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+      };
+  secondaryCta?:
+    | T
+    | {
+        label?: T;
+        href?: T;
+      };
+  phoneSource?: T;
+  phoneOverride?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SectionHeaderBlock_select".
+ */
+export interface SectionHeaderBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  tagline?: T;
+  style?: T;
   id?: T;
   blockName?: T;
 }
@@ -2275,7 +2417,7 @@ export interface PianosSelect<T extends boolean = true> {
   isAvailable?: T;
   isFeatured?: T;
   priority?: T;
-  priceOnCall?: T;
+  showPrice?: T;
   publishedAt?: T;
   generateSlug?: T;
   slug?: T;
@@ -2301,6 +2443,7 @@ export interface TestimonialsSelect<T extends boolean = true> {
         description?: T;
       };
   featured?: T;
+  priority?: T;
   publishedAt?: T;
   generateSlug?: T;
   slug?: T;

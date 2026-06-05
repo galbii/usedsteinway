@@ -7,7 +7,7 @@ import type { Post } from '@/payload-types'
 
 import { Media } from '@/components/Media'
 
-export type CardPostData = Pick<Post, 'slug' | 'categories' | 'meta' | 'title'>
+export type CardPostData = Pick<Post, 'slug' | 'categories' | 'meta' | 'title' | 'heroImage'>
 
 const C = {
   accent:      'hsl(40, 72%, 52%)',
@@ -30,8 +30,13 @@ export const Card: React.FC<{
   const { card, link } = useClickableCard({})
   const { className, doc, relationTo, showCategories, title: titleFromProps, featured } = props
 
-  const { slug, categories, meta, title } = doc || {}
+  const { slug, categories, meta, title, heroImage } = doc || {}
   const { description, image: metaImage } = meta || {}
+
+  const image =
+    (typeof metaImage === 'object' && metaImage) ||
+    (typeof heroImage === 'object' && heroImage) ||
+    null
 
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
   const titleToUse = titleFromProps || title
@@ -50,9 +55,9 @@ export const Card: React.FC<{
           className="relative overflow-hidden lg:w-[55%] aspect-[16/10] lg:aspect-auto shrink-0"
           style={{ backgroundColor: 'hsl(36, 22%, 94%)' }}
         >
-          {metaImage && typeof metaImage !== 'string' ? (
+          {image ? (
             <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.03]">
-              <Media resource={metaImage} fill imgClassName="object-cover" size="(max-width: 1024px) 100vw, 55vw" />
+              <Media resource={image} fill imgClassName="object-cover" size="(max-width: 1024px) 100vw, 55vw" />
             </div>
           ) : (
             <div
@@ -156,9 +161,9 @@ export const Card: React.FC<{
         className="relative overflow-hidden aspect-[16/10] mb-0"
         style={{ backgroundColor: 'hsl(36, 22%, 94%)' }}
       >
-        {metaImage && typeof metaImage !== 'string' ? (
+        {image ? (
           <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.04]">
-            <Media resource={metaImage} fill imgClassName="object-cover" size="33vw" />
+            <Media resource={image} fill imgClassName="object-cover" size="33vw" />
           </div>
         ) : (
           <div

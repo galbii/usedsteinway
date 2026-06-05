@@ -80,8 +80,8 @@ export function getFinishBucket(finish: string): FinishFilter {
 export const BRAND_TABS: { key: BrandFilter; label: string; sub?: string }[] = [
   { key: 'all',           label: 'All Instruments' },
   { key: 'steinway',      label: 'Steinway & Sons',  sub: 'Hamburg · New York'                  },
-  { key: 'shigeru-kawai', label: 'Shigeru Kawai',    sub: 'Hamamatsu, Japan'                    },
   { key: 'european',      label: 'European',          sub: 'Bösendorfer · Bechstein · Blüthner' },
+  { key: 'shigeru-kawai', label: 'Shigeru Kawai',    sub: 'Hamamatsu, Japan'                    },
 ]
 
 export const CONDITION_OPTS: { key: ConditionFilter; label: string }[] = [

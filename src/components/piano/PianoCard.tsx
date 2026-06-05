@@ -9,6 +9,11 @@ interface PianoCardProps {
   className?: string
 }
 
+// On cards, hidden-price pianos read as a CTA instead of a passive "Call for Pricing".
+function cardPriceLabel(piano: Piano): string {
+  return piano.priceDisplay === 'Call for Pricing' ? 'More Info' : piano.priceDisplay
+}
+
 export function PianoCard({ piano, variant = 'default', className }: PianoCardProps) {
   // stockImageUrl is the primary source (brand reference photo); fall back to actual media
   const primaryImage = piano.stockImageUrl || piano.imageUrls[0]
@@ -226,7 +231,7 @@ function DefaultCard({
                   whiteSpace:  'nowrap',
                 }}
               >
-                {piano.priceDisplay}
+                {cardPriceLabel(piano)}
               </span>
               <span
                 className="pcard-arrow font-display flex-shrink-0"
@@ -427,7 +432,7 @@ function FeaturedCard({
                 className="font-cormorant font-light text-piano-black"
                 style={{ fontSize: 'clamp(2rem, 2.8vw, 2.7rem)', lineHeight: 1 }}
               >
-                {piano.priceDisplay}
+                {cardPriceLabel(piano)}
               </span>
               <span
                 className="pcard-feat-cta font-display uppercase text-piano-stone"

@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
+import { useAntiSpam, HoneypotField } from '@/lib/contact/useAntiSpam'
 import { cn } from '@/utilities/ui'
 
 const TIME_SLOTS = [
@@ -25,17 +26,18 @@ interface ScheduleViewingModalProps {
   onClose: () => void
   pianoTitle: string
   pianoSlug: string
-  pianoSerialNumber?: string
+  pianoSerial?: string | null
 }
 
-const EMPTY_FORM = { name: '', email: '', phone: '', preferredDate: '', preferredTime: '', message: '' }
+const EMPTY_FORM = { firstName: '', lastName: '', email: '', phone: '', preferredDate: '', preferredTime: '', message: '' }
 
-export function ScheduleViewingModal({ open, onClose, pianoTitle, pianoSerialNumber }: ScheduleViewingModalProps) {
+export function ScheduleViewingModal({ open, onClose, pianoTitle, pianoSerial }: ScheduleViewingModalProps) {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [form, setForm] = useState(EMPTY_FORM)
   const firstInputRef = useRef<HTMLInputElement>(null)
+  const { honeypotRef, getSpamSignals } = useAntiSpam()
 
   // ESC to close
   useEffect(() => {
@@ -97,16 +99,18 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle, pianoSerialNum
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: form.name,
+          firstName: form.firstName,
+          lastName: form.lastName,
           email: form.email,
           phone: form.phone || undefined,
           inquiryType: 'buy',
           pianoTitle,
-          pianoSerialNumber: pianoSerialNumber || undefined,
+          pianoSerial: pianoSerial || undefined,
           message: buildMessage(),
           preferredDate: form.preferredDate || undefined,
           preferredTime: form.preferredTime || undefined,
           source: 'schedule',
+          ...getSpamSignals(),
         }),
       })
 
@@ -222,49 +226,71 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle, pianoSerialNum
             // as a contact form, not an address profile (otherwise it injects a native
             // "Please enter your zip code" tooltip on submit).
             <form onSubmit={handleSubmit} className="space-y-7" autoComplete="on">
+              <HoneypotField inputRef={honeypotRef} />
 
-              {/* Name + Email */}
+              {/* First + Last Name */}
               <div className="grid sm:grid-cols-2 gap-7">
                 <div className="group">
                   <label
-                    htmlFor="sv-name"
+                    htmlFor="sv-first-name"
                     className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-2.5 group-focus-within:text-piano-burgundy transition-colors duration-200"
                   >
-                    Full Name <span className="text-piano-burgundy">*</span>
+                    First Name <span className="text-piano-burgundy">*</span>
                   </label>
                   <input
-                    id="sv-name"
-                    name="name"
+                    id="sv-first-name"
+                    name="given-name"
                     ref={firstInputRef}
                     type="text"
                     required
-                    autoComplete="name"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    autoComplete="given-name"
+                    value={form.firstName}
+                    onChange={(e) => setForm({ ...form, firstName: e.target.value })}
                     className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-2.5 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 placeholder:text-piano-stone/35"
-                    placeholder="Your name"
+                    placeholder="First name"
                   />
                 </div>
                 <div className="group">
                   <label
-                    htmlFor="sv-email"
+                    htmlFor="sv-last-name"
                     className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-2.5 group-focus-within:text-piano-burgundy transition-colors duration-200"
                   >
-                    Email <span className="text-piano-burgundy">*</span>
+                    Last Name <span className="text-piano-burgundy">*</span>
                   </label>
                   <input
-                    id="sv-email"
-                    name="email"
-                    type="email"
+                    id="sv-last-name"
+                    name="family-name"
+                    type="text"
                     required
-                    autoComplete="email"
-                    inputMode="email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    autoComplete="family-name"
+                    value={form.lastName}
+                    onChange={(e) => setForm({ ...form, lastName: e.target.value })}
                     className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-2.5 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 placeholder:text-piano-stone/35"
-                    placeholder="you@email.com"
+                    placeholder="Last name"
                   />
                 </div>
+              </div>
+
+              {/* Email */}
+              <div className="group">
+                <label
+                  htmlFor="sv-email"
+                  className="block font-display text-[10px] tracking-[0.4em] uppercase text-piano-stone mb-2.5 group-focus-within:text-piano-burgundy transition-colors duration-200"
+                >
+                  Email <span className="text-piano-burgundy">*</span>
+                </label>
+                <input
+                  id="sv-email"
+                  name="email"
+                  type="email"
+                  required
+                  autoComplete="email"
+                  inputMode="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-2.5 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 placeholder:text-piano-stone/35"
+                  placeholder="you@email.com"
+                />
               </div>
 
               {/* Phone */}

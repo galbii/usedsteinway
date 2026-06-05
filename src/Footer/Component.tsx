@@ -10,9 +10,9 @@ const NAV_COLUMNS = [
     title: 'Inventory',
     links: [
       { label: 'All Pianos', href: '/pianos' },
-      { label: 'Steinway & Sons', href: '/pianos/steinway' },
+      { label: 'Steinway & Sons', href: '/steinway' },
       { label: 'Handcrafted European', href: '/pianos/european' },
-      { label: 'Shigeru Kawai', href: '/pianos/shigeru-kawai' },
+      { label: 'Shigeru Kawai', href: '/shigeru' },
     ],
   },
   {

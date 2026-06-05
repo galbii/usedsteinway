@@ -361,7 +361,7 @@ export function AboutPageContent() {
           </div>
 
           {/* Service cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-piano-gold/10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-piano-gold/10">
             {[
               {
                 service: 'Tuning &\nMaintenance',
@@ -374,10 +374,6 @@ export function AboutPageContent() {
               {
                 service: 'Player Piano\nSystems',
                 detail: 'Player-piano system installations.',
-              },
-              {
-                service: 'Piano\nRentals',
-                detail: 'Piano rentals for beginners and institutions.',
               },
             ].map(({ service, detail }, i) => (
               <div

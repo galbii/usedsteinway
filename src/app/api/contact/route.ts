@@ -7,72 +7,46 @@ import {
   confirmationEmailSubject,
   confirmationEmailHtml,
 } from '@/lib/email'
-import type { ContactFormData, SellPianoDetails } from '@/lib/email'
+import { isHoneypotTripped, isTooFast, validateContactSubmission } from '@/lib/contact/antiSpam'
+import { isRateLimited } from '@/lib/contact/rateLimit'
 
 const ADMIN_EMAIL = process.env.RESEND_ADMIN_EMAIL ?? 'usedsteinwayadmin@gmail.com'
 
+function getClientIp(req: NextRequest): string {
+  const fwd = req.headers.get('x-forwarded-for')
+  if (fwd) return (fwd.split(',')[0] ?? '').trim()
+  return req.headers.get('x-real-ip')?.trim() ?? ''
+}
+
 export async function POST(req: NextRequest) {
-  let body: unknown
+  let body: Record<string, unknown>
 
   try {
-    body = await req.json()
+    body = (await req.json()) as Record<string, unknown>
   } catch {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
 
-  const data = body as Partial<ContactFormData>
-
-  if (!data.name?.trim() || !data.email?.trim() || !data.inquiryType) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+  // Bot traps. Respond with a fake success so bots can't tell they were caught
+  // and don't retry with a different strategy.
+  if (isHoneypotTripped(body) || isTooFast(body)) {
+    return NextResponse.json({ success: true })
   }
 
-  // For non-sell inquiries the free-form message is required; sell submissions
-  // carry their content in pianoDetails instead.
-  if (data.inquiryType !== 'sell' && !data.message?.trim()) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+  // Per-IP rate limiting (best-effort, in-memory).
+  if (isRateLimited(getClientIp(req))) {
+    return NextResponse.json(
+      { error: 'Please wait a moment before sending another message.' },
+      { status: 429 },
+    )
   }
 
-  const sanitizePianoDetails = (input?: Partial<SellPianoDetails>): SellPianoDetails | undefined => {
-    if (!input) return undefined
-    const allowedStyles: SellPianoDetails['style'][] = ['grand', 'upright', 'digital', 'unknown']
-    const allowedPlayerSystems: SellPianoDetails['playerSystem'][] = ['yes', 'no']
-    const style =
-      input.style && allowedStyles.includes(input.style) ? input.style : undefined
-    const playerSystem =
-      input.playerSystem && allowedPlayerSystems.includes(input.playerSystem)
-        ? input.playerSystem
-        : undefined
-    const cleaned: SellPianoDetails = {
-      brand: input.brand?.trim() || undefined,
-      model: input.model?.trim() || undefined,
-      size: input.size?.trim() || undefined,
-      style,
-      finish: input.finish?.trim() || undefined,
-      age: input.age?.trim() || undefined,
-      serialNumber: input.serialNumber?.trim() || undefined,
-      playerSystem,
-      location: input.location?.trim() || undefined,
-      askingPrice: input.askingPrice?.trim() || undefined,
-    }
-    const hasAny = Object.values(cleaned).some((v) => v !== undefined)
-    return hasAny ? cleaned : undefined
+  // Field validation + sanitization. Real errors surface to the user.
+  const result = validateContactSubmission(body)
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error }, { status: 400 })
   }
-
-  const validated: ContactFormData = {
-    name: data.name.trim(),
-    email: data.email.trim(),
-    phone: data.phone?.trim() || undefined,
-    inquiryType: data.inquiryType,
-    message: data.message?.trim() ?? '',
-    pianoTitle: data.pianoTitle?.trim() || undefined,
-    pianoSerialNumber: data.pianoSerialNumber?.trim() || undefined,
-    budget: data.budget || undefined,
-    timeline: data.timeline || undefined,
-    preferredDate: data.preferredDate?.trim() || undefined,
-    preferredTime: data.preferredTime?.trim() || undefined,
-    source: data.source ?? undefined,
-    pianoDetails: data.inquiryType === 'sell' ? sanitizePianoDetails(data.pianoDetails) : undefined,
-  }
+  const validated = result.data
 
   const payload = await getPayload({ config: configPromise })
 

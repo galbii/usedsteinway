@@ -2,6 +2,9 @@
 
 import { useState } from 'react'
 import { PianoBrowser } from '@/components/piano/PianoBrowser'
+import { PianoReorderCard } from '@/components/piano/PianoReorderCard'
+import { AdminReorderButton } from '@/components/admin/reorder/AdminReorderButton'
+import { AdminReorderGrid } from '@/components/admin/reorder/AdminReorderGrid'
 import { type BrandFilter, getBrandCategory } from '@/lib/pianoFilters'
 import type { Piano } from '@/types/piano'
 
@@ -37,7 +40,7 @@ const BLOCKS: BlockDef[] = [
     label:   'Steinway & Sons',
     eyebrow: 'Hamburg · New York',
     dark:    false,
-    tags:    ['Model B', 'Model C', 'Model D', 'Model A', 'Model M'],
+    tags:    ['Model M', 'Model A', 'Model B', 'Model C', 'Model D'],
   },
   {
     brand:   'european',
@@ -51,17 +54,37 @@ const BLOCKS: BlockDef[] = [
     label:   'Shigeru Kawai',
     eyebrow: 'Hamamatsu, Japan',
     dark:    false,
-    tags:    ['SK-2', 'SK-3', 'SK-6'],
+    tags:    ['SK-2', 'SK-3', 'SK-5', 'SK-6', 'SK-EX'],
   },
 ]
 
-export function PianosPageClient({ pianos }: Props) {
+export function PianosPageClient({ pianos: initialPianos }: Props) {
   const [activeBrand, setActiveBrand] = useState<BrandFilter>('all')
+  const [pianos, setPianos] = useState<Piano[]>(initialPianos)
+  const [reorderMode, setReorderMode] = useState(false)
 
   const counts: Record<string, number> = {
     steinway:      pianos.filter(p => getBrandCategory(p.brandSlug) === 'steinway').length,
     european:      pianos.filter(p => getBrandCategory(p.brandSlug) === 'european').length,
     'shigeru-kawai': pianos.filter(p => getBrandCategory(p.brandSlug) === 'shigeru-kawai').length,
+  }
+
+  if (reorderMode) {
+    return (
+      <>
+        <AdminReorderGrid<Piano>
+          items={pianos}
+          collection="pianos"
+          renderCardBody={(piano) => <PianoReorderCard piano={piano} />}
+          onSaved={(updated) => {
+            setPianos(updated)
+            setReorderMode(false)
+          }}
+          onCancel={() => setReorderMode(false)}
+        />
+        <AdminReorderButton value={reorderMode} onChange={setReorderMode} />
+      </>
+    )
   }
 
   function handleBlockClick(brand: BrandFilter) {
@@ -379,6 +402,8 @@ export function PianosPageClient({ pianos }: Props) {
       <div id="inventory">
         <PianoBrowser pianos={pianos} initialBrandFilter={activeBrand} />
       </div>
+
+      <AdminReorderButton value={reorderMode} onChange={setReorderMode} />
     </>
   )
 }

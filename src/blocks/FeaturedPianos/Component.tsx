@@ -2,7 +2,7 @@ import React from 'react'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import type { Piano as PianoType } from '@/payload-types'
-import { FeaturedCarousel } from '@/components/piano/FeaturedCarousel'
+import { FeaturedProductsCarousel } from '@/components/piano/FeaturedProductsCarousel'
 import type { Piano } from '@/types/piano'
 
 type FeaturedPianosBlockProps = {
@@ -41,7 +41,11 @@ function adaptPayloadPiano(doc: PianoType): Piano {
     model: doc.model ?? '',
     year: doc.year ?? 0,
     price: typeof doc.price === 'number' ? doc.price : null,
-    priceDisplay: doc.price ? `$${doc.price.toLocaleString()}` : 'Call for Price',
+    priceDisplay:
+      doc.showPrice && typeof doc.price === 'number'
+        ? `$${doc.price.toLocaleString()}`
+        : 'Call for Pricing',
+    showPrice: doc.showPrice ?? false,
     condition: (doc.condition as Piano['condition']) ?? 'used',
     finish: doc.finish ?? '',
     location: doc.location ?? null,
@@ -94,5 +98,5 @@ export const FeaturedPianosBlock: React.FC<FeaturedPianosBlockProps> = async ({
 
   if (displayPianos.length === 0) return null
 
-  return <FeaturedCarousel pianos={displayPianos} />
+  return <FeaturedProductsCarousel pianos={displayPianos} />
 }

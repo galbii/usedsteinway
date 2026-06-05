@@ -2,7 +2,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import type { PianoModel, Piano } from '@/types/piano'
 import { PianoCardFeatured } from './PianoCardFeatured'
-import { PriceGuideTable } from './PriceGuideTable'
 import { InquiryCTA } from './InquiryCTA'
 
 interface ModelPageTemplateProps {
@@ -37,13 +36,13 @@ export function ModelPageTemplate({
             <span className="text-piano-cream">{model.name}</span>
           </nav>
           <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-4">
-            Steinway & Sons · {model.type}
+            {brandLabel} · {model.type}
           </p>
           <h1
             className="font-cormorant font-light text-white mb-6"
             style={{ fontSize: 'clamp(3.6rem, 7vw, 8.5rem)' }}
           >
-            Steinway {model.name}
+            {brandLabel} {model.name}
           </h1>
           <p className="text-piano-cream/70 text-xl max-w-2xl leading-relaxed">
             {model.size} · {model.yearRange}
@@ -99,25 +98,6 @@ export function ModelPageTemplate({
         </div>
       </section>
 
-      {/* Price Guide */}
-      <section className="py-24 px-8 bg-piano-burgundy border-t border-piano-gold/10">
-        <div className="max-w-7xl mx-auto">
-          <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-3">Market Pricing</p>
-          <h2
-            className="font-cormorant font-light text-piano-cream mb-10"
-            style={{ fontSize: 'clamp(2.8rem, 4.5vw, 4.5rem)' }}
-          >
-            Price Guide by Era & Condition
-          </h2>
-          <PriceGuideTable entries={model.priceGuide} className="max-w-3xl" />
-          <p className="mt-6 text-piano-silver/60 text-xs max-w-2xl leading-relaxed">
-            Prices are indicative market ranges based on current auction results, dealer prices, and private
-            sales. Condition descriptions follow the Registered Piano Technician (RPT) standard scale.
-            Contact us for a specific appraisal.
-          </p>
-        </div>
-      </section>
-
       {/* Current Inventory */}
       {currentInventory.length > 0 && (
         <section className="py-28 px-8 bg-piano-cream border-t border-piano-linen">
@@ -156,7 +136,7 @@ export function ModelPageTemplate({
         </section>
       )}
 
-      <InquiryCTA brand="Steinway" variant="dark" />
+      <InquiryCTA brand={brandLabel} variant="dark" />
     </main>
   )
 }

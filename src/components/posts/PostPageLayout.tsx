@@ -44,17 +44,27 @@ export const PostPageLayout: React.FC<Props> = ({
         {/* ── Right: collapse-on-hover sidebar rail ──────────────
             64px by default; expands to 280px on hover or when any
             child receives focus (keyboard accessible). The article
-            column reclaims the width when collapsed. */}
+            column reclaims the width when collapsed.
+
+            Two-layer structure for sticky positioning:
+            - Outer wrapper provides the full-height column visual
+              (bg, border) and animates the width on hover.
+            - Inner wrapper is `sticky top-0 h-screen` and owns the
+              `overflow-hidden` clipping. Sticky on an element with
+              its own overflow-hidden is fine; sticky inside an
+              ancestor with overflow-hidden is what would silently
+              break it. */}
         <div
           className="
             group hidden lg:block shrink-0
             w-16 hover:w-[280px] focus-within:w-[280px]
             transition-[width] duration-300 ease-out
-            overflow-hidden
             border-l border-piano-linen bg-piano-cream
           "
         >
-          <PostSidebar title={post.title} backHref={backHref} backLabel={backLabel} />
+          <div className="sticky top-0 h-screen overflow-hidden">
+            <PostSidebar title={post.title} backHref={backHref} backLabel={backLabel} />
+          </div>
         </div>
       </div>
 

@@ -63,6 +63,16 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
   const telHref = phone ? `tel:+1${phone.replace(/\D/g, '')}` : undefined
   const displayPhone = phone ?? undefined
 
+  const descriptionSnippet = (() => {
+    const raw = piano.description?.trim()
+    if (!raw) return null
+    const max = 240
+    if (raw.length <= max) return raw
+    const truncated = raw.slice(0, max)
+    const lastSpace = truncated.lastIndexOf(' ')
+    return `${truncated.slice(0, lastSpace > 0 ? lastSpace : max).replace(/[.,;:]\s*$/, '')}…`
+  })()
+
   useEffect(() => {
     const els = document.querySelectorAll<HTMLElement>('.sr')
     const observer = new IntersectionObserver(
@@ -151,56 +161,17 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
               )}
             </div>
 
-            {/* Short description excerpt — same RichText pipeline as the About section, clamped */}
-            {piano.richTextDescription ? (
+            {/* Description snippet — leads visitors into the full story below */}
+            {descriptionSnippet && (
               <div
-                className="mb-8 max-w-md"
+                className="mb-8 max-w-xl"
                 style={{ animation: 'fade-up 0.7s ease-out 0.28s both' }}
               >
-                <RichText
-                  data={normalizeRichTextContent(piano.richTextDescription)!}
-                  enableGutter={false}
-                  enableProse={false}
-                  className={[
-                    'text-piano-stone/80 text-base leading-relaxed line-clamp-4',
-                    '[&_p]:mb-0',
-                  ].join(' ')}
-                />
-              </div>
-            ) : piano.description ? (
-              <p
-                className="text-piano-stone/80 text-base leading-relaxed line-clamp-4 max-w-md mb-8"
-                style={{ animation: 'fade-up 0.7s ease-out 0.28s both' }}
-              >
-                {piano.description}
-              </p>
-            ) : null}
-
-            {/* Floating glass price card */}
-            <div
-              className="bg-white/90 backdrop-blur-sm border border-black/[0.06] shadow-[0_4px_32px_rgba(0,0,0,0.07)] p-7 mb-8 self-start"
-              style={{ animation: 'fade-up 0.7s ease-out 0.3s both' }}
-            >
-              <p className="font-display text-xs tracking-[0.45em] uppercase text-piano-stone/45 mb-2">
-                Asking Price
-              </p>
-              <p
-                className="font-cormorant font-light text-piano-black"
-                style={{ fontSize: 'clamp(2.4rem, 4vw, 4rem)' }}
-              >
-                {piano.priceDisplay}
-              </p>
-              {piano.retailPrice && (
-                <p className="text-piano-stone/40 text-xs font-display tracking-wide mt-2">
-                  New retail:{' '}
-                  {new Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: 'USD',
-                    maximumFractionDigits: 0,
-                  }).format(piano.retailPrice)}
+                <p className="text-piano-stone text-base leading-relaxed font-light">
+                  {descriptionSnippet}
                 </p>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* CTAs */}
             <div
@@ -341,7 +312,7 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
             { label: 'Brand', value: piano.brand },
             { label: 'Finish', value: piano.finish },
             ...(piano.serialNumber ? [{ label: 'Serial', value: `#${piano.serialNumber}` }] : []),
-          ].map(({ label, value }) => (
+          ].filter(({ value }) => value !== 0 && value !== null && value !== undefined && value !== '').map(({ label, value }) => (
             <div key={label} className="flex flex-col px-8 py-6 min-w-[130px]">
               <dt className="text-piano-stone/40 text-[10px] font-display tracking-[0.45em] uppercase mb-1.5">
                 {label}
@@ -439,6 +410,31 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
                   ))}
                 </dl>
 
+                {/* Pricing — moved here from the top hero */}
+                <div className="mt-8 pt-8 border-t border-black/[0.05]">
+                  <p className="text-piano-stone/50 text-[10px] font-display tracking-[0.45em] uppercase mb-2">
+                    {piano.showPrice && piano.price ? 'Sale Price' : 'Pricing'}
+                  </p>
+                  <p
+                    className="font-cormorant font-light text-piano-black leading-none"
+                    style={{ fontSize: 'clamp(2rem, 3vw, 2.75rem)' }}
+                  >
+                    {piano.priceDisplay}
+                  </p>
+                  {piano.retailPrice && (
+                    <p className="text-piano-stone/50 text-xs font-display tracking-wide mt-3">
+                      Retail Price:{' '}
+                      <span className="text-piano-stone/70">
+                        {new Intl.NumberFormat('en-US', {
+                          style: 'currency',
+                          currency: 'USD',
+                          maximumFractionDigits: 0,
+                        }).format(piano.retailPrice)}
+                      </span>
+                    </p>
+                  )}
+                </div>
+
                 <div className="mt-8 pt-8 border-t border-black/[0.05] space-y-3">
                   <a
                     href="#inquiry"
@@ -490,7 +486,7 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
               Ask Us About This Piano
             </h2>
           </div>
-          <PianoInquiryForm pianoTitle={piano.title} pianoSlug={piano.slug} phone={phone} />
+          <PianoInquiryForm pianoTitle={piano.title} pianoSlug={piano.slug} pianoSerial={piano.serialNumber} phone={phone} locations={locations} />
         </div>
       </section>
 
@@ -520,7 +516,7 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
         onClose={() => setScheduleOpen(false)}
         pianoTitle={piano.title}
         pianoSlug={piano.slug}
-        pianoSerialNumber={piano.serialNumber}
+        pianoSerial={piano.serialNumber}
       />
 
     </main>

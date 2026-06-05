@@ -31,7 +31,7 @@ export const Pianos: CollectionConfig<'pianos'> = {
     brand: true,
     condition: true,
     price: true,
-    priceOnCall: true,
+    showPrice: true,
     location: true,
     meta: {
       image: true,
@@ -186,9 +186,9 @@ export const Pianos: CollectionConfig<'pianos'> = {
                   type: 'number',
                   label: 'Asking Price (USD)',
                   admin: {
-                    description: 'e.g. 89500. Leave blank if "Price on Call" is checked.',
+                    description: 'e.g. 89500. Only shown publicly when "Show Price" is checked.',
                     width: '50%',
-                    condition: (data) => !data.priceOnCall,
+                    condition: (data) => Boolean(data.showPrice),
                   },
                 },
                 {
@@ -376,13 +376,13 @@ export const Pianos: CollectionConfig<'pianos'> = {
       },
     },
     {
-      name: 'priceOnCall',
+      name: 'showPrice',
       type: 'checkbox',
-      label: 'Price on Call',
+      label: 'Show Price',
       defaultValue: false,
       admin: {
         position: 'sidebar',
-        description: 'Check if price should display as "Call for Pricing" instead of a number.',
+        description: 'When off (default), the public listing shows "Call for Pricing" instead of the price.',
       },
     },
     {

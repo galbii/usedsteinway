@@ -16,10 +16,12 @@ import { CodeBlock, CodeBlockProps } from '@/blocks/Code/Component'
 import type {
   BannerBlock as BannerBlockProps,
   CallToActionBlock as CTABlockProps,
+  Media as MediaType,
   MediaBlock as MediaBlockProps,
 } from '@/payload-types'
 import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
+import { Media } from '@/components/Media'
 import { cn } from '@/utilities/ui'
 
 type NodeTypes =
@@ -53,6 +55,26 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     return typeof defaultConverters.paragraph === 'function'
       ? defaultConverters.paragraph(args)
       : null
+  },
+  // Upload nodes inserted by the Lexical Media Library button. The library's
+  // default upload converter emits raw <img>/<picture> tags — we route through
+  // <Media> so R2 URL resolution and Next.js Image optimization both apply.
+  upload: ({ node }) => {
+    if (node.relationTo !== 'media') return null
+    if (typeof node.value !== 'object' || node.value === null) return null
+    const media = node.value as MediaType
+    if (!media.mimeType?.startsWith('image')) {
+      return media.url ? (
+        <a href={media.url} rel="noopener noreferrer">
+          {media.filename}
+        </a>
+      ) : null
+    }
+    return (
+      <figure className="my-10">
+        <Media resource={media} imgClassName="w-full h-auto" />
+      </figure>
+    )
   },
   blocks: {
     banner: ({ node }) => <BannerBlock className="col-start-2 mb-4" {...node.fields} />,
