@@ -62,8 +62,14 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
 
   const [sidebarOpen,     setSidebarOpen]     = useState(false)
   const [brandFilter,     setBrandFilter]     = useState<BrandFilter>(initialBrandFilter ?? 'all')
-  const [filterKey,       setFilterKey]       = useState(0)
-  const firstRender = useRef(true)
+  const [mounted,         setMounted]         = useState(false)
+  const [elevated,        setElevated]        = useState(false)
+  const [searchFocused,   setSearchFocused]   = useState(false)
+
+  // Shared sliding pill behind the active brand tab — measured from label refs.
+  const tabRowRef = useRef<HTMLDivElement>(null)
+  const labelRefs = useRef<Map<string, HTMLSpanElement>>(new Map())
+  const [pillStyle, setPillStyle] = useState<{ left: number; width: number }>({ left: 0, width: 0 })
 
   useEffect(() => {
     if (initialBrandFilter !== undefined) setBrandFilter(initialBrandFilter)
@@ -74,11 +80,32 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
   const [finishFilter,    setFinishFilter]    = useState<FinishFilter>('all')
   const [query,           setQuery]           = useState('')
 
-  // Increment filterKey on filter change to re-trigger card entry animations
+  // Mark mounted after first render so subsequent filter changes use a lighter
+  // crossfade instead of the heavier initial slide-in stagger.
+  useEffect(() => { setMounted(true) }, [])
+
+  // Reposition sliding pill whenever the active brand changes or the layout reflows.
+  useLayoutEffect(() => {
+    const measure = () => {
+      const el = labelRefs.current.get(brandFilter)
+      const row = tabRowRef.current
+      if (!el || !row) return
+      const rRect = row.getBoundingClientRect()
+      const eRect = el.getBoundingClientRect()
+      setPillStyle({ left: eRect.left - rRect.left + row.scrollLeft, width: eRect.width })
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [brandFilter])
+
+  // Subtle elevation cue on the sticky bar once content has scrolled beneath it.
   useEffect(() => {
-    if (firstRender.current) { firstRender.current = false; return }
-    setFilterKey(k => k + 1)
-  }, [brandFilter, conditionFilter, priceFilter, sizeFilter, finishFilter, query])
+    const onScroll = () => setElevated(window.scrollY > headerH + 40)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [headerH])
 
   useEffect(() => {
     document.body.style.overflow = sidebarOpen ? 'hidden' : ''
@@ -100,6 +127,9 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
     [pianos, query, brandFilter, conditionFilter, priceFilter, sizeFilter, finishFilter],
   )
 
+  // Smoothly tween the visible count from old value → new value.
+  const animatedCount = useCountUp(filtered.length)
+
   const hasFilters =
     query.length > 0 ||
     brandFilter !== 'all' || conditionFilter !== 'all' ||
@@ -118,8 +148,9 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
   const featuredPianos = filtered.filter(p => p.isFeatured)
   const regularPianos  = filtered.filter(p => !p.isFeatured)
 
-  // Delay offset for cards on initial load (so they sequence after the header reveals)
-  const cardBaseDelay = filterKey === 0 ? 520 : 0
+  // Delay offset for cards on initial load (so they sequence after the header reveals).
+  // After the first mount, new cards fade in immediately so filter changes feel snappy.
+  const cardBaseDelay = mounted ? 0 : 520
 
   function handleBrandTabClick(key: BrandFilter) {
     if (key === brandFilter) return
@@ -136,7 +167,14 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
       ═══════════════════════════════════════════════════════════ */}
       <div
         className="sticky z-30 w-full"
-        style={{ top: `${headerH}px`, backgroundColor: C.charcoal }}
+        style={{
+          top:             `${headerH}px`,
+          backgroundColor: C.charcoal,
+          boxShadow:       elevated
+            ? '0 14px 36px -18px rgba(0,0,0,0.55), 0 1px 0 rgba(255,255,255,0.02)'
+            : '0 0 0 rgba(0,0,0,0)',
+          transition:      'box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
       >
         {/* ── Row 1: label + active chips + count + filters button ── */}
         <div
@@ -185,7 +223,7 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
                     <button
                       key={val}
                       onClick={clear}
-                      className="inline-flex items-center gap-1 transition-opacity duration-150 hover:opacity-70"
+                      className="group inline-flex items-center gap-1.5 transition-all duration-200 hover:bg-[hsla(40,72%,52%,0.18)]"
                       style={{
                         padding:       '0.4rem 0.9rem',
                         border:        `1px solid ${C.goldBorder}`,
@@ -194,17 +232,24 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
                         letterSpacing: '0.3em',
                         fontFamily:    'var(--font-display, sans-serif)',
                         textTransform: 'uppercase',
+                        animation:     'piano-chip-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both',
+                        transformOrigin: 'left center',
                       }}
                     >
                       {label}
-                      <span style={{ opacity: 0.5, fontSize: '13px' }}>×</span>
+                      <span
+                        className="transition-transform duration-200 group-hover:rotate-90"
+                        style={{ opacity: 0.5, fontSize: '13px', display: 'inline-block', lineHeight: 1 }}
+                      >
+                        ×
+                      </span>
                     </button>
                   )
                 })}
                 {query && (
                   <button
                     onClick={() => setQuery('')}
-                    className="inline-flex items-center gap-1 transition-opacity duration-150 hover:opacity-70"
+                    className="group inline-flex items-center gap-1.5 transition-all duration-200 hover:bg-[hsla(40,72%,52%,0.18)]"
                     style={{
                       padding:       '0.4rem 0.9rem',
                       border:        `1px solid ${C.goldBorder}`,
@@ -214,10 +259,17 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
                       fontFamily:    'var(--font-display, sans-serif)',
                       textTransform: 'uppercase',
                       maxWidth:      '160px',
+                      animation:     'piano-chip-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both',
+                      transformOrigin: 'left center',
                     }}
                   >
                     <span className="truncate">&ldquo;{query}&rdquo;</span>
-                    <span style={{ opacity: 0.5, fontSize: '13px', flexShrink: 0 }}>×</span>
+                    <span
+                      className="transition-transform duration-200 group-hover:rotate-90"
+                      style={{ opacity: 0.5, fontSize: '13px', flexShrink: 0, display: 'inline-block', lineHeight: 1 }}
+                    >
+                      ×
+                    </span>
                   </button>
                 )}
                 {hasFilters && (
@@ -245,15 +297,8 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
               className="font-display uppercase tabular-nums hidden sm:block"
               style={{ fontSize: '15px', letterSpacing: '0.28em', color: C.muted }}
             >
-              <span
-                key={`count-${filterKey}`}
-                style={{
-                  color:     C.gold,
-                  display:   'inline-block',
-                  animation: 'piano-count-flip 0.4s cubic-bezier(0.2, 0, 0, 1) both',
-                }}
-              >
-                {filtered.length}
+              <span style={{ color: C.gold, display: 'inline-block', minWidth: '1.5ch', textAlign: 'right' }}>
+                {animatedCount}
               </span>
               {' '}/ {pianos.length}
             </p>
@@ -306,8 +351,9 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
             className="max-w-7xl mx-auto flex items-center justify-between"
             style={{ padding: '0 2.5rem' }}
           >
-            {/* Brand tabs — scrollable on mobile */}
+            {/* Brand tabs — scrollable on mobile, with shared sliding pill */}
             <div
+              ref={tabRowRef}
               className="flex items-center overflow-x-auto relative"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
             >
@@ -329,63 +375,111 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
                       animation:      'piano-card-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) both',
                       animationDelay: `${360 + tabIndex * 55}ms`,
                     }}
+                    onMouseEnter={e => { if (!active) e.currentTarget.style.color = 'rgba(255,255,255,0.6)' }}
+                    onMouseLeave={e => { if (!active) e.currentTarget.style.color = C.muted }}
                   >
-                    {label}
-                    {/* Active indicator — springs out from centre */}
                     <span
-                      style={{
-                        position:        'absolute',
-                        bottom:          0,
-                        left:            active ? '1.6rem' : '50%',
-                        right:           active ? '1.6rem' : '50%',
-                        height:          '2px',
-                        backgroundColor: C.gold,
-                        transition:      'left 0.4s cubic-bezier(0.16, 1, 0.3, 1), right 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease',
-                        opacity:         active ? 1 : 0,
-                        borderRadius:    '1px',
+                      ref={el => {
+                        if (el) labelRefs.current.set(key, el)
+                        else labelRefs.current.delete(key)
                       }}
-                    />
+                      style={{ display: 'inline-block' }}
+                    >
+                      {label}
+                    </span>
                   </button>
                 )
               })}
+
+              {/* Shared sliding pill */}
+              <span
+                aria-hidden="true"
+                style={{
+                  position:        'absolute',
+                  bottom:          0,
+                  height:          '2px',
+                  backgroundColor: C.gold,
+                  borderRadius:    '1px',
+                  left:            `${pillStyle.left}px`,
+                  width:           `${pillStyle.width}px`,
+                  opacity:         pillStyle.width > 0 ? 1 : 0,
+                  transition:      'left 0.5s cubic-bezier(0.16, 1, 0.3, 1), width 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease',
+                  pointerEvents:   'none',
+                  boxShadow:       '0 0 12px hsla(40, 72%, 52%, 0.35)',
+                }}
+              />
             </div>
 
-            {/* Search input */}
+            {/* Search input — light, prominent, with focus glow */}
             <div
-              className="hidden sm:flex items-center gap-2 flex-shrink-0"
+              className="hidden sm:flex items-center flex-shrink-0"
               style={{
                 paddingLeft:    '2rem',
                 animation:      'reveal-fade 0.6s ease both',
                 animationDelay: '590ms',
               }}
             >
-              <svg width="15" height="15" viewBox="0 0 12 12" fill="none">
-                <circle cx="5" cy="5" r="4" stroke="rgba(255,255,255,0.28)" strokeWidth="1.2" />
-                <line x1="8.2" y1="8.2" x2="11" y2="11" stroke="rgba(255,255,255,0.28)" strokeWidth="1.2" strokeLinecap="round" />
-              </svg>
-              <input
-                type="text"
-                value={query}
-                onChange={e => setQuery(e.target.value)}
-                placeholder="Search instruments..."
-                className="font-display bg-transparent outline-none uppercase"
+              <label
+                className="flex items-center gap-2.5 relative"
                 style={{
-                  fontSize:     '12px',
-                  letterSpacing: '0.28em',
-                  color:        'rgba(255,255,255,0.65)',
-                  width:        '220px',
-                  borderBottom: '1px solid rgba(255,255,255,0.12)',
-                  padding:      '0.5rem 0',
+                  width:           '260px',
+                  padding:         '0.55rem 1rem',
+                  backgroundColor: searchFocused || query ? 'rgba(255,255,255,0.96)' : 'rgba(255,255,255,0.88)',
+                  border:          `1px solid ${searchFocused ? C.gold : 'rgba(255,255,255,0.5)'}`,
+                  boxShadow:       searchFocused
+                    ? '0 0 0 3px hsla(40, 72%, 52%, 0.18), 0 6px 20px -6px rgba(0,0,0,0.4)'
+                    : '0 2px 10px -4px rgba(0,0,0,0.35)',
+                  transition:      'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                  cursor:          'text',
                 }}
-              />
-              {query && (
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  style={{
+                    color:      searchFocused ? C.gold : 'hsl(25, 5%, 38%)',
+                    transition: 'color 0.3s ease',
+                    flexShrink: 0,
+                  }}
+                >
+                  <circle cx="5" cy="5" r="4" stroke="currentColor" strokeWidth="1.4" />
+                  <line x1="8.2" y1="8.2" x2="11" y2="11" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                </svg>
+                <input
+                  type="text"
+                  value={query}
+                  onChange={e => setQuery(e.target.value)}
+                  onFocus={() => setSearchFocused(true)}
+                  onBlur={() => setSearchFocused(false)}
+                  placeholder="Search instruments…"
+                  className="font-display bg-transparent outline-none uppercase flex-1 min-w-0"
+                  style={{
+                    fontSize:      '11px',
+                    letterSpacing: '0.28em',
+                    color:         'hsl(25, 6%, 12%)',
+                  }}
+                />
                 <button
+                  type="button"
                   onClick={() => setQuery('')}
-                  style={{ color: C.muted, fontSize: '18px', lineHeight: 1 }}
+                  aria-label="Clear search"
+                  style={{
+                    color:         'hsl(25, 5%, 38%)',
+                    fontSize:      '16px',
+                    lineHeight:    1,
+                    width:         query ? '16px' : '0',
+                    overflow:      'hidden',
+                    opacity:       query ? 1 : 0,
+                    transition:    'opacity 0.25s ease, width 0.25s ease',
+                    pointerEvents: query ? 'auto' : 'none',
+                    flexShrink:    0,
+                  }}
                 >
                   ×
                 </button>
-              )}
+              </label>
             </div>
           </div>
         </div>
@@ -397,10 +491,7 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
       <div style={{ backgroundColor: C.cream }}>
         <div className="max-w-7xl mx-auto" style={{ padding: '3.5rem 2.5rem 6rem' }}>
           {filtered.length === 0 ? (
-            <div
-              key={`empty-${filterKey}`}
-              style={{ animation: 'piano-card-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both' }}
-            >
+            <div style={{ animation: 'piano-card-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both' }}>
               <EmptyState onClear={clearAll} hasFilters={hasFilters} />
             </div>
           ) : (
@@ -411,17 +502,25 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
                 <section>
                   <SectionDivider label="Featured Instruments" />
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                    {featuredPianos.map((piano, i) => (
-                      <div
-                        key={`feat-${piano.id}-${filterKey}`}
-                        style={{
-                          animation:      'piano-card-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both',
-                          animationDelay: `${cardBaseDelay + i * 100}ms`,
-                        }}
-                      >
-                        <PianoCard piano={piano} variant="featured" />
-                      </div>
-                    ))}
+                    {featuredPianos.map((piano, i) => {
+                      // Cards that stay across filter changes keep their DOM node (no re-animation).
+                      // New cards entering fade in with a light stagger.
+                      const anim = mounted
+                        ? `piano-fade-rise 0.55s cubic-bezier(0.16, 1, 0.3, 1) both`
+                        : `piano-card-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) both`
+                      const stagger = mounted ? Math.min(i * 45, 240) : i * 100
+                      return (
+                        <div
+                          key={`feat-${piano.id}`}
+                          style={{
+                            animation:      anim,
+                            animationDelay: `${cardBaseDelay + stagger}ms`,
+                          }}
+                        >
+                          <PianoCard piano={piano} variant="featured" />
+                        </div>
+                      )
+                    })}
                   </div>
                 </section>
               )}
@@ -433,17 +532,23 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
                     <SectionDivider label="All Instruments" muted />
                   )}
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 lg:gap-6">
-                    {regularPianos.map((piano, i) => (
-                      <div
-                        key={`${piano.id}-${filterKey}`}
-                        style={{
-                          animation:      'piano-card-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both',
-                          animationDelay: `${cardBaseDelay + i * 52}ms`,
-                        }}
-                      >
-                        <PianoCard piano={piano} />
-                      </div>
-                    ))}
+                    {regularPianos.map((piano, i) => {
+                      const anim = mounted
+                        ? `piano-fade-rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both`
+                        : `piano-card-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both`
+                      const stagger = mounted ? Math.min(i * 24, 280) : i * 52
+                      return (
+                        <div
+                          key={`${piano.id}`}
+                          style={{
+                            animation:      anim,
+                            animationDelay: `${cardBaseDelay + stagger}ms`,
+                          }}
+                        >
+                          <PianoCard piano={piano} />
+                        </div>
+                      )
+                    })}
                   </div>
                 </section>
               )}
@@ -551,14 +656,14 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
           >
             Showing{' '}
             <span
-              key={`sidebar-count-${filterKey}`}
               style={{
-                color:     C.gold,
-                display:   'inline-block',
-                animation: 'piano-count-flip 0.35s cubic-bezier(0.2, 0, 0, 1) both',
+                color:    C.gold,
+                display:  'inline-block',
+                minWidth: '1.5ch',
+                textAlign:'right',
               }}
             >
-              {filtered.length}
+              {animatedCount}
             </span>{' '}
             of {pianos.length} instruments
           </p>
@@ -634,11 +739,8 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
             }}
           >
             View{' '}
-            <span
-              key={`btn-count-${filterKey}`}
-              style={{ animation: 'piano-count-flip 0.35s cubic-bezier(0.2, 0, 0, 1) both' }}
-            >
-              {filtered.length}
+            <span style={{ display: 'inline-block', minWidth: '1.5ch', textAlign: 'center' }}>
+              {animatedCount}
             </span>{' '}
             Instrument{filtered.length !== 1 ? 's' : ''}
           </button>
@@ -646,6 +748,43 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
       </aside>
     </>
   )
+}
+
+// ── useCountUp ───────────────────────────────────────────────────────────────
+// Smoothly tween a numeric value between renders (e.g. the visible result
+// count). Falls through instantly under prefers-reduced-motion.
+
+function useCountUp(value: number, duration = 380): number {
+  const [display, setDisplay] = useState(value)
+  const prev = useRef(value)
+
+  useEffect(() => {
+    const from = prev.current
+    const to   = value
+    if (from === to) return
+
+    const reduce = typeof window !== 'undefined'
+      && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    if (reduce) {
+      setDisplay(to)
+      prev.current = to
+      return
+    }
+
+    const start = performance.now()
+    let raf = 0
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration)
+      const eased = 1 - Math.pow(1 - t, 3) // easeOutCubic — weighted, no overshoot
+      setDisplay(Math.round(from + (to - from) * eased))
+      if (t < 1) raf = requestAnimationFrame(tick)
+      else prev.current = to
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [value, duration])
+
+  return display
 }
 
 // ── EmptyState ───────────────────────────────────────────────────────────────

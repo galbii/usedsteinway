@@ -151,6 +151,31 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
               )}
             </div>
 
+            {/* Short description excerpt — same RichText pipeline as the About section, clamped */}
+            {piano.richTextDescription ? (
+              <div
+                className="mb-8 max-w-md"
+                style={{ animation: 'fade-up 0.7s ease-out 0.28s both' }}
+              >
+                <RichText
+                  data={normalizeRichTextContent(piano.richTextDescription)!}
+                  enableGutter={false}
+                  enableProse={false}
+                  className={[
+                    'text-piano-stone/80 text-base leading-relaxed line-clamp-4',
+                    '[&_p]:mb-0',
+                  ].join(' ')}
+                />
+              </div>
+            ) : piano.description ? (
+              <p
+                className="text-piano-stone/80 text-base leading-relaxed line-clamp-4 max-w-md mb-8"
+                style={{ animation: 'fade-up 0.7s ease-out 0.28s both' }}
+              >
+                {piano.description}
+              </p>
+            ) : null}
+
             {/* Floating glass price card */}
             <div
               className="bg-white/90 backdrop-blur-sm border border-black/[0.06] shadow-[0_4px_32px_rgba(0,0,0,0.07)] p-7 mb-8 self-start"
@@ -495,6 +520,7 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
         onClose={() => setScheduleOpen(false)}
         pianoTitle={piano.title}
         pianoSlug={piano.slug}
+        pianoSerialNumber={piano.serialNumber}
       />
 
     </main>

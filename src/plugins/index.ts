@@ -10,16 +10,10 @@ import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
 import { searchFields } from '@/search/fieldOverrides'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
+import { getCollectionPrefix } from '@/lib/search/urls'
 
 import { Page, Piano as PayloadPiano, Post, Testimonial } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
-
-const collectionPrefixMap: Record<string, string> = {
-  posts: '/posts',
-  testimonials: '/testimonials',
-  pianos: '/pianos',
-  pages: '',
-}
 
 const generateTitle: GenerateTitle<Post | Page | Testimonial | PayloadPiano> = ({ doc }) => {
   return doc?.title ? `${doc.title} | UsedSteinways.com` : 'UsedSteinways.com'
@@ -27,7 +21,7 @@ const generateTitle: GenerateTitle<Post | Page | Testimonial | PayloadPiano> = (
 
 const generateURL: GenerateURL<Post | Page | Testimonial | PayloadPiano> = ({ doc, collectionSlug }) => {
   const siteURL = getServerSideURL()
-  const prefix = (collectionSlug && collectionPrefixMap[collectionSlug as string]) ?? ''
+  const prefix = collectionSlug ? getCollectionPrefix(collectionSlug as string) : ''
 
   return doc?.slug ? `${siteURL}${prefix}/${doc.slug}` : siteURL
 }

@@ -65,6 +65,7 @@ export async function POST(req: NextRequest) {
     inquiryType: data.inquiryType,
     message: data.message?.trim() ?? '',
     pianoTitle: data.pianoTitle?.trim() || undefined,
+    pianoSerialNumber: data.pianoSerialNumber?.trim() || undefined,
     budget: data.budget || undefined,
     timeline: data.timeline || undefined,
     preferredDate: data.preferredDate?.trim() || undefined,

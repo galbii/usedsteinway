@@ -193,9 +193,24 @@
     100% { transform: translateX(220%) skewX(-12deg); }
   }
 
+  /* Lighter "fade + small lift" used when filter changes — softer than piano-card-in
+     so refining a search doesn't feel like the grid is being thrown back at you. */
+  @keyframes piano-fade-rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Active filter chip entrance — scale + fade from the leading edge. */
+  @keyframes piano-chip-in {
+    from { opacity: 0; transform: scaleX(0.85) translateX(-4px); }
+    to   { opacity: 1; transform: scaleX(1) translateX(0); }
+  }
+
   --animate-piano-card-in: piano-card-in 0.55s cubic-bezier(0.2, 0, 0, 1) both;
   --animate-piano-block-in: piano-block-in 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-piano-count-flip: piano-count-flip 0.4s cubic-bezier(0.2, 0, 0, 1) both;
+  --animate-piano-fade-rise: piano-fade-rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-piano-chip-in: piano-chip-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 
   /* ── Contact modal animations ──────────────────────────────── */
   @keyframes contact-modal-backdrop-in {

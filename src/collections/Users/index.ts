@@ -15,7 +15,9 @@ export const Users: CollectionConfig = {
     defaultColumns: ['name', 'email'],
     useAsTitle: 'name',
   },
-  auth: true,
+  auth: {
+    tokenExpiration: 60 * 60 * 24 * 10, // 10 days; sliding via admin.autoRefresh in payload.config.ts
+  },
   fields: [
     {
       name: 'name',

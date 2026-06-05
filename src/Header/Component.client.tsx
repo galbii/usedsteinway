@@ -15,6 +15,7 @@ import { MobileBrandsSection } from './Nav/MobileBrandsSection'
 import { MobileResourcesSection } from './Nav/MobileResourcesSection'
 import { cn } from '@/utilities/ui'
 import type { Brand } from '@/payload-types'
+import { SearchOverlay } from '@/components/search/SearchOverlay'
 
 type BrandModel = NonNullable<Brand['models']>[number]
 type ActiveDropdown = 'models' | 'resources' | 'brands' | null
@@ -43,6 +44,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [expandedSection, setExpandedSection] = useState<ActiveDropdown>(null)
   const [scrolled, setScrolled] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
   const { headerTheme, setHeaderTheme } = useHeaderTheme()
   const pathname = usePathname()
   const ticking = useRef(false)
@@ -78,6 +80,21 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
     return () => { document.body.style.overflow = '' }
   }, [mobileMenuOpen])
 
+  // Global "l" shortcut to open search — ignored while typing in fields
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key !== 'l' || e.metaKey || e.ctrlKey || e.altKey) return
+      const target = e.target as HTMLElement | null
+      if (!target) return
+      const tag = target.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || target.isContentEditable) return
+      e.preventDefault()
+      setSearchOpen(true)
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [])
+
   const navItems = data?.navItems || []
 
   return (
@@ -111,16 +128,17 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
           {/* Right side */}
           <div className="flex items-center gap-4 lg:gap-5">
             {/* Search */}
-            <Link
-              href="/search"
+            <button
+              type="button"
+              onClick={() => setSearchOpen(true)}
               className={cn(
                 'hidden lg:flex items-center transition-all duration-200',
                 'text-piano-cream/40 hover:text-piano-cream/80',
               )}
-              aria-label="Search"
+              aria-label="Search (press L)"
             >
               <SearchIcon className="w-[15px] h-[15px]" />
-            </Link>
+            </button>
 
             {/* Vertical rule */}
             <div className="hidden lg:block w-px h-[18px] bg-piano-cream/10" />
@@ -332,17 +350,21 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
             transition: `opacity 0.4s ease ${navItems.length * 65 + 320}ms`,
           }}
         >
-          <Link
-            href="/search"
+          <button
+            type="button"
+            onClick={() => {
+              setMobileMenuOpen(false)
+              setSearchOpen(true)
+            }}
             className={cn(
-              'flex items-center gap-3 w-full',
+              'flex items-center gap-3 w-full text-left',
               'font-display text-[10px] tracking-[0.22em] uppercase',
               'text-piano-cream/35 hover:text-piano-cream/65 transition-colors duration-150',
             )}
           >
             <SearchIcon className="w-3.5 h-3.5 shrink-0" />
             Search Pianos
-          </Link>
+          </button>
 
           <div className="mt-8">
             <div
@@ -359,6 +381,8 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data, models = [] })
           </div>
         </div>
       </aside>
+
+      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   )
 }
