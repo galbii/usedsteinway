@@ -18,9 +18,10 @@ type PhilosophyBlockProps = {
 
 const C = {
   accent:     'hsl(40, 72%, 52%)',
+  darkBg:     'hsl(350, 62%, 26%)',
   borderDark: 'hsl(350, 45%, 38%)',
   ivory:      'hsl(36, 22%, 96%)',
-  ivoryMuted: 'rgba(245,235,220,0.55)',
+  ivoryMuted: 'rgba(245,235,220,0.50)',
 }
 
 function isMedia(val: Media | string | null | undefined): val is Media {
@@ -36,9 +37,10 @@ export const PhilosophyBlock: React.FC<PhilosophyBlockProps> = ({
   secondaryCta,
 }) => {
   const headingParts = heading ? heading.split('\\n') : []
+  const bodyParts = body ? body.split('\\n') : []
 
   return (
-    <section className="relative overflow-hidden py-36 px-8">
+    <section className="relative overflow-hidden py-36 px-8" style={{ backgroundColor: C.darkBg }}>
 
       {/* Background image */}
       {isMedia(backgroundImage) && (
@@ -61,7 +63,7 @@ export const PhilosophyBlock: React.FC<PhilosophyBlockProps> = ({
 
         {/* Eyebrow with flanking gold lines */}
         {eyebrow && (
-          <div className="flex items-center justify-center gap-5 mb-12">
+          <div className="sr flex items-center justify-center gap-5 mb-12">
             <div className="h-px w-10 shrink-0" style={{ backgroundColor: 'hsla(40,72%,52%,0.40)' }} />
             <span className="font-display text-[10px] tracking-[0.5em] uppercase" style={{ color: C.accent }}>
               {eyebrow}
@@ -73,7 +75,7 @@ export const PhilosophyBlock: React.FC<PhilosophyBlockProps> = ({
         {/* Heading */}
         {headingParts.length > 0 && (
           <h2
-            className="font-light leading-[1.05] mb-8"
+            className="sr sr-d1 font-light leading-[1.05] mb-8"
             style={{
               fontFamily: "'Cormorant Garamond', serif",
               fontSize: 'clamp(3rem, 6vw, 6.5rem)',
@@ -90,18 +92,23 @@ export const PhilosophyBlock: React.FC<PhilosophyBlockProps> = ({
         )}
 
         {/* Body */}
-        {body && (
+        {bodyParts.length > 0 && (
           <p
-            className="leading-loose mx-auto mb-14"
+            className="sr sr-d2 leading-loose mx-auto mb-14"
             style={{ fontSize: '1.125rem', color: C.ivoryMuted, maxWidth: '42ch' }}
           >
-            {body}
+            {bodyParts.map((part, i) => (
+              <React.Fragment key={i}>
+                {part}
+                {i < bodyParts.length - 1 && <br />}
+              </React.Fragment>
+            ))}
           </p>
         )}
 
         {/* CTAs */}
         {(primaryCta?.label || secondaryCta?.label) && (
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="sr sr-d3 flex flex-col sm:flex-row items-center justify-center gap-4">
             {primaryCta?.label && primaryCta.href && (
               <Link
                 href={primaryCta.href}

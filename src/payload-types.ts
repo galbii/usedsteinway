@@ -971,41 +971,50 @@ export interface TickerBlock {
  */
 export interface BrandRowsBlock {
   /**
-   * Each row is a full-width brand category link with large editorial typography
+   * Full-width brand category links with large editorial typography. Leave empty to auto-render the three default rows (Steinway & Sons, Handcrafted European, Shigeru Kawai) pulled live from the Brands collection. Add rows to control order, mix in custom rows, or override the auto-derived copy.
    */
-  rows: {
-    /**
-     * e.g. 'Steinway & Sons'
-     */
-    heading: string;
-    /**
-     * Country and founding year (e.g. 'New York, USA · Est. 1853')
-     */
-    eyebrow?: string | null;
-    /**
-     * Short description shown below the brand name
-     */
-    tagline?: string | null;
-    /**
-     * e.g. '/steinway'
-     */
-    href: string;
-    /**
-     * Defaults to 'Browse Collection' if left empty
-     */
-    ctaLabel?: string | null;
-    /**
-     * Optional pill badges showing model names (e.g. Model S, Model B)
-     */
-    tags?:
-      | {
-          name: string;
-          id?: string | null;
-        }[]
-      | null;
-    style?: ('light' | 'dark') | null;
-    id?: string | null;
-  }[];
+  rows?:
+    | {
+        /**
+         * Auto-derive this row from a Brands-collection category, or build it manually with "Custom".
+         */
+        source: 'steinway' | 'european' | 'shigeru-kawai' | 'custom';
+        /**
+         * Overrides the auto-derived heading. Required for Custom rows.
+         */
+        heading?: string | null;
+        /**
+         * Overrides the auto eyebrow (e.g. 'United States · Est. 1853').
+         */
+        eyebrow?: string | null;
+        /**
+         * Overrides the brand tagline shown below the heading.
+         */
+        tagline?: string | null;
+        /**
+         * Overrides the auto link (e.g. '/steinway'). Required for Custom rows.
+         */
+        href?: string | null;
+        /**
+         * Defaults to 'Browse Collection' if left empty.
+         */
+        ctaLabel?: string | null;
+        /**
+         * Overrides the auto-derived model/brand pill badges when one or more are set.
+         */
+        tags?:
+          | {
+              name: string;
+              id?: string | null;
+            }[]
+          | null;
+        /**
+         * Overrides the default background (Steinway & Shigeru = light, European = dark).
+         */
+        style?: ('light' | 'dark') | null;
+        id?: string | null;
+      }[]
+    | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'brandRows';
@@ -1058,7 +1067,7 @@ export interface PhilosophyBlock {
    */
   heading: string;
   /**
-   * Body paragraph beneath the heading
+   * Body paragraph beneath the heading — use \n for line breaks
    */
   body?: string | null;
   /**
@@ -1976,6 +1985,7 @@ export interface BrandRowsBlockSelect<T extends boolean = true> {
   rows?:
     | T
     | {
+        source?: T;
         heading?: T;
         eyebrow?: T;
         tagline?: T;

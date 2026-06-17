@@ -72,8 +72,19 @@ export const HeroHomepageBlock: React.FC<HeroHomepageBlockProps> = ({
         >
           {/* Eyebrow overline */}
           {eyebrow && (
-            <div className="flex items-center gap-5 mb-14">
-              <div className="h-px shrink-0" style={{ width: '2.5rem', backgroundColor: C.accent }} />
+            <div
+              className="flex items-center gap-5 mb-14"
+              style={{ animation: 'reveal-left 0.9s cubic-bezier(0.16,1,0.3,1) 0.05s both' }}
+            >
+              <div
+                className="h-px shrink-0"
+                style={{
+                  width: '2.5rem',
+                  backgroundColor: C.accent,
+                  animation: 'scale-x-in 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s both',
+                  transformOrigin: 'left',
+                }}
+              />
               <span className="font-display text-[11px] tracking-[0.55em] uppercase" style={{ color: C.muted }}>
                 {eyebrow}
               </span>
@@ -81,9 +92,12 @@ export const HeroHomepageBlock: React.FC<HeroHomepageBlockProps> = ({
           )}
 
           {/* Logo + wordmark */}
-          <div className="mb-8">
+          <div className="mb-8" style={{ animation: 'section-reveal 1s cubic-bezier(0.16,1,0.3,1) 0.12s both' }}>
             {isMedia(logoImage) && (
-              <div className="mb-8 flex justify-center">
+              <div
+                className="mb-8 flex justify-center"
+                style={{ animation: 'float-badge 6s ease-in-out 1.2s infinite' }}
+              >
                 <MediaComponent resource={logoImage} imgClassName="w-[110px] h-[110px] object-contain" priority />
               </div>
             )}
@@ -97,6 +111,7 @@ export const HeroHomepageBlock: React.FC<HeroHomepageBlockProps> = ({
                   fontStyle: 'italic',
                   color: C.text,
                   letterSpacing: '-0.015em',
+                  animation: 'reveal-left 1s cubic-bezier(0.16,1,0.3,1) 0.22s both',
                 }}
               >
                 {heading}
@@ -106,26 +121,44 @@ export const HeroHomepageBlock: React.FC<HeroHomepageBlockProps> = ({
 
           {/* Gold sub-label */}
           {subLabel && (
-            <p className="font-display text-[11px] tracking-[0.50em] uppercase mb-12" style={{ color: C.accent }}>
+            <p
+              className="font-display text-[11px] tracking-[0.50em] uppercase mb-12"
+              style={{ color: C.accent, animation: 'fade-up 0.8s ease-out 0.36s both' }}
+            >
               {subLabel}
             </p>
           )}
 
           {/* Tagline */}
           {tagline && (
-            <p className="text-xl leading-[1.75] mb-14" style={{ color: C.muted, maxWidth: '46ch' }}>
+            <p
+              className="text-xl leading-[1.75] mb-14"
+              style={{
+                color: C.muted,
+                maxWidth: '34ch',
+                animation: 'reveal-up 0.9s cubic-bezier(0.16,1,0.3,1) 0.46s both',
+              }}
+            >
               {tagline}
             </p>
           )}
 
           {/* CTAs */}
           {(primaryCta?.label || secondaryCta?.label) && (
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+            <div
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
+              style={{ animation: 'fade-up 0.8s ease-out 0.58s both' }}
+            >
               {primaryCta?.label && (
                 <Link
                   href={primaryCta.href ?? '/pianos'}
                   className="group relative inline-flex items-center justify-center overflow-hidden font-display text-[13px] tracking-[0.38em] uppercase transition-transform duration-200 hover:scale-[1.02] active:scale-[0.99]"
-                  style={{ backgroundColor: C.darkBg, color: C.ivory, padding: '1.25rem 3.2rem' }}
+                  style={{
+                    backgroundColor: C.darkBg,
+                    color: C.ivory,
+                    padding: '1.25rem 3.2rem',
+                    boxShadow: `0 4px 24px hsla(350,62%,14%,0.20)`,
+                  }}
                 >
                   <span
                     className="absolute inset-0 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out"
@@ -153,7 +186,11 @@ export const HeroHomepageBlock: React.FC<HeroHomepageBlockProps> = ({
           {stats && stats.length > 0 && (
             <div className="flex items-start justify-center pt-10 w-full" style={{ borderTop: `1px solid ${C.border}` }}>
               {stats.map((stat, i) => (
-                <div key={stat.id ?? i} className="flex items-stretch">
+                <div
+                  key={stat.id ?? i}
+                  className="flex items-stretch"
+                  style={{ animation: `counter-up 0.7s cubic-bezier(0.16,1,0.3,1) ${(0.68 + i * 0.12).toFixed(2)}s both` }}
+                >
                   {i > 0 && (
                     <div className="w-px mx-8 self-stretch" style={{ backgroundColor: C.border }} />
                   )}
@@ -175,7 +212,10 @@ export const HeroHomepageBlock: React.FC<HeroHomepageBlockProps> = ({
         </div>
 
         {/* RIGHT COLUMN — cycling images (desktop) */}
-        <div className="relative hidden lg:block overflow-hidden">
+        <div
+          className="relative hidden lg:block overflow-hidden"
+          style={{ animation: 'reveal-right 1s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}
+        >
           {resolvedHeroImages.length > 0 ? (
             <HeroImageCycler heroImages={resolvedHeroImages} />
           ) : (

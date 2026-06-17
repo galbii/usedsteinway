@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Media } from '@/components/Media'
 import { cn } from '@/utilities/ui'
@@ -55,9 +55,32 @@ type CellSlots = {
 
 interface Props {
   images: MediaType[]
+  eyebrow?: string
+  /** May contain literal `\n` (backslash-n) for line breaks. */
+  heading?: string
+  galleryHref?: string
+  showroomHref?: string
 }
 
-export function ShowroomGallerySection({ images }: Props) {
+export function ShowroomGallerySection({
+  images,
+  eyebrow = 'The Showroom',
+  heading,
+  galleryHref = '/gallery',
+  showroomHref = '/visit#locations',
+}: Props) {
+  const headingNode = heading
+    ? heading.split('\\n').map((part, i, arr) => (
+        <React.Fragment key={i}>
+          {part}
+          {i < arr.length - 1 && <br />}
+        </React.Fragment>
+      ))
+    : (
+        <>
+          Inside Our<br />Collection
+        </>
+      )
   const [cells, setCells] = useState<CellSlots[]>(() => {
     const indices = shuffle(images.map((_, i) => i))
     const len = Math.max(images.length, 1)
@@ -127,7 +150,7 @@ export function ShowroomGallerySection({ images }: Props) {
                   className="font-display text-[10px] tracking-[0.55em] uppercase"
                   style={{ color: C.accent }}
                 >
-                  The Showroom
+                  {eyebrow}
                 </span>
               </div>
 
@@ -135,13 +158,13 @@ export function ShowroomGallerySection({ images }: Props) {
                 className="font-cormorant font-light leading-[1.02]"
                 style={{ fontSize: 'clamp(3rem, 5vw, 5.5rem)', color: C.text }}
               >
-                Inside Our<br />Collection
+                {headingNode}
               </h2>
             </div>
 
             {/* Desktop "View all" ghost link */}
             <Link
-              href="/gallery"
+              href={galleryHref}
               className="sr sr-d1 hidden md:flex group items-center gap-3 self-end pb-2 font-display text-[10px] tracking-[0.38em] uppercase transition-opacity duration-200 hover:opacity-50"
               style={{ color: C.muted }}
             >
@@ -258,14 +281,14 @@ export function ShowroomGallerySection({ images }: Props) {
             {/* Right: CTAs */}
             <div className="flex flex-col sm:flex-row items-center gap-3">
               <Link
-                href="/gallery"
+                href={galleryHref}
                 className="inline-flex items-center gap-3 px-10 py-3.5 font-display text-[11px] tracking-[0.38em] uppercase transition-opacity duration-200 hover:opacity-80"
                 style={{ backgroundColor: C.text, color: C.bg }}
               >
                 View Full Gallery
               </Link>
               <Link
-                href="/visit#locations"
+                href={showroomHref}
                 className="inline-flex items-center gap-3 px-10 py-3.5 font-display text-[11px] tracking-[0.38em] uppercase transition-opacity duration-200 hover:opacity-70"
                 style={{ border: `1px solid ${C.border}`, color: C.text }}
               >

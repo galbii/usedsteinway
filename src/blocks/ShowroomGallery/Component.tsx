@@ -18,12 +18,26 @@ function isMedia(val: Media | string | null | undefined): val is Media {
   return typeof val === 'object' && val !== null && 'url' in val
 }
 
-export const ShowroomGalleryBlock: React.FC<ShowroomGalleryBlockProps> = ({ images }) => {
+export const ShowroomGalleryBlock: React.FC<ShowroomGalleryBlockProps> = ({
+  eyebrow,
+  heading,
+  images,
+  galleryHref,
+  showroomHref,
+}) => {
   const resolvedImages: Media[] = (images ?? [])
     .map((item) => item.image)
     .filter(isMedia)
 
   if (resolvedImages.length === 0) return null
 
-  return <ShowroomGallerySection images={resolvedImages} />
+  return (
+    <ShowroomGallerySection
+      images={resolvedImages}
+      eyebrow={eyebrow ?? undefined}
+      heading={heading ?? undefined}
+      galleryHref={galleryHref ?? undefined}
+      showroomHref={showroomHref ?? undefined}
+    />
+  )
 }

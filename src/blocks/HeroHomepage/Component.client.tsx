@@ -42,6 +42,7 @@ export function HeroImageCycler({ heroImages }: Props) {
           style={{
             opacity: heroSlot.front === 'a' ? 1 : 0,
             transition: `opacity ${HERO_FADE_MS}ms ease-in-out`,
+            animation: heroSlot.front === 'a' ? 'kenburns 18s ease-in-out infinite alternate' : undefined,
           }}
         >
           <MediaComponent

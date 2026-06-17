@@ -12,6 +12,7 @@ export const FinalCta: Block = {
       name: 'eyebrow',
       type: 'text',
       label: 'Eyebrow',
+      defaultValue: 'Burlington & Natick Showrooms',
       admin: {
         description: "Small label above the heading (e.g. 'Burlington & Natick Showrooms')",
       },
@@ -21,7 +22,7 @@ export const FinalCta: Block = {
       type: 'text',
       label: 'Heading',
       required: true,
-      defaultValue: 'Begin Your\nSearch',
+      defaultValue: 'Begin Your\\nSearch',
       admin: {
         description: 'Large display heading — use \\n for line breaks',
       },
@@ -30,6 +31,8 @@ export const FinalCta: Block = {
       name: 'body',
       type: 'textarea',
       label: 'Body Text',
+      defaultValue:
+        "Tell us what you're looking for — or come hear the pianos yourself. Every conversation starts with listening.",
       admin: {
         description: 'Body paragraph beneath the heading',
       },

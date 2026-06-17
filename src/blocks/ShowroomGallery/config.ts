@@ -22,7 +22,7 @@ export const ShowroomGallery: Block = {
       name: 'heading',
       type: 'text',
       label: 'Heading',
-      defaultValue: 'Inside Our\nCollection',
+      defaultValue: 'Inside Our\\nCollection',
       admin: {
         description: 'Section heading — use \\n for line breaks',
       },
@@ -46,7 +46,7 @@ export const ShowroomGallery: Block = {
       name: 'showroomHref',
       type: 'text',
       label: 'Showroom Link URL',
-      defaultValue: '/contact',
+      defaultValue: '/visit#locations',
       admin: {
         description: 'URL for the "Visit Our Showroom" button',
       },

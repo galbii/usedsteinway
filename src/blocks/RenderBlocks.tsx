@@ -2,6 +2,7 @@ import React, { Fragment } from 'react'
 
 import type { Page, Post } from '@/payload-types'
 
+import { ScrollReveal } from '@/components/ScrollReveal'
 import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
 import { BannerBlock } from '@/blocks/Banner/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
@@ -58,6 +59,7 @@ export const RenderBlocks: React.FC<{
 
   return (
     <Fragment>
+      <ScrollReveal />
       {blocks.map((block, index) => {
         const { blockType } = block
 

@@ -13,6 +13,7 @@ export const Philosophy: Block = {
       name: 'eyebrow',
       type: 'text',
       label: 'Eyebrow',
+      defaultValue: 'Our Philosophy',
       admin: {
         description: "Small label above the heading (e.g. 'Our Philosophy')",
       },
@@ -22,6 +23,7 @@ export const Philosophy: Block = {
       type: 'text',
       label: 'Heading',
       required: true,
+      defaultValue: 'People + Pianos\\n= Music',
       admin: {
         description: 'Large display heading — use \\n for line breaks',
       },
@@ -30,8 +32,10 @@ export const Philosophy: Block = {
       name: 'body',
       type: 'textarea',
       label: 'Body Text',
+      defaultValue:
+        'Over 45 years of expertise.\\nA trade-up policy that lets you grow.\\nTwo showrooms with over two hundred pianos to match individual preferences.',
       admin: {
-        description: 'Body paragraph beneath the heading',
+        description: 'Body paragraph beneath the heading — use \\n for line breaks',
       },
     },
     imageField('backgroundImage', {
@@ -45,8 +49,8 @@ export const Philosophy: Block = {
       type: 'group',
       label: 'Primary CTA',
       fields: [
-        { name: 'label', type: 'text', label: 'Label' },
-        { name: 'href', type: 'text', label: 'URL' },
+        { name: 'label', type: 'text', label: 'Label', defaultValue: 'Our Story' },
+        { name: 'href', type: 'text', label: 'URL', defaultValue: '/about' },
       ],
     },
     {
@@ -54,8 +58,8 @@ export const Philosophy: Block = {
       type: 'group',
       label: 'Secondary CTA',
       fields: [
-        { name: 'label', type: 'text', label: 'Label' },
-        { name: 'href', type: 'text', label: 'URL' },
+        { name: 'label', type: 'text', label: 'Label', defaultValue: 'Browse Pianos' },
+        { name: 'href', type: 'text', label: 'URL', defaultValue: '/pianos' },
       ],
     },
   ],
