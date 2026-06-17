@@ -25,6 +25,7 @@ const dirname = path.dirname(filename)
 
 export default buildConfig({
   admin: {
+    autoRefresh: true,
     components: {
       providers: ['/components/admin/AdminRootProvider#AdminRootProvider'],
       beforeLogin: ['/components/admin/LoginBranding#default'],

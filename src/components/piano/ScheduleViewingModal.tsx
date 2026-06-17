@@ -70,6 +70,25 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle, pianoSerial }:
     }
   }, [open, submitted])
 
+  // Build a meaningful message even when the optional Notes field is empty —
+  // the shared /api/contact endpoint requires `message` to be non-empty for
+  // non-sell inquiries, and the structured date/time fields here carry the
+  // viewing intent.
+  const buildMessage = (): string => {
+    const parts: string[] = [`Viewing request for ${pianoTitle}.`]
+    const slot = TIME_SLOTS.find(s => s.value === form.preferredTime)?.label
+    if (form.preferredDate && slot) {
+      parts.push(`Preferred date/time: ${form.preferredDate} at ${slot}.`)
+    } else if (form.preferredDate) {
+      parts.push(`Preferred date: ${form.preferredDate}.`)
+    } else if (slot) {
+      parts.push(`Preferred time: ${slot}.`)
+    }
+    const notes = form.message.trim()
+    if (notes) parts.push(`Notes: ${notes}`)
+    return parts.join(' ')
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -87,7 +106,7 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle, pianoSerial }:
           inquiryType: 'buy',
           pianoTitle,
           pianoSerial: pianoSerial || undefined,
-          message: form.message,
+          message: buildMessage(),
           preferredDate: form.preferredDate || undefined,
           preferredTime: form.preferredTime || undefined,
           source: 'schedule',
@@ -203,7 +222,10 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle, pianoSerial }:
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-7">
+            // autoComplete tokens are explicit per field below so Chrome treats this
+            // as a contact form, not an address profile (otherwise it injects a native
+            // "Please enter your zip code" tooltip on submit).
+            <form onSubmit={handleSubmit} className="space-y-7" autoComplete="on">
               <HoneypotField inputRef={honeypotRef} />
 
               {/* First + Last Name */}
@@ -217,9 +239,11 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle, pianoSerial }:
                   </label>
                   <input
                     id="sv-first-name"
+                    name="given-name"
                     ref={firstInputRef}
                     type="text"
                     required
+                    autoComplete="given-name"
                     value={form.firstName}
                     onChange={(e) => setForm({ ...form, firstName: e.target.value })}
                     className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-2.5 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 placeholder:text-piano-stone/35"
@@ -235,8 +259,10 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle, pianoSerial }:
                   </label>
                   <input
                     id="sv-last-name"
+                    name="family-name"
                     type="text"
                     required
+                    autoComplete="family-name"
                     value={form.lastName}
                     onChange={(e) => setForm({ ...form, lastName: e.target.value })}
                     className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-2.5 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 placeholder:text-piano-stone/35"
@@ -255,8 +281,11 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle, pianoSerial }:
                 </label>
                 <input
                   id="sv-email"
+                  name="email"
                   type="email"
                   required
+                  autoComplete="email"
+                  inputMode="email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-2.5 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 placeholder:text-piano-stone/35"
@@ -274,8 +303,11 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle, pianoSerial }:
                 </label>
                 <input
                   id="sv-phone"
+                  name="phone"
                   type="tel"
                   required
+                  autoComplete="tel"
+                  inputMode="tel"
                   value={form.phone}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
                   className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-2.5 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 placeholder:text-piano-stone/35"
@@ -298,7 +330,9 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle, pianoSerial }:
                     </label>
                     <input
                       id="sv-date"
+                      name="preferredDate"
                       type="date"
+                      autoComplete="off"
                       value={form.preferredDate}
                       onChange={(e) => setForm({ ...form, preferredDate: e.target.value })}
                       min={today}
@@ -314,6 +348,8 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle, pianoSerial }:
                     </label>
                     <select
                       id="sv-time"
+                      name="preferredTime"
+                      autoComplete="off"
                       value={form.preferredTime}
                       onChange={(e) => setForm({ ...form, preferredTime: e.target.value })}
                       className="w-full bg-piano-warm-white border-b-2 border-piano-linen text-piano-black text-lg py-2.5 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 appearance-none cursor-pointer"
@@ -340,7 +376,9 @@ export function ScheduleViewingModal({ open, onClose, pianoTitle, pianoSerial }:
                 </label>
                 <textarea
                   id="sv-message"
+                  name="message"
                   rows={3}
+                  autoComplete="off"
                   value={form.message}
                   onChange={(e) => setForm({ ...form, message: e.target.value })}
                   className="w-full bg-transparent border-b-2 border-piano-linen text-piano-black text-lg py-2.5 focus:outline-none focus:border-piano-burgundy transition-colors duration-200 placeholder:text-piano-stone/35 resize-none"

@@ -24,6 +24,8 @@ export type ContactFormData = {
   inquiryType: 'buy' | 'sell' | 'general'
   message: string
   pianoTitle?: string
+  /** Serial number of the inventory piano being inquired about — surfaced in the
+      admin email so Roger can pull the file without looking it up. */
   pianoSerial?: string
   budget?: string
   timeline?: string

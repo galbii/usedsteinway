@@ -32,18 +32,18 @@ export default async function VisitPage() {
   return (
     <main className="min-h-screen bg-piano-cream">
       {/* Hero */}
-      <section className="bg-piano-burgundy py-28 px-8">
+      <section className="bg-piano-burgundy py-16 sm:py-20 lg:py-28 px-6 sm:px-8">
         <div className="max-w-7xl mx-auto">
-          <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-5">
+          <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-4 sm:mb-5">
             Plan Your Visit
           </p>
           <h1
-            className="font-cormorant font-light text-white mb-6"
-            style={{ fontSize: 'clamp(3.6rem, 7vw, 8.5rem)' }}
+            className="font-cormorant font-light text-white mb-5 sm:mb-6"
+            style={{ fontSize: 'clamp(2.5rem, 8vw, 8.5rem)' }}
           >
             Come Hear Them Yourself
           </h1>
-          <p className="text-piano-cream/70 text-lg max-w-xl leading-relaxed">
+          <p className="text-piano-cream/70 text-base sm:text-lg max-w-xl leading-relaxed">
             No piano purchase should be made without playing the instrument.
             Our showrooms are designed to let you hear each piano at its best.
           </p>
@@ -52,8 +52,8 @@ export default async function VisitPage() {
 
       {/* Showroom Hours + How to Maximize Your Visit — above the map */}
       <section className="bg-piano-cream">
-        <div className="max-w-7xl mx-auto px-8 pt-20 pb-16">
-          <div className="grid lg:grid-cols-2 gap-14">
+        <div className="max-w-7xl mx-auto px-6 sm:px-8 pt-12 sm:pt-20 pb-10 sm:pb-16">
+          <div className="grid lg:grid-cols-2 gap-10 sm:gap-14">
             {/* Hours */}
             <div>
               <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-4">
@@ -93,21 +93,21 @@ export default async function VisitPage() {
       {/* Location selector + Map */}
       {locations.length > 0 && (
         <section id="locations" className="bg-piano-cream border-t border-b border-piano-linen scroll-mt-24">
-          <div className="max-w-7xl mx-auto px-8 pt-16 pb-0">
-            <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-6">
+          <div className="max-w-7xl mx-auto px-6 sm:px-8 pt-12 sm:pt-16 pb-0">
+            <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-5 sm:mb-6">
               Our Locations
             </p>
           </div>
-          <div className="max-w-7xl mx-auto px-8">
+          <div className="max-w-7xl mx-auto px-6 sm:px-8">
             <LocationTabs locations={locations} phone={displayPhone} />
           </div>
-          <div className="pb-16" />
+          <div className="pb-12 sm:pb-16" />
         </section>
       )}
 
       {/* Appointment CTA — below the map */}
-      <div className="max-w-7xl mx-auto px-8 py-24">
-        <div className="max-w-xl mx-auto bg-piano-cream border border-piano-gold/20 p-8">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 py-16 sm:py-24">
+        <div className="max-w-xl mx-auto bg-piano-cream border border-piano-gold/20 p-6 sm:p-8">
           <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-3">
             Schedule a Visit
           </p>

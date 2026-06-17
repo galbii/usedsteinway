@@ -125,19 +125,72 @@ export const SORT_OPTS: { key: SortOrder; label: string }[] = [
   { key: 'year-asc',   label: 'Year: Oldest First' },
 ]
 
+// ── Search normalisation + fuzzy matching ─────────────────────
+// Strips diacritics so "bo" matches "Bösendorfer" and "blutner" matches "Blüthner".
+// Falls back to a token-level Damerau-Levenshtein search for misspellings
+// like "bosendorefer" → "Bosendorfer".
+
+export function normalizeForSearch(s: string): string {
+  return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim()
+}
+
+function damerauLevenshtein(a: string, b: string): number {
+  const m = a.length, n = b.length
+  if (m === 0) return n
+  if (n === 0) return m
+  const d: number[][] = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0))
+  for (let i = 0; i <= m; i++) d[i]![0] = i
+  for (let j = 0; j <= n; j++) d[0]![j] = j
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1
+      d[i]![j] = Math.min(
+        d[i - 1]![j]! + 1,
+        d[i]![j - 1]! + 1,
+        d[i - 1]![j - 1]! + cost,
+      )
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+        d[i]![j] = Math.min(d[i]![j]!, d[i - 2]![j - 2]! + 1)
+      }
+    }
+  }
+  return d[m]![n]!
+}
+
+// Looser as the query grows: 3-5 chars → 1 edit, 6-11 → 2, 12+ → 3+
+function fuzzyThreshold(qLen: number): number {
+  return Math.max(1, Math.floor(qLen / 6))
+}
+
+function fuzzyTokenMatch(query: string, text: string): boolean {
+  const qLen = query.length
+  if (qLen < 3) return false
+  const threshold = fuzzyThreshold(qLen)
+  const tokens = text.split(/[\s\-/]+/).filter(t => t.length >= 3)
+  return tokens.some(t => {
+    if (Math.abs(t.length - qLen) > threshold) return false
+    return damerauLevenshtein(query, t) <= threshold
+  })
+}
+
 // ── Core filter + sort functions ──────────────────────────────
 
 export function filterPianos(pianos: Piano[], filters: PianoFilters): Piano[] {
+  // Pre-normalise the query once; cheap but adds up across many items.
+  const q = filters.query ? normalizeForSearch(filters.query) : ''
+
   return pianos.filter(p => {
-    // Text search across title, brand, model, finish, description, tags
-    if (filters.query) {
-      const q = filters.query.toLowerCase()
-      const searchable = [
-        p.title, p.brand, p.model, p.finish,
-        p.description, p.tags.join(' '),
-        String(p.year),
-      ].join(' ').toLowerCase()
-      if (!searchable.includes(q)) return false
+    // Text search — diacritic-insensitive substring, fuzzy fallback on key fields.
+    if (q.length > 0) {
+      const fullText = normalizeForSearch(
+        [p.title, p.brand, p.model, p.finish, p.description, p.tags.join(' '), String(p.year)].join(' '),
+      )
+      if (!fullText.includes(q)) {
+        // Fuzzy match only on high-signal fields (brand/model/title) to avoid
+        // accidental matches against long description prose.
+        const keyFields = normalizeForSearch([p.brand, p.model, p.title].join(' '))
+        if (!fuzzyTokenMatch(q, keyFields)) return false
+      }
     }
 
     // Brand category

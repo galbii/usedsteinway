@@ -98,6 +98,90 @@ export function PianosPageClient({ pianos: initialPianos }: Props) {
 
   return (
     <>
+      {/* ── Hover-reveal styles for the category blocks ── */}
+      {/* Rest = brand name only (editorial silence).
+          Hover / focus / active = eyebrow, tags, footer reveal with stagger.
+          @media (hover: none) keeps everything visible on touch devices. */}
+      <style>{`
+        @media (hover: hover) {
+          .pblock-reveal {
+            opacity: 0;
+            transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+          }
+          .pblock-eyebrow { transform: translateY(-6px); }
+          .pblock-tags    { transform: translateY(8px); }
+          .pblock-footer  { transform: translateY(8px); }
+
+          .pblock-tag-item {
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+          }
+
+          .pblock-brand {
+            transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform;
+          }
+
+          /* The hover/active reveal */
+          .pblock:hover .pblock-reveal,
+          .pblock:focus-visible .pblock-reveal,
+          .pblock[data-active="true"] .pblock-reveal,
+          .pblock:hover .pblock-tag-item,
+          .pblock:focus-visible .pblock-tag-item,
+          .pblock[data-active="true"] .pblock-tag-item {
+            opacity: 1;
+            transform: translateY(0);
+          }
+
+          /* Brand name lifts subtly */
+          .pblock:hover .pblock-brand,
+          .pblock:focus-visible .pblock-brand,
+          .pblock[data-active="true"] .pblock-brand {
+            transform: translateY(-3px);
+          }
+
+          /* Timing: eyebrow → tags (staggered) → footer */
+          .pblock:hover .pblock-eyebrow,
+          .pblock:focus-visible .pblock-eyebrow,
+          .pblock[data-active="true"] .pblock-eyebrow { transition-delay: 40ms; }
+
+          .pblock:hover .pblock-tag-item:nth-child(1),
+          .pblock:focus-visible .pblock-tag-item:nth-child(1),
+          .pblock[data-active="true"] .pblock-tag-item:nth-child(1) { transition-delay: 120ms; }
+          .pblock:hover .pblock-tag-item:nth-child(2),
+          .pblock:focus-visible .pblock-tag-item:nth-child(2),
+          .pblock[data-active="true"] .pblock-tag-item:nth-child(2) { transition-delay: 160ms; }
+          .pblock:hover .pblock-tag-item:nth-child(3),
+          .pblock:focus-visible .pblock-tag-item:nth-child(3),
+          .pblock[data-active="true"] .pblock-tag-item:nth-child(3) { transition-delay: 200ms; }
+          .pblock:hover .pblock-tag-item:nth-child(4),
+          .pblock:focus-visible .pblock-tag-item:nth-child(4),
+          .pblock[data-active="true"] .pblock-tag-item:nth-child(4) { transition-delay: 240ms; }
+          .pblock:hover .pblock-tag-item:nth-child(5),
+          .pblock:focus-visible .pblock-tag-item:nth-child(5),
+          .pblock[data-active="true"] .pblock-tag-item:nth-child(5) { transition-delay: 280ms; }
+
+          .pblock:hover .pblock-footer,
+          .pblock:focus-visible .pblock-footer,
+          .pblock[data-active="true"] .pblock-footer { transition-delay: 320ms; }
+
+          /* A faint "tap to explore" hint appears at rest only — fades out on hover. */
+          .pblock-hint {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+          }
+          .pblock:hover .pblock-hint,
+          .pblock:focus-visible .pblock-hint,
+          .pblock[data-active="true"] .pblock-hint {
+            opacity: 0;
+          }
+        }
+      `}</style>
+
       {/* ── Category blocks ── */}
       <section aria-label="Browse by category">
         {/* Entry animation shimmer line */}
@@ -129,7 +213,8 @@ export function PianosPageClient({ pianos: initialPianos }: Props) {
                 key={block.brand}
                 type="button"
                 onClick={() => handleBlockClick(block.brand)}
-                className="group text-left w-full focus-visible:outline-none"
+                className="pblock group text-left w-full focus-visible:outline-none"
+                data-active={isActive ? 'true' : 'false'}
                 style={{
                   backgroundColor: bgColor,
                   borderTop:       `1px solid ${borderColor}`,
@@ -141,6 +226,7 @@ export function PianosPageClient({ pianos: initialPianos }: Props) {
                   animationDelay:  `${index * 110}ms`,
                 }}
                 aria-pressed={isActive}
+                aria-label={`${block.label} — ${count} instrument${count === 1 ? '' : 's'}`}
               >
                 {/* Gold top bar — sweeps in on active */}
                 <div
@@ -203,40 +289,37 @@ export function PianosPageClient({ pianos: initialPianos }: Props) {
                     zIndex:   3,
                   }}
                 >
-                  {/* Eyebrow */}
+                  {/* Eyebrow — hidden at rest, fades in on hover/focus/active */}
                   <p
-                    className="font-display uppercase mb-5"
+                    className="pblock-reveal pblock-eyebrow font-display uppercase mb-5"
                     style={{ fontSize: '10px', letterSpacing: '0.42em', color: muteColor }}
                   >
                     {block.eyebrow}
                   </p>
 
-                  {/* Brand name */}
+                  {/* Brand name — the only thing visible at rest */}
                   <h3
-                    className="font-cormorant font-light leading-[0.9]"
+                    className="pblock-brand font-cormorant font-light leading-[0.9]"
                     style={{
                       fontSize:     'clamp(2.2rem, 4vw, 4.5rem)',
                       color:        textColor,
                       marginBottom: '1.25rem',
-                      transition:   'color 0.3s ease',
                     }}
                   >
                     {block.label}
                   </h3>
 
-                  {/* Model tags */}
+                  {/* Model tags — hidden at rest, stagger in on hover/focus/active */}
                   {block.tags && (
-                    <div className="flex flex-wrap gap-2 mb-5">
-                      {block.tags.map((t, ti) => (
+                    <div className="pblock-reveal pblock-tags flex flex-wrap gap-2 mb-5">
+                      {block.tags.map(t => (
                         <span
                           key={t}
-                          className="font-display uppercase"
+                          className="pblock-tag-item font-display uppercase"
                           style={{
                             fontSize:       '9px',
                             letterSpacing:  '0.18em',
                             padding:        '0.35rem 0.75rem',
-                            transition:     'all 0.3s ease',
-                            transitionDelay: `${ti * 25}ms`,
                             ...(isActive
                               ? block.dark
                                 ? { border: '1px solid rgba(245,235,220,0.28)', color: 'rgba(245,235,220,0.7)' }
@@ -251,14 +334,14 @@ export function PianosPageClient({ pianos: initialPianos }: Props) {
                     </div>
                   )}
 
-                  {/* Footer row: active indicator */}
+                  {/* Footer row — hidden at rest, fades in last */}
                   <div
-                    className="flex items-center justify-end"
+                    className="pblock-reveal pblock-footer flex items-center justify-end"
                     style={{
                       paddingTop:  '1.25rem',
                       borderTop:   `1px solid ${isActive ? (block.dark ? 'rgba(180,130,60,0.3)' : 'rgba(180,130,60,0.25)') : borderColor}`,
                       marginTop:   '0.5rem',
-                      transition:  'border-color 0.4s ease',
+                      transition:  'border-color 0.4s ease, opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
                     }}
                   >
                     <span
@@ -281,6 +364,30 @@ export function PianosPageClient({ pianos: initialPianos }: Props) {
                       )}
                     </span>
                   </div>
+
+                  {/* Faint resting hint — number of instruments + arrow. Fades out on hover. */}
+                  {!isActive && (
+                    <div
+                      className="pblock-hint absolute"
+                      aria-hidden="true"
+                      style={{
+                        bottom:        'clamp(2.5rem, 4vw, 4rem)',
+                        right:         'clamp(2rem, 3.5vw, 3.5rem)',
+                        pointerEvents: 'none',
+                      }}
+                    >
+                      <span
+                        className="font-display uppercase tabular-nums"
+                        style={{
+                          fontSize:      '10px',
+                          letterSpacing: '0.4em',
+                          color:         muteColor,
+                        }}
+                      >
+                        {count > 0 ? `${count} available` : 'View'}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </button>
             )
