@@ -22,7 +22,6 @@ export const Philosophy: Block = {
       name: 'heading',
       type: 'text',
       label: 'Heading',
-      required: true,
       defaultValue: 'People + Pianos\\n= Music',
       admin: {
         description: 'Large display heading — use \\n for line breaks',

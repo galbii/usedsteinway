@@ -12,16 +12,15 @@ export const Ticker: Block = {
       name: 'items',
       type: 'array',
       label: 'Ticker Items',
-      required: true,
-      minRows: 1,
+      minRows: 0,
       admin: {
-        description: 'Brand names or labels that scroll across the ticker bar',
+        description:
+          'Brand names or labels that scroll across the ticker bar. Leave empty to use the default brand list.',
       },
       fields: [
         {
           name: 'text',
           type: 'text',
-          required: true,
           label: 'Text',
           admin: { description: "e.g. 'Steinway & Sons'" },
         },

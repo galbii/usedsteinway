@@ -20,16 +20,23 @@ const C = {
   border: 'hsl(36, 18%, 89%)',
 }
 
+// ── Static defaults (mirror UsedSteinwaysHomePage.tsx Locations section) ──
+const DEFAULT_EYEBROW = 'Our Locations'
+const DEFAULT_HEADING = ''
+const DEFAULT_PHONE = '508-545-0766'
+
 export const LocationsBlock: React.FC<LocationsBlockProps> = async ({ eyebrow, heading }) => {
+  // Locations are a live source (Site Settings) — the same source the static homepage uses.
   const siteSettings = (await getCachedGlobal('site-settings', 0)()) as SiteSetting
 
   const locations = siteSettings?.locations ?? []
-  const phone = siteSettings?.contactInfo?.phone ?? undefined
+  const phone = siteSettings?.contactInfo?.phone || DEFAULT_PHONE
 
+  // Static homepage omits this whole section when there are no locations.
   if (!locations.length) return null
 
-  const eyebrowText = eyebrow?.trim() || 'Our Locations'
-  const headingText = heading?.trim() ?? ''
+  const eyebrowText = eyebrow || DEFAULT_EYEBROW
+  const headingText = heading || DEFAULT_HEADING
 
   return (
     <section className="px-8 py-24" style={{ backgroundColor: C.bg }}>
@@ -55,7 +62,7 @@ export const LocationsBlock: React.FC<LocationsBlockProps> = async ({ eyebrow, h
         )}
 
         <div className="sr sr-d1">
-          <LocationTabs locations={locations} phone={phone ?? undefined} />
+          <LocationTabs locations={locations} phone={phone} />
         </div>
       </div>
     </section>

@@ -21,7 +21,6 @@ export const FinalCta: Block = {
       name: 'heading',
       type: 'text',
       label: 'Heading',
-      required: true,
       defaultValue: 'Begin Your\\nSearch',
       admin: {
         description: 'Large display heading — use \\n for line breaks',

@@ -13,6 +13,7 @@ export const HeroHomepage: Block = {
       name: 'eyebrow',
       type: 'text',
       label: 'Eyebrow Overline',
+      defaultValue: 'Est. 1980 · Massachusetts',
       admin: {
         description: "Small text above the wordmark (e.g. 'Est. 1980 · Massachusetts')",
       },
@@ -21,7 +22,7 @@ export const HeroHomepage: Block = {
       name: 'heading',
       type: 'text',
       label: 'Heading / Wordmark',
-      required: true,
+      defaultValue: 'UsedSteinways',
       admin: {
         description: "Main heading displayed in large italic Cormorant Garamond (e.g. 'UsedSteinways')",
       },
@@ -30,6 +31,7 @@ export const HeroHomepage: Block = {
       name: 'subLabel',
       type: 'text',
       label: 'Gold Sub-Label',
+      defaultValue: 'Quality Instruments · Expert Hands',
       admin: {
         description: "Small gold uppercase label below the heading (e.g. 'Quality Instruments · Expert Hands')",
       },
@@ -38,6 +40,8 @@ export const HeroHomepage: Block = {
       name: 'tagline',
       type: 'textarea',
       label: 'Tagline',
+      defaultValue:
+        'Every piano personally evaluated by Roger, a master piano technician with over 45 years of experience.',
       admin: {
         description: 'Body paragraph shown below the sub-label',
       },
@@ -66,14 +70,12 @@ export const HeroHomepage: Block = {
         {
           name: 'number',
           type: 'text',
-          required: true,
           label: 'Number',
           admin: { description: "e.g. '45+'" },
         },
         {
           name: 'label',
           type: 'text',
-          required: true,
           label: 'Label',
           admin: { description: "e.g. 'Years'" },
         },
@@ -84,8 +86,8 @@ export const HeroHomepage: Block = {
       type: 'group',
       label: 'Primary CTA',
       fields: [
-        { name: 'label', type: 'text', label: 'Label', admin: { description: "e.g. 'Browse Collection'" } },
-        { name: 'href', type: 'text', label: 'URL', admin: { description: "e.g. '/pianos'" } },
+        { name: 'label', type: 'text', label: 'Label', defaultValue: 'Browse Collection', admin: { description: "e.g. 'Browse Collection'" } },
+        { name: 'href', type: 'text', label: 'URL', defaultValue: '/pianos', admin: { description: "e.g. '/pianos'" } },
       ],
     },
     {
@@ -93,8 +95,8 @@ export const HeroHomepage: Block = {
       type: 'group',
       label: 'Secondary CTA',
       fields: [
-        { name: 'label', type: 'text', label: 'Label', admin: { description: "e.g. 'Get in Touch'" } },
-        { name: 'href', type: 'text', label: 'URL', admin: { description: "e.g. '/contact'" } },
+        { name: 'label', type: 'text', label: 'Label', defaultValue: 'Get in Touch', admin: { description: "e.g. 'Get in Touch'" } },
+        { name: 'href', type: 'text', label: 'URL', defaultValue: '/contact', admin: { description: "e.g. '/contact'" } },
       ],
     },
   ],

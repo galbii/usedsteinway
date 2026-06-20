@@ -1,9 +1,24 @@
-import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Media } from '@/payload-types'
 import { Media as MediaComponent } from '@/components/Media'
+import { queryShowroomPhotos, querySteinwayPhotos } from '@/lib/payload/media'
 import { HeroImageCycler } from './Component.client'
+
+// Static homepage defaults — used when a CMS field is empty (overwrite system).
+const DEFAULTS = {
+  eyebrow: 'Est. 1980 · Massachusetts',
+  heading: 'UsedSteinways',
+  subLabel: 'Quality Instruments · Expert Hands',
+  tagline:
+    'Every piano personally evaluated by Roger, a master piano technician with over 45 years of experience.',
+  primaryCta: { label: 'Browse Collection', href: '/pianos' },
+  secondaryCta: { label: 'Get in Touch', href: '/contact' },
+  stats: [
+    { number: '45+', label: 'Years' },
+    { number: '20+', label: 'Steinways' },
+  ],
+}
 
 type HeroHomepageBlockProps = {
   eyebrow?: string | null
@@ -35,7 +50,7 @@ function isMedia(val: Media | string | null | undefined): val is Media {
   return typeof val === 'object' && val !== null && 'url' in val
 }
 
-export const HeroHomepageBlock: React.FC<HeroHomepageBlockProps> = ({
+export const HeroHomepageBlock = async ({
   eyebrow,
   heading,
   subLabel,
@@ -45,10 +60,36 @@ export const HeroHomepageBlock: React.FC<HeroHomepageBlockProps> = ({
   stats,
   primaryCta,
   secondaryCta,
-}) => {
-  const resolvedHeroImages: Media[] = (heroImages ?? [])
+}: HeroHomepageBlockProps) => {
+  // Copy falls back to the static homepage values when empty.
+  const eyebrowText = eyebrow || DEFAULTS.eyebrow
+  const headingText = heading || DEFAULTS.heading
+  const subLabelText = subLabel || DEFAULTS.subLabel
+  const taglineText = tagline || DEFAULTS.tagline
+  const primary = {
+    label: primaryCta?.label || DEFAULTS.primaryCta.label,
+    href: primaryCta?.href || DEFAULTS.primaryCta.href,
+  }
+  const secondary = {
+    label: secondaryCta?.label || DEFAULTS.secondaryCta.label,
+    href: secondaryCta?.href || DEFAULTS.secondaryCta.href,
+  }
+  const resolvedStats = stats && stats.length > 0 ? stats : DEFAULTS.stats
+
+  // Images: admin-supplied array wins; otherwise mirror the static hero's live
+  // source — shuffled showroom + steinway photos — then the single Roger fallback.
+  const adminHeroImages: Media[] = (heroImages ?? [])
     .map((item) => item.image)
     .filter(isMedia)
+
+  let resolvedHeroImages: Media[] = adminHeroImages
+  if (resolvedHeroImages.length === 0) {
+    const [showroomPhotos, steinwayPhotos] = await Promise.all([
+      queryShowroomPhotos(18),
+      querySteinwayPhotos(18),
+    ])
+    resolvedHeroImages = [...showroomPhotos, ...steinwayPhotos].sort(() => Math.random() - 0.5)
+  }
 
   return (
     <section
@@ -71,123 +112,119 @@ export const HeroHomepageBlock: React.FC<HeroHomepageBlockProps> = ({
           style={{ borderRight: `1px solid hsla(40, 72%, 52%, 0.16)` }}
         >
           {/* Eyebrow overline */}
-          {eyebrow && (
+          <div
+            className="flex items-center gap-5 mb-14"
+            style={{ animation: 'reveal-left 0.9s cubic-bezier(0.16,1,0.3,1) 0.05s both' }}
+          >
             <div
-              className="flex items-center gap-5 mb-14"
-              style={{ animation: 'reveal-left 0.9s cubic-bezier(0.16,1,0.3,1) 0.05s both' }}
-            >
-              <div
-                className="h-px shrink-0"
-                style={{
-                  width: '2.5rem',
-                  backgroundColor: C.accent,
-                  animation: 'scale-x-in 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s both',
-                  transformOrigin: 'left',
-                }}
-              />
-              <span className="font-display text-[11px] tracking-[0.55em] uppercase" style={{ color: C.muted }}>
-                {eyebrow}
-              </span>
-            </div>
-          )}
+              className="h-px shrink-0"
+              style={{
+                width: '2.5rem',
+                backgroundColor: C.accent,
+                animation: 'scale-x-in 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s both',
+                transformOrigin: 'left',
+              }}
+            />
+            <span className="font-display text-[11px] tracking-[0.55em] uppercase" style={{ color: C.muted }}>
+              {eyebrowText}
+            </span>
+          </div>
 
           {/* Logo + wordmark */}
           <div className="mb-8" style={{ animation: 'section-reveal 1s cubic-bezier(0.16,1,0.3,1) 0.12s both' }}>
-            {isMedia(logoImage) && (
+            {isMedia(logoImage) ? (
               <div
                 className="mb-8 flex justify-center"
                 style={{ animation: 'float-badge 6s ease-in-out 1.2s infinite' }}
               >
                 <MediaComponent resource={logoImage} imgClassName="w-[110px] h-[110px] object-contain" priority />
               </div>
+            ) : (
+              <div className="mb-8 flex justify-center">
+                <Image
+                  src="/UsedSteinway.png"
+                  alt="UsedSteinways monogram"
+                  width={110}
+                  height={110}
+                  priority
+                  style={{ animation: 'float-badge 6s ease-in-out 1.2s infinite' }}
+                />
+              </div>
             )}
-            {heading && (
-              <h1
-                className="leading-[0.90]"
-                style={{
-                  fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: 'clamp(4rem, 7.8vw, 8.5rem)',
-                  fontWeight: 300,
-                  fontStyle: 'italic',
-                  color: C.text,
-                  letterSpacing: '-0.015em',
-                  animation: 'reveal-left 1s cubic-bezier(0.16,1,0.3,1) 0.22s both',
-                }}
-              >
-                {heading}
-              </h1>
-            )}
+            <h1
+              className="leading-[0.90]"
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: 'clamp(4rem, 7.8vw, 8.5rem)',
+                fontWeight: 300,
+                fontStyle: 'italic',
+                color: C.text,
+                letterSpacing: '-0.015em',
+                animation: 'reveal-left 1s cubic-bezier(0.16,1,0.3,1) 0.22s both',
+              }}
+            >
+              {headingText}
+            </h1>
           </div>
 
           {/* Gold sub-label */}
-          {subLabel && (
-            <p
-              className="font-display text-[11px] tracking-[0.50em] uppercase mb-12"
-              style={{ color: C.accent, animation: 'fade-up 0.8s ease-out 0.36s both' }}
-            >
-              {subLabel}
-            </p>
-          )}
+          <p
+            className="font-display text-[11px] tracking-[0.50em] uppercase mb-12"
+            style={{ color: C.accent, animation: 'fade-up 0.8s ease-out 0.36s both' }}
+          >
+            {subLabelText}
+          </p>
 
           {/* Tagline */}
-          {tagline && (
-            <p
-              className="text-xl leading-[1.75] mb-14"
-              style={{
-                color: C.muted,
-                maxWidth: '34ch',
-                animation: 'reveal-up 0.9s cubic-bezier(0.16,1,0.3,1) 0.46s both',
-              }}
-            >
-              {tagline}
-            </p>
-          )}
+          <p
+            className="text-xl leading-[1.75] mb-14"
+            style={{
+              color: C.muted,
+              maxWidth: '34ch',
+              animation: 'reveal-up 0.9s cubic-bezier(0.16,1,0.3,1) 0.46s both',
+            }}
+          >
+            {taglineText}
+          </p>
 
           {/* CTAs */}
-          {(primaryCta?.label || secondaryCta?.label) && (
-            <div
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
-              style={{ animation: 'fade-up 0.8s ease-out 0.58s both' }}
+          <div
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
+            style={{ animation: 'fade-up 0.8s ease-out 0.58s both' }}
+          >
+            <Link
+              href={primary.href}
+              className="group relative inline-flex items-center justify-center overflow-hidden font-display text-[13px] tracking-[0.38em] uppercase transition-transform duration-200 hover:scale-[1.02] active:scale-[0.99]"
+              style={{
+                backgroundColor: C.darkBg,
+                color: C.ivory,
+                padding: '1.25rem 3.2rem',
+                boxShadow: `0 4px 24px hsla(350,62%,14%,0.20)`,
+              }}
             >
-              {primaryCta?.label && (
-                <Link
-                  href={primaryCta.href ?? '/pianos'}
-                  className="group relative inline-flex items-center justify-center overflow-hidden font-display text-[13px] tracking-[0.38em] uppercase transition-transform duration-200 hover:scale-[1.02] active:scale-[0.99]"
-                  style={{
-                    backgroundColor: C.darkBg,
-                    color: C.ivory,
-                    padding: '1.25rem 3.2rem',
-                    boxShadow: `0 4px 24px hsla(350,62%,14%,0.20)`,
-                  }}
-                >
-                  <span
-                    className="absolute inset-0 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out"
-                    style={{ backgroundColor: C.accent }}
-                    aria-hidden
-                  />
-                  <span className="relative z-10 transition-colors duration-300 group-hover:text-[hsl(350,62%,14%)]">
-                    {primaryCta.label}
-                  </span>
-                </Link>
-              )}
-              {secondaryCta?.label && (
-                <Link
-                  href={secondaryCta.href ?? '/contact'}
-                  className="inline-flex items-center justify-center font-display text-[13px] tracking-[0.38em] uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.99]"
-                  style={{ border: `1.5px solid ${C.text}`, color: C.text, padding: '1.2rem 2.8rem' }}
-                >
-                  {secondaryCta.label}
-                </Link>
-              )}
-            </div>
-          )}
+              <span
+                className="absolute inset-0 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out"
+                style={{ backgroundColor: C.accent }}
+                aria-hidden
+              />
+              <span className="relative z-10 transition-colors duration-300 group-hover:text-[hsl(350,62%,14%)]">
+                {primary.label}
+              </span>
+            </Link>
+            <Link
+              href={secondary.href}
+              className="inline-flex items-center justify-center font-display text-[13px] tracking-[0.38em] uppercase transition-all duration-300 hover:scale-[1.02] active:scale-[0.99]"
+              style={{ border: `1.5px solid ${C.text}`, color: C.text, padding: '1.2rem 2.8rem' }}
+            >
+              {secondary.label}
+            </Link>
+          </div>
 
           {/* Stats */}
-          {stats && stats.length > 0 && (
-            <div className="flex items-start justify-center pt-10 w-full" style={{ borderTop: `1px solid ${C.border}` }}>
-              {stats.map((stat, i) => (
+          <div className="flex items-start justify-center pt-10 w-full" style={{ borderTop: `1px solid ${C.border}` }}>
+            {resolvedStats.map((stat, i) => (
                 <div
-                  key={stat.id ?? i}
+                  key={i}
                   className="flex items-stretch"
                   style={{ animation: `counter-up 0.7s cubic-bezier(0.16,1,0.3,1) ${(0.68 + i * 0.12).toFixed(2)}s both` }}
                 >
@@ -207,8 +244,7 @@ export const HeroHomepageBlock: React.FC<HeroHomepageBlockProps> = ({
                   </div>
                 </div>
               ))}
-            </div>
-          )}
+          </div>
         </div>
 
         {/* RIGHT COLUMN — cycling images (desktop) */}

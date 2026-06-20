@@ -4,6 +4,19 @@ import { revalidatePath, revalidateTag } from 'next/cache'
 
 import type { Piano } from '../../../payload-types'
 
+// Statically-rendered pages that list/group pianos and must be flushed whenever
+// any piano changes (sort order, availability, price, add/remove, etc.).
+// Detail pages (/pianos/[slug]) are handled separately by slug.
+const revalidateListingPages = () => {
+  revalidatePath('/pianos')
+  revalidatePath('/steinway')
+  revalidatePath('/steinway/[modelSlug]', 'page')
+  revalidatePath('/shigeru')
+  revalidatePath('/european-pianos')
+  revalidatePath('/pianos/[slug]/[modelSlug]', 'page')
+  revalidatePath('/')
+}
+
 export const revalidatePiano: CollectionAfterChangeHook<Piano> = ({
   doc,
   previousDoc,
@@ -16,6 +29,7 @@ export const revalidatePiano: CollectionAfterChangeHook<Piano> = ({
       payload.logger.info(`Revalidating piano at path: ${path}`)
 
       revalidatePath(path)
+      revalidateListingPages()
       revalidateTag('pianos-sitemap')
     }
 
@@ -25,6 +39,7 @@ export const revalidatePiano: CollectionAfterChangeHook<Piano> = ({
       payload.logger.info(`Revalidating old piano at path: ${oldPath}`)
 
       revalidatePath(oldPath)
+      revalidateListingPages()
       revalidateTag('pianos-sitemap')
     }
   }
@@ -36,6 +51,7 @@ export const revalidateDelete: CollectionAfterDeleteHook<Piano> = ({ doc, req: {
     const path = `/pianos/${doc?.slug}`
 
     revalidatePath(path)
+    revalidateListingPages()
     revalidateTag('pianos-sitemap')
   }
 

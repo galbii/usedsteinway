@@ -17,11 +17,18 @@ const C = {
   text:       'hsl(350, 12%, 11%)',
 }
 
-export const TickerBlock: React.FC<TickerBlockProps> = ({ items, style }) => {
-  const variant = style ?? 'dark'
-  const safeItems = items ?? []
+// Static homepage defaults — must match UsedSteinwaysHomePage.tsx TICKER section exactly
+const DEFAULT_ITEMS = [
+  'Steinway & Sons', '·', 'Shigeru Kawai', '·', 'Handcrafted European Pianos', '·',
+  'Blüthner', '·', 'Bösendorfer', '·', 'C. Bechstein', '·',
+  'Petrof', '·', 'Schimmel', '·',
+].map((text) => ({ text }))
+const DEFAULT_STYLE: 'dark' | 'light' = 'dark'
 
-  if (safeItems.length === 0) return null
+export const TickerBlock: React.FC<TickerBlockProps> = ({ items, style }) => {
+  const variant = style || DEFAULT_STYLE
+  const provided = items ?? []
+  const safeItems = provided.length > 0 ? provided : DEFAULT_ITEMS
 
   const isDark = variant === 'dark'
 

@@ -20,7 +20,6 @@ export const BrandRows: Block = {
         {
           name: 'source',
           type: 'select',
-          required: true,
           defaultValue: 'steinway',
           label: 'Content Source',
           admin: {

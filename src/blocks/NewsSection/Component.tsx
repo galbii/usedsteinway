@@ -11,10 +11,14 @@ type NewsSectionBlockProps = {
   disableInnerContainer?: boolean
 }
 
-export const NewsSectionBlock: React.FC<NewsSectionBlockProps> = async ({ limit }) => {
-  const posts = await queryRecentPosts(limit ?? 4)
+// Static homepage default — page.tsx fetches queryRecentPosts(6) and renders
+// <NewsCarousel> unconditionally (it has its own empty state).
+const DEFAULT_LIMIT = 6
 
-  if (!posts.length) return null
+export const NewsSectionBlock: React.FC<NewsSectionBlockProps> = async ({ limit }) => {
+  // Same live source as the static homepage; when the field is empty fall back
+  // to the static default count so the output matches exactly.
+  const posts = await queryRecentPosts(limit ?? DEFAULT_LIMIT)
 
   return <NewsCarousel posts={posts} />
 }

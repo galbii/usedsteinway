@@ -12,6 +12,7 @@ export const NewsSection: Block = {
       name: 'heading',
       type: 'text',
       label: 'Section Label',
+      defaultValue: 'Latest News',
       admin: {
         description: "Internal label (e.g. 'Latest News')",
         position: 'sidebar',
@@ -21,7 +22,7 @@ export const NewsSection: Block = {
       name: 'limit',
       type: 'number',
       label: 'Number of Posts',
-      defaultValue: 4,
+      defaultValue: 6,
       min: 1,
       max: 8,
       admin: {

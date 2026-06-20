@@ -880,7 +880,7 @@ export interface HeroHomepageBlock {
   /**
    * Main heading displayed in large italic Cormorant Garamond (e.g. 'UsedSteinways')
    */
-  heading: string;
+  heading?: string | null;
   /**
    * Small gold uppercase label below the heading (e.g. 'Quality Instruments · Expert Hands')
    */
@@ -910,11 +910,11 @@ export interface HeroHomepageBlock {
         /**
          * e.g. '45+'
          */
-        number: string;
+        number?: string | null;
         /**
          * e.g. 'Years'
          */
-        label: string;
+        label?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -948,15 +948,17 @@ export interface HeroHomepageBlock {
  */
 export interface TickerBlock {
   /**
-   * Brand names or labels that scroll across the ticker bar
+   * Brand names or labels that scroll across the ticker bar. Leave empty to use the default brand list.
    */
-  items: {
-    /**
-     * e.g. 'Steinway & Sons'
-     */
-    text: string;
-    id?: string | null;
-  }[];
+  items?:
+    | {
+        /**
+         * e.g. 'Steinway & Sons'
+         */
+        text?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Background color of the ticker bar
    */
@@ -978,7 +980,7 @@ export interface BrandRowsBlock {
         /**
          * Auto-derive this row from a Brands-collection category, or build it manually with "Custom".
          */
-        source: 'steinway' | 'european' | 'shigeru-kawai' | 'custom';
+        source?: ('steinway' | 'european' | 'shigeru-kawai' | 'custom') | null;
         /**
          * Overrides the auto-derived heading. Required for Custom rows.
          */
@@ -1065,7 +1067,7 @@ export interface PhilosophyBlock {
   /**
    * Large display heading — use \n for line breaks
    */
-  heading: string;
+  heading?: string | null;
   /**
    * Body paragraph beneath the heading — use \n for line breaks
    */
@@ -1096,15 +1098,15 @@ export interface FeaturedPianosBlock {
    */
   heading?: string | null;
   /**
-   * How many pianos to display. Ignored if specific pianos are pinned below.
+   * Caps how many pinned pianos are shown. Only applies when specific pianos are pinned below — the automatic fallback always matches the static homepage carousel.
    */
   limit?: number | null;
   /**
-   * Leave empty to show the most recent featured pianos automatically. Add rows to pin specific instruments.
+   * Leave empty to render the exact same featured-pianos carousel as the static homepage. Add rows to pin specific instruments and override the default selection.
    */
   pianos?:
     | {
-        piano: string | Piano;
+        piano?: (string | null) | Piano;
         id?: string | null;
       }[]
     | null;
@@ -1387,7 +1389,7 @@ export interface FinalCtaBlock {
   /**
    * Large display heading — use \n for line breaks
    */
-  heading: string;
+  heading?: string | null;
   /**
    * Body paragraph beneath the heading
    */
@@ -1430,7 +1432,7 @@ export interface SectionHeaderBlock {
   /**
    * Giant italic display heading (e.g. 'Our Pianos')
    */
-  heading: string;
+  heading?: string | null;
   /**
    * Optional supporting paragraph aligned bottom-right beside the heading
    */

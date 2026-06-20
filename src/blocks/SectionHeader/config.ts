@@ -12,6 +12,7 @@ export const SectionHeader: Block = {
       name: 'eyebrow',
       type: 'text',
       label: 'Eyebrow',
+      defaultValue: 'The Collection',
       admin: {
         description: "Small uppercase label above the heading (e.g. 'The Collection')",
       },
@@ -19,8 +20,8 @@ export const SectionHeader: Block = {
     {
       name: 'heading',
       type: 'text',
-      required: true,
       label: 'Heading',
+      defaultValue: 'Our Pianos',
       admin: {
         description: "Giant italic display heading (e.g. 'Our Pianos')",
       },
@@ -29,6 +30,7 @@ export const SectionHeader: Block = {
       name: 'tagline',
       type: 'textarea',
       label: 'Tagline',
+      defaultValue: "From the world's finest makers — Each with its unique tone and touch",
       admin: {
         description: 'Optional supporting paragraph aligned bottom-right beside the heading',
       },

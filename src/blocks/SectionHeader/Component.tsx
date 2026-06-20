@@ -21,15 +21,23 @@ const C = {
   ivory:    'hsl(36, 22%, 96%)',
 }
 
+// Static homepage defaults — must match the "Our Pianos" header section of UsedSteinwaysHomePage.tsx exactly
+const DEFAULT_EYEBROW = 'The Collection'
+const DEFAULT_HEADING = 'Our Pianos'
+const DEFAULT_TAGLINE = "From the world's finest makers — Each with its unique tone and touch"
+const DEFAULT_STYLE: 'dark' | 'light' = 'dark'
+
 export const SectionHeaderBlock: React.FC<SectionHeaderBlockProps> = ({
   eyebrow,
   heading,
   tagline,
   style,
 }) => {
-  if (!heading) return null
+  const eyebrowText = eyebrow || DEFAULT_EYEBROW
+  const headingText = heading || DEFAULT_HEADING
+  const taglineText = tagline || DEFAULT_TAGLINE
 
-  const isDark = (style ?? 'dark') === 'dark'
+  const isDark = (style || DEFAULT_STYLE) === 'dark'
   const bgColor = isDark ? C.charcoal : C.bg
   const headingColor = isDark ? C.ivory : C.text
   const dividerColor = isDark ? 'rgba(255,255,255,0.08)' : C.border
@@ -39,14 +47,14 @@ export const SectionHeaderBlock: React.FC<SectionHeaderBlockProps> = ({
     <section style={{ backgroundColor: bgColor }}>
       <div className="max-w-7xl mx-auto px-8 pt-24 pb-0">
 
-        {eyebrow && (
+        {eyebrowText && (
           <div className="sr flex items-center gap-5 mb-14">
             <div className="h-px w-12 shrink-0" style={{ backgroundColor: C.accent }} />
             <span
               className="font-display text-[10px] tracking-[0.55em] uppercase"
               style={{ color: C.accent }}
             >
-              {eyebrow}
+              {eyebrowText}
             </span>
             <div className="flex-1 h-px" style={{ backgroundColor: dividerColor }} />
           </div>
@@ -65,16 +73,16 @@ export const SectionHeaderBlock: React.FC<SectionHeaderBlockProps> = ({
               letterSpacing: '-0.015em',
             }}
           >
-            {heading}
+            {headingText}
           </h2>
 
-          {tagline && (
+          {taglineText && (
             <div className="xl:text-right space-y-5 shrink-0 pb-2">
               <p
                 className="text-base leading-relaxed xl:max-w-[28ch] xl:ml-auto"
                 style={{ color: taglineColor }}
               >
-                {tagline}
+                {taglineText}
               </p>
             </div>
           )}

@@ -25,7 +25,8 @@ export const FeaturedPianos: Block = {
       min: 1,
       max: 12,
       admin: {
-        description: 'How many pianos to display. Ignored if specific pianos are pinned below.',
+        description:
+          'Caps how many pinned pianos are shown. Only applies when specific pianos are pinned below — the automatic fallback always matches the static homepage carousel.',
         position: 'sidebar',
       },
     },
@@ -34,14 +35,14 @@ export const FeaturedPianos: Block = {
       type: 'array',
       label: 'Pin Specific Pianos (optional)',
       admin: {
-        description: 'Leave empty to show the most recent featured pianos automatically. Add rows to pin specific instruments.',
+        description:
+          'Leave empty to render the exact same featured-pianos carousel as the static homepage. Add rows to pin specific instruments and override the default selection.',
       },
       fields: [
         {
           name: 'piano',
           type: 'relationship',
           relationTo: 'pianos',
-          required: true,
           label: 'Piano',
         },
       ],
