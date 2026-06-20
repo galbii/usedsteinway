@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { authenticated } from '@/access'
 import { imageField } from '@/lib/payload/fields/media'
+import { revalidateBrand, revalidateBrandDelete } from './hooks/revalidateBrand'
 
 export const Brands: CollectionConfig = {
   slug: 'brands',
@@ -9,6 +10,10 @@ export const Brands: CollectionConfig = {
     delete: authenticated,
     read: () => true,
     update: authenticated,
+  },
+  hooks: {
+    afterChange: [revalidateBrand],
+    afterDelete: [revalidateBrandDelete],
   },
   admin: {
     defaultColumns: ['name', 'slug', 'prestige', 'country'],

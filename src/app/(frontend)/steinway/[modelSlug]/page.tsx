@@ -5,6 +5,8 @@ import configPromise from '@payload-config'
 import { ModelPageTemplate } from '@/components/piano/ModelPageTemplate'
 import { queryModelFromBrand } from '@/lib/payload/brands'
 import { queryPianosByBrandAndModel } from '@/lib/payload/pianos'
+import { ModelEditButton } from '@/components/admin/onpage/ModelEditButton'
+import { modelEditFieldSchemas } from '@/components/admin/onpage/brandEditSchema'
 
 interface Props {
   params: Promise<{ modelSlug: string }>
@@ -49,12 +51,20 @@ export default async function SteinwayModelPage({ params }: Props) {
   const inventory = await queryPianosByBrandAndModel('steinway', modelValue)
 
   return (
-    <ModelPageTemplate
-      model={model}
-      currentInventory={inventory}
-      brandHref="/steinway"
-      brandLabel="Steinway"
-      modelUrlBase="/steinway"
-    />
+    <>
+      <ModelPageTemplate
+        model={model}
+        currentInventory={inventory}
+        brandHref="/steinway"
+        brandLabel="Steinway"
+        modelUrlBase="/steinway"
+      />
+      <ModelEditButton
+        brandSlug="steinway"
+        modelSlug={modelSlug}
+        modelName={`Steinway ${model.name}`}
+        fieldSchemas={modelEditFieldSchemas()}
+      />
+    </>
   )
 }

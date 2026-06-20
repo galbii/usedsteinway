@@ -3,46 +3,17 @@ import { BrandPageV2 } from '@/components/piano/BrandPageV2'
 import { PianoHeroCarousel } from '@/components/piano/PianoHeroCarousel'
 import { SteinwayModelsGrid } from './_components/SteinwayModelsGrid'
 import { SteinwayPianosGrid } from './_components/SteinwayPianosGrid'
-import { getBrand, STEINWAY_MODELS } from '@/lib/piano-data'
+import { STEINWAY_MODELS } from '@/lib/piano-data'
 import { notFound } from 'next/navigation'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
 import { queryPianosByBrand } from '@/lib/payload/pianos'
-import type { PianoModel } from '@/types/piano'
-import type { Brand } from '@/payload-types'
-
-type BrandModel = NonNullable<Brand['models']>[number]
+import { getBrandPageData } from '@/lib/payload/brands'
+import { BrandEditButton } from '@/components/admin/onpage/BrandEditButton'
+import { brandEditFieldSchemas } from '@/components/admin/onpage/brandEditSchema'
 
 export const metadata: Metadata = {
   title: 'Steinway & Sons Pianos For Sale | UsedSteinways.com',
   description:
     'Browse our curated selection of pre-owned Steinway & Sons grand pianos. Model B, Model D, Model M, and more — personally inspected and selected.',
-}
-
-function cmsModelToPianoModel(doc: BrandModel): PianoModel {
-  return {
-    slug: doc.slug,
-    brandSlug: 'steinway',
-    name: doc.name,
-    type: doc.type,
-    size: doc.size ?? '',
-    sizeInches: doc.sizeInches ?? '',
-    weight: doc.weight ?? '',
-    stringLength: doc.stringLength ?? '',
-    yearRange: doc.yearRange ?? '',
-    description: doc.description,
-    highlights: (doc.highlights ?? []).map((h) => h.text),
-    priceGuide: (doc.priceGuide ?? []).map((p) => ({
-      era: p.era,
-      condition: p.condition,
-      priceRange: p.priceRange,
-    })),
-    adjacentModels: (doc.adjacentModels ?? []).map((a) => ({
-      slug: a.adjacentSlug,
-      name: a.adjacentName,
-    })),
-    imageUrl: typeof doc.image === 'object' && doc.image?.url ? doc.image.url : '',
-  }
 }
 
 const MODEL_ORDER: Record<string, number> = {
@@ -57,33 +28,17 @@ const MODEL_ORDER: Record<string, number> = {
 
 const REMOVED_SLUGS = new Set(['model-a3', 'hamburg-s'])
 
-async function getModelsFromCMS(): Promise<PianoModel[] | null> {
-  try {
-    const payload = await getPayload({ config: configPromise })
-    const result = await payload.find({
-      collection: 'brands',
-      where: { slug: { equals: 'steinway' } },
-      limit: 1,
-    })
-    const brand = result.docs[0]
-    if (!brand?.models || brand.models.length === 0) return null
-    return [...brand.models]
-      .filter((m) => !REMOVED_SLUGS.has(m.slug))
-      .map(cmsModelToPianoModel)
-      .sort((a, b) => (MODEL_ORDER[a.slug] ?? 99) - (MODEL_ORDER[b.slug] ?? 99))
-  } catch {
-    return null
-  }
-}
-
 export default async function SteinwayPage() {
-  const brand = getBrand('steinway')
-  if (!brand) notFound()
-  const [pianos, cmsModels] = await Promise.all([
+  const [pianos, { brand, models: rawModels }] = await Promise.all([
     queryPianosByBrand('steinway'),
-    getModelsFromCMS(),
+    getBrandPageData('steinway', STEINWAY_MODELS),
   ])
-  const models = cmsModels ?? STEINWAY_MODELS
+  if (!brand) notFound()
+
+  const models = rawModels
+    .filter((m) => !REMOVED_SLUGS.has(m.slug))
+    .sort((a, b) => (MODEL_ORDER[a.slug] ?? 99) - (MODEL_ORDER[b.slug] ?? 99))
+
   const featured = pianos.filter((p) => p.isFeatured)
   const carouselPianos = featured.length > 0 ? featured : pianos.slice(0, 6)
 
@@ -104,6 +59,11 @@ export default async function SteinwayPage() {
         pianos={pianos}
         hideHero
         hideInventory
+      />
+      <BrandEditButton
+        brandSlug="steinway"
+        brandName={brand.name}
+        fieldSchemas={brandEditFieldSchemas()}
       />
     </>
   )

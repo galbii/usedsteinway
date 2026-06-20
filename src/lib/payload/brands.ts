@@ -3,6 +3,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import type { Brand } from '@/payload-types'
 import type { Brand as DomainBrand, PianoModel } from '@/types/piano'
+import { getBrand } from '@/lib/piano-data'
 
 export type BrandRow = {
   id: string
@@ -139,6 +140,63 @@ export const queryModelFromBrand = cache(
       imageUrl:
         typeof modelDoc.image === 'object' && modelDoc.image?.url ? modelDoc.image.url : '',
     }
+  },
+)
+
+// Field-level merge: hardcoded brand copy is the baseline; any field actually
+// filled in on the CMS document overrides it. Reads raw doc fields (not the
+// defaulted adapter output) so blank CMS fields fall through to hardcoded copy
+// rather than clobbering it with adapter defaults.
+function mergeBrandFromDoc(base: DomainBrand, doc: Brand): DomainBrand {
+  let cmsHeroImageUrl: string | null = null
+  if (doc.heroImage && typeof doc.heroImage !== 'string') {
+    cmsHeroImageUrl = doc.heroImage.url ?? doc.heroImage.thumbnailURL ?? null
+  }
+
+  return {
+    slug: base.slug,
+    name: doc.name || base.name,
+    country: doc.country || base.country,
+    founded: doc.founded || base.founded,
+    category: (doc.category as DomainBrand['category']) || base.category,
+    tagline: doc.tagline || base.tagline,
+    description: doc.description || base.description,
+    whyBuyPreowned: doc.whyBuyPreowned?.length
+      ? doc.whyBuyPreowned.map((w) => w.text)
+      : base.whyBuyPreowned,
+    heroImageUrl: cmsHeroImageUrl || base.heroImageUrl,
+    models: doc.models?.length ? doc.models.map((m) => m.name) : base.models,
+    priceRange: doc.priceRange || base.priceRange,
+    prestige: (doc.prestige as DomainBrand['prestige']) || base.prestige,
+    accentColor: doc.accentColor || base.accentColor,
+  }
+}
+
+/**
+ * Brand listing page data with field-level fallback to hardcoded copy.
+ *
+ * - Brand identity: hardcoded baseline (`getBrand`) overridden field-by-field
+ *   by any value filled in on the CMS brand document.
+ * - Models grid: CMS models when the document has any, otherwise `fallbackModels`.
+ * - Missing document: fully hardcoded baseline.
+ */
+export const getBrandPageData = cache(
+  async (
+    brandSlug: string,
+    fallbackModels: PianoModel[] = [],
+  ): Promise<{ brand: DomainBrand | null; models: PianoModel[] }> => {
+    const base = getBrand(brandSlug) ?? null
+    const doc = await queryBrandBySlug(brandSlug)
+
+    if (!doc) {
+      return { brand: base, models: fallbackModels }
+    }
+
+    const brand = base ? mergeBrandFromDoc(base, doc) : adaptPayloadBrandToDomain(doc)
+    const cmsModels = adaptPayloadBrandModels(doc)
+    const models = cmsModels.length > 0 ? cmsModels : fallbackModels
+
+    return { brand, models }
   },
 )
 

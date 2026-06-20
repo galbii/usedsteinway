@@ -236,6 +236,25 @@ export function serializeBlocks(blocks: Block[]): EditorBlockSchema[] {
   return blocks.map(serializeBlock)
 }
 
+// Serialize an arbitrary set of Payload fields (e.g. a collection's top-level
+// fields, or an array field's sub-fields) into editor schemas. Layout-only types
+// (row/collapsible/tabs) are flattened, so the result is a flat editable list.
+export function serializeFields(fields: Field[]): EditorFieldSchema[] {
+  return fields.flatMap(serializeField)
+}
+
+// Pull just the editable values named in `schemas` out of a loaded document (or
+// array row). Used to seed the document drawer from a depth=0 fetch — fields not
+// in the schema (slug, ids, etc.) are left untouched so they round-trip on save.
+export function pickEditableValues(
+  source: Record<string, unknown> | null | undefined,
+  schemas: EditorFieldSchema[],
+): Record<string, unknown> {
+  const out: Record<string, unknown> = {}
+  for (const field of schemas) out[field.name] = source?.[field.name]
+  return out
+}
+
 // Produces an empty value object for a freshly-added block instance, seeded with
 // the blockType discriminator Payload requires.
 export function defaultValueForBlock(

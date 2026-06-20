@@ -5,6 +5,8 @@ import configPromise from '@payload-config'
 import { ModelPageTemplate } from '@/components/piano/ModelPageTemplate'
 import { queryBrandBySlug, queryModelFromBrand } from '@/lib/payload/brands'
 import { queryPianosByBrandAndModel } from '@/lib/payload/pianos'
+import { ModelEditButton } from '@/components/admin/onpage/ModelEditButton'
+import { modelEditFieldSchemas } from '@/components/admin/onpage/brandEditSchema'
 
 interface Props {
   params: Promise<{ slug: string; modelSlug: string }>
@@ -61,12 +63,20 @@ export default async function BrandModelPage({ params }: Props) {
   const inventory = await queryPianosByBrandAndModel(decodedBrand, model.name)
 
   return (
-    <ModelPageTemplate
-      model={model}
-      currentInventory={inventory}
-      brandHref={`/pianos/${brandDoc.slug}`}
-      brandLabel={brandDoc.name}
-      modelUrlBase={`/pianos/${brandDoc.slug}`}
-    />
+    <>
+      <ModelPageTemplate
+        model={model}
+        currentInventory={inventory}
+        brandHref={`/pianos/${brandDoc.slug}`}
+        brandLabel={brandDoc.name}
+        modelUrlBase={`/pianos/${brandDoc.slug}`}
+      />
+      <ModelEditButton
+        brandSlug={brandDoc.slug}
+        modelSlug={modelSlug}
+        modelName={`${brandDoc.name} ${model.name}`}
+        fieldSchemas={modelEditFieldSchemas()}
+      />
+    </>
   )
 }
