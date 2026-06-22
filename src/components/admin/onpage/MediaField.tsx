@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { ImageIcon, RefreshCw, X } from 'lucide-react'
 import { useMediaManager } from '@/components/admin/media-manager/MediaManagerProvider'
@@ -32,8 +32,33 @@ function resolveDisplay(
 export function MediaField({ value, onChange, label, mimeFilter }: MediaFieldProps) {
   const { openModal } = useMediaManager()
   const [justPicked, setJustPicked] = useState<MediaItem | null>(null)
+  const [resolved, setResolved] = useState<{ id: string; url: string | null; alt: string | null } | null>(null)
 
   const display = resolveDisplay(value, justPicked)
+  const displayId = display?.id ?? null
+  const displayUrl = display?.url ?? null
+
+  // The on-page editor loads documents at depth=0, so an already-set image
+  // arrives as a bare id with no url. Fetch the media doc once to show its
+  // current thumbnail instead of an opaque "id:" chip. Picking a new image
+  // (justPicked) already carries a url, so this only runs for pre-existing ones.
+  useEffect(() => {
+    if (!displayId || displayUrl) return
+    let cancelled = false
+    fetch(`/api/media/${displayId}?depth=0`, { credentials: 'include' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((doc: { url?: string | null; thumbnailURL?: string | null; alt?: string | null } | null) => {
+        if (cancelled || !doc) return
+        setResolved({ id: displayId, url: doc.url ?? doc.thumbnailURL ?? null, alt: doc.alt ?? null })
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [displayId, displayUrl])
+
+  const thumbUrl = displayUrl ?? (resolved?.id === displayId ? resolved.url : null)
+  const thumbAlt = display?.alt ?? (resolved?.id === displayId ? resolved.alt : null)
 
   const browse = () => {
     openModal({
@@ -69,10 +94,10 @@ export function MediaField({ value, onChange, label, mimeFilter }: MediaFieldPro
   return (
     <div className="flex items-center gap-3 bg-white border border-piano-stone/15 p-2">
       <div className="relative w-16 h-16 shrink-0 bg-piano-linen overflow-hidden">
-        {display.url ? (
+        {thumbUrl ? (
           <Image
-            src={display.url}
-            alt={display.alt || ''}
+            src={thumbUrl}
+            alt={thumbAlt || ''}
             fill
             className="object-cover"
             sizes="64px"
@@ -85,8 +110,8 @@ export function MediaField({ value, onChange, label, mimeFilter }: MediaFieldPro
         )}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm text-piano-black truncate">{display.alt || 'Image selected'}</p>
-        {!display.url && (
+        <p className="text-sm text-piano-black truncate">{thumbAlt || 'Image selected'}</p>
+        {!thumbUrl && (
           <p className="text-[10px] font-display tracking-[0.25em] uppercase text-piano-stone/40 mt-0.5 truncate">
             id: {display.id}
           </p>
