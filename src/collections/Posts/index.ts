@@ -2,11 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
-import { Banner } from '../../blocks/Banner/config'
-import { CallToAction } from '../../blocks/CallToAction/config'
-import { Content } from '../../blocks/Content/config'
-import { ExpertBlock } from '../../blocks/Expert/config'
-import { MediaBlock } from '../../blocks/MediaBlock/config'
+import { editablePostBlocks } from '../../blocks/postRegistry'
 import { imageField } from '../../lib/payload/fields/media'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { populateAuthors } from './hooks/populateAuthors'
@@ -78,9 +74,10 @@ export const Posts: CollectionConfig<'posts'> = {
               },
             }),
             // Layout builder — composable blocks rendered on the post page.
-            // To add a new block type: create src/blocks/YourBlock/config.ts,
-            // import it here, add it to the blocks array, add the component
-            // to RenderBlocks.tsx.
+            // The block set lives in src/blocks/postRegistry.ts (single source
+            // of truth shared with the on-page post editor). To add a new block
+            // type: create src/blocks/YourBlock/config.ts, add it to the
+            // registry, then add the component to RenderBlocks.tsx.
             {
               name: 'layout',
               type: 'blocks',
@@ -90,13 +87,7 @@ export const Posts: CollectionConfig<'posts'> = {
                   blockType: 'content',
                 },
               ],
-              blocks: [
-                ExpertBlock,   // Expert quote / profile card
-                Content,       // Rich-text columns
-                MediaBlock,    // Single media embed
-                Banner,        // Info / warning / success callout
-                CallToAction,  // CTA with links
-              ],
+              blocks: editablePostBlocks,
               admin: {
                 description:
                   'Build the post body by adding, reordering, and configuring blocks. ' +

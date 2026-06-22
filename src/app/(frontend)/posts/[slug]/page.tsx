@@ -10,6 +10,8 @@ import React, { cache } from 'react'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { PostEditButton } from '@/components/admin/onpage/PostEditButton'
+import { postBlockSchemas, postEditFieldSchemas } from '@/components/admin/onpage/postEditSchema'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -44,6 +46,12 @@ export default async function Post({ params: paramsPromise }: Args) {
       <PayloadRedirects disableNotFound url={url} />
       {draft && <LivePreviewListener />}
       <PostPageLayout post={post} backHref="/posts" backLabel="All Posts" />
+      <PostEditButton
+        postId={post.id}
+        postTitle={post.title}
+        fieldSchemas={postEditFieldSchemas()}
+        blockSchemas={postBlockSchemas()}
+      />
     </article>
   )
 }
