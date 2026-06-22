@@ -242,19 +242,27 @@ export const getBrandPageData = cache(
   async (
     brandSlug: string,
     fallbackModels: PianoModel[] = [],
-  ): Promise<{ brand: DomainBrand | null; models: PianoModel[] }> => {
+  ): Promise<{ brand: DomainBrand | null; models: PianoModel[]; heroImageUrl: string | null }> => {
     const base = getBrand(brandSlug) ?? null
     const doc = await queryBrandBySlug(brandSlug)
 
     if (!doc) {
-      return { brand: base, models: fallbackModels }
+      return { brand: base, models: fallbackModels, heroImageUrl: null }
     }
 
     const brand = base ? mergeBrandFromDoc(base, doc) : adaptPayloadBrandToDomain(doc)
     const cmsModels = adaptPayloadBrandModels(doc)
     const models = cmsModels.length > 0 ? cmsModels : fallbackModels
 
-    return { brand, models }
+    // CMS-only hero image (no hardcoded fallback): drives the static page hero.
+    // Kept separate from brand.heroImageUrl, which merges the hardcoded Unsplash
+    // fallback and is used for OG metadata / BrandPageV2.
+    let heroImageUrl: string | null = null
+    if (doc.heroImage && typeof doc.heroImage !== 'string') {
+      heroImageUrl = doc.heroImage.url ?? doc.heroImage.thumbnailURL ?? null
+    }
+
+    return { brand, models, heroImageUrl }
   },
 )
 

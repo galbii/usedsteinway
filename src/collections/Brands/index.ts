@@ -140,6 +140,10 @@ export const Brands: CollectionConfig = {
     },
     imageField('heroImage', {
       label: 'Hero Image',
+      admin: {
+        description:
+          'When set, shown as a static hero at the top of the brand page (over the brand name / tagline). Leave empty to use the automatic piano carousel.',
+      },
     }),
     {
       name: 'models',

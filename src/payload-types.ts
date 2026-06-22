@@ -1281,6 +1281,9 @@ export interface Brand {
    */
   priceRange?: string | null;
   accentColor?: string | null;
+  /**
+   * When set, shown as a static hero at the top of the brand page (over the brand name / tagline). Leave empty to use the automatic piano carousel.
+   */
   heroImage?: (string | null) | Media;
   /**
    * Piano models offered by this brand.

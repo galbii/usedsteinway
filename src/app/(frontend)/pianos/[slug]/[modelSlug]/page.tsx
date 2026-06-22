@@ -12,6 +12,11 @@ interface Props {
   params: Promise<{ slug: string; modelSlug: string }>
 }
 
+// ISR safety net: the revalidateBrand hook is the primary freshness path, but
+// on-demand revalidation is lazy + Route-Handler-scoped, so brand/model edits
+// can lag. A short window bounds staleness without per-edit work.
+export const revalidate = 30
+
 // Brands with their own dedicated top-level routes — exclude from this dynamic route
 const DEDICATED_BRAND_ROUTES = new Set(['steinway', 'shigeru-kawai'])
 

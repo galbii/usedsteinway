@@ -11,6 +11,8 @@ import { BrandStory } from '@/components/piano/BrandStory'
 import { BrandPianosGrid } from '@/components/piano/BrandPianosGrid'
 import { PianoHeroCarousel } from '@/components/piano/PianoHeroCarousel'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { BrandEditButton } from '@/components/admin/onpage/BrandEditButton'
+import { brandEditFieldSchemas } from '@/components/admin/onpage/brandEditSchema'
 import { queryPianoBySlug, queryPianosByBrand } from '@/lib/payload/pianos'
 import { queryBrandBySlug, adaptPayloadBrandToDomain, brandHeroEyebrow } from '@/lib/payload/brands'
 import { getCachedGlobal } from '@/utilities/getGlobals'
@@ -22,6 +24,12 @@ import type { Piano } from '@/types/piano'
 interface Props {
   params: Promise<{ slug: string }>
 }
+
+// ISR safety net: the revalidateBrand hook is the primary freshness path, but
+// on-demand revalidation is lazy + Route-Handler-scoped, so brand/model edits
+// can lag. A short window bounds staleness without per-edit work. Covers both
+// the brand listing and individual piano detail pages on this combined route.
+export const revalidate = 30
 
 // ── JSON-LD for individual pianos ────────────────────────────────────────────
 
@@ -227,6 +235,7 @@ export default async function PianoOrBrandPage({ params }: Props) {
       <>
         <PianoHeroCarousel
           pianos={featured.length > 0 ? featured : pianos.slice(0, 5)}
+          staticImageUrl={brand.heroImageUrl || null}
           variant="center"
           eyebrow={brandHeroEyebrow(brand)}
           headingLine1={brand.name}
@@ -241,6 +250,11 @@ export default async function PianoOrBrandPage({ params }: Props) {
           hideHero
           hideInventory
           hideStory
+        />
+        <BrandEditButton
+          brandSlug={brand.slug}
+          brandName={brand.name}
+          fieldSchemas={brandEditFieldSchemas()}
         />
       </>
     )

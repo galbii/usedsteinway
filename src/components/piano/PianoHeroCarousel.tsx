@@ -40,6 +40,12 @@ interface PianoHeroCarouselProps {
   variant?: 'corner' | 'center'
   /** Tagline shown beneath the rule in the centered variant. */
   tagline?: string
+  /**
+   * When set, the rotating carousel is replaced by a single static hero image
+   * (the brand's CMS hero image) keeping the same centered overlay. Empty/null
+   * falls back to the piano carousel.
+   */
+  staticImageUrl?: string | null
 }
 
 export function PianoHeroCarousel({
@@ -51,6 +57,7 @@ export function PianoHeroCarousel({
   minimal = false,
   variant = 'corner',
   tagline,
+  staticImageUrl,
 }: PianoHeroCarouselProps) {
   const prefersReducedMotion =
     typeof window !== 'undefined'
@@ -108,7 +115,7 @@ export function PianoHeroCarousel({
   }
 
   useEffect(() => {
-    if (isTransitioning || isPaused) {
+    if (staticImageUrl || isTransitioning || isPaused) {
       if (rafRef.current)   cancelAnimationFrame(rafRef.current)
       if (timerRef.current) clearTimeout(timerRef.current)
       return
@@ -128,7 +135,7 @@ export function PianoHeroCarousel({
       if (rafRef.current)   cancelAnimationFrame(rafRef.current)
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [activeIndex, isPaused, isTransitioning, pianos.length, navigate])
+  }, [activeIndex, isPaused, isTransitioning, pianos.length, navigate, staticImageUrl])
 
   useEffect(() => () => {
     ;[rafRef, timerRef, doneRef].forEach(r => {
@@ -138,6 +145,39 @@ export function PianoHeroCarousel({
       }
     })
   }, [])
+
+  // Static hero — a brand-set hero image replaces the rotating carousel,
+  // keeping the same centered overlay (eyebrow · name · rule · tagline).
+  // Renders independently of pianos, so a brand with no inventory still shows it.
+  if (staticImageUrl) {
+    return (
+      <div
+        className="relative overflow-hidden"
+        style={{ height: '100vh', minHeight: '680px', backgroundColor: C.darkBg }}
+      >
+        <Image
+          src={staticImageUrl}
+          alt={headingLine1 ?? ''}
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+        />
+        {/* Overlay — darker at top and bottom, clear in middle (matches carousel) */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ zIndex: 3, background: 'linear-gradient(to bottom, rgba(4,1,1,0.55) 0%, rgba(4,1,1,0.10) 35%, rgba(4,1,1,0.10) 65%, rgba(4,1,1,0.72) 100%)' }}
+        />
+        <CenterOverlay
+          showLogo={showLogo}
+          eyebrow={eyebrow}
+          headingLine1={headingLine1}
+          headingLine2={headingLine2}
+          tagline={tagline}
+        />
+      </div>
+    )
+  }
 
   if (!pianos.length) return null
 
@@ -213,70 +253,13 @@ export function PianoHeroCarousel({
         {/* ── Centered brand announcement (brand landing pages) ── */}
         {variant === 'center' ? (
           <>
-            <div
-              className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none"
-              style={{ zIndex: 4, padding: '0 clamp(1.5rem, 5vw, 4rem)' }}
-            >
-              {showLogo && (
-                <Image
-                  src="/UsedSteinway.png"
-                  alt="UsedSteinways"
-                  width={64}
-                  height={64}
-                  priority
-                  style={{ marginBottom: 'clamp(1.5rem, 3vh, 2.25rem)', opacity: 0.92 }}
-                />
-              )}
-              <p
-                className="font-display"
-                style={{ fontSize: 'clamp(10px, 1vw, 12px)', letterSpacing: '0.5em', textTransform: 'uppercase', color: C.accent, marginBottom: 'clamp(1.25rem, 2.5vh, 2rem)', paddingLeft: '0.5em' }}
-              >
-                {eyebrow}
-              </p>
-              <h1
-                style={{
-                  fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: 'clamp(3.4rem, 9vw, 9rem)',
-                  fontWeight: 300,
-                  lineHeight: 0.92,
-                  color: C.ivory,
-                  letterSpacing: '-0.02em',
-                  maxWidth: '16ch',
-                }}
-              >
-                {headingLine1}
-                {headingLine2 && (
-                  <>
-                    {' '}
-                    <span style={{ fontStyle: 'italic', color: C.accent }}>{headingLine2}</span>
-                  </>
-                )}
-              </h1>
-              {/* Hairline rule with center diamond */}
-              <div
-                className="flex items-center justify-center"
-                style={{ gap: '0.85rem', margin: 'clamp(1.75rem, 3.5vh, 2.75rem) 0 clamp(1.25rem, 2.5vh, 1.75rem)' }}
-              >
-                <span style={{ width: 'clamp(2.5rem, 6vw, 5rem)', height: '1px', backgroundColor: C.goldBorder }} />
-                <span style={{ width: '5px', height: '5px', transform: 'rotate(45deg)', backgroundColor: C.accent }} />
-                <span style={{ width: 'clamp(2.5rem, 6vw, 5rem)', height: '1px', backgroundColor: C.goldBorder }} />
-              </div>
-              {tagline && (
-                <p
-                  style={{
-                    fontFamily: "'Cormorant Garamond', serif",
-                    fontSize: 'clamp(1.25rem, 2.2vw, 1.85rem)',
-                    fontWeight: 300,
-                    fontStyle: 'italic',
-                    color: C.ivoryFaded,
-                    maxWidth: '34ch',
-                    lineHeight: 1.4,
-                  }}
-                >
-                  {tagline}
-                </p>
-              )}
-            </div>
+            <CenterOverlay
+              showLogo={showLogo}
+              eyebrow={eyebrow}
+              headingLine1={headingLine1}
+              headingLine2={headingLine2}
+              tagline={tagline}
+            />
 
             {/* Minimal centered dots */}
             {pianos.length > 1 && (
@@ -421,6 +404,90 @@ export function PianoHeroCarousel({
 
       </div>
     </>
+  )
+}
+
+// Centered brand announcement (eyebrow · name · hairline rule · tagline).
+// Shared by the rotating carousel's `center` variant and the static hero so
+// both render identical overlay treatment.
+function CenterOverlay({
+  showLogo,
+  eyebrow,
+  headingLine1,
+  headingLine2,
+  tagline,
+}: {
+  showLogo?: boolean
+  eyebrow?: string
+  headingLine1?: string
+  headingLine2?: string
+  tagline?: string
+}) {
+  return (
+    <div
+      className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none"
+      style={{ zIndex: 4, padding: '0 clamp(1.5rem, 5vw, 4rem)' }}
+    >
+      {showLogo && (
+        <Image
+          src="/UsedSteinway.png"
+          alt="UsedSteinways"
+          width={64}
+          height={64}
+          priority
+          style={{ marginBottom: 'clamp(1.5rem, 3vh, 2.25rem)', opacity: 0.92 }}
+        />
+      )}
+      <p
+        className="font-display"
+        style={{ fontSize: 'clamp(10px, 1vw, 12px)', letterSpacing: '0.5em', textTransform: 'uppercase', color: C.accent, marginBottom: 'clamp(1.25rem, 2.5vh, 2rem)', paddingLeft: '0.5em' }}
+      >
+        {eyebrow}
+      </p>
+      <h1
+        style={{
+          fontFamily: "'Cormorant Garamond', serif",
+          fontSize: 'clamp(3.4rem, 9vw, 9rem)',
+          fontWeight: 300,
+          lineHeight: 0.92,
+          color: C.ivory,
+          letterSpacing: '-0.02em',
+          maxWidth: '16ch',
+        }}
+      >
+        {headingLine1}
+        {headingLine2 && (
+          <>
+            {' '}
+            <span style={{ fontStyle: 'italic', color: C.accent }}>{headingLine2}</span>
+          </>
+        )}
+      </h1>
+      {/* Hairline rule with center diamond */}
+      <div
+        className="flex items-center justify-center"
+        style={{ gap: '0.85rem', margin: 'clamp(1.75rem, 3.5vh, 2.75rem) 0 clamp(1.25rem, 2.5vh, 1.75rem)' }}
+      >
+        <span style={{ width: 'clamp(2.5rem, 6vw, 5rem)', height: '1px', backgroundColor: C.goldBorder }} />
+        <span style={{ width: '5px', height: '5px', transform: 'rotate(45deg)', backgroundColor: C.accent }} />
+        <span style={{ width: 'clamp(2.5rem, 6vw, 5rem)', height: '1px', backgroundColor: C.goldBorder }} />
+      </div>
+      {tagline && (
+        <p
+          style={{
+            fontFamily: "'Cormorant Garamond', serif",
+            fontSize: 'clamp(1.25rem, 2.2vw, 1.85rem)',
+            fontWeight: 300,
+            fontStyle: 'italic',
+            color: C.ivoryFaded,
+            maxWidth: '34ch',
+            lineHeight: 1.4,
+          }}
+        >
+          {tagline}
+        </p>
+      )}
+    </div>
   )
 }
 

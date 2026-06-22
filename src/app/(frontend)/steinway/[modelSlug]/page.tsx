@@ -13,6 +13,11 @@ interface Props {
   params: Promise<{ modelSlug: string }>
 }
 
+// ISR safety net: the revalidateBrand hook is the primary freshness path, but
+// on-demand revalidation is lazy + Route-Handler-scoped, so brand/model edits
+// can lag. A short window bounds staleness without per-edit work.
+export const revalidate = 30
+
 // Convert model slug to the value stored in the pianos collection's model field.
 // e.g. "model-b" → "B", "model-a3" → "A3"
 function modelSlugToValue(modelSlug: string): string {

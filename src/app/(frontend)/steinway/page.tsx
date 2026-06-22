@@ -11,6 +11,11 @@ import { getBrandPageData, brandHeroEyebrow } from '@/lib/payload/brands'
 import { BrandEditButton } from '@/components/admin/onpage/BrandEditButton'
 import { brandEditFieldSchemas } from '@/components/admin/onpage/brandEditSchema'
 
+// ISR safety net: the revalidateBrand hook is the primary freshness path, but
+// on-demand revalidation is lazy + Route-Handler-scoped, so brand/model edits
+// can lag. A short window bounds staleness without per-edit work.
+export const revalidate = 30
+
 export const metadata: Metadata = {
   title: 'Steinway & Sons Pianos For Sale | UsedSteinways.com',
   description:
@@ -30,7 +35,7 @@ const MODEL_ORDER: Record<string, number> = {
 const REMOVED_SLUGS = new Set(['model-a3', 'hamburg-s'])
 
 export default async function SteinwayPage() {
-  const [pianos, { brand, models: rawModels }] = await Promise.all([
+  const [pianos, { brand, models: rawModels, heroImageUrl }] = await Promise.all([
     queryPianosByBrand('steinway'),
     getBrandPageData('steinway', STEINWAY_MODELS),
   ])
@@ -47,6 +52,7 @@ export default async function SteinwayPage() {
     <>
       <PianoHeroCarousel
         pianos={carouselPianos}
+        staticImageUrl={heroImageUrl}
         variant="center"
         eyebrow={brandHeroEyebrow(brand)}
         headingLine1={brand.name}
