@@ -17,8 +17,8 @@ export function SteinwayModelCard({ model }: { model: PianoModel }) {
 
   return (
     <div className="group relative flex flex-col w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)] xl:w-[calc(25%-1.125rem)] p-8 rounded-2xl overflow-hidden border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(89,25,42,0.07)] transition-all duration-300 hover:bg-piano-burgundy/85 hover:border-piano-burgundy/40 hover:shadow-[0_20px_50px_rgba(89,25,42,0.28)]">
-      {/* Left accent bar on hover */}
-      <div className="absolute left-0 top-0 bottom-0 w-0 group-hover:w-[3px] bg-piano-gold transition-all duration-300 ease-out" />
+      {/* Left accent bar on hover (decorative — must not eat clicks) */}
+      <div className="pointer-events-none absolute left-0 top-0 bottom-0 z-10 w-0 group-hover:w-[3px] bg-piano-gold transition-all duration-300 ease-out" />
 
       {/* Stretched link — the whole card still navigates. It sits beneath the
           expand toggle (z-0 vs z-10) so the toggle handles its own clicks
@@ -29,13 +29,13 @@ export function SteinwayModelCard({ model }: { model: PianoModel }) {
         aria-label={`View ${model.name}`}
       />
 
-      <span className="relative font-display text-[10px] tracking-[0.4em] uppercase text-piano-gold block mb-4">
+      <span className="font-display text-[10px] tracking-[0.4em] uppercase text-piano-gold block mb-4">
         {model.type}
         {model.size ? ` · ${model.size}` : ''}
       </span>
 
       <h3
-        className="relative font-cormorant font-light text-piano-black group-hover:text-white leading-none mb-4 transition-colors duration-300"
+        className="font-cormorant font-light text-piano-black group-hover:text-white leading-none mb-4 transition-colors duration-300"
         style={{ fontSize: 'clamp(2rem, 2.5vw, 2.8rem)' }}
       >
         {model.name}
@@ -46,7 +46,7 @@ export function SteinwayModelCard({ model }: { model: PianoModel }) {
           (hover-shifting) background; it's dropped once expanded. */}
       <div
         className={cn(
-          'relative overflow-hidden transition-[max-height] duration-500 ease-in-out',
+          'overflow-hidden transition-[max-height] duration-500 ease-in-out',
           expandable &&
             !expanded &&
             '[mask-image:linear-gradient(to_bottom,black_55%,transparent)]',
@@ -77,12 +77,12 @@ export function SteinwayModelCard({ model }: { model: PianoModel }) {
       <div aria-hidden className="flex-1 min-h-[1.5rem]" />
 
       {model.yearRange && (
-        <p className="relative font-display text-[10px] tracking-[0.3em] uppercase text-piano-stone/60 group-hover:text-piano-cream/40 mb-5 transition-colors duration-300">
+        <p className="font-display text-[10px] tracking-[0.3em] uppercase text-piano-stone/60 group-hover:text-piano-cream/40 mb-5 transition-colors duration-300">
           {model.yearRange}
         </p>
       )}
 
-      <span className="relative font-display text-[10px] tracking-[0.3em] uppercase text-piano-stone group-hover:text-piano-gold transition-colors duration-300 inline-flex items-center gap-1.5">
+      <span className="font-display text-[10px] tracking-[0.3em] uppercase text-piano-stone group-hover:text-piano-gold transition-colors duration-300 inline-flex items-center gap-1.5">
         View Model
         <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
       </span>
