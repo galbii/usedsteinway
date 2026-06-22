@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
 import { BrandPageV2 } from '@/components/piano/BrandPageV2'
+import { BrandStory } from '@/components/piano/BrandStory'
 import { PianoHeroCarousel } from '@/components/piano/PianoHeroCarousel'
 import { SteinwayModelsGrid } from './_components/SteinwayModelsGrid'
 import { SteinwayPianosGrid } from './_components/SteinwayPianosGrid'
 import { STEINWAY_MODELS } from '@/lib/piano-data'
 import { notFound } from 'next/navigation'
 import { queryPianosByBrand } from '@/lib/payload/pianos'
-import { getBrandPageData } from '@/lib/payload/brands'
+import { getBrandPageData, brandHeroEyebrow } from '@/lib/payload/brands'
 import { BrandEditButton } from '@/components/admin/onpage/BrandEditButton'
 import { brandEditFieldSchemas } from '@/components/admin/onpage/brandEditSchema'
 
@@ -46,19 +47,22 @@ export default async function SteinwayPage() {
     <>
       <PianoHeroCarousel
         pianos={carouselPianos}
-        eyebrow="Steinway & Sons"
-        headingLine1="Our Used"
-        headingLine2="Steinways"
+        variant="center"
+        eyebrow={brandHeroEyebrow(brand)}
+        headingLine1={brand.name}
+        tagline={brand.tagline}
         showLogo
         minimal
       />
-      <SteinwayPianosGrid pianos={pianos} />
+      <BrandStory brand={brand} />
       <SteinwayModelsGrid models={models} />
+      <SteinwayPianosGrid pianos={pianos} />
       <BrandPageV2
         brand={brand}
         pianos={pianos}
         hideHero
         hideInventory
+        hideStory
       />
       <BrandEditButton
         brandSlug="steinway"

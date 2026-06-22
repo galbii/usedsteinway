@@ -14,7 +14,16 @@ const C = {
 }
 
 const DURATION = 9000
-const TRANS    = 1400
+const TRANS    = 2000
+
+// Smooth, symmetric dissolve curve (easeInOutCubic) shared by the crossfade + text.
+const EASE = 'cubic-bezier(0.65, 0, 0.35, 1)'
+
+// Ken Burns end scale + a small rotation of drift origins so each slide's slow
+// zoom pans a slightly different direction — keeps a long autoplay feeling alive.
+const KB_SCALE = 1.08
+const KB_ORIGINS = ['50% 36%', '36% 58%', '64% 42%', '50% 64%']
+const kbOrigin = (i: number) => KB_ORIGINS[i % KB_ORIGINS.length]
 
 interface PianoHeroCarouselProps {
   pianos: Piano[]
@@ -23,6 +32,14 @@ interface PianoHeroCarouselProps {
   headingLine2?: string
   showLogo?: boolean
   minimal?: boolean
+  /**
+   * 'corner' (default) — large heading anchored top-left, used on the /pianos listing.
+   * 'center' — centered brand announcement (eyebrow · brand name · rule · tagline),
+   *   used on brand landing pages.
+   */
+  variant?: 'corner' | 'center'
+  /** Tagline shown beneath the rule in the centered variant. */
+  tagline?: string
 }
 
 export function PianoHeroCarousel({
@@ -32,6 +49,8 @@ export function PianoHeroCarousel({
   headingLine2 = 'Pianos',
   showLogo = false,
   minimal = false,
+  variant = 'corner',
+  tagline,
 }: PianoHeroCarouselProps) {
   const prefersReducedMotion =
     typeof window !== 'undefined'
@@ -126,18 +145,16 @@ export function PianoHeroCarousel({
   const prevPiano = prevIndex !== null ? pianos[prevIndex] : null
 
   const textStyle: React.CSSProperties = {
-    opacity:    isTransitioning ? 0.72 : 1,
-    transition: isTransitioning
-      ? `opacity ${TRANS * 0.3}ms ease-in`
-      : `opacity ${TRANS * 0.5}ms ease-out`,
+    opacity:    isTransitioning ? 0.5 : 1,
+    transition: `opacity ${TRANS}ms ${EASE}`,
   }
 
   return (
     <>
       <style>{`
         @keyframes phc-kb {
-          from { transform: scale(1);    }
-          to   { transform: scale(1.04); }
+          from { transform: scale(1);          }
+          to   { transform: scale(${KB_SCALE}); }
         }
       `}</style>
 
@@ -150,9 +167,13 @@ export function PianoHeroCarousel({
         onTouchEnd={handleTouchEnd}
       >
 
-        {/* Outgoing image — fades out during crossfade */}
+        {/* Outgoing image — held at the scale/origin its Ken Burns reached, so the
+            incoming layer dissolves over it without any scale "snap". */}
         {prevPiano && (
-          <div className="absolute inset-0" style={{ zIndex: 1 }}>
+          <div
+            className="absolute inset-0"
+            style={{ zIndex: 1, transform: `scale(${KB_SCALE})`, transformOrigin: kbOrigin(prevIndex ?? 0) }}
+          >
             {(() => {
               const url = prevPiano.stockImageUrl ?? prevPiano.imageUrls[0] ?? null
               return url ? (
@@ -169,8 +190,10 @@ export function PianoHeroCarousel({
           style={{
             zIndex: 2,
             opacity: isTransitioning ? 0 : 1,
-            transition: `opacity ${TRANS}ms ease-in-out`,
-            animation: prefersReducedMotion ? undefined : `phc-kb ${DURATION + TRANS}ms ease-out forwards`,
+            transition: `opacity ${TRANS}ms ${EASE}`,
+            transformOrigin: kbOrigin(activeIndex),
+            animation: prefersReducedMotion ? undefined : `phc-kb ${DURATION + TRANS}ms linear forwards`,
+            willChange: 'transform, opacity',
           }}
         >
           {(() => {
@@ -187,42 +210,137 @@ export function PianoHeroCarousel({
           style={{ zIndex: 3, background: 'linear-gradient(to bottom, rgba(4,1,1,0.55) 0%, rgba(4,1,1,0.10) 35%, rgba(4,1,1,0.10) 65%, rgba(4,1,1,0.72) 100%)' }}
         />
 
-        {/* Top-left heading */}
-        <div
-          className="absolute top-0 left-0"
-          style={{ zIndex: 4, padding: 'clamp(5rem, 8vh, 7rem) clamp(2.5rem, 5vw, 5rem) 0' }}
-        >
-          {showLogo && (
-            <Image
-              src="/UsedSteinway.png"
-              alt="UsedSteinways"
-              width={72}
-              height={72}
-              priority
-              style={{ marginBottom: '1.5rem' }}
-            />
-          )}
-          <p
-            className="font-display"
-            style={{ fontSize: '10px', letterSpacing: '0.55em', textTransform: 'uppercase', color: C.ivoryFaded, marginBottom: '1.5rem' }}
+        {/* ── Centered brand announcement (brand landing pages) ── */}
+        {variant === 'center' ? (
+          <>
+            <div
+              className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none"
+              style={{ zIndex: 4, padding: '0 clamp(1.5rem, 5vw, 4rem)' }}
+            >
+              {showLogo && (
+                <Image
+                  src="/UsedSteinway.png"
+                  alt="UsedSteinways"
+                  width={64}
+                  height={64}
+                  priority
+                  style={{ marginBottom: 'clamp(1.5rem, 3vh, 2.25rem)', opacity: 0.92 }}
+                />
+              )}
+              <p
+                className="font-display"
+                style={{ fontSize: 'clamp(10px, 1vw, 12px)', letterSpacing: '0.5em', textTransform: 'uppercase', color: C.accent, marginBottom: 'clamp(1.25rem, 2.5vh, 2rem)', paddingLeft: '0.5em' }}
+              >
+                {eyebrow}
+              </p>
+              <h1
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: 'clamp(3.4rem, 9vw, 9rem)',
+                  fontWeight: 300,
+                  lineHeight: 0.92,
+                  color: C.ivory,
+                  letterSpacing: '-0.02em',
+                  maxWidth: '16ch',
+                }}
+              >
+                {headingLine1}
+                {headingLine2 && (
+                  <>
+                    {' '}
+                    <span style={{ fontStyle: 'italic', color: C.accent }}>{headingLine2}</span>
+                  </>
+                )}
+              </h1>
+              {/* Hairline rule with center diamond */}
+              <div
+                className="flex items-center justify-center"
+                style={{ gap: '0.85rem', margin: 'clamp(1.75rem, 3.5vh, 2.75rem) 0 clamp(1.25rem, 2.5vh, 1.75rem)' }}
+              >
+                <span style={{ width: 'clamp(2.5rem, 6vw, 5rem)', height: '1px', backgroundColor: C.goldBorder }} />
+                <span style={{ width: '5px', height: '5px', transform: 'rotate(45deg)', backgroundColor: C.accent }} />
+                <span style={{ width: 'clamp(2.5rem, 6vw, 5rem)', height: '1px', backgroundColor: C.goldBorder }} />
+              </div>
+              {tagline && (
+                <p
+                  style={{
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontSize: 'clamp(1.25rem, 2.2vw, 1.85rem)',
+                    fontWeight: 300,
+                    fontStyle: 'italic',
+                    color: C.ivoryFaded,
+                    maxWidth: '34ch',
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {tagline}
+                </p>
+              )}
+            </div>
+
+            {/* Minimal centered dots */}
+            {pianos.length > 1 && (
+              <div
+                className="absolute left-0 right-0 flex items-center justify-center"
+                style={{ zIndex: 5, bottom: 'clamp(2rem, 5vh, 3.5rem)', gap: '0.85rem' }}
+              >
+                {pianos.map((p, i) => (
+                  <button
+                    key={p.id}
+                    onClick={() => navigate(i)}
+                    aria-label={`Go to slide ${i + 1}`}
+                    style={{
+                      width: i === activeIndex ? '26px' : '7px',
+                      height: '2px',
+                      padding: 0,
+                      border: 'none',
+                      cursor: 'pointer',
+                      backgroundColor: i === activeIndex ? C.accent : 'rgba(245,235,215,0.30)',
+                      transition: 'width 400ms ease, background-color 400ms ease',
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          /* ── Top-left heading (default /pianos layout) ── */
+          <div
+            className="absolute top-0 left-0"
+            style={{ zIndex: 4, padding: 'clamp(5rem, 8vh, 7rem) clamp(2.5rem, 5vw, 5rem) 0' }}
           >
-            {eyebrow}
-          </p>
-          <h1
-            style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: 'clamp(7rem, 16vw, 20rem)',
-              fontWeight: 300,
-              lineHeight: 0.85,
-              color: C.ivory,
-              letterSpacing: '-0.025em',
-            }}
-          >
-            {headingLine1}
-            <br />
-            <span style={{ fontStyle: 'italic', color: C.accent }}>{headingLine2}</span>
-          </h1>
-        </div>
+            {showLogo && (
+              <Image
+                src="/UsedSteinway.png"
+                alt="UsedSteinways"
+                width={72}
+                height={72}
+                priority
+                style={{ marginBottom: '1.5rem' }}
+              />
+            )}
+            <p
+              className="font-display"
+              style={{ fontSize: '10px', letterSpacing: '0.55em', textTransform: 'uppercase', color: C.ivoryFaded, marginBottom: '1.5rem' }}
+            >
+              {eyebrow}
+            </p>
+            <h1
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: 'clamp(7rem, 16vw, 20rem)',
+                fontWeight: 300,
+                lineHeight: 0.85,
+                color: C.ivory,
+                letterSpacing: '-0.025em',
+              }}
+            >
+              {headingLine1}
+              <br />
+              <span style={{ fontStyle: 'italic', color: C.accent }}>{headingLine2}</span>
+            </h1>
+          </div>
+        )}
 
         {/* Bottom bar */}
         {!minimal && (

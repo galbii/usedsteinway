@@ -3,8 +3,9 @@ import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { ModelPageTemplate } from '@/components/piano/ModelPageTemplate'
-import { queryModelFromBrand } from '@/lib/payload/brands'
+import { getModelPageData } from '@/lib/payload/brands'
 import { queryPianosByBrandAndModel } from '@/lib/payload/pianos'
+import { STEINWAY_MODELS } from '@/lib/piano-data'
 import { ModelEditButton } from '@/components/admin/onpage/ModelEditButton'
 import { modelEditFieldSchemas } from '@/components/admin/onpage/brandEditSchema'
 
@@ -34,7 +35,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { modelSlug } = await params
-  const model = await queryModelFromBrand('steinway', modelSlug)
+  const model = await getModelPageData('steinway', modelSlug, STEINWAY_MODELS)
   if (!model) return { title: 'Model Not Found | UsedSteinways.com' }
   return {
     title: `Steinway ${model.name} For Sale | UsedSteinways.com`,
@@ -44,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function SteinwayModelPage({ params }: Props) {
   const { modelSlug } = await params
-  const model = await queryModelFromBrand('steinway', modelSlug)
+  const model = await getModelPageData('steinway', modelSlug, STEINWAY_MODELS)
   if (!model) notFound()
 
   const modelValue = modelSlugToValue(modelSlug)

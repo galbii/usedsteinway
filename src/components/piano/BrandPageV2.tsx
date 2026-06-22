@@ -19,10 +19,11 @@ interface BrandPageV2Props {
   modelUrlBase?: string
   hideHero?: boolean
   hideInventory?: boolean
+  hideStory?: boolean
   modelsLinkable?: boolean
 }
 
-export function BrandPageV2({ brand, pianos, models, modelUrlBase, hideHero = false, hideInventory = false, modelsLinkable = true }: BrandPageV2Props) {
+export function BrandPageV2({ brand, pianos, models, modelUrlBase, hideHero = false, hideInventory = false, hideStory = false, modelsLinkable = true }: BrandPageV2Props) {
   const modelBase = modelUrlBase ?? `/pianos/${brand.slug}`
   return (
     <main className="min-h-screen bg-piano-cream">
@@ -73,8 +74,79 @@ export function BrandPageV2({ brand, pianos, models, modelUrlBase, hideHero = fa
       </section>
       )}
 
+      {/* ── Models Overview ── (sits directly beneath the brand story) */}
+      {models && models.length > 0 && (
+        <section className="relative overflow-hidden bg-piano-cream py-28 px-8 border-t border-piano-linen">
+          {/* Soft glass backdrop — gives the frosted cards something to blur against */}
+          <div aria-hidden className="pointer-events-none absolute inset-0">
+            <div className="absolute -top-24 -left-24 h-[28rem] w-[28rem] rounded-full bg-piano-burgundy/10 blur-3xl" />
+            <div className="absolute top-1/3 -right-20 h-[24rem] w-[24rem] rounded-full bg-piano-gold/10 blur-3xl" />
+            <div className="absolute -bottom-28 left-1/3 h-[22rem] w-[22rem] rounded-full bg-piano-burgundy/10 blur-3xl" />
+          </div>
+
+          <div className="relative max-w-7xl mx-auto">
+            <span className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold block mb-5">
+              Model Lineup
+            </span>
+            <h2
+              className="font-cormorant font-light text-piano-black mb-16"
+              style={{ fontSize: 'clamp(2.8rem, 4.5vw, 4.5rem)' }}
+            >
+              {brand.name} Models
+            </h2>
+            {/* Grid — centered flex-wrap so a partial last row sits in the middle */}
+            <div className="flex flex-wrap justify-center gap-6">
+              {models.map((model) => {
+                const inner = (
+                  <>
+                    <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold block mb-3">
+                      {model.type}
+                    </span>
+                    <h3 className="font-cormorant text-3xl font-light text-piano-black group-hover:text-white mb-2 transition-colors duration-300">
+                      {model.name}
+                    </h3>
+                    <p className="text-piano-stone group-hover:text-piano-cream/60 text-sm mb-5 transition-colors duration-300">
+                      {model.size}
+                    </p>
+                    <p className="text-piano-stone group-hover:text-piano-cream/70 text-base leading-relaxed line-clamp-2 mb-5 transition-colors duration-300">
+                      {model.description}
+                    </p>
+                    {modelsLinkable && (
+                      <span className="font-display text-[10px] tracking-[0.3em] uppercase text-piano-stone group-hover:text-piano-gold transition-colors duration-300 inline-flex items-center gap-1.5">
+                        View Model
+                        <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
+                      </span>
+                    )}
+                  </>
+                )
+                const cardWidth =
+                  'w-full sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]'
+                return modelsLinkable ? (
+                  <Link
+                    key={model.slug}
+                    href={`${modelBase}/${model.slug}`}
+                    className={`group relative flex flex-col ${cardWidth} p-8 rounded-2xl overflow-hidden border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(89,25,42,0.07)] transition-all duration-300 hover:bg-piano-burgundy/85 hover:border-piano-burgundy/40 hover:shadow-[0_20px_50px_rgba(89,25,42,0.28)]`}
+                  >
+                    {/* Left accent bar on hover */}
+                    <div className="absolute left-0 top-0 bottom-0 w-0 group-hover:w-[3px] bg-piano-gold transition-all duration-300 ease-out" />
+                    {inner}
+                  </Link>
+                ) : (
+                  <div
+                    key={model.slug}
+                    className={`relative flex flex-col ${cardWidth} p-8 rounded-2xl overflow-hidden border border-white/60 bg-white/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(89,25,42,0.07)]`}
+                  >
+                    {inner}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ── Current Inventory ── */}
-      {!hideInventory && <section className="py-36" style={{ backgroundColor: C.bg }}>
+      {!hideInventory && <section className="py-36 border-t border-piano-linen" style={{ backgroundColor: C.bg }}>
         <div className="max-w-7xl mx-auto px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-4">
             <div>
@@ -132,92 +204,37 @@ export function BrandPageV2({ brand, pianos, models, modelUrlBase, hideHero = fa
         )}
       </section>}
 
-      <div className="border-t border-piano-linen" />
-
-      {/* ── Brand Story ── */}
-      <section className="bg-piano-cream py-28 px-8">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-start">
-          <div>
-            <span className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold block mb-5">
-              The Instrument
-            </span>
-            <h2
-              className="font-cormorant font-light text-piano-black leading-snug mb-8"
-              style={{ fontSize: 'clamp(2.8rem, 4.5vw, 4.5rem)' }}
-            >
-              About {brand.name}
-            </h2>
-            <p className="text-piano-stone text-lg leading-relaxed">{brand.description}</p>
-          </div>
-          <div className="border-l border-piano-linen pl-12">
-            <span className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold block mb-8">
-              The Case for Pre-Owned
-            </span>
-            <ul className="space-y-6">
-              {brand.whyBuyPreowned.map((reason, i) => (
-                <li key={i} className="flex gap-5">
-                  <span className="mt-0.5 shrink-0 w-6 h-6 border border-piano-gold/40 flex items-center justify-center text-piano-gold font-display text-[9px] font-bold">
-                    {i + 1}
-                  </span>
-                  <p className="text-piano-stone text-base leading-relaxed">{reason}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Models Overview ── */}
-      {models && models.length > 0 && (
+      {/* ── Brand Story ── (now hoisted above inventory via <BrandStory/> on each
+          brand page; kept here behind hideStory for any legacy full-page usage) */}
+      {!hideStory && (
         <section className="bg-piano-cream py-28 px-8 border-t border-piano-linen">
-          <div className="max-w-7xl mx-auto">
-            <span className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold block mb-5">
-              Model Lineup
-            </span>
-            <h2
-              className="font-cormorant font-light text-piano-black mb-16"
-              style={{ fontSize: 'clamp(2.8rem, 4.5vw, 4.5rem)' }}
-            >
-              {brand.name} Models
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-piano-linen border border-piano-linen">
-              {models.map((model) => {
-                const inner = (
-                  <>
-                    <span className="font-display text-[10px] tracking-[0.35em] uppercase text-piano-gold block mb-3">
-                      {model.type}
+          <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-start">
+            <div>
+              <span className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold block mb-5">
+                The Instrument
+              </span>
+              <h2
+                className="font-cormorant font-light text-piano-black leading-snug mb-8"
+                style={{ fontSize: 'clamp(2.8rem, 4.5vw, 4.5rem)' }}
+              >
+                About {brand.name}
+              </h2>
+              <p className="text-piano-stone text-lg leading-relaxed">{brand.description}</p>
+            </div>
+            <div className="border-l border-piano-linen pl-12">
+              <span className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold block mb-8">
+                The Case for Pre-Owned
+              </span>
+              <ul className="space-y-6">
+                {brand.whyBuyPreowned.map((reason, i) => (
+                  <li key={i} className="flex gap-5">
+                    <span className="mt-0.5 shrink-0 w-6 h-6 border border-piano-gold/40 flex items-center justify-center text-piano-gold font-display text-[9px] font-bold">
+                      {i + 1}
                     </span>
-                    <h3 className="font-cormorant text-3xl font-light text-piano-black mb-2 group-hover:text-piano-charcoal transition-colors">
-                      {model.name}
-                    </h3>
-                    <p className="text-piano-stone text-sm mb-5">
-                      {model.size}
-                    </p>
-                    <p className="text-piano-stone text-base leading-relaxed line-clamp-2 mb-5">
-                      {model.description}
-                    </p>
-                    {modelsLinkable && (
-                      <span className="font-display text-[10px] tracking-[0.3em] uppercase text-piano-stone group-hover:text-piano-black transition-colors inline-flex items-center gap-1.5">
-                        View Model
-                        <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
-                      </span>
-                    )}
-                  </>
-                )
-                return modelsLinkable ? (
-                  <Link
-                    key={model.slug}
-                    href={`${modelBase}/${model.slug}`}
-                    className="group p-8 bg-piano-cream hover:bg-piano-warm-white transition-colors duration-200"
-                  >
-                    {inner}
-                  </Link>
-                ) : (
-                  <div key={model.slug} className="p-8 bg-piano-cream">
-                    {inner}
-                  </div>
-                )
-              })}
+                    <p className="text-piano-stone text-base leading-relaxed">{reason}</p>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </section>

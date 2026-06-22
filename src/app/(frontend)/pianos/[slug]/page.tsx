@@ -7,11 +7,12 @@ import { PianoDetailV2 } from '@/components/piano/PianoDetailV2'
 import { PianoEditButton } from '@/components/piano/PianoEditButton'
 import { InquiryCTA } from '@/components/piano/InquiryCTA'
 import { BrandPageV2 } from '@/components/piano/BrandPageV2'
+import { BrandStory } from '@/components/piano/BrandStory'
 import { BrandPianosGrid } from '@/components/piano/BrandPianosGrid'
 import { PianoHeroCarousel } from '@/components/piano/PianoHeroCarousel'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { queryPianoBySlug, queryPianosByBrand } from '@/lib/payload/pianos'
-import { queryBrandBySlug, adaptPayloadBrandToDomain } from '@/lib/payload/brands'
+import { queryBrandBySlug, adaptPayloadBrandToDomain, brandHeroEyebrow } from '@/lib/payload/brands'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import { getServerSideURL } from '@/utilities/getURL'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
@@ -226,17 +227,20 @@ export default async function PianoOrBrandPage({ params }: Props) {
       <>
         <PianoHeroCarousel
           pianos={featured.length > 0 ? featured : pianos.slice(0, 5)}
-          eyebrow={brand.name}
-          headingLine1={brand.slug === 'petrof' || brand.slug === 'shigeru-kawai' ? 'Our' : 'Our Used'}
-          headingLine2={brand.name}
+          variant="center"
+          eyebrow={brandHeroEyebrow(brand)}
+          headingLine1={brand.name}
+          tagline={brand.tagline}
           minimal
         />
+        <BrandStory brand={brand} />
         <BrandPianosGrid pianos={pianos} brandName={brand.name} />
         <BrandPageV2
           brand={brand}
           pianos={pianos}
           hideHero
           hideInventory
+          hideStory
         />
       </>
     )

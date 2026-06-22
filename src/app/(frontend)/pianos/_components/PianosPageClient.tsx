@@ -98,11 +98,30 @@ export function PianosPageClient({ pianos: initialPianos }: Props) {
 
   return (
     <>
-      {/* ── Hover-reveal styles for the category blocks ── */}
-      {/* Rest = brand name only (editorial silence).
-          Hover / focus / active = eyebrow, tags, footer reveal with stagger.
-          @media (hover: none) keeps everything visible on touch devices. */}
+      {/* ── Category block styles ──
+          Desktop: brand name at rest; eyebrow + tags reveal on hover/focus/active.
+          The "Press to view" CTA is ALWAYS visible — the persistent tap affordance.
+          Mobile (≤640px): single column, compact, everything legible (no hover needed). */}
       <style>{`
+        .pcat-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+
+        /* Cards stretch to equal height; content is a flex column so the
+           CTA can pin to the bottom edge regardless of card height. */
+        .pblock-inner {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          min-height: 24rem;
+          padding: clamp(2.5rem, 4vw, 4rem) clamp(2rem, 3.5vw, 3.5rem);
+        }
+
+        /* Press-to-view affordance — pinned to the bottom of every card */
+        .pblock-cta { margin-top: auto; }
+        .pblock-cta-arrow {
+          display: inline-block;
+          transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
         @media (hover: hover) {
           .pblock-reveal {
             opacity: 0;
@@ -112,7 +131,6 @@ export function PianosPageClient({ pianos: initialPianos }: Props) {
           }
           .pblock-eyebrow { transform: translateY(-6px); }
           .pblock-tags    { transform: translateY(8px); }
-          .pblock-footer  { transform: translateY(8px); }
 
           .pblock-tag-item {
             opacity: 0;
@@ -144,7 +162,7 @@ export function PianosPageClient({ pianos: initialPianos }: Props) {
             transform: translateY(-3px);
           }
 
-          /* Timing: eyebrow → tags (staggered) → footer */
+          /* Timing: eyebrow → tags (staggered) */
           .pblock:hover .pblock-eyebrow,
           .pblock:focus-visible .pblock-eyebrow,
           .pblock[data-active="true"] .pblock-eyebrow { transition-delay: 40ms; }
@@ -165,20 +183,23 @@ export function PianosPageClient({ pianos: initialPianos }: Props) {
           .pblock:focus-visible .pblock-tag-item:nth-child(5),
           .pblock[data-active="true"] .pblock-tag-item:nth-child(5) { transition-delay: 280ms; }
 
-          .pblock:hover .pblock-footer,
-          .pblock:focus-visible .pblock-footer,
-          .pblock[data-active="true"] .pblock-footer { transition-delay: 320ms; }
+          /* Arrow on the CTA nudges forward on hover */
+          .pblock:hover .pblock-cta-arrow,
+          .pblock:focus-visible .pblock-cta-arrow { transform: translateX(6px); }
+        }
 
-          /* A faint "tap to explore" hint appears at rest only — fades out on hover. */
-          .pblock-hint {
-            opacity: 1;
-            transition: opacity 0.3s ease;
+        /* ── Mobile: single column, compact, fully legible (no hover dependency) ── */
+        @media (max-width: 640px) {
+          .pcat-grid { grid-template-columns: 1fr; }
+          .pblock-inner {
+            min-height: 0;
+            padding: 1.6rem 1.5rem;
           }
-          .pblock:hover .pblock-hint,
-          .pblock:focus-visible .pblock-hint,
-          .pblock[data-active="true"] .pblock-hint {
-            opacity: 0;
-          }
+          /* Reveal the eyebrow that desktop tucks behind hover */
+          .pblock-reveal   { opacity: 1 !important; transform: none !important; }
+          .pblock-tag-item { opacity: 1 !important; transform: none !important; }
+          /* Model tags stay a desktop-only delight — keep mobile cards uncluttered */
+          .pblock-tags { display: none; }
         }
       `}</style>
 
@@ -195,10 +216,7 @@ export function PianosPageClient({ pianos: initialPianos }: Props) {
           }}
         />
 
-        <div
-          style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}
-          className="max-sm:grid-cols-1"
-        >
+        <div className="pcat-grid">
           {BLOCKS.map((block, index) => {
             const isActive = activeBrand === block.brand
             const count    = counts[block.brand as string] ?? 0
@@ -283,13 +301,10 @@ export function PianosPageClient({ pianos: initialPianos }: Props) {
                 )}
 
                 <div
-                  style={{
-                    padding:  'clamp(2.5rem, 4vw, 4rem) clamp(2rem, 3.5vw, 3.5rem)',
-                    position: 'relative',
-                    zIndex:   3,
-                  }}
+                  className="pblock-inner"
+                  style={{ position: 'relative', zIndex: 3 }}
                 >
-                  {/* Eyebrow — hidden at rest, fades in on hover/focus/active */}
+                  {/* Eyebrow — location. Tucked behind hover on desktop, always shown on mobile. */}
                   <p
                     className="pblock-reveal pblock-eyebrow font-display uppercase mb-5"
                     style={{ fontSize: '10px', letterSpacing: '0.42em', color: muteColor }}
@@ -297,7 +312,7 @@ export function PianosPageClient({ pianos: initialPianos }: Props) {
                     {block.eyebrow}
                   </p>
 
-                  {/* Brand name — the only thing visible at rest */}
+                  {/* Brand name — the anchor, always visible */}
                   <h3
                     className="pblock-brand font-cormorant font-light leading-[0.9]"
                     style={{
@@ -309,9 +324,9 @@ export function PianosPageClient({ pianos: initialPianos }: Props) {
                     {block.label}
                   </h3>
 
-                  {/* Model tags — hidden at rest, stagger in on hover/focus/active */}
+                  {/* Model tags — desktop hover delight, hidden on mobile */}
                   {block.tags && (
-                    <div className="pblock-reveal pblock-tags flex flex-wrap gap-2 mb-5">
+                    <div className="pblock-reveal pblock-tags flex flex-wrap gap-2">
                       {block.tags.map(t => (
                         <span
                           key={t}
@@ -334,60 +349,49 @@ export function PianosPageClient({ pianos: initialPianos }: Props) {
                     </div>
                   )}
 
-                  {/* Footer row — hidden at rest, fades in last */}
+                  {/* ── Press-to-view overlay — always visible, the primary tap affordance ── */}
                   <div
-                    className="pblock-reveal pblock-footer flex items-center justify-end"
+                    className="pblock-cta flex items-end justify-between gap-4"
                     style={{
                       paddingTop:  '1.25rem',
                       borderTop:   `1px solid ${isActive ? (block.dark ? 'rgba(180,130,60,0.3)' : 'rgba(180,130,60,0.25)') : borderColor}`,
-                      marginTop:   '0.5rem',
-                      transition:  'border-color 0.4s ease, opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+                      transition:  'border-color 0.4s ease',
                     }}
                   >
                     <span
-                      className="font-display uppercase flex items-center gap-2 group-hover:gap-3"
+                      className="font-display uppercase leading-[1.6]"
                       style={{
                         fontSize:      '10px',
-                        letterSpacing: '0.32em',
-                        color:         isActive ? C.accent : muteColor,
-                        transition:    'color 0.35s ease, gap 0.25s ease',
+                        letterSpacing: '0.22em',
+                        color:         isActive
+                          ? C.accent
+                          : (block.dark ? 'rgba(245,235,220,0.66)' : muteColor),
+                        transition:    'color 0.35s ease',
                       }}
                     >
-                      {isActive ? 'See less ✓' : 'See more'}
-                      {!isActive && (
-                        <span
-                          className="group-hover:translate-x-1 transition-transform duration-300"
-                          style={{ display: 'inline-block' }}
-                        >
-                          →
-                        </span>
+                      {isActive ? (
+                        <>Now viewing<span aria-hidden="true"> ✓</span></>
+                      ) : (
+                        <>
+                          Press to view {block.label}{' '}
+                          <span className="pblock-cta-arrow" aria-hidden="true">→</span>
+                        </>
                       )}
                     </span>
-                  </div>
 
-                  {/* Faint resting hint — number of instruments + arrow. Fades out on hover. */}
-                  {!isActive && (
-                    <div
-                      className="pblock-hint absolute"
-                      aria-hidden="true"
-                      style={{
-                        bottom:        'clamp(2.5rem, 4vw, 4rem)',
-                        right:         'clamp(2rem, 3.5vw, 3.5rem)',
-                        pointerEvents: 'none',
-                      }}
-                    >
+                    {count > 0 && (
                       <span
-                        className="font-display uppercase tabular-nums"
+                        className="font-display uppercase tabular-nums shrink-0 whitespace-nowrap"
                         style={{
                           fontSize:      '10px',
-                          letterSpacing: '0.4em',
+                          letterSpacing: '0.28em',
                           color:         muteColor,
                         }}
                       >
-                        {count > 0 ? `${count} available` : 'View'}
+                        {count} available
                       </span>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </button>
             )

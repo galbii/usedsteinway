@@ -21,6 +21,20 @@ export type BrandRow = {
   models: { name: string; slug: string; type: string }[]
 }
 
+/**
+ * Builds the centered-hero eyebrow line shown on brand landing pages,
+ * e.g. "Germany · Est. 1853 · Ultra Premium". Omits any missing piece.
+ */
+export function brandHeroEyebrow(brand: {
+  country?: string | null
+  founded?: number | null
+  prestige?: string | null
+}): string {
+  return [brand.country, brand.founded ? `Est. ${brand.founded}` : null, brand.prestige]
+    .filter(Boolean)
+    .join('  ·  ')
+}
+
 function adaptBrand(doc: Brand): BrandRow {
   let heroImageUrl: string | null = null
   if (doc.heroImage && typeof doc.heroImage !== 'string') {
@@ -140,6 +154,50 @@ export const queryModelFromBrand = cache(
       imageUrl:
         typeof modelDoc.image === 'object' && modelDoc.image?.url ? modelDoc.image.url : '',
     }
+  },
+)
+
+// Field-level merge for a single model: hardcoded model spec is the baseline,
+// any value filled in on the CMS model overrides it. Mirrors the brand merge so
+// a sparsely-populated CMS model (e.g. missing stringLength/yearRange/priceGuide)
+// still renders complete specs from the hardcoded fallback.
+function mergeModel(base: PianoModel, cms: PianoModel): PianoModel {
+  return {
+    slug: base.slug,
+    brandSlug: cms.brandSlug || base.brandSlug,
+    name: cms.name || base.name,
+    type: cms.type || base.type,
+    size: cms.size || base.size,
+    sizeInches: cms.sizeInches || base.sizeInches,
+    weight: cms.weight || base.weight,
+    stringLength: cms.stringLength || base.stringLength,
+    yearRange: cms.yearRange || base.yearRange,
+    description: cms.description || base.description,
+    highlights: cms.highlights.length ? cms.highlights : base.highlights,
+    priceGuide: cms.priceGuide.length ? cms.priceGuide : base.priceGuide,
+    adjacentModels: cms.adjacentModels.length ? cms.adjacentModels : base.adjacentModels,
+    imageUrl: cms.imageUrl || base.imageUrl,
+  }
+}
+
+/**
+ * Model detail page data with field-level fallback to hardcoded specs.
+ *
+ * - CMS model present + hardcoded fallback present → field-level merge (CMS wins
+ *   per non-empty field).
+ * - Only one present → that one.
+ * - Neither → null.
+ */
+export const getModelPageData = cache(
+  async (
+    brandSlug: string,
+    modelSlug: string,
+    fallbackModels: PianoModel[] = [],
+  ): Promise<PianoModel | null> => {
+    const cms = await queryModelFromBrand(brandSlug, modelSlug)
+    const base = fallbackModels.find((m) => m.slug === modelSlug) ?? null
+    if (cms && base) return mergeModel(base, cms)
+    return cms ?? base
   },
 )
 

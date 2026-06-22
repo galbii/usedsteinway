@@ -71,6 +71,32 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
   const labelRefs = useRef<Map<string, HTMLSpanElement>>(new Map())
   const [pillStyle, setPillStyle] = useState<{ left: number; width: number }>({ left: 0, width: 0 })
 
+  // Track whether the scrollable tab row can scroll further left/right so we can
+  // fade the appropriate edge(s). When the tabs fit (e.g. desktop) no fade shows.
+  const [tabEdges, setTabEdges] = useState({ start: true, end: true })
+  const updateTabEdges = () => {
+    const el = tabRowRef.current
+    if (!el) return
+    const start = el.scrollLeft <= 1
+    const end = el.scrollLeft + el.clientWidth >= el.scrollWidth - 1
+    setTabEdges(prev => (prev.start === start && prev.end === end ? prev : { start, end }))
+  }
+  useLayoutEffect(() => {
+    updateTabEdges()
+    window.addEventListener('resize', updateTabEdges)
+    return () => window.removeEventListener('resize', updateTabEdges)
+  }, [])
+
+  const tabFade = '1.75rem'
+  const tabMask =
+    !tabEdges.start && !tabEdges.end
+      ? `linear-gradient(to right, transparent, #000 ${tabFade}, #000 calc(100% - ${tabFade}), transparent)`
+      : !tabEdges.end
+        ? `linear-gradient(to right, #000 calc(100% - ${tabFade}), transparent)`
+        : !tabEdges.start
+          ? `linear-gradient(to right, transparent, #000 ${tabFade})`
+          : 'none'
+
   useEffect(() => {
     if (initialBrandFilter !== undefined) setBrandFilter(initialBrandFilter)
   }, [initialBrandFilter])
@@ -162,6 +188,23 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
 
   return (
     <>
+      {/* ── Mobile refinements for the sticky filter bar ──
+          Inline styles below win over Tailwind, so mobile overrides use
+          !important. The title scales with viewport width (vw) so it can
+          never collide with the Filters button on any phone size. */}
+      <style>{`
+        @media (max-width: 640px) {
+          .pb-row1    { padding: 1.3rem 1.15rem !important; }
+          .pb-eyebrow { font-size: 9.5px !important; letter-spacing: 0.3em !important; margin-bottom: 0.45rem !important; }
+          .pb-title   { font-size: clamp(1.5rem, 6.2vw, 2.15rem) !important; }
+          .pb-actions { gap: 0 !important; }
+          .pb-filters { padding: 0.62rem 0.95rem !important; gap: 0.55rem !important; }
+          .pb-filters-label { font-size: 11px !important; letter-spacing: 0.2em !important; }
+          .pb-row2    { padding: 0 1.15rem !important; }
+          .pb-tab     { padding: 1rem 1.05rem !important; font-size: 11px !important; letter-spacing: 0.26em !important; }
+        }
+      `}</style>
+
       {/* ═══════════════════════════════════════════════════════════
           STICKY BAR — two rows, locks below the main header
       ═══════════════════════════════════════════════════════════ */}
@@ -178,14 +221,14 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
       >
         {/* ── Row 1: label + active chips + count + filters button ── */}
         <div
-          className="max-w-7xl mx-auto flex items-center justify-between"
+          className="pb-row1 max-w-7xl mx-auto flex items-center justify-between"
           style={{ padding: '2rem 2.5rem' }}
         >
           {/* Left: section label + active chips */}
           <div className="flex items-center gap-6 min-w-0">
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 min-w-0">
               <p
-                className="font-display uppercase leading-none"
+                className="pb-eyebrow font-display uppercase leading-none"
                 style={{
                   fontSize:  '11px',
                   letterSpacing: '0.45em',
@@ -198,7 +241,7 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
                 Complete Inventory
               </p>
               <h2
-                className="font-cormorant font-light leading-none text-white"
+                className="pb-title font-cormorant font-light leading-none text-white"
                 style={{
                   fontSize:  'clamp(2.6rem, 4vw, 3.6rem)',
                   animation: 'reveal-up 0.85s cubic-bezier(0.16, 1, 0.3, 1) both',
@@ -287,7 +330,7 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
 
           {/* Right: result count + filter toggle */}
           <div
-            className="flex items-center gap-5 flex-shrink-0"
+            className="pb-actions flex items-center gap-5 flex-shrink-0 pl-3"
             style={{
               animation:      'reveal-right 0.7s cubic-bezier(0.16, 1, 0.3, 1) both',
               animationDelay: '260ms',
@@ -305,7 +348,7 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
 
             <button
               onClick={() => setSidebarOpen(true)}
-              className="group flex items-center gap-3 transition-all duration-200"
+              className="pb-filters group flex items-center gap-3 transition-all duration-200 flex-shrink-0"
               style={{
                 padding:         '0.9rem 1.8rem',
                 border:          `1px solid ${sidebarFilterCount > 0 ? C.gold : C.goldBorder}`,
@@ -319,7 +362,7 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
                 <circle cx="9"  cy="8" r="1.8" fill={C.charcoal} stroke={sidebarFilterCount > 0 ? C.gold : C.muted} strokeWidth="1.1" />
               </svg>
               <span
-                className="font-display uppercase"
+                className="pb-filters-label font-display uppercase"
                 style={{ fontSize: '14px', letterSpacing: '0.38em', color: sidebarFilterCount > 0 ? C.gold : C.muted }}
               >
                 Filters
@@ -348,14 +391,21 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
         {/* ── Row 2: Brand tabs + search ── */}
         <div style={{ borderTop: `1px solid ${C.divider}` }}>
           <div
-            className="max-w-7xl mx-auto flex items-center justify-between"
+            className="pb-row2 max-w-7xl mx-auto flex items-center justify-between"
             style={{ padding: '0 2.5rem' }}
           >
-            {/* Brand tabs — scrollable on mobile, with shared sliding pill */}
+            {/* Brand tabs — scrollable on mobile, with shared sliding pill.
+                Edges fade via a mask when there's more to scroll in that direction. */}
             <div
               ref={tabRowRef}
-              className="flex items-center overflow-x-auto relative"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
+              onScroll={updateTabEdges}
+              className="flex items-center overflow-x-auto relative min-w-0"
+              style={{
+                scrollbarWidth:    'none',
+                msOverflowStyle:   'none',
+                WebkitMaskImage:   tabMask,
+                maskImage:         tabMask,
+              } as React.CSSProperties}
             >
               {BRAND_TABS.map(({ key, label }, tabIndex) => {
                 const active = brandFilter === key
@@ -363,7 +413,7 @@ export function PianoBrowser({ pianos, initialBrandFilter }: PianoBrowserProps) 
                   <button
                     key={key}
                     onClick={() => handleBrandTabClick(key)}
-                    className="font-display uppercase flex-shrink-0 relative"
+                    className="pb-tab font-display uppercase flex-shrink-0 relative"
                     style={{
                       padding:        '1.3rem 1.6rem',
                       fontSize:       '12px',

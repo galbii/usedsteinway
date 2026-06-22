@@ -33,6 +33,7 @@ interface PianoDetailV2Props {
 export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Props) {
   const [activeImage, setActiveImage] = useState(0)
   const [scheduleOpen, setScheduleOpen] = useState(false)
+  const [descExpanded, setDescExpanded] = useState(false)
 
   const allImages = [
     ...piano.imageUrls,
@@ -63,14 +64,18 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
   const telHref = phone ? `tel:+1${phone.replace(/\D/g, '')}` : undefined
   const displayPhone = phone ?? undefined
 
-  const descriptionSnippet = (() => {
-    const raw = piano.description?.trim()
-    if (!raw) return null
-    const max = 240
-    if (raw.length <= max) return raw
-    const truncated = raw.slice(0, max)
+  // Hero preview: collapsed clamps to a few lines; "Read More" expands to a
+  // fuller ~700-char excerpt. The full formatted description lives in #description.
+  const rawDescription = piano.description?.trim() ?? ''
+  const COLLAPSED_CHARS = 240
+  const EXPANDED_CHARS = 700
+  const hasLongDescription = rawDescription.length > COLLAPSED_CHARS
+  const previewText = (() => {
+    if (!rawDescription) return ''
+    if (rawDescription.length <= EXPANDED_CHARS) return rawDescription
+    const truncated = rawDescription.slice(0, EXPANDED_CHARS)
     const lastSpace = truncated.lastIndexOf(' ')
-    return `${truncated.slice(0, lastSpace > 0 ? lastSpace : max).replace(/[.,;:]\s*$/, '')}…`
+    return `${truncated.slice(0, lastSpace > 0 ? lastSpace : EXPANDED_CHARS).replace(/[.,;:]\s*$/, '')}…`
   })()
 
   useEffect(() => {
@@ -161,15 +166,61 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
               )}
             </div>
 
-            {/* Description snippet — leads visitors into the full story below */}
-            {descriptionSnippet && (
+            {/* Description preview — collapsed clamp + "Read More" disclosure */}
+            {previewText && (
               <div
                 className="mb-8 max-w-xl"
                 style={{ animation: 'fade-up 0.7s ease-out 0.28s both' }}
               >
-                <p className="text-piano-stone text-base leading-relaxed font-light">
-                  {descriptionSnippet}
-                </p>
+                <div className="relative">
+                  <div
+                    id="hero-description"
+                    className={cn(
+                      'overflow-hidden transition-[max-height] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]',
+                      hasLongDescription && !descExpanded ? 'max-h-[4.75rem]' : 'max-h-[40rem]',
+                    )}
+                  >
+                    <p className="text-piano-stone text-base leading-relaxed font-light">
+                      {previewText}
+                    </p>
+                  </div>
+
+                  {/* Fade-out mask while collapsed */}
+                  {hasLongDescription && (
+                    <div
+                      aria-hidden="true"
+                      className={cn(
+                        'pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-piano-cream to-transparent transition-opacity duration-500',
+                        descExpanded ? 'opacity-0' : 'opacity-100',
+                      )}
+                    />
+                  )}
+                </div>
+
+                {hasLongDescription && (
+                  <button
+                    type="button"
+                    onClick={() => setDescExpanded((v) => !v)}
+                    aria-expanded={descExpanded}
+                    aria-controls="hero-description"
+                    className="group/more mt-3 inline-flex items-center gap-2 font-display text-[11px] tracking-[0.35em] uppercase text-piano-burgundy/80 hover:text-piano-burgundy transition-colors"
+                  >
+                    {descExpanded ? 'Read Less' : 'Read More'}
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      aria-hidden="true"
+                      className={cn(
+                        'h-3.5 w-3.5 transition-transform duration-300 ease-out',
+                        descExpanded ? 'rotate-180' : 'group-hover/more:translate-y-0.5',
+                      )}
+                    >
+                      <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                )}
               </div>
             )}
 
@@ -187,9 +238,14 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
               </button>
               <a
                 href="#description"
-                className="w-full text-center border border-piano-burgundy/55 text-piano-burgundy px-10 py-4 font-display text-xs tracking-[0.3em] uppercase hover:bg-piano-burgundy/5 hover:border-piano-burgundy transition-colors duration-200"
+                className={cn(
+                  'w-full text-center px-10 py-4 font-display text-xs tracking-[0.3em] uppercase border transition-colors duration-300',
+                  descExpanded
+                    ? 'bg-piano-burgundy text-piano-cream border-piano-burgundy hover:bg-piano-burgundy/90'
+                    : 'border-piano-burgundy/55 text-piano-burgundy hover:bg-piano-burgundy/5 hover:border-piano-burgundy',
+                )}
               >
-                About This Piano
+                {descExpanded ? 'Read Full Description' : 'About This Piano'}
               </a>
               {displayPhone && telHref && (
                 <a
@@ -423,7 +479,7 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
                   </p>
                   {piano.retailPrice && (
                     <p className="text-piano-stone/50 text-xs font-display tracking-wide mt-3">
-                      Retail Price:{' '}
+                      Retail Price for New:{' '}
                       <span className="text-piano-stone/70">
                         {new Intl.NumberFormat('en-US', {
                           style: 'currency',

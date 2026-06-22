@@ -13,6 +13,8 @@ const revalidateBrandPages = () => {
   // Dedicated brand listing pages (models grid is CMS-driven)
   revalidatePath('/steinway')
   revalidatePath('/shigeru')
+  // Dynamic brand listing pages (e.g. /pianos/bosendorfer, /pianos/petrof)
+  revalidatePath('/pianos/[slug]', 'page')
   // Model detail pages
   revalidatePath('/steinway/[modelSlug]', 'page')
   revalidatePath('/pianos/[slug]/[modelSlug]', 'page')

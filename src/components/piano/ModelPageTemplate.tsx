@@ -21,32 +21,62 @@ export function ModelPageTemplate({
 }: ModelPageTemplateProps) {
   return (
     <main className="min-h-screen bg-piano-cream">
-      {/* Hero */}
-      <section className="relative bg-piano-burgundy pt-28 pb-24 px-8 overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <Image src={model.imageUrl} alt={model.name} fill className="object-cover" sizes="100vw" />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-piano-black/60 to-piano-black" />
-        <div className="relative max-w-7xl mx-auto">
-          <nav className="flex items-center gap-2 text-piano-cream/60 font-display text-[11px] tracking-[0.45em] uppercase mb-8">
-            <Link href="/pianos" className="hover:text-piano-gold transition-colors">All Pianos</Link>
-            <span>·</span>
-            <Link href={brandHref} className="hover:text-piano-gold transition-colors">{brandLabel}</Link>
-            <span>·</span>
-            <span className="text-piano-cream">{model.name}</span>
-          </nav>
-          <p className="font-display text-[11px] tracking-[0.45em] uppercase text-piano-gold mb-4">
+      {/* Hero — centered announcement (matches brand landing pages) */}
+      <section className="relative min-h-[85vh] flex items-center justify-center bg-piano-burgundy px-8 py-32 overflow-hidden">
+        {model.imageUrl && (
+          <div className="absolute inset-0">
+            <Image src={model.imageUrl} alt={model.name} fill priority className="object-cover opacity-25" sizes="100vw" />
+          </div>
+        )}
+        {/* Overlay — darker at top and bottom, clear in middle */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: 'linear-gradient(to bottom, rgba(4,1,1,0.55) 0%, rgba(4,1,1,0.12) 35%, rgba(4,1,1,0.12) 65%, rgba(4,1,1,0.78) 100%)' }}
+        />
+
+        {/* Breadcrumb */}
+        <nav
+          className="absolute top-0 left-0 right-0 flex items-center justify-center gap-2 text-piano-cream/55 font-display text-[10px] tracking-[0.4em] uppercase"
+          style={{ paddingTop: 'clamp(5rem, 8vh, 7rem)' }}
+        >
+          <Link href="/pianos" className="hover:text-piano-gold transition-colors">All Pianos</Link>
+          <span>·</span>
+          <Link href={brandHref} className="hover:text-piano-gold transition-colors">{brandLabel}</Link>
+          <span>·</span>
+          <span className="text-piano-cream/85">{model.name}</span>
+        </nav>
+
+        {/* Centered announcement */}
+        <div className="relative flex flex-col items-center text-center max-w-3xl">
+          <p
+            className="font-display text-piano-gold"
+            style={{ fontSize: 'clamp(10px, 1vw, 12px)', letterSpacing: '0.5em', textTransform: 'uppercase', marginBottom: 'clamp(1.25rem, 2.5vh, 2rem)', paddingLeft: '0.5em' }}
+          >
             {brandLabel} · {model.type}
           </p>
           <h1
-            className="font-cormorant font-light text-white mb-6"
-            style={{ fontSize: 'clamp(3.6rem, 7vw, 8.5rem)' }}
+            className="font-cormorant font-light text-piano-cream text-balance"
+            style={{ fontSize: 'clamp(3.4rem, 8vw, 8.5rem)', lineHeight: 1.05, letterSpacing: '-0.02em' }}
           >
             {brandLabel} {model.name}
           </h1>
-          <p className="text-piano-cream/70 text-xl max-w-2xl leading-relaxed">
-            {model.size} · {model.yearRange}
-          </p>
+          {/* Hairline rule with center diamond */}
+          <div
+            className="flex items-center justify-center"
+            style={{ gap: '0.85rem', margin: 'clamp(1.75rem, 3.5vh, 2.75rem) 0 clamp(1.25rem, 2.5vh, 1.75rem)' }}
+          >
+            <span style={{ width: 'clamp(2.5rem, 6vw, 5rem)', height: '1px', backgroundColor: 'rgba(200,160,75,0.28)' }} />
+            <span style={{ width: '5px', height: '5px', transform: 'rotate(45deg)', backgroundColor: 'hsl(40, 72%, 52%)' }} />
+            <span style={{ width: 'clamp(2.5rem, 6vw, 5rem)', height: '1px', backgroundColor: 'rgba(200,160,75,0.28)' }} />
+          </div>
+          {(model.size || model.yearRange) && (
+            <p
+              className="font-cormorant font-light italic text-piano-cream/60"
+              style={{ fontSize: 'clamp(1.25rem, 2.2vw, 1.85rem)', lineHeight: 1.4 }}
+            >
+              {[model.size, model.yearRange].filter(Boolean).join('  ·  ')}
+            </p>
+          )}
         </div>
       </section>
 

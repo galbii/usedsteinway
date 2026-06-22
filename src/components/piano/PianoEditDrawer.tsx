@@ -274,7 +274,7 @@ export function PianoEditDrawer({ piano, open, onClose }: PianoEditDrawerProps) 
                     placeholder="e.g. 21999"
                   />
                 </Field>
-                <Field label="Retail Price ($)">
+                <Field label="Retail Price for New ($)">
                   <Input
                     type="number"
                     value={form.retailPrice}
