@@ -42,8 +42,8 @@ function buildSpecs(doc: PayloadPiano): Record<string, string> {
   if (s?.keys) specs['Keys'] = String(s.keys)
   if (s?.pedals) specs['Pedals'] = String(s.pedals)
   if (doc.finish) specs['Finish'] = doc.finish
-  const isRebuilt = doc.condition === 'rebuilt' || doc.condition === 'rebuilt-partial'
-  if (doc.year) specs[isRebuilt ? 'Rebuilt' : 'Year'] = String(doc.year)
+  if (doc.year) specs['Manufactured'] = String(doc.year)
+  if (doc.rebuiltYear) specs['Rebuilt'] = String(doc.rebuiltYear)
   if (doc.serialNumber) specs['Serial'] = doc.serialNumber
 
   return specs
@@ -66,6 +66,7 @@ export function adaptPayloadPiano(doc: PayloadPiano): Piano {
     brandSlug: brand.slug,
     model: doc.model ?? '',
     year: doc.year ?? 0,
+    rebuiltYear: doc.rebuiltYear ?? undefined,
     serialNumber: doc.serialNumber ?? undefined,
     price: doc.price ?? null,
     priceDisplay: formatPrice(doc.price, doc.showPrice),

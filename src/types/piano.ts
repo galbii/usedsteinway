@@ -7,6 +7,8 @@ export interface Piano {
   model: string
   modelSlug?: string
   year: number
+  /** Year the piano was rebuilt/restored — only set for rebuilt instruments */
+  rebuiltYear?: number
   serialNumber?: string
   price: number | null
   priceDisplay: string

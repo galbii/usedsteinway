@@ -364,7 +364,8 @@ export function PianoDetailV2({ piano, locations = [], phone }: PianoDetailV2Pro
       <div className="bg-white border-y border-black/[0.05] shadow-[0_1px_24px_rgba(0,0,0,0.04)] overflow-x-auto">
         <dl className="flex divide-x divide-black/[0.05] max-w-7xl mx-auto">
           {[
-            { label: piano.condition === 'rebuilt' || piano.condition === 'rebuilt-partial' ? 'Rebuilt' : 'Year', value: piano.year },
+            { label: 'Manufactured', value: piano.year },
+            ...(piano.rebuiltYear ? [{ label: 'Rebuilt', value: piano.rebuiltYear }] : []),
             { label: 'Brand', value: piano.brand },
             { label: 'Finish', value: piano.finish },
             ...(piano.serialNumber ? [{ label: 'Serial', value: `#${piano.serialNumber}` }] : []),

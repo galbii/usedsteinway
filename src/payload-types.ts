@@ -1132,9 +1132,13 @@ export interface Piano {
    */
   model?: string | null;
   /**
-   * Manufacturing year
+   * Year the piano was originally built
    */
   year?: number | null;
+  /**
+   * Year the piano was rebuilt/restored, if applicable
+   */
+  rebuiltYear?: number | null;
   serialNumber?: string | null;
   /**
    * e.g. "Satin Ebony"
@@ -2391,6 +2395,7 @@ export interface PianosSelect<T extends boolean = true> {
   brand?: T;
   model?: T;
   year?: T;
+  rebuiltYear?: T;
   serialNumber?: T;
   finish?: T;
   specifications?:

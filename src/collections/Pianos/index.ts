@@ -102,17 +102,26 @@ export const Pianos: CollectionConfig<'pianos'> = {
                 {
                   name: 'year',
                   type: 'number',
-                  label: 'Year',
+                  label: 'Manufactured Year',
                   admin: {
-                    description: 'Manufacturing year',
-                    width: '33%',
+                    description: 'Year the piano was originally built',
+                    width: '25%',
+                  },
+                },
+                {
+                  name: 'rebuiltYear',
+                  type: 'number',
+                  label: 'Rebuilt Year',
+                  admin: {
+                    description: 'Year the piano was rebuilt/restored, if applicable',
+                    width: '25%',
                   },
                 },
                 {
                   name: 'serialNumber',
                   type: 'text',
                   label: 'Serial Number',
-                  admin: { width: '33%' },
+                  admin: { width: '25%' },
                 },
                 {
                   name: 'finish',
@@ -120,7 +129,7 @@ export const Pianos: CollectionConfig<'pianos'> = {
                   label: 'Finish',
                   admin: {
                     description: 'e.g. "Satin Ebony"',
-                    width: '33%',
+                    width: '25%',
                   },
                 },
               ],
