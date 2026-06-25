@@ -1,5 +1,15 @@
 import type { Metadata } from 'next'
+import { cache } from 'react'
 import Link from 'next/link'
+import { draftMode } from 'next/headers'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
+import { RenderBlocks } from '@/blocks/RenderBlocks'
+import { RenderHero } from '@/heros/RenderHero'
+import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { PageEditButton } from '@/components/admin/onpage/PageEditButton'
+import { serializeBlocks } from '@/components/admin/onpage/editorSchema'
+import { editableBlocks } from '@/blocks/registry'
 import { InquiryCTA } from '@/components/piano/InquiryCTA'
 
 export const metadata: Metadata = {
@@ -8,7 +18,38 @@ export const metadata: Metadata = {
     'Flexible payment options for serious piano buyers. We work with specialized music lenders to help qualified buyers finance the right instrument.',
 }
 
-export default function FinancingPage() {
+const queryFinancingPage = cache(async () => {
+  const { isEnabled: draft } = await draftMode()
+  const payload = await getPayload({ config: configPromise })
+  const result = await payload.find({
+    collection: 'pages',
+    draft,
+    limit: 1,
+    pagination: false,
+    overrideAccess: draft,
+    where: { slug: { equals: 'financing' } },
+  })
+  return result.docs?.[0] ?? null
+})
+
+export default async function FinancingPage() {
+  const { isEnabled: draft } = await draftMode()
+  const page = await queryFinancingPage()
+
+  // CMS-driven: if an editor has built the Financing page out of blocks, render it.
+  if (page) {
+    const { hero, layout } = page
+    return (
+      <article className={hero?.type === 'none' ? '' : 'pt-16'}>
+        {draft && <LivePreviewListener />}
+        <RenderHero {...hero} />
+        <RenderBlocks blocks={layout} />
+        <PageEditButton pageId={page.id} blockSchemas={serializeBlocks(editableBlocks)} />
+      </article>
+    )
+  }
+
+  // Fallback: the original hand-built Financing page (default until a CMS page exists).
   return (
     <main className="min-h-screen bg-piano-cream">
       {/* Hero */}

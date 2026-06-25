@@ -225,6 +225,12 @@ export interface Page {
     | LocationsBlock
     | FinalCtaBlock
     | SectionHeaderBlock
+    | PageHeroBlock
+    | TwoColumnBlock
+    | CardGridBlock
+    | SellFormBlock
+    | TestimonialsFeaturedBlock
+    | TestimonialsGridBlock
   )[];
   meta?: {
     title?: string | null;
@@ -1454,6 +1460,216 @@ export interface SectionHeaderBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageHeroBlock".
+ */
+export interface PageHeroBlock {
+  /**
+   * Small uppercase label above the headline, preceded by a gold rule
+   */
+  eyebrow?: string | null;
+  /**
+   * Main headline line (large Cormorant display)
+   */
+  heading?: string | null;
+  /**
+   * Optional italic gold span appended to the headline on its own line
+   */
+  headingAccent?: string | null;
+  /**
+   * Supporting paragraph beneath the headline
+   */
+  subtext?: string | null;
+  /**
+   * Full-bleed hero image shown behind a bottom-heavy dark gradient
+   */
+  backgroundImage?: (string | null) | Media;
+  /**
+   * Optional small flanking label beside the subtext (e.g. "Est. 1980")
+   */
+  estLabel?: string | null;
+  /**
+   * Base background color shown behind/around the image
+   */
+  bgStyle?: ('burgundy' | 'charcoal' | 'cream' | 'black') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'heroPage';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TwoColumnBlock".
+ */
+export interface TwoColumnBlock {
+  /**
+   * Small label above the heading (e.g. 'Our Story')
+   */
+  eyebrow?: string | null;
+  /**
+   * Large display heading — use \n for line breaks
+   */
+  heading?: string | null;
+  /**
+   * Body paragraphs — separate each paragraph with a BLANK LINE (two returns).
+   */
+  body?: string | null;
+  /**
+   * Which side the accent column sits on. Prose takes the opposite side.
+   */
+  accentSide?: ('left' | 'right') | null;
+  /**
+   * Which accent column to render: Image (portrait photo), Pull Quote (large italic quote), Feature List (gold-dot rows), or None (prose spans the full width).
+   */
+  accentType?: ('image' | 'pullQuote' | 'featureList' | 'none') | null;
+  /**
+   * Used when Accent Type = Image. Portrait image shown beside the prose.
+   */
+  image?: (string | null) | Media;
+  /**
+   * Used when Accent Type = Pull Quote. The large italic statement.
+   */
+  quote?: string | null;
+  /**
+   * Used when Accent Type = Pull Quote. Small label beneath the quote.
+   */
+  quoteAttribution?: string | null;
+  /**
+   * Used when Accent Type = Feature List. One row per feature.
+   */
+  features?:
+    | {
+        /**
+         * Uppercase gold label (e.g. "Performance")
+         */
+        label?: string | null;
+        /**
+         * Supporting sentence beneath the label
+         */
+        detail?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Section background. Cream is light; charcoal/burgundy/black are dark.
+   */
+  bgStyle?: ('cream' | 'charcoal' | 'burgundy' | 'black') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'twoColumn';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CardGridBlock".
+ */
+export interface CardGridBlock {
+  /**
+   * Small uppercase label above the heading (e.g. 'The Value Proposition')
+   */
+  eyebrow?: string | null;
+  /**
+   * Large cormorant display heading. Use line breaks for multi-line headings.
+   */
+  heading?: string | null;
+  /**
+   * Optional supporting paragraph below the heading
+   */
+  intro?: string | null;
+  /**
+   * Cards rendered in the grid. Titles may contain line breaks to wrap across lines.
+   */
+  cards?:
+    | {
+        /**
+         * Card title. Use line breaks to wrap onto multiple lines.
+         */
+        title?: string | null;
+        /**
+         * Short supporting copy for the card
+         */
+        body?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional paragraph rendered below the grid
+   */
+  closingText?: string | null;
+  /**
+   * Number of columns on large screens
+   */
+  columns?: ('2' | '3' | '4') | null;
+  /**
+   * Render 01/02/03… numerals per card (divider layout)
+   */
+  showNumbers?: boolean | null;
+  /**
+   * Section background color
+   */
+  bgStyle?: ('burgundy' | 'charcoal' | 'cream' | 'black') | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'cardGrid';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SellFormBlock".
+ */
+export interface SellFormBlock {
+  /**
+   * Small uppercase label above the heading (e.g. 'Piano Inquiry').
+   */
+  eyebrow?: string | null;
+  /**
+   * Large display heading shown above the form.
+   */
+  heading?: string | null;
+  /**
+   * Short note rendered above the form, beside a gold accent rule.
+   */
+  intro?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'sellForm';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialsFeaturedBlock".
+ */
+export interface TestimonialsFeaturedBlock {
+  /**
+   * Optional small label (internal — the carousel renders its own "Featured Voices" eyebrow).
+   */
+  eyebrow?: string | null;
+  /**
+   * Optional internal label for this block.
+   */
+  heading?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'testimonialsFeatured';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialsGridBlock".
+ */
+export interface TestimonialsGridBlock {
+  /**
+   * Optional small uppercase label above the grid.
+   */
+  eyebrow?: string | null;
+  /**
+   * Optional display heading above the grid.
+   */
+  heading?: string | null;
+  /**
+   * Optional cap on how many testimonials to show. Leave empty to show all published.
+   */
+  limit?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'testimonialsGrid';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "testimonials".
  */
 export interface Testimonial {
@@ -1850,6 +2066,12 @@ export interface PagesSelect<T extends boolean = true> {
         locations?: T | LocationsBlockSelect<T>;
         finalCta?: T | FinalCtaBlockSelect<T>;
         sectionHeader?: T | SectionHeaderBlockSelect<T>;
+        heroPage?: T | PageHeroBlockSelect<T>;
+        twoColumn?: T | TwoColumnBlockSelect<T>;
+        cardGrid?: T | CardGridBlockSelect<T>;
+        sellForm?: T | SellFormBlockSelect<T>;
+        testimonialsFeatured?: T | TestimonialsFeaturedBlockSelect<T>;
+        testimonialsGrid?: T | TestimonialsGridBlockSelect<T>;
       };
   meta?:
     | T
@@ -2124,6 +2346,99 @@ export interface SectionHeaderBlockSelect<T extends boolean = true> {
   heading?: T;
   tagline?: T;
   style?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PageHeroBlock_select".
+ */
+export interface PageHeroBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  headingAccent?: T;
+  subtext?: T;
+  backgroundImage?: T;
+  estLabel?: T;
+  bgStyle?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TwoColumnBlock_select".
+ */
+export interface TwoColumnBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  body?: T;
+  accentSide?: T;
+  accentType?: T;
+  image?: T;
+  quote?: T;
+  quoteAttribution?: T;
+  features?:
+    | T
+    | {
+        label?: T;
+        detail?: T;
+        id?: T;
+      };
+  bgStyle?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CardGridBlock_select".
+ */
+export interface CardGridBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  intro?: T;
+  cards?:
+    | T
+    | {
+        title?: T;
+        body?: T;
+        id?: T;
+      };
+  closingText?: T;
+  columns?: T;
+  showNumbers?: T;
+  bgStyle?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SellFormBlock_select".
+ */
+export interface SellFormBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  intro?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialsFeaturedBlock_select".
+ */
+export interface TestimonialsFeaturedBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TestimonialsGridBlock_select".
+ */
+export interface TestimonialsGridBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  limit?: T;
   id?: T;
   blockName?: T;
 }

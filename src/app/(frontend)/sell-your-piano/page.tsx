@@ -1,4 +1,14 @@
 import type { Metadata } from 'next'
+import { cache } from 'react'
+import { draftMode } from 'next/headers'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
+import { RenderBlocks } from '@/blocks/RenderBlocks'
+import { RenderHero } from '@/heros/RenderHero'
+import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { PageEditButton } from '@/components/admin/onpage/PageEditButton'
+import { serializeBlocks } from '@/components/admin/onpage/editorSchema'
+import { editableBlocks } from '@/blocks/registry'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import type { SiteSetting } from '@/payload-types'
 import { SellPianoForm } from './_components/SellPianoForm'
@@ -9,7 +19,38 @@ export const metadata: Metadata = {
     'We will consider for purchase or by consignment your Steinway, Shigeru Kawai, Bösendorfer, and C. Bechstein pianos.',
 }
 
+const querySellYourPianoPage = cache(async () => {
+  const { isEnabled: draft } = await draftMode()
+  const payload = await getPayload({ config: configPromise })
+  const result = await payload.find({
+    collection: 'pages',
+    draft,
+    limit: 1,
+    pagination: false,
+    overrideAccess: draft,
+    where: { slug: { equals: 'sell-your-piano' } },
+  })
+  return result.docs?.[0] ?? null
+})
+
 export default async function SellYourPianoPage() {
+  const { isEnabled: draft } = await draftMode()
+  const page = await querySellYourPianoPage()
+
+  // CMS-driven: if an editor has built the page out of blocks, render it.
+  if (page) {
+    const { hero, layout } = page
+    return (
+      <article className={hero?.type === 'none' ? '' : 'pt-16'}>
+        {draft && <LivePreviewListener />}
+        <RenderHero {...hero} />
+        <RenderBlocks blocks={layout} />
+        <PageEditButton pageId={page.id} blockSchemas={serializeBlocks(editableBlocks)} />
+      </article>
+    )
+  }
+
+  // Fallback: the original hand-built Sell Your Piano page.
   const siteSettings = (await getCachedGlobal('site-settings', 0)()) as SiteSetting
   const rawPhone = siteSettings?.contactInfo?.phone ?? '508-545-0766'
   const telHref = `tel:+1${rawPhone.replace(/\D/g, '')}`

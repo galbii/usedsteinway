@@ -1,10 +1,17 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import React from 'react'
-
-import { InquiryCTA } from '@/components/piano/InquiryCTA'
-import configPromise from '@payload-config'
+import React, { cache } from 'react'
+import { draftMode } from 'next/headers'
 import { getPayload } from 'payload'
+import configPromise from '@payload-config'
+
+import { RenderBlocks } from '@/blocks/RenderBlocks'
+import { RenderHero } from '@/heros/RenderHero'
+import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { PageEditButton } from '@/components/admin/onpage/PageEditButton'
+import { serializeBlocks } from '@/components/admin/onpage/editorSchema'
+import { editableBlocks } from '@/blocks/registry'
+import { InquiryCTA } from '@/components/piano/InquiryCTA'
 
 import { TestimonialsPageClient } from './_components/TestimonialsPageClient'
 
@@ -14,7 +21,38 @@ export const metadata: Metadata = {
     'What our clients say about buying through UsedSteinways.com. Real stories from pianists across New England.',
 }
 
+const queryTestimonialsPage = cache(async () => {
+  const { isEnabled: draft } = await draftMode()
+  const payload = await getPayload({ config: configPromise })
+  const result = await payload.find({
+    collection: 'pages',
+    draft,
+    limit: 1,
+    pagination: false,
+    overrideAccess: draft,
+    where: { slug: { equals: 'testimonials' } },
+  })
+  return result.docs?.[0] ?? null
+})
+
 export default async function TestimonialsPage() {
+  const { isEnabled: draft } = await draftMode()
+  const page = await queryTestimonialsPage()
+
+  // CMS-driven: if an editor has built the Testimonials page out of blocks, render it.
+  if (page) {
+    const { hero, layout } = page
+    return (
+      <article className={hero?.type === 'none' ? '' : 'pt-16'}>
+        {draft && <LivePreviewListener />}
+        <RenderHero {...hero} />
+        <RenderBlocks blocks={layout} />
+        <PageEditButton pageId={page.id} blockSchemas={serializeBlocks(editableBlocks)} />
+      </article>
+    )
+  }
+
+  // Fallback: the original hand-built Testimonials page (default until a CMS page exists).
   const payload = await getPayload({ config: configPromise })
 
   const { docs: testimonials } = await payload.find({

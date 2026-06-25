@@ -1,4 +1,14 @@
 import type { Metadata } from 'next'
+import { cache } from 'react'
+import { draftMode } from 'next/headers'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
+import { RenderBlocks } from '@/blocks/RenderBlocks'
+import { RenderHero } from '@/heros/RenderHero'
+import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { PageEditButton } from '@/components/admin/onpage/PageEditButton'
+import { serializeBlocks } from '@/components/admin/onpage/editorSchema'
+import { editableBlocks } from '@/blocks/registry'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import type { SiteSetting } from '@/payload-types'
 import { InquiryCTA } from '@/components/piano/InquiryCTA'
@@ -20,8 +30,43 @@ const maximizeTips = [
   'We are happy to extend your visit if no other appointment is expected.',
 ]
 
+const queryVisitPage = cache(async () => {
+  const { isEnabled: draft } = await draftMode()
+  const payload = await getPayload({ config: configPromise })
+  const result = await payload.find({
+    collection: 'pages',
+    draft,
+    limit: 1,
+    pagination: false,
+    overrideAccess: draft,
+    where: { slug: { equals: 'visit' } },
+  })
+  return result.docs?.[0] ?? null
+})
+
 export default async function VisitPage() {
-  const siteSettings = await getCachedGlobal('site-settings', 0)() as SiteSetting
+  const { isEnabled: draft } = await draftMode()
+  const page = await queryVisitPage()
+
+  // CMS-driven: if an editor has built the Visit page out of blocks, render it.
+  if (page) {
+    const { hero, layout } = page
+    return (
+      <article className={hero?.type === 'none' ? '' : 'pt-16'}>
+        {draft && <LivePreviewListener />}
+        <RenderHero {...hero} />
+        <RenderBlocks blocks={layout} />
+        <PageEditButton pageId={page.id} blockSchemas={serializeBlocks(editableBlocks)} />
+      </article>
+    )
+  }
+
+  // Fallback: the original hand-built Visit page (default until a CMS page exists).
+  return <VisitStaticContent />
+}
+
+async function VisitStaticContent() {
+  const siteSettings = (await getCachedGlobal('site-settings', 0)()) as SiteSetting
   const { phone, hoursOfOperation } = siteSettings?.contactInfo ?? {}
   const locations = siteSettings?.locations ?? []
 

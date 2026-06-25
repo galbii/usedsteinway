@@ -20,6 +20,12 @@ import { NewsSectionBlock } from '@/blocks/NewsSection/Component'
 import { LocationsBlock } from '@/blocks/Locations/Component'
 import { FinalCtaBlock } from '@/blocks/FinalCta/Component'
 import { SectionHeaderBlock } from '@/blocks/SectionHeader/Component'
+import { PageHeroBlock } from '@/blocks/PageHero/Component'
+import { TwoColumnBlock } from '@/blocks/TwoColumn/Component'
+import { CardGridBlock } from '@/blocks/CardGrid/Component'
+import { SellFormBlock } from '@/blocks/SellForm/Component'
+import { TestimonialsFeaturedBlock } from '@/blocks/TestimonialsFeatured/Component'
+import { TestimonialsGridBlock } from '@/blocks/TestimonialsGrid/Component'
 
 // Registry: blockType slug → React component.
 // To add a new block: create src/blocks/YourBlock/Component.tsx,
@@ -43,6 +49,12 @@ const blockComponents = {
   locations:      LocationsBlock,
   finalCta:       FinalCtaBlock,
   sectionHeader:  SectionHeaderBlock,
+  heroPage:       PageHeroBlock,
+  twoColumn:      TwoColumnBlock,
+  cardGrid:       CardGridBlock,
+  sellForm:       SellFormBlock,
+  testimonialsFeatured: TestimonialsFeaturedBlock,
+  testimonialsGrid: TestimonialsGridBlock,
 }
 
 // Union of all block types that any collection's layout field may contain.

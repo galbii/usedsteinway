@@ -15,6 +15,12 @@ import { NewsSection } from './NewsSection/config'
 import { Locations } from './Locations/config'
 import { FinalCta } from './FinalCta/config'
 import { SectionHeader } from './SectionHeader/config'
+import { PageHero } from './PageHero/config'
+import { TwoColumn } from './TwoColumn/config'
+import { CardGrid } from './CardGrid/config'
+import { SellForm } from './SellForm/config'
+import { TestimonialsFeatured } from './TestimonialsFeatured/config'
+import { TestimonialsGrid } from './TestimonialsGrid/config'
 
 // Single source of truth for the Pages `layout` blocks. Consumed by both the
 // Payload collection config (admin) and the on-page block editor (frontend
@@ -36,4 +42,10 @@ export const editableBlocks: Block[] = [
   Locations,
   FinalCta,
   SectionHeader,
+  PageHero,
+  TwoColumn,
+  CardGrid,
+  SellForm,
+  TestimonialsFeatured,
+  TestimonialsGrid,
 ]

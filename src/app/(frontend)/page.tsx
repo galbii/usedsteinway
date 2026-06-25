@@ -39,7 +39,7 @@ export default async function HomePage() {
   if (page) {
     const { hero, layout } = page
     return (
-      <article className="pt-16 pb-24">
+      <article className={hero?.type === 'none' ? '' : 'pt-16'}>
         {draft && <LivePreviewListener />}
         <RenderHero {...hero} />
         <RenderBlocks blocks={layout} />
